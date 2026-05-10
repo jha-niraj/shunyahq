@@ -59,76 +59,69 @@ const services = [
 	},
 ]
 
-// --- DATA: WHY US (From Image) ---
+// --- DATA: WHY US ---
 const whyUs = [
 	{
-		title: "Creative Excellence",
-		description: "Combining strategic thinking with visually stunning, user-centric design paradigms.",
+		title: "We Ship Real Products",
+		description: "Every project we take goes live. Not a prototype, not a Figma deck — a production system people actually use.",
+		icon: Rocket
+	},
+	{
+		title: "Full-Stack Ownership",
+		description: "One team owns everything — frontend, backend, infra, and deployment. No handoffs, no finger-pointing.",
 		icon: Sparkles
 	},
 	{
-		title: "Technical Expertise",
-		description: "Leveraging cutting-edge stacks to build robust, scalable, and high-performance solutions.",
-		icon: Terminal
-	},
-	{
-		title: "Quality Assurance",
-		description: "Rigorous testing protocols ensuring performance, security, and reliability metrics are met.",
-		icon: Shield
-	},
-	{
-		title: "Innovation Focus",
-		description: "Incorporating emerging technologies to give your business a distinct competitive edge.",
+		title: "Speed Without Shortcuts",
+		description: "Modern stacks (Next.js, tRPC, Prisma) let us move fast without creating technical debt you'll pay for later.",
 		icon: Zap
 	},
 	{
-		title: "Timely Delivery",
-		description: "Agile methodologies that ensure efficient execution and transparent timelines.",
+		title: "Honest Timelines",
+		description: "We scope in weeks, not quarters. Bi-weekly deployments mean you always see real working software — never just status updates.",
 		icon: Clock
-	},
-	{
-		title: "Client Partnership",
-		description: "Building lasting partnerships through dedicated support and deep business understanding.",
-		icon: Users
 	}
 ]
 
 // --- DATA: PROJECTS (Top 3) ---
 const selectedProjects = [
 	{
-		title: "The Coder'z",
+		title: "CodrzAI",
 		category: "EdTech Platform",
-		image: "/thecoderz.png", // Ensure this image exists in public folder
-		description: "Real-time collaborative coding environment with AI mentorship."
+		image: "/thecoderz.png",
+		description: "AI-powered engineering suite for CS students — DSA, project scaffolding, and open-source bounties.",
+		slug: "coderzai"
 	},
 	{
-		title: "Logistics Center",
-		category: "Supply Chain",
-		image: "/logistics.png", // Ensure this image exists in public folder
-		description: "Global freight tracking system with predictive route optimization."
+		title: "EventEye",
+		category: "Event Management",
+		image: "/eventeye.png",
+		description: "Dual-sided event platform for college organizers and attendees. Ticket checkout in under 30 seconds.",
+		slug: "eventeye"
 	},
 	{
-		title: "FinTech Pro",
-		category: "Financial Dashboard",
-		image: "/fintech.png", // Ensure this image exists in public folder
-		description: "High-frequency trading interface handling millions in volume."
+		title: "M.P. Solutions",
+		category: "Healthcare Tech",
+		image: "/mpsolutions.png",
+		description: "Real-time pharmaceutical inventory connecting pharmacies and distributors — no phone calls needed.",
+		slug: "mp-solutions"
 	}
 ]
 
 const processSteps = [
 	{
 		title: "01. DISCOVERY",
-		description: "Requirement analysis & technical architecture blueprinting.",
+		description: "Week 1–2: Requirements workshop, tech stack decision, architecture blueprint. You get a written spec doc before a single line is written.",
 		icon: Lightbulb,
 	},
 	{
 		title: "02. ENGINEERING",
-		description: "Agile development sprints with bi-weekly deployments.",
+		description: "Week 3–8: Agile sprints with bi-weekly deployments to staging. You always see real working software — never mockups, never status decks.",
 		icon: Code2,
 	},
 	{
-		title: "03. EXECUTION",
-		description: " rigorous QA testing, security auditing, and production launch.",
+		title: "03. LAUNCH",
+		description: "Final week: QA testing, security audit, production deployment — handed over with documentation and 30 days of post-launch support.",
 		icon: Rocket,
 	}
 ]
@@ -194,18 +187,18 @@ export default function LandingPage() {
 								<span className="block">THE FUTURE.</span>
 							</h1>
 							<p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto leading-relaxed font-light mb-12">
-								Shunya Tech is a digital product agency. We combine strategic thinking with
-								high-performance engineering to build systems that matter.
+								We are builders who ship. From concept to production — we architect digital
+								products that scale, perform, and actually get used.
 							</p>
 							<div className="flex flex-col sm:flex-row items-center justify-center gap-4">
 								<Link href="/contactus">
 									<Button className="h-14 px-8 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 text-lg font-bold shadow-lg hover:shadow-xl transition-all">
-										Initiate Project <ArrowRight className="ml-2 w-5 h-5" />
+										Start a Project <ArrowRight className="ml-2 w-5 h-5" />
 									</Button>
 								</Link>
-								<Link href="/pricing">
+								<Link href="/projects">
 									<Button variant="outline" className="h-14 px-8 rounded-full border-2 border-neutral-200 dark:border-neutral-800 bg-transparent hover:bg-neutral-100 dark:hover:bg-neutral-900 text-lg font-medium">
-										View Protocol <Terminal className="ml-2 w-5 h-5" />
+										See Our Work <Terminal className="ml-2 w-5 h-5" />
 									</Button>
 								</Link>
 							</div>
@@ -215,10 +208,10 @@ export default function LandingPage() {
 				<section className="py-24 px-6 bg-neutral-50 dark:bg-neutral-950">
 					<div className="max-w-7xl mx-auto">
 						<div className="text-center mb-16">
-							<Badge variant="outline" className="mb-4 bg-white dark:bg-black">Our Philosophy</Badge>
-							<h2 className="text-4xl md:text-5xl font-bold tracking-tight">Excellence in Every Detail</h2>
+							<Badge variant="outline" className="mb-4 bg-white dark:bg-black">How We Work</Badge>
+							<h2 className="text-4xl md:text-5xl font-bold tracking-tight">Built Different.</h2>
 							<p className="text-neutral-500 mt-4 max-w-2xl mx-auto">
-								We combine technical expertise with creative innovation to deliver exceptional digital solutions.
+								We don't manage projects — we own them. Here's what that actually means in practice.
 							</p>
 						</div>
 						<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -264,7 +257,7 @@ export default function LandingPage() {
 									<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
 									<span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
 								</span>
-								<span className="text-xs font-mono text-blue-400 uppercase tracking-widest">System Launch: T-Minus 30 Days</span>
+								<span className="text-xs font-mono text-blue-400 uppercase tracking-widest">Now in Beta — Request Access</span>
 							</div>
 							<h2 className="text-6xl md:text-8xl font-bold tracking-tighter mb-6 leading-none">
 								Sync<span className="text-neutral-700">Orbit</span>
@@ -461,14 +454,14 @@ export default function LandingPage() {
 							</div>
 							<Link href="/projects">
 								<Button className="rounded-full bg-neutral-900 dark:bg-white text-white dark:text-black">
-									View Full Registry
+									View All Projects
 								</Button>
 							</Link>
 						</div>
 						<div className="grid md:grid-cols-3 gap-8">
 							{
 								selectedProjects.map((project, i) => (
-									<Link href="/projects" key={i} className="group block">
+									<Link href={`/projects/${project.slug}`} key={i} className="group block">
 										<div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 mb-6">
 											<Image
 												src={project.image}

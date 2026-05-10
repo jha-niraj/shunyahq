@@ -17,6 +17,7 @@ const menuItems = [
     { name: 'Services', href: '/services' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'About', href: '/aboutus' },
+    { name: 'Team', href: '/aboutus#team' },
 ]
 
 export const Navbar = () => {
@@ -42,11 +43,11 @@ export const Navbar = () => {
         const [path, hash] = href.split('#');
         const targetId = `#${hash}`;
 
-        if (pathname === '/' || pathname === path) {
+        if (pathname === path) {
             const element = document.querySelector(targetId);
             if (element) element.scrollIntoView({ behavior: 'smooth' });
         } else {
-            router.push(`/${targetId}`);
+            router.push(`${path}${targetId}`);
         }
     };
 

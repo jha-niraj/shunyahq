@@ -51,59 +51,35 @@ const teamMembers = [
     {
         name: "Kratik Singh",
         role: "CO-FOUNDER & CEO",
-        bio: "The strategic mind behind Shunya. Orchestrating the vision and steering the agency towards global innovation.",
-        image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1000&auto=format&fit=crop",
+        bio: "Co-Founder & CEO of Shunya Tech. Focused on digital branding, product strategy, and helping businesses build a meaningful presence in the modern digital world.",
+        image: "/teams/kartiksingh.png",
         linkedin: "#",
         colSpan: "md:col-span-2 lg:col-span-2"
     },
     {
-        name: "Aman Singh",
-        role: "CO-FOUNDER & DIRECTOR",
-        bio: "Ensuring operational excellence and driving the company's long-term growth strategies.",
-        image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1000&auto=format&fit=crop",
+        name: "Amandeep",
+        role: "CO-FOUNDER & CFO",
+        bio: "Co-Founder & CFO at Shunya Tech. Drives financial planning and strategic operations, building a stable foundation for the company's long-term growth.",
+        image: "",
         linkedin: "#",
         colSpan: "md:col-span-1 lg:col-span-1"
     },
     {
         name: "Niraj Jha",
         role: "CO-FOUNDER & CTO",
-        bio: "Full-stack architect and technical visionary. Building the engineering culture and setting the tech stack standards.",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop",
+        bio: "Co-Founder & CTO of Shunya Tech. Full-stack architect who sets the engineering culture and technical standards behind every product we ship.",
+        image: "",
         linkedin: "https://linkedin.com/in/nirajjha",
         colSpan: "md:col-span-1 lg:col-span-1"
     },
     {
         name: "Harsh Pandey",
-        role: "CHIEF OPERATING OFFICER",
-        bio: "The engine room. Managing workflows, resources, and ensuring delivery timelines are met with precision.",
-        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format&fit=crop",
+        role: "OPERATIONS ASSOCIATE",
+        bio: "Operations Associate at Shunya Tech. Keeps daily operations running efficiently with strong organizational discipline and a proactive work ethic.",
+        image: "",
         linkedin: "#",
         colSpan: "md:col-span-2 lg:col-span-2"
     },
-    {
-        name: "Sarah Jenkin",
-        role: "HEAD OF PRODUCT",
-        bio: "Translating complex user needs into seamless digital experiences.",
-        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=1000&auto=format&fit=crop",
-        linkedin: "#",
-        colSpan: "md:col-span-1"
-    },
-    {
-        name: "David Chen",
-        role: "LEAD VIDEO EDITOR",
-        bio: "Crafting visual narratives that tell the story behind the code.",
-        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop",
-        linkedin: "#",
-        colSpan: "md:col-span-1"
-    },
-    {
-        name: "Elena Rodriguez",
-        role: "SENIOR FRONTEND",
-        bio: "Pixel-perfect implementation of complex UI systems.",
-        image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1000&auto=format&fit=crop",
-        linkedin: "#",
-        colSpan: "md:col-span-1"
-    }
 ]
 
 // --- Animation Variants (Typed to fix TS Error) ---
@@ -164,8 +140,8 @@ export default function AboutPage() {
                             variants={staggerContainer}
                             className="text-6xl md:text-8xl font-bold tracking-tighter mb-8"
                         >
-                            <motion.span variants={fadeInUp} className="block text-neutral-400 dark:text-neutral-500">ENGINEERING</motion.span>
-                            <motion.span variants={fadeInUp} className="block text-neutral-900 dark:text-white">THE FUTURE</motion.span>
+                            <motion.span variants={fadeInUp} className="block text-neutral-400 dark:text-neutral-500">BUILT BY</motion.span>
+                            <motion.span variants={fadeInUp} className="block text-neutral-900 dark:text-white">BUILDERS.</motion.span>
                         </motion.h1>
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
@@ -173,8 +149,8 @@ export default function AboutPage() {
                             transition={{ delay: 0.4, duration: 0.8 }}
                             className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto font-light leading-relaxed"
                         >
-                            Shunya Tech is a digital product agency. We combine strategic thinking with
-                            high-performance engineering to build systems that matter.
+                            We are a team of engineers, designers, and product thinkers who care deeply
+                            about what gets shipped — and how well it works once it does.
                         </motion.p>
                     </div>
                     <motion.div
@@ -211,12 +187,12 @@ export default function AboutPage() {
                                 <div className="pt-8 flex gap-8 border-t border-neutral-200 dark:border-neutral-800 mt-8">
                                     <div>
                                         <h3 className="text-4xl font-bold text-neutral-900 dark:text-white mb-1">50+</h3>
-                                        <p className="text-xs font-mono text-neutral-500 uppercase">Enterprise Clients</p>
+                                        <p className="text-xs font-mono text-neutral-500 uppercase">Clients Since 2019</p>
                                     </div>
                                     <div className="w-[1px] h-full bg-neutral-200 dark:bg-neutral-800" />
                                     <div>
                                         <h3 className="text-4xl font-bold text-neutral-900 dark:text-white mb-1">99%</h3>
-                                        <p className="text-xs font-mono text-neutral-500 uppercase">Retention Rate</p>
+                                        <p className="text-xs font-mono text-neutral-500 uppercase">Client Retention</p>
                                     </div>
                                 </div>
                             </div>
@@ -305,27 +281,31 @@ export default function AboutPage() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         viewport={{ once: true }}
                                         transition={{ duration: 0.5, delay: index * 0.1 }}
-                                        className={`group relative overflow-hidden rounded-3xl bg-neutral-200 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 ${member.colSpan || ''} min-h-[400px]`}
+                                        className={`group relative overflow-hidden rounded-3xl border border-neutral-200 dark:border-neutral-800 ${member.colSpan || ''} min-h-[560px]`}
                                     >
                                         <div className="absolute inset-0">
-                                            <Image
-                                                src={member.image}
-                                                alt={member.name}
-                                                fill
-                                                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out group-hover:scale-105"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                                            {member.image ? (
+                                                <Image
+                                                    src={member.image}
+                                                    alt={member.name}
+                                                    fill
+                                                    className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out group-hover:scale-105"
+                                                />
+                                            ) : (
+                                                <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-900 to-neutral-950 dark:from-neutral-700 dark:via-neutral-800 dark:to-neutral-950" />
+                                            )}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                                         </div>
-                                        <div className="absolute inset-0 p-8 flex flex-col justify-end transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                        <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-3 group-hover:translate-y-0 transition-transform duration-500 ease-out">
                                             <div className="relative z-10">
                                                 <div className="inline-block mb-3 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
                                                     <span className="text-[10px] font-mono uppercase tracking-wider text-white">
                                                         {member.role}
                                                     </span>
                                                 </div>
-                                                <h3 className="text-3xl font-bold text-white mb-2">{member.name}</h3>
-                                                <div className="h-0 group-hover:h-auto overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
-                                                    <p className="text-neutral-300 text-sm font-light leading-relaxed mb-4">
+                                                <h3 className="text-2xl font-bold text-white mb-2">{member.name}</h3>
+                                                <div className="max-h-0 group-hover:max-h-44 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
+                                                    <p className="text-neutral-300 text-sm font-light leading-relaxed mb-4 pt-1">
                                                         {member.bio}
                                                     </p>
                                                     <div className="flex gap-4">
