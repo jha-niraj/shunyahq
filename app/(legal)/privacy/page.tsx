@@ -77,7 +77,7 @@ export default function PrivacyPolicy() {
                             <ul className="list-disc pl-6 space-y-2">
                                 <li>Right to Access (Subject Access Request)</li>
                                 <li>Right to Rectification</li>
-                                <li>Right to Erasure ("Right to be Forgotten")</li>
+                                <li>Right to Erasure (&quot;Right to be Forgotten&quot;)</li>
                                 <li>Right to Portability</li>
                             </ul>
                         </section>

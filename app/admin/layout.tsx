@@ -1,8 +1,4 @@
 import type { Metadata } from "next";
-import Navbar from "@/components/navbar";
-import { ThemeProvider } from "@/components/theme-providers";
-import Footer from "@/components/footer";
-import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
     title: "Admin Panel - Shunya Tech",
@@ -15,16 +11,8 @@ export default function AdminLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
-            <div className="min-h-screen bg-background">
-                <main>{children}</main>
-                <Toaster />
-            </div>
-        </ThemeProvider>
+        <div data-internal className="min-h-screen bg-background">
+            <main>{children}</main>
+        </div>
     );
 }

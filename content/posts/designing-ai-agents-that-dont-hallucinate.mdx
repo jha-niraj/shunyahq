@@ -1,0 +1,64 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+An AI agent that confidently invents a fact is worse than one that admits it does not know. The confident wrong answer gets trusted, acted on, and discovered too late. We build agents that real businesses depend on, which means hallucination is not a quirky failure mode to tolerate - it is the central engineering problem to design around.
+
+The good news is that hallucination is largely an architecture problem, not a model problem. You do not eliminate it by waiting for a better model. You eliminate most of it by building the system so the model has fewer opportunities to make things up.
+
+## Why agents hallucinate
+
+A language model's job is to produce plausible text. When it has the right information in context, plausible and correct usually coincide. When it does not, the model still produces plausible text - and now plausible and correct diverge. It fills the gap with something that sounds right.
+
+So the goal of agent design is to make sure the model is almost never operating in that gap. Every design decision below is, at bottom, a way to keep the model grounded in real information instead of improvising.
+
+<Callout type="info">
+Hallucination is not the model lying. It is the model doing exactly what it was trained to do - produce fluent text - in a situation where it lacks the facts. Fix the situation, not the model.
+</Callout>
+
+## Ground every answer in retrieved facts
+
+The first and most important defense is to never let the agent answer from memory when it could answer from data. Instead of asking the model what it knows, you retrieve the relevant facts from a trusted source and hand them to the model as context, with explicit instructions to answer only from what it was given.
+
+This is the difference between "what do you know about our refund policy?" and "here is our refund policy document; answer the user's question using only this text." The second framing removes the gap where invention happens.
+
+For this to work, the instruction has to be paired with permission to fail. The model must be explicitly told that "I do not have enough information to answer that" is an acceptable and preferred response. An agent that is allowed to say "I do not know" is dramatically more trustworthy than one that feels obligated to always produce an answer.
+
+## Give the agent tools instead of trusting its recall
+
+The second defense is to stop the agent from guessing at anything it could look up. Models are bad at arithmetic, bad at recalling exact figures, and bad at knowing the current state of your system. So we do not ask them to. We give them tools.
+
+- Need a calculation? A calculator tool, not the model's mental math.
+- Need the customer's order status? A database query tool, not the model's guess.
+- Need today's data? An API call, not whatever the model remembers from training.
+
+The model's job becomes deciding which tool to call and how to phrase the result - not being the source of truth. This is the single biggest lever for accuracy in agent design, because it moves every factual claim from the model's unreliable memory to a deterministic system.
+
+<RateTable
+  headers={["Failure mode", "Naive approach", "Grounded approach"]}
+  rows={[
+    ["Wrong fact", "Ask the model what it knows", "Retrieve from a trusted source"],
+    ["Bad arithmetic", "Let the model compute", "Call a calculator or query tool"],
+    ["Stale data", "Rely on training knowledge", "Fetch live data via API"],
+    ["Made-up source", "Accept the answer", "Require and display citations"],
+    ["Confident guess", "No escape hatch", "Allow and reward 'I do not know'"],
+  ]}
+/>
+
+## Constrain the output, then verify it
+
+Even grounded, a model can drift. So we constrain what a valid answer looks like and check it before it reaches the user.
+
+- **Structured outputs.** When an answer should be a set of fields, we require structured output (a defined schema) rather than free prose. A schema cannot hallucinate a sixth field that does not exist.
+- **Citations as a requirement.** If the agent claims something, it must point to the retrieved passage it came from. An uncited claim is treated as unverified, and we can surface that to the user.
+- **Verification passes.** For high-stakes outputs, a second step checks the answer against the source - sometimes another model call, sometimes deterministic validation. Catching a bad answer before it ships is far cheaper than apologising for it after.
+
+<Callout type="warning">
+The most dangerous agent is the one that is right 95% of the time with total confidence. Users learn to trust it, then get burned by the 5%. Design for the failure case from the start: make the agent show its sources, admit uncertainty, and verify high-stakes claims. Trust is earned by being honestly fallible, not falsely perfect.
+</Callout>
+
+## Measure it like any other system
+
+You cannot reduce what you do not track. We build an evaluation set - real questions paired with correct answers and the sources that should back them - before tuning anything. Then we can measure how often the agent is grounded, how often it correctly says "I do not know," and how often it invents. Without this, every change is a vibe. With it, hallucination becomes a number you can drive down.
+
+## The architecture, in one line
+
+A reliable agent is mostly scaffolding around a model that is kept on a short leash: retrieve the facts, give it tools for anything deterministic, constrain and cite its output, let it admit ignorance, and measure all of it. The model is the last 10% of the system. The other 90% - the grounding, the tools, the guardrails, the evaluation - is what makes the difference between a clever demo and an agent a business can actually rely on. That 90% is the engineering, and it is the work we do.

@@ -1,38 +1,64 @@
 "use client"
 
-import SmoothScroll from "@/components/smoothscroll"
 import {
-    ArrowUpRight, Linkedin, Twitter, Code2, Users, Globe, Zap
+    Linkedin, Twitter, Code2, Users, Globe, Zap, ArrowRight, ArrowUpRight
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import {
-    motion, useScroll, useTransform, Variants
-} from "framer-motion"
-import { useRef } from "react"
 import { toast } from "sonner"
+import { PageHero } from "@/components/landing/page-hero"
+import { PageBackground } from "@/components/landing/page-background"
+import { PageFAQ } from "@/components/landing/page-faq"
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/landing/animations"
+
+const FAQS = [
+    {
+        q: "What kind of work does Shunya Tech take on?",
+        a: "We architect and ship digital products end to end - web platforms, mobile apps, AI features, and the cloud infrastructure behind them. We work best on ambitious builds where engineering quality actually matters, not throwaway sites.",
+    },
+    {
+        q: "Who will I actually be working with?",
+        a: "The people who build your product. You talk to engineers and product thinkers directly, not a layer of account managers relaying messages. Our founders stay close to the work.",
+    },
+    {
+        q: "How does an engagement start?",
+        a: "It starts with a conversation. We pressure-test your idea, agree on scope and the right stack, and give you an honest read on timeline before any commitment. We'd rather scope it right than oversell it.",
+    },
+    {
+        q: "What does your engagement model look like?",
+        a: "We treat clients as partners. Most work runs as a focused project or an ongoing build relationship with a clear source of truth, regular shipping, and transparent progress - so you always know where things stand.",
+    },
+    {
+        q: "Do you only build for clients, or your own products too?",
+        a: "Both. We build and run our own products alongside client work, which keeps our engineering culture sharp and means the standards we hold ourselves to are the same ones we bring to your build.",
+    },
+    {
+        q: "How do I get started?",
+        a: "Reach out through the contact page or book a strategy call. Tell us what you want to build and we'll take it from there - no pressure, no sales script.",
+    },
+]
 
 const values = [
     {
-        icon: <Zap className="w-6 h-6" />,
+        icon: <Zap className="w-5 h-5" />,
         header: "01_INNOVATION",
         title: "Technical Velocity",
         description: "We don't just write code; we engineer velocity. Pushing boundaries with bleeding-edge stacks to solve complex problems.",
     },
     {
-        icon: <Users className="w-6 h-6" />,
+        icon: <Users className="w-5 h-5" />,
         header: "02_SYNERGY",
         title: "Collective Intelligence",
         description: "A hive-mind approach to development. Open communication loops between engineering, design, and product.",
     },
     {
-        icon: <Code2 className="w-6 h-6" />,
+        icon: <Code2 className="w-5 h-5" />,
         header: "03_PRECISION",
         title: "Pixel Perfection",
         description: "Zero compromise on quality. We obsess over the micro-interactions that define the macro experience.",
     },
     {
-        icon: <Globe className="w-6 h-6" />,
+        icon: <Globe className="w-5 h-5" />,
         header: "04_IMPACT",
         title: "Global Scale",
         description: "Architecting systems designed to handle global traffic and deliver real-world impact from day one.",
@@ -82,303 +108,244 @@ const teamMembers = [
     },
 ]
 
-// --- Animation Variants (Typed to fix TS Error) ---
-
-const fadeInUp: Variants = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            duration: 0.8,
-            ease: [0.22, 1, 0.36, 1]
-        }
-    }
-}
-
-const staggerContainer: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.1
-        }
-    }
-}
-
 export default function AboutPage() {
-    const containerRef = useRef(null)
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start start", "end end"]
-    })
-
-    const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
-
     return (
-        <SmoothScroll>
-            <main ref={containerRef} className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-50 selection:bg-neutral-200 dark:selection:bg-neutral-800 selection:text-black dark:selection:text-white transition-colors duration-300">
-                <div className="fixed inset-0 z-0 pointer-events-none">
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e5e5_1px,transparent_1px),linear-gradient(to_bottom,#e5e5e5_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#262626_1px,transparent_1px),linear-gradient(to_bottom,#262626_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-40 dark:opacity-20" />
-                </div>
-                <section className="relative h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-neutral-200/50 dark:bg-neutral-800/30 rounded-full blur-[120px] pointer-events-none" />
+        <main className="relative overflow-x-clip isolate">
+            <PageBackground className="z-0" />
+            <PageHero
+                palette="platinum"
+                eyebrow="About us"
+                title={
+                    <>
+                        Built by{" "}
+                        <span className="so-serif italic">builders.</span>
+                    </>
+                }
+                description="We are a team of engineers, designers, and product thinkers who care deeply about what gets shipped - and how well it works once it does."
+            />
 
-                    <div className="relative z-10 max-w-5xl mx-auto text-center">
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.5 }}
-                            className="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full border border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-md shadow-sm"
-                        >
-                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                            <span className="text-xs font-mono text-neutral-500 dark:text-neutral-400 tracking-wider">SYSTEM STATUS: ONLINE</span>
-                        </motion.div>
-                        <motion.h1
-                            initial="hidden"
-                            animate="visible"
-                            variants={staggerContainer}
-                            className="text-6xl md:text-8xl font-bold tracking-tighter mb-8"
-                        >
-                            <motion.span variants={fadeInUp} className="block text-neutral-400 dark:text-neutral-500">BUILT BY</motion.span>
-                            <motion.span variants={fadeInUp} className="block text-neutral-900 dark:text-white">BUILDERS.</motion.span>
-                        </motion.h1>
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4, duration: 0.8 }}
-                            className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto font-light leading-relaxed"
-                        >
-                            We are a team of engineers, designers, and product thinkers who care deeply
-                            about what gets shipped — and how well it works once it does.
-                        </motion.p>
-                    </div>
-                    <motion.div
-                        style={{ y }}
-                        className="absolute bottom-10 left-0 w-full flex justify-center text-neutral-400 dark:text-neutral-600"
-                    >
-                        <div className="flex flex-col items-center gap-2">
-                            <span className="text-[10px] font-mono uppercase tracking-[0.2em]">Scroll to Explore</span>
-                            <div className="w-[1px] h-12 bg-gradient-to-b from-neutral-400 to-transparent dark:from-neutral-600" />
-                        </div>
-                    </motion.div>
-                </section>
-                <section className="py-24 md:py-32 px-6 relative z-10 border-t border-neutral-200 dark:border-neutral-900 bg-white/80 dark:bg-neutral-950/50 backdrop-blur-sm">
-                    <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={fadeInUp}
-                        >
-                            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-8 text-neutral-900 dark:text-white">
-                                Built on <span className="text-neutral-400 dark:text-neutral-500">First Principles</span>.
+            {/* First principles + stats */}
+            <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
+                <div className="so-container">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                        <FadeIn>
+                            <span className="so-eyebrow">Our philosophy</span>
+                            <h2 className="mt-5 mb-6 text-[clamp(26px,3.4vw,40px)] tracking-[-0.025em] text-so-ink max-w-[18ch]">
+                                Built on first{" "}
+                                <span className="so-serif italic">principles.</span>
                             </h2>
-                            <div className="space-y-6 text-lg text-neutral-600 dark:text-neutral-400 font-light leading-relaxed">
+                            <div className="space-y-5 text-[15px] leading-[1.75] text-so-ink-2">
                                 <p>
-                                    At Shunya Tech, we reject the noise. We believe that great technology is silent—it works so well
-                                    you don't notice the complexity behind it.
+                                    At Shunya Tech, we reject the noise. We believe that great technology is silent-it works so well
+                                    you don&apos;t notice the complexity behind it.
                                 </p>
                                 <p>
                                     What started as a small collective of obsessive developers has evolved into a powerhouse
-                                    engineering firm. We don't just "build websites"; we architect digital ecosystems that
+                                    engineering firm. We don&apos;t just &quot;build websites&quot;; we architect digital ecosystems that
                                     scale, perform, and endure.
                                 </p>
-                                <div className="pt-8 flex gap-8 border-t border-neutral-200 dark:border-neutral-800 mt-8">
-                                    <div>
-                                        <h3 className="text-4xl font-bold text-neutral-900 dark:text-white mb-1">50+</h3>
-                                        <p className="text-xs font-mono text-neutral-500 uppercase">Clients Since 2019</p>
-                                    </div>
-                                    <div className="w-[1px] h-full bg-neutral-200 dark:bg-neutral-800" />
-                                    <div>
-                                        <h3 className="text-4xl font-bold text-neutral-900 dark:text-white mb-1">99%</h3>
-                                        <p className="text-xs font-mono text-neutral-500 uppercase">Client Retention</p>
+                            </div>
+                            <div className="mt-8 pt-8 flex gap-10 border-t border-so-line">
+                                <div>
+                                    <h3 className="text-[clamp(32px,4vw,44px)] font-semibold text-so-ink mb-1 tracking-[-0.02em]">50+</h3>
+                                    <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-so-ink-3">Clients Since 2019</p>
+                                </div>
+                                <div className="w-px self-stretch bg-so-line" />
+                                <div>
+                                    <h3 className="text-[clamp(32px,4vw,44px)] font-semibold text-so-ink mb-1 tracking-[-0.02em]">99%</h3>
+                                    <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-so-ink-3">Client Retention</p>
+                                </div>
+                            </div>
+                        </FadeIn>
+
+                        <FadeIn delay={0.1}>
+                            <div className="so-card relative aspect-square overflow-hidden p-0">
+                                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-90" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                                <div className="absolute bottom-8 left-8 right-8 text-white">
+                                    <div className="flex justify-between items-end gap-4">
+                                        <div>
+                                            <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-white/60 mb-2">Current mission</p>
+                                            <h3 className="text-[22px] font-semibold tracking-[-0.01em]">Redefining Digital Landscapes</h3>
+                                        </div>
+                                        <div className="w-11 h-11 shrink-0 rounded-full border border-white/20 flex items-center justify-center bg-white/10 backdrop-blur-md">
+                                            <ArrowUpRight className="w-5 h-5" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.8 }}
-                            className="relative aspect-square md:aspect-video lg:aspect-square bg-neutral-100 dark:bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-200 dark:border-neutral-800 group shadow-2xl shadow-neutral-200/50 dark:shadow-black/50"
+                        </FadeIn>
+                    </div>
+                </div>
+            </section>
+
+            {/* Values */}
+            <section className="relative z-[1] bg-so-surface so-section border-t border-so-line">
+                <div className="so-container">
+                    <span className="so-eyebrow">Our DNA</span>
+                    <h2 className="mt-5 mb-12 text-[clamp(26px,3.4vw,40px)] tracking-[-0.025em] text-so-ink max-w-[24ch]">
+                        The code we{" "}
+                        <span className="so-serif italic">live by.</span>
+                    </h2>
+
+                    <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                        {values.map((item, index) => (
+                            <StaggerItem key={index}>
+                                <div className="group so-card p-8 h-full flex flex-col hover:shadow-md transition-all">
+                                    <div className="flex justify-between items-start mb-8">
+                                        <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-so-surface-2 text-so-ink">
+                                            {item.icon}
+                                        </div>
+                                        <span className="text-[10.5px] font-medium tracking-[0.08em] text-so-ink-4">
+                                            {item.header}
+                                        </span>
+                                    </div>
+                                    <h4 className="text-[18px] font-semibold mb-2 text-so-ink tracking-[-0.01em]">{item.title}</h4>
+                                    <p className="text-[14px] leading-[1.7] text-so-ink-2">
+                                        {item.description}
+                                    </p>
+                                </div>
+                            </StaggerItem>
+                        ))}
+                    </StaggerContainer>
+                </div>
+            </section>
+
+            {/* Team */}
+            <section id="team" className="relative z-[1] bg-so-bg so-section border-t border-so-line">
+                <div className="so-container">
+                    <div className="flex flex-col md:flex-row justify-between md:items-end gap-6 mb-12">
+                        <div>
+                            <span className="so-eyebrow">The team</span>
+                            <h2 className="mt-5 mb-4 text-[clamp(26px,3.6vw,44px)] tracking-[-0.025em] text-so-ink">
+                                The{" "}
+                                <span className="so-serif italic">architects.</span>
+                            </h2>
+                            <p className="text-[15px] leading-[1.7] text-so-ink-2 max-w-[44ch]">
+                                Meet the minds behind the machines. A collective of founders, engineers, and creators.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => toast.success("Career Page coming soon!!!")}
+                            className="so-btn so-btn-ghost shrink-0"
                         >
-                            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-80 dark:opacity-40 group-hover:scale-105 transition-transform duration-700" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                            Join the collective <ArrowRight size={13} />
+                        </button>
+                    </div>
 
-                            <div className="absolute bottom-8 left-8 right-8 text-white">
-                                <div className="flex justify-between items-end">
-                                    <div>
-                                        <p className="text-xs font-mono text-neutral-300 mb-2">CURRENT MISSION</p>
-                                        <h3 className="text-2xl font-bold">Redefining Digital Landscapes</h3>
+                    <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {teamMembers.map((member, index) => (
+                            <StaggerItem key={index} className={member.colSpan || ""}>
+                                <div className="group relative overflow-hidden so-card p-0 min-h-[520px] h-full">
+                                    <div className="absolute inset-0">
+                                        {member.image ? (
+                                            <Image
+                                                src={member.image}
+                                                alt={member.name}
+                                                fill
+                                                className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out group-hover:scale-105"
+                                            />
+                                        ) : (
+                                            <div className="absolute inset-0 bg-gradient-to-br from-neutral-700 via-neutral-800 to-neutral-950" />
+                                        )}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
                                     </div>
-                                    <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center bg-black/20 backdrop-blur-md hover:bg-white hover:text-black transition-all">
-                                        <ArrowUpRight className="w-5 h-5" />
+                                    <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-3 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                                        <div className="relative z-10">
+                                            <div className="inline-block mb-3 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
+                                                <span className="text-[10px] font-medium uppercase tracking-[0.1em] text-white">
+                                                    {member.role}
+                                                </span>
+                                            </div>
+                                            <h3 className="text-[22px] font-semibold text-white mb-2 tracking-[-0.01em]">{member.name}</h3>
+                                            <div className="max-h-0 group-hover:max-h-44 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
+                                                <p className="text-white/75 text-[14px] leading-[1.7] mb-4 pt-1">
+                                                    {member.bio}
+                                                </p>
+                                                <div className="flex gap-4">
+                                                    <Link href={member.linkedin} className="cursor-pointer text-white hover:text-white/60 transition-colors">
+                                                        <Linkedin className="w-5 h-5" />
+                                                    </Link>
+                                                    <button className="cursor-pointer text-white hover:text-white/60 transition-colors">
+                                                        <Twitter className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    </div>
-                </section>
-                <section className="py-24 px-6 border-t border-neutral-200 dark:border-neutral-900">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="mb-16">
-                            <h2 className="text-sm font-mono text-neutral-500 uppercase tracking-widest mb-4">Our DNA</h2>
-                            <h3 className="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white">The Code We Live By</h3>
-                        </div>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {
-                                values.map((item, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: index * 0.1 }}
-                                        className="group p-8 rounded-3xl bg-neutral-50 dark:bg-neutral-900/30 border border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 hover:bg-white dark:hover:bg-neutral-900/50 transition-all duration-300 shadow-sm hover:shadow-md"
-                                    >
-                                        <div className="flex justify-between items-start mb-8">
-                                            <div className="p-3 rounded-2xl bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors">
-                                                {item.icon}
-                                            </div>
-                                            <span className="text-[10px] font-mono text-neutral-400 dark:text-neutral-600 group-hover:text-neutral-500 transition-colors">
-                                                {item.header}
-                                            </span>
-                                        </div>
-                                        <h4 className="text-xl font-bold mb-3 text-neutral-900 dark:text-white">{item.title}</h4>
-                                        <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed font-light">
-                                            {item.description}
-                                        </p>
-                                    </motion.div>
-                                ))
-                            }
-                        </div>
-                    </div>
-                </section>
-                <section id="team" className="py-24 px-6 border-t border-neutral-200 dark:border-neutral-900 bg-neutral-50 dark:bg-neutral-950">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                            <div>
-                                <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 text-neutral-900 dark:text-white">The Architects</h2>
-                                <p className="text-neutral-600 dark:text-neutral-400 text-lg max-w-xl">
-                                    Meet the minds behind the machines. A collective of founders, engineers, and creators.
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => toast.success("Career Page coming soon!!!")}
-                                className="px-6 py-3 rounded-full border border-neutral-300 dark:border-neutral-800 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors duration-300 text-sm font-medium text-neutral-900 dark:text-white"
-                            >
-                                Join the Collective
-                            </button>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {
-                                teamMembers.map((member, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        whileInView={{ opacity: 1, scale: 1 }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                                        className={`group relative overflow-hidden rounded-3xl border border-neutral-200 dark:border-neutral-800 ${member.colSpan || ''} min-h-[560px]`}
-                                    >
-                                        <div className="absolute inset-0">
-                                            {member.image ? (
-                                                <Image
-                                                    src={member.image}
-                                                    alt={member.name}
-                                                    fill
-                                                    className="object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out group-hover:scale-105"
-                                                />
-                                            ) : (
-                                                <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-900 to-neutral-950 dark:from-neutral-700 dark:via-neutral-800 dark:to-neutral-950" />
-                                            )}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                                        </div>
-                                        <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-3 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                                            <div className="relative z-10">
-                                                <div className="inline-block mb-3 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
-                                                    <span className="text-[10px] font-mono uppercase tracking-wider text-white">
-                                                        {member.role}
-                                                    </span>
-                                                </div>
-                                                <h3 className="text-2xl font-bold text-white mb-2">{member.name}</h3>
-                                                <div className="max-h-0 group-hover:max-h-44 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
-                                                    <p className="text-neutral-300 text-sm font-light leading-relaxed mb-4 pt-1">
-                                                        {member.bio}
-                                                    </p>
-                                                    <div className="flex gap-4">
-                                                        <Link href={member.linkedin} className="cursor-pointer text-white hover:text-neutral-400 transition-colors">
-                                                            <Linkedin className="w-5 h-5" />
-                                                        </Link>
-                                                        <button className="cursor-pointer text-white hover:text-neutral-400 transition-colors">
-                                                            <Twitter className="w-5 h-5" />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                ))
-                            }
-                        </div>
-                    </div>
-                </section>
-                <section className="py-24 px-6 border-t border-neutral-200 dark:border-neutral-900 bg-white dark:bg-neutral-950">
-                    <div className="max-w-5xl mx-auto">
-                        <div className="text-center mb-16">
-                            <h2 className="text-4xl font-bold text-neutral-900 dark:text-white">Execution Timeline</h2>
-                        </div>
-                        <div className="relative">
-                            <div className="absolute left-[15px] md:left-1/2 top-0 bottom-0 w-px bg-neutral-200 dark:bg-neutral-800" />
-                            <div className="space-y-12">
-                                {
-                                milestones.map((milestone, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        className={`flex flex-col md:flex-row gap-8 md:gap-0 items-start relative ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
-                                    >
-                                        <div className={`pl-12 md:pl-0 md:w-1/2 ${index % 2 === 0 ? 'md:pr-16 md:text-right' : 'md:pl-16'}`}>
-                                            <div className="text-4xl font-bold text-neutral-100 dark:text-neutral-800/20 absolute -z-10 select-none transform translate-y-[-10px] md:translate-x-0">
-                                                {milestone.year}
-                                            </div>
-                                            <span className="text-xs font-mono text-neutral-500 mb-2 block">{milestone.year}</span>
-                                            <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">{milestone.title}</h3>
-                                            <p className="text-neutral-600 dark:text-neutral-400 text-sm">{milestone.description}</p>
-                                        </div>
-                                        <div className="absolute left-[11px] md:left-1/2 top-1.5 w-2 h-2 rounded-full bg-neutral-900 dark:bg-neutral-200 -translate-x-1/2 shadow-[0_0_10px_rgba(0,0,0,0.1)] dark:shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+                            </StaggerItem>
+                        ))}
+                    </StaggerContainer>
+                </div>
+            </section>
 
-                                        <div className="hidden md:block md:w-1/2" />
-                                    </motion.div>
-                                ))
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <section className="py-32 px-6 border-t border-neutral-200 dark:border-neutral-900 bg-neutral-50 dark:bg-neutral-950">
-                    <div className="max-w-4xl mx-auto text-center">
-                        <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 text-neutral-900 dark:text-white">
-                            Ready to build<br />the impossible?
+            {/* Timeline */}
+            <section className="relative z-[1] bg-so-surface so-section border-t border-so-line">
+                <div className="so-container">
+                    <div className="text-center mb-14">
+                        <span className="so-eyebrow">Our journey</span>
+                        <h2 className="mt-5 text-[clamp(26px,3.4vw,40px)] tracking-[-0.025em] text-so-ink">
+                            Execution{" "}
+                            <span className="so-serif italic">timeline.</span>
                         </h2>
-                        <p className="text-xl text-neutral-600 dark:text-neutral-400 mb-10 font-light">
-                            We are looking for partners, not just clients. If you want to build the future, let's talk.
+                    </div>
+                    <div className="relative max-w-3xl mx-auto">
+                        <div className="absolute left-[7px] md:left-1/2 top-0 bottom-0 w-px bg-so-line md:-translate-x-1/2" />
+                        <div className="space-y-10">
+                            {milestones.map((milestone, index) => (
+                                <FadeIn
+                                    key={index}
+                                    className={`relative flex flex-col md:flex-row gap-6 md:gap-0 items-start ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
+                                >
+                                    <div className={`pl-10 md:pl-0 md:w-1/2 ${index % 2 === 0 ? "md:pr-12 md:text-right" : "md:pl-12"}`}>
+                                        <span className="text-[12px] font-medium tracking-[0.08em] text-so-ink-3 mb-2 block">{milestone.year}</span>
+                                        <h3 className="text-[18px] font-semibold text-so-ink mb-1.5 tracking-[-0.01em]">{milestone.title}</h3>
+                                        <p className="text-[14px] leading-[1.7] text-so-ink-2">{milestone.description}</p>
+                                    </div>
+                                    <div className="absolute left-[3px] md:left-1/2 top-1.5 w-2.5 h-2.5 rounded-full bg-so-ink ring-4 ring-so-surface md:-translate-x-1/2" />
+                                    <div className="hidden md:block md:w-1/2" />
+                                </FadeIn>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* FAQ */}
+            <section className="relative z-[1] bg-so-bg border-t border-so-line">
+                <PageFAQ
+                    items={FAQS}
+                    eyebrow="FAQ"
+                    title="Working with"
+                    titleAccent="Shunya Tech"
+                    description="A few things founders and teams usually want to know before we start."
+                />
+            </section>
+
+            {/* CTA */}
+            <section className="relative z-[1] bg-so-surface so-section border-t border-so-line">
+                <div className="so-container">
+                    <div className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
+                        <span className="so-eyebrow">Let&apos;s talk</span>
+                        <h2 className="mt-5 mb-4 text-[clamp(28px,4vw,46px)] tracking-[-0.03em] text-so-ink max-w-[18ch]">
+                            Ready to build the{" "}
+                            <span className="so-serif italic">impossible?</span>
+                        </h2>
+                        <p className="text-[15px] leading-[1.7] text-so-ink-2 max-w-[52ch] mb-8">
+                            We are looking for partners, not just clients. If you want to build the future, let&apos;s talk.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href="/contactus" className="cursor-pointer px-8 py-4 rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-black font-bold hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all text-lg shadow-lg hover:shadow-xl">
-                                Start a Project
+                        <div className="flex flex-col sm:flex-row items-center gap-3">
+                            <Link href="/contactus" className="so-btn so-btn-primary">
+                                Start a project <ArrowRight size={13} />
                             </Link>
-                            <Link href="/projects" className="cursor-pointer px-8 py-4 rounded-2xl border border-neutral-300 dark:border-neutral-800 text-neutral-900 dark:text-white font-medium hover:bg-neutral-200 dark:hover:bg-neutral-900 transition-all text-lg">
-                                View Case Studies
+                            <Link href="/projects" className="so-btn so-btn-ghost">
+                                View case studies <ArrowRight size={13} />
                             </Link>
                         </div>
                     </div>
-                </section>
-            </main>
-        </SmoothScroll>
+                </div>
+            </section>
+        </main>
     )
 }

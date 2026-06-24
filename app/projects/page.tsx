@@ -1,205 +1,207 @@
 "use client"
 
-import { motion } from "framer-motion"
-import {
-    Eye, FileText
-} from "lucide-react"
+import { Eye, FileText, ArrowRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { useState } from "react"
-import SmoothScroll from "@/components/smoothscroll"
+import { useMemo, useState } from "react"
+import { PageHero } from "@/components/landing/page-hero"
+import { PageBackground } from "@/components/landing/page-background"
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/landing/animations"
+import { TechBadge } from "@/components/landing/tech-icon"
+import { PROJECTS } from "@/content/projects"
 
-const projectData = [
-    {
-        id: 1,
-        slug: "coderzai",
-        title: "CodrzAI",
-        description: "AI-powered engineering intelligence suite for CS students — DSA prep, AI mentors, full-stack project scaffolding, and open-source bounties in one platform.",
-        image: "/thecoderz.png",
-        link: "https://coderzai.xyz",
-        industry: "Education",
-        technologies: ["Next.js", "Node.js", "MongoDB", "OpenAI"]
-    },
-    {
-        id: 2,
-        slug: "eventeye",
-        title: "EventEye",
-        description: "End-to-end event management platform connecting organizers and attendees across colleges and institutions — from discovery to ticket checkout in under 30 seconds.",
-        image: "/eventeye.png",
-        link: "https://eventeye.in",
-        industry: "Events",
-        technologies: ["React", "Node.js", "PostgreSQL", "Razorpay"]
-    },
-    {
-        id: 3,
-        slug: "mp-solutions",
-        title: "M.P. Solutions",
-        description: "Real-time pharmaceutical inventory system connecting local pharmacies with distributors — eliminating stockouts and manual reorder calls across the supply chain.",
-        image: "/mpsolutions.png",
-        link: "https://mpsolutions.vercel.app/",
-        industry: "Healthcare",
-        technologies: ["Next.js", "Prisma", "PostgreSQL", "tRPC"]
-    },
-];
-
-const industries = Array.from(new Set(projectData.map(project => project.industry)));
-
-const container = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.1
-        }
-    }
-};
-
-const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-};
+// Industries are derived from the data so only filters that have projects appear.
+const INDUSTRIES = Array.from(new Set(PROJECTS.map((p) => p.industry)))
 
 export default function ProjectsPage() {
-    const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+    const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null)
 
-    const filteredProjects = selectedIndustry
-        ? projectData.filter(project => project.industry === selectedIndustry)
-        : projectData;
+    const filteredProjects = useMemo(
+        () =>
+            selectedIndustry
+                ? PROJECTS.filter((p) => p.industry === selectedIndustry)
+                : PROJECTS,
+        [selectedIndustry]
+    )
 
     return (
-        <SmoothScroll>
-            <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-50 selection:bg-neutral-200 dark:selection:bg-neutral-800">
-                <section className="relative pt-32 px-6 pb-12">
-                    <div className="relative max-w-7xl mx-auto">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                            className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12 border-b border-neutral-200 dark:border-neutral-800 pb-12"
-                        >
-                            <div className="max-w-3xl">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <div className="p-1 px-2 rounded-md border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900">
-                                        <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">Project Archive</span>
-                                    </div>
-                                    <div className="h-px flex-1 bg-neutral-200 dark:bg-neutral-800" />
+        <main className="relative overflow-x-clip isolate">
+            <PageBackground className="z-0" />
+            <PageHero
+                palette="goldNoir"
+                eyebrow="Project Archive"
+                title={
+                    <>
+                        Selected works,{" "}
+                        <span className="so-serif italic">shipped.</span>
+                    </>
+                }
+                description="A collection of high-performance digital systems engineered for scalability and impact - each one built, shipped, and running in production."
+            />
+
+            <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
+                <div className="so-container">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10 border-b border-so-line pb-10">
+                        <div className="max-w-2xl">
+                            <span className="so-eyebrow">The work</span>
+                            <h2 className="mt-5 text-[clamp(26px,3.4vw,40px)] tracking-[-0.025em] text-so-ink max-w-[24ch]">
+                                Products engineered for{" "}
+                                <span className="so-serif italic">real impact.</span>
+                            </h2>
+                        </div>
+                        <div className="flex gap-10">
+                            <div>
+                                <div className="font-mono text-[32px] font-semibold tracking-[-0.02em] text-so-ink">
+                                    {PROJECTS.length}
                                 </div>
-                                <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-neutral-900 dark:text-white mb-6">
-                                    Selected Works
-                                </h1>
-                                <p className="text-xl text-neutral-800 dark:text-neutral-300 font-light max-w-xl">
-                                    A collection of high-performance digital systems engineered for scalability and impact.
-                                </p>
+                                <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-so-ink-3 mt-1">
+                                    Shipped
+                                </div>
                             </div>
-                            <div className="flex gap-8">
-                                <div>
-                                    <div className="text-3xl font-bold font-mono">150+</div>
-                                    <div className="text-xs text-neutral-500 uppercase tracking-widest mt-1">Deployed</div>
+                            <div>
+                                <div className="font-mono text-[32px] font-semibold tracking-[-0.02em] text-so-ink">
+                                    {INDUSTRIES.length}
                                 </div>
-                                <div>
-                                    <div className="text-3xl font-bold font-mono">12</div>
-                                    <div className="text-xs text-neutral-500 uppercase tracking-widest mt-1">Industries</div>
+                                <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-so-ink-3 mt-1">
+                                    Industries
                                 </div>
                             </div>
-                        </motion.div>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="flex flex-wrap gap-2 mb-12"
+                        </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 mb-10">
+                        <button
+                            onClick={() => setSelectedIndustry(null)}
+                            className={`px-4 py-2 rounded-full text-[13px] font-medium transition-all border ${selectedIndustry === null
+                                ? 'bg-so-ink text-so-bg border-transparent'
+                                : 'bg-transparent border-so-line text-so-ink-3 hover:text-so-ink hover:border-so-ink-4'}`}
                         >
-                            <button
-                                onClick={() => setSelectedIndustry(null)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${selectedIndustry === null
-                                    ? 'bg-neutral-900 dark:bg-white text-white dark:text-black border-transparent'
-                                    : 'bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-500 hover:border-neutral-400'}`}
-                            >
-                                All Systems
-                            </button>
-                            {
-                                industries.map((industry) => (
-                                    <button
-                                        key={industry}
-                                        onClick={() => setSelectedIndustry(industry)}
-                                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${selectedIndustry === industry
-                                            ? 'bg-neutral-900 dark:bg-white text-white dark:text-black border-transparent'
-                                            : 'bg-transparent border-neutral-200 dark:border-neutral-800 text-neutral-500 hover:border-neutral-400'}`}
-                                    >
-                                        {industry}
-                                    </button>
-                                ))
-                            }
-                        </motion.div>
-                        <motion.div
-                            variants={container}
-                            initial="hidden"
-                            animate="show"
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                        >
-                            {
-                                filteredProjects.map((project) => (
-                                    <motion.div
-                                        key={project.id}
-                                        variants={item}
-                                        className="group flex flex-col bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl overflow-hidden hover:border-neutral-400 dark:hover:border-neutral-600 transition-all duration-300 shadow-sm hover:shadow-xl"
-                                    >
-                                        <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                            All Systems
+                        </button>
+                        {
+                            INDUSTRIES.map((industry) => (
+                                <button
+                                    key={industry}
+                                    onClick={() => setSelectedIndustry(industry)}
+                                    className={`px-4 py-2 rounded-full text-[13px] font-medium transition-all border ${selectedIndustry === industry
+                                        ? 'bg-so-ink text-so-bg border-transparent'
+                                        : 'bg-transparent border-so-line text-so-ink-3 hover:text-so-ink hover:border-so-ink-4'}`}
+                                >
+                                    {industry}
+                                </button>
+                            ))
+                        }
+                    </div>
+
+                    {/* key forces a remount on filter change so the `once:true` whileInView
+                        animation re-fires and cards reliably reappear when returning to "All". */}
+                    <StaggerContainer
+                        key={selectedIndustry ?? "all"}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+                    >
+                        {
+                            filteredProjects.map((project) => (
+                                <StaggerItem key={project.slug} className="h-full">
+                                    <div className="group so-card h-full flex flex-col overflow-hidden hover:shadow-md transition-all p-0">
+                                        <div className="relative aspect-[16/10] overflow-hidden bg-so-surface-2 border-b border-so-line">
                                             <div className="absolute top-4 left-4 z-10">
-                                                <div className="px-3 py-1 bg-white/90 dark:bg-black/90 backdrop-blur-md border border-neutral-200 dark:border-neutral-700 rounded-full text-[10px] font-mono uppercase tracking-wider text-neutral-900 dark:text-white">
+                                                <span className="px-3 py-1 bg-so-bg/90 backdrop-blur-md border border-so-line rounded-full font-mono text-[10px] uppercase tracking-[0.1em] text-so-ink">
                                                     {project.industry}
-                                                </div>
+                                                </span>
                                             </div>
-                                            <Image
-                                                src={project.image}
-                                                alt={project.title}
-                                                fill
-                                                className="object-cover transition-transform duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0"
-                                            />
+                                            {
+                                                project.image ? (
+                                                    <Image
+                                                        src={project.image}
+                                                        alt={project.title}
+                                                        fill
+                                                        className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                                                    />
+                                                ) : (
+                                                    <ProjectFallback title={project.title} />
+                                                )
+                                            }
                                         </div>
                                         <div className="p-6 flex flex-col flex-1">
-                                            <div className="mb-4">
-                                                <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">
-                                                    {project.title}
-                                                </h3>
-                                                <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">
-                                                    {project.description}
-                                                </p>
-                                            </div>
+                                            <h3 className="text-[20px] font-semibold text-so-ink mb-2 tracking-[-0.01em]">
+                                                {project.title}
+                                            </h3>
+                                            <p className="text-[14px] leading-[1.7] text-so-ink-2 line-clamp-2 mb-5">
+                                                {project.description}
+                                            </p>
                                             <div className="flex flex-wrap gap-2 mb-6">
                                                 {
                                                     project.technologies.slice(0, 3).map((tech) => (
-                                                        <span key={tech} className="text-[10px] font-mono text-neutral-500 border border-neutral-200 dark:border-neutral-800 px-2 py-1 rounded-md">
-                                                            {tech}
-                                                        </span>
+                                                        <TechBadge key={tech} name={tech} />
                                                     ))
                                                 }
                                                 {
                                                     project.technologies.length > 3 && (
-                                                        <span className="text-[10px] font-mono text-neutral-500 border border-neutral-200 dark:border-neutral-800 px-2 py-1 rounded-md">
+                                                        <span className="inline-flex items-center rounded-lg border border-so-line bg-so-surface px-3 py-1.5 text-[12px] font-medium text-so-ink-3 transition-colors hover:text-so-ink">
                                                             +{project.technologies.length - 3}
                                                         </span>
                                                     )
                                                 }
                                             </div>
                                             <div className="mt-auto grid grid-cols-2 gap-3">
-                                                <Link href={project.link} target="_blank" className="w-full">
-                                                    <button className="cursor-pointer w-full py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-sm font-medium transition-colors flex items-center justify-center gap-2">
-                                                        <Eye className="w-4 h-4" /> Live Demo
-                                                    </button>
+                                                <Link href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="so-btn so-btn-ghost w-full justify-center text-[13px]">
+                                                    <Eye className="w-4 h-4" /> Live
                                                 </Link>
-                                                <Link href={`/projects/${project.slug}`} className="w-full">
-                                                    <button className="cursor-pointer w-full py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-black hover:opacity-90 text-sm font-bold transition-opacity flex items-center justify-center gap-2">
-                                                        <FileText className="w-4 h-4" /> Case Study
-                                                    </button>
+                                                <Link href={`/projects/${project.slug}`} className="so-btn so-btn-primary w-full justify-center text-[13px]">
+                                                    <FileText className="w-4 h-4" /> Case Study
                                                 </Link>
                                             </div>
                                         </div>
-                                    </motion.div>
-                                ))
-                            }
-                        </motion.div>
-                    </div>
-                </section>
-            </div>
-        </SmoothScroll>
+                                    </div>
+                                </StaggerItem>
+                            ))
+                        }
+                    </StaggerContainer>
+                </div>
+            </section>
+
+            <section className="relative z-[1] bg-so-surface so-section border-t border-so-line">
+                <div className="so-container">
+                    <FadeIn className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
+                        <span className="so-eyebrow">Have something in mind?</span>
+                        <h2 className="mt-5 mb-4 text-[clamp(28px,4vw,46px)] tracking-[-0.03em] text-so-ink max-w-[20ch]">
+                            Let&apos;s build your{" "}
+                            <span className="so-serif italic">next one.</span>
+                        </h2>
+                        <p className="text-[15px] leading-[1.7] text-so-ink-2 max-w-[52ch] mb-8">
+                            Every project here started as a single conversation. Tell us what you&apos;re building and we&apos;ll scope exactly how we&apos;d ship it.
+                        </p>
+                        <div className="flex flex-col sm:flex-row items-center gap-3">
+                            <Link href="/contactus" className="so-btn so-btn-primary">
+                                Start a project <ArrowRight size={13} />
+                            </Link>
+                            <Link href="/services" className="so-btn so-btn-ghost">
+                                View services <ArrowRight size={13} />
+                            </Link>
+                        </div>
+                    </FadeIn>
+                </div>
+            </section>
+        </main>
+    )
+}
+
+// Graceful branded tile for projects without a screenshot asset.
+function ProjectFallback({ title }: { title: string }) {
+    return (
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-so-surface-2 via-so-surface to-so-surface-2">
+            <div
+                aria-hidden
+                className="absolute inset-0 opacity-[0.4]"
+                style={{
+                    backgroundImage:
+                        "radial-gradient(circle at 1px 1px, var(--so-line, rgba(0,0,0,0.08)) 1px, transparent 0)",
+                    backgroundSize: "22px 22px",
+                }}
+            />
+            <span className="relative so-serif italic text-[64px] leading-none text-so-ink-3 select-none">
+                {title.charAt(0)}
+            </span>
+        </div>
     )
 }

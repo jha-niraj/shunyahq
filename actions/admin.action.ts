@@ -1,48 +1,44 @@
 "use server"
 
-import prisma from "@/lib/prisma"
+import { db } from "@/lib/db"
+import { contact } from "@/lib/db/schema"
+import { count, desc, eq, gte } from "drizzle-orm"
 
 export async function getContactStats() {
     try {
         // Get total count
-        const total = await prisma.contact.count()
+        const [{ value: total }] = await db
+            .select({ value: count() })
+            .from(contact)
 
         // Get this week's count
         const oneWeekAgo = new Date()
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-        const thisWeek = await prisma.contact.count({
-            where: {
-                createdAt: {
-                    gte: oneWeekAgo
-                }
-            }
-        })
+        const [{ value: thisWeek }] = await db
+            .select({ value: count() })
+            .from(contact)
+            .where(gte(contact.createdAt, oneWeekAgo))
 
         // Get this month's count
         const oneMonthAgo = new Date()
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
-        const thisMonth = await prisma.contact.count({
-            where: {
-                createdAt: {
-                    gte: oneMonthAgo
-                }
-            }
-        })
+        const [{ value: thisMonth }] = await db
+            .select({ value: count() })
+            .from(contact)
+            .where(gte(contact.createdAt, oneMonthAgo))
 
         // Get recent inquiries (last 5)
-        const recent = await prisma.contact.findMany({
-            orderBy: {
-                createdAt: 'desc'
-            },
-            take: 5,
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                message: true,
-                createdAt: true
-            }
-        })
+        const recent = await db
+            .select({
+                id: contact.id,
+                name: contact.name,
+                email: contact.email,
+                message: contact.message,
+                createdAt: contact.createdAt,
+            })
+            .from(contact)
+            .orderBy(desc(contact.createdAt))
+            .limit(5)
 
         return {
             success: true,
@@ -64,20 +60,18 @@ export async function getContactStats() {
 
 export async function getAllContactInquiries() {
     try {
-        const inquiries = await prisma.contact.findMany({
-            orderBy: {
-                createdAt: 'desc'
-            },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                message: true,
-                inquiryType: true,
-                createdAt: true,
-                updatedAt: true
-            }
-        })
+        const inquiries = await db
+            .select({
+                id: contact.id,
+                name: contact.name,
+                email: contact.email,
+                message: contact.message,
+                inquiryType: contact.inquiryType,
+                createdAt: contact.createdAt,
+                updatedAt: contact.updatedAt,
+            })
+            .from(contact)
+            .orderBy(desc(contact.createdAt))
 
         return {
             success: true,
@@ -94,11 +88,11 @@ export async function getAllContactInquiries() {
 
 export async function getContactInquiry(id: string) {
     try {
-        const inquiry = await prisma.contact.findUnique({
-            where: {
-                id: id
-            }
-        })
+        const [inquiry] = await db
+            .select()
+            .from(contact)
+            .where(eq(contact.id, id))
+            .limit(1)
 
         if (!inquiry) {
             return {
@@ -122,11 +116,7 @@ export async function getContactInquiry(id: string) {
 
 export async function deleteContactInquiry(id: string) {
     try {
-        await prisma.contact.delete({
-            where: {
-                id: id
-            }
-        })
+        await db.delete(contact).where(eq(contact.id, id))
 
         return {
             success: true,

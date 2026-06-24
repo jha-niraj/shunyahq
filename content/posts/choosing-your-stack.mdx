@@ -1,0 +1,54 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Every project kicks off with the same temptation: re-litigate the stack. New framework on the timeline, new database everyone is excited about, a chance to do it "right this time." We mostly resist it. When a client hires Shunya to ship, our default answer is Next.js, tRPC, and Prisma - and the fact that it is a default is the point.
+
+This is not laziness. It is the single biggest reason we move fast without drowning in technical debt.
+
+## A default stack is a feature, not a constraint
+
+When the foundation is decided, the team stops spending energy on solved problems. Nobody debates how the frontend talks to the backend, how types flow, or how the database is accessed. That energy goes into the actual product instead.
+
+A team that knows one stack deeply will out-ship a team assembling a bespoke "perfect" stack every time. Fluency compounds. The tenth project on a familiar stack is faster than the first project on a novel one, even if the novel one is theoretically better.
+
+<Callout type="info">
+A default is a starting point, not a religion. We swap pieces when a project genuinely needs it. But the burden of proof is on changing the default, not on keeping it.
+</Callout>
+
+## End-to-end type safety, in one language
+
+The three tools fit together to give you a single TypeScript codebase where types flow from the database all the way to the React component:
+
+<RateTable
+  headers={["Layer", "Tool", "What it gives you"]}
+  rows={[
+    ["Database", "Prisma", "Typed schema and queries; safe migrations"],
+    ["API boundary", "tRPC", "Backend types reach the frontend with no codegen"],
+    ["UI", "Next.js / React", "Server and client rendering, one framework"],
+  ]}
+/>
+
+The payoff is concrete. Rename a column in Prisma, and the type error propagates through the tRPC procedure and lands in the React component that used it - at build time, in your editor, before it ships. A whole category of integration bugs simply stops existing, because the API boundary is no longer a place where the frontend and backend can silently disagree.
+
+And it is all one language. TypeScript from the schema to the button. No context-switching between a backend language and a frontend one, no maintaining two type definitions of the same object, no glue code translating between worlds.
+
+## We choose boring tools on purpose
+
+Each piece of this stack is well-supported, widely used, and unlikely to be abandoned. That is a deliberate selection criterion. The goal is software that still runs in two years, that a future engineer can pick up, and that has answers on the internet when something breaks.
+
+<Callout type="tip">
+"Boring" is high praise for production infrastructure. The exciting tool that nobody else uses is the one you will be debugging alone at 2am. Choose the technology with the biggest, calmest community.
+</Callout>
+
+## When we reach for something else
+
+A default that you never question is just dogma. We move off the stack when the project genuinely calls for it:
+
+- **Heavy data engineering or ML pipelines** - Python earns its place.
+- **A team that does not write TypeScript** - fluency in the team beats fluency on paper.
+- **Real-time systems with strict latency budgets** that need specialised infrastructure.
+- **An existing codebase** to extend rather than a greenfield to start.
+- **A public API for many external clients**, where documented REST or GraphQL may fit better than tRPC's tight frontend-backend coupling.
+
+## The point
+
+The value of a default stack is not that these are the only good tools. It is that having a strong default - one the team knows cold and that gives you type safety end to end - removes a dozen decisions from every project and lets the team spend its judgment where it matters: on the product. Next.js, tRPC, and Prisma are ours. The lesson is to have one.

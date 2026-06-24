@@ -1,0 +1,63 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Every shortcut in software feels free at the moment you take it. Skip the tests, hardcode the value, copy the function instead of refactoring it, defer the error handling. The deadline is met, the demo lands, everyone moves on. The bill arrives later - and it always arrives with interest.
+
+We get hired to build things fast, so we think a lot about the difference between moving fast and cutting corners. They are not the same thing, and conflating them is one of the most expensive mistakes a product team makes.
+
+## Cutting scope is not cutting corners
+
+This distinction is the whole article, so we will be blunt about it.
+
+**Cutting scope** is deciding not to build something. You ship fewer features, but the features you ship are complete: tested, handled, deployed properly. The thing you did not build simply does not exist yet, and that is fine.
+
+**Cutting corners** is building something badly. The feature exists, but it skips the unglamorous parts - validation, error states, tests, accessibility - that make it actually work when a real user does something you did not expect.
+
+Cutting scope makes you faster with no long-term cost. Cutting corners makes you faster today and slower every day after. The first is a strategy. The second is a loan.
+
+<Callout type="tip">
+When a deadline is tight, cut features, not quality. "We are not building the export feature this sprint" is a clean decision. "We are shipping the export feature but it does not handle errors" is debt with your name on it.
+</Callout>
+
+## Where the bill actually shows up
+
+The reason cutting corners is so seductive is that the cost is invisible at decision time and only becomes visible later, somewhere else, to someone else. Here is where it tends to land.
+
+<RateTable
+  headers={["Corner cut", "Feels like it saves", "What it actually costs"]}
+  rows={[
+    ["No tests", "A few hours per feature", "Every future change becomes risky and slow"],
+    ["No error handling", "A day of edge-case work", "Silent failures, lost data, support tickets"],
+    ["Hardcoded config", "Minutes now", "A deploy and a code change for every tweak"],
+    ["Copy-paste over refactor", "One refactor", "A bug fixed in three places, missed in the fourth"],
+    ["Skipping the spec", "A planning meeting", "Building the wrong thing, then rebuilding it"],
+  ]}
+/>
+
+The pattern is consistent: the saving is small, immediate, and accrues to the person taking the shortcut. The cost is large, delayed, and accrues to whoever maintains the system - often a different person, often the same one six months later who has forgotten why the code is shaped this way.
+
+## The compounding problem
+
+A single cut corner is survivable. The danger is that they compound. The first untested module makes the second one feel acceptable. The first silent error handler establishes the pattern. Soon the codebase has a culture: this is a place where corners get cut, so everyone cuts them.
+
+This is how a six-week project becomes a six-month rescue. Not through one catastrophic decision, but through hundreds of small ones that each seemed reasonable in isolation. We have inherited these codebases. The features all "work" in the demo. Then you change one thing and three unrelated things break, because nothing was tested and everything was coupled.
+
+<Callout type="warning">
+The most expensive software is not the software that was built carefully. It is the software that was built quickly and carelessly, shipped, depended on, and then could not be changed. Speed without quality does not save money. It defers and multiplies the cost.
+</Callout>
+
+## What "doing it right" actually means
+
+Doing it right does not mean gold-plating. We are not advocating for exhaustive test suites on throwaway prototypes or elaborate abstractions for code that will run once. Over-engineering is its own form of waste. Doing it right means the load-bearing parts are solid:
+
+- **The core workflow is tested** so you can change it later without fear.
+- **Failures are handled and visible** so a broken state surfaces as an error, not as quietly corrupted data.
+- **Configuration is configurable** so routine changes do not require a deploy.
+- **The code is shaped so the next change is cheap** - because there is always a next change.
+
+None of this is slow. A team that does these by default ships at the same pace as a team that cuts them, because they spend their time building forward instead of repaying yesterday's shortcuts.
+
+## How we think about it on a deadline
+
+Deadlines are real and we hit them. When time is short, our move is always the same: we cut the feature list, never the engineering quality of what remains. We would rather hand over four features that are genuinely done than eight that are half-built. The four-feature version is something you can build on. The eight-feature version is something you will have to rescue.
+
+The real cost of cutting corners is not the rework, painful as that is. It is the slow loss of the ability to change your own software - the moment a team becomes afraid to touch their own codebase. Protecting that ability is the most valuable thing engineering discipline buys you, and it is why we treat quality as a way to go fast, not a tax on going fast.

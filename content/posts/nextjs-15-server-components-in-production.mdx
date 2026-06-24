@@ -1,0 +1,75 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+React Server Components were sold to us as a clean separation: render on the server, ship less JavaScript, fetch data where it lives. In a tutorial, that story holds. In production - with auth, caching, third-party libraries, and a team that has to reason about where every line of code runs - the story gets more interesting.
+
+We have shipped a dozen Next.js 15 apps on the App Router now. Here is what actually changed in how we build, what bit us, and the rules we settled on so we stop relearning the same lessons.
+
+## The mental model that finally stuck
+
+The single biggest source of confusion is the server/client boundary. The breakthrough for our team was to stop thinking of it as "two kinds of components" and start thinking of it as one question per file: **does this code need the browser?**
+
+If it needs state, effects, event handlers, or browser APIs, it is a Client Component and you put `'use client'` at the top. Everything else stays on the server by default, where it can touch the database, read secrets, and ship zero JavaScript to the user.
+
+The trap is treating `'use client'` as a per-component decision. It is not - it is a boundary. Once a module is marked client, everything it imports is pulled into the client bundle too. We have seen a single careless `'use client'` at the top of a layout drag an entire date-formatting library to the browser.
+
+<Callout type="tip">
+Push `'use client'` as far down the tree as you can. A page should be a Server Component that renders a small interactive Client Component, not a client page that renders everything. The deeper the boundary, the less JavaScript ships.
+</Callout>
+
+## What actually got better
+
+This is not a cautionary tale. The wins are real, and they are the reason we did not roll back.
+
+- **Data fetching lives next to the component that needs it.** No more lifting a fetch to the top of the tree and prop-drilling it down. The component that shows the user's invoices fetches the invoices.
+- **Secrets stay on the server.** API keys, database URLs, and internal endpoints never cross the boundary. This removed a whole category of "oops, that was in the client bundle" leaks.
+- **The default bundle is smaller.** Marketing pages and content-heavy routes ship almost no JavaScript. Our Lighthouse scores went up without us optimising anything.
+
+## Where it bit us
+
+### Third-party libraries that assume the client
+
+A large slice of the npm ecosystem was written before Server Components existed. Many libraries call `window`, use React Context, or rely on hooks at import time. Drop one into a Server Component and you get a cryptic build error.
+
+Our rule: wrap client-only libraries in a thin `'use client'` component that we own, and import that wrapper everywhere else. The boundary lives in one file we control, not scattered across the app.
+
+### Caching is now four overlapping systems
+
+This is the part that surprised us most. Next.js 15 has the Request Memoization, the Data Cache, the Full Route Cache, and the Router Cache - and they interact. A response that looks stale is often a route cache hit, not a data bug.
+
+<RateTable
+  headers={["Cache", "Scope", "When it surprised us"]}
+  rows={[
+    ["Request Memoization", "Single render pass", "Two fetches to the same URL silently deduped"],
+    ["Data Cache", "Across requests", "Stale data after a write with no revalidation"],
+    ["Full Route Cache", "Static routes at build", "Updated content not showing until redeploy"],
+    ["Router Cache", "Client-side navigation", "Back button showing old data for ~30s"],
+  ]}
+/>
+
+Next.js 15 made fetches uncached by default, which removed the worst of the surprises - earlier versions cached aggressively and silently. But you still have to be deliberate. We now treat `revalidatePath` and `revalidateTag` after every mutation as non-negotiable, the same way we treat error handling.
+
+### Server Actions are great until they are your whole API
+
+Server Actions let you mutate data from a form without writing an API route. For internal CRUD, they are a genuine productivity win. But they are POST requests under the hood, they are not free to call from a mobile client, and they do not give you a documented contract.
+
+We use Server Actions for the app's own forms and mutations. The moment a second client appears - a mobile app, a partner integration - we add a typed API layer instead of stretching actions to cover it.
+
+<Callout type="warning">
+Server Actions are a feature of your web app, not an API strategy. If you can foresee external clients, do not let actions become the only way to write data. Retrofitting an API after the fact is far more expensive than planning for one.
+</Callout>
+
+## The rules we ship by
+
+After enough projects, the team converged on a short list that we now treat as defaults:
+
+1. **Server by default, client by necessity.** Add `'use client'` only when the browser is genuinely required, and add it as deep in the tree as possible.
+2. **One wrapper per client-only library.** Quarantine the boundary in a file you own.
+3. **Revalidate after every write.** Treat a mutation without a matching `revalidatePath`/`revalidateTag` as an unfinished mutation.
+4. **Keep Server Actions for your own app.** Reach for a typed API the moment a second client is on the roadmap.
+5. **Read the cache before debugging the data.** Most "stale data" reports are cache behaviour, not logic bugs.
+
+## Was it worth it?
+
+Yes - but with eyes open. The App Router and Server Components are not a free upgrade that makes everything faster. They are a different model with a real learning curve, and the caching layer in particular costs a team a few weeks of confusion before it clicks.
+
+What you get on the other side is apps that ship less JavaScript, keep secrets where they belong, and put data fetching where it makes sense. For the kind of production software we build, that trade is worth making - as long as you respect the boundary and the cache instead of fighting them.

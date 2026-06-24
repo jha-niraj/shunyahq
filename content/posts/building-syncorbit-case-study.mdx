@@ -1,0 +1,72 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Agencies run on a strange contradiction: they sell organisation and clarity to clients while running their own operations across a dozen disconnected tools. Projects live in one app, time in another, invoices in a third, client updates in email, and the actual status of the business in someone's head. We built SyncOrbit because we were that agency, and we were tired of being it.
+
+This is the story of how SyncOrbit came together - the problem, the decisions, and what we learned building a command center for the way agencies actually work.
+
+## The problem: a business with no single screen
+
+The symptom was simple and familiar. There was no one place to answer the question every agency asks all day long: *what is the state of everything right now?* Which projects are at risk, who is over capacity, what is unbilled, which client has not heard from us in two weeks.
+
+Answering that meant opening five tabs and assembling the picture by hand, repeatedly, every day. The cost was not just the wasted time. It was that the picture was always slightly out of date, so decisions were made on stale information and things slipped through the gaps between tools.
+
+<Callout type="info">
+The core insight behind SyncOrbit: agencies do not lack tools. They lack a single surface that ties the tools together. The problem was never "we need another app" - it was "we need one place that knows about all the others."
+</Callout>
+
+## Defining the core loop
+
+We build everything around a core loop, and SyncOrbit was no exception. We resisted the temptation to build "everything an agency needs" and instead found the one loop that, if solved, made the rest worth building:
+
+> A team member opens SyncOrbit and immediately sees the true state of every project, what needs attention, and what to do next - without opening anything else.
+
+Everything in the first version had to serve that loop. A feature that did not help someone open one screen and know what was going on did not make the cut.
+
+## The architecture
+
+SyncOrbit is a data-aggregation product at heart, and that shaped every technical decision. The hard part is not displaying a dashboard - it is keeping the dashboard true.
+
+<RateTable
+  headers={["Layer", "Choice", "Why"]}
+  rows={[
+    ["Framework", "Next.js App Router", "Server-rendered dashboards, fast first paint"],
+    ["API", "tRPC", "End-to-end type safety from DB to UI"],
+    ["Database", "Postgres + Prisma", "Relational data, typed access, safe migrations"],
+    ["Sync", "Background jobs + webhooks", "Keep aggregated state fresh, not stale"],
+    ["Auth", "Role-based access", "Owners, members, and client-facing views differ"],
+  ]}
+/>
+
+The decision we spent the most time on was freshness. A command center that shows yesterday's data is worse than useless - it is actively misleading. We combined webhooks (push updates from connected tools the moment something changes) with scheduled background reconciliation (a periodic sweep to catch anything missed). Webhooks keep it fast; reconciliation keeps it correct. Relying on either alone left gaps.
+
+<Callout type="warning">
+The trap in any aggregation product is trusting your cache too much. If a webhook is missed and you never reconcile, the dashboard quietly drifts from reality and nobody notices until a decision is made on bad data. We treat the aggregated state as a cache that must be continuously re-proven against the source, never as the source of truth itself.
+</Callout>
+
+## The hard part was the model, not the screens
+
+People assumed the challenge was the UI - the charts, the dashboard, the polish. It was not. The genuinely hard problem was the data model underneath: representing projects, people, capacity, time, and money in a way that was flexible enough for how different agencies actually operate, without becoming so generic it meant nothing.
+
+Model it too rigidly and it only fits one agency's workflow. Model it too loosely and the dashboard cannot say anything specific because everything is a free-form blob. We iterated on this model more than any other part of the product, because every meaningful view downstream depended on getting it right.
+
+## What we deliberately left out of v1
+
+True to how we ship, the first version was ruthlessly scoped. We left out, on purpose:
+
+- Deep customisation of dashboards - sensible defaults first, configuration later.
+- Integrations with every tool under the sun - we connected the few that mattered most and resisted the long tail.
+- Advanced reporting and forecasting - the present state had to be solid before we modelled the future.
+
+None of this was technical debt. It was deferred scope, and deferring it is what let us get a useful product live and learn from real daily use instead of guessing for another six months.
+
+## What we learned
+
+A few lessons generalised well beyond this one product:
+
+1. **Aggregation products live and die on freshness.** The feature is not the dashboard; it is the trustworthiness of the dashboard. We under-estimated how much engineering that trust required.
+2. **The data model is the product.** Screens are downstream of the model. Time spent getting the model right paid off in every view we built afterward.
+3. **A command center has to earn the "open it first" habit.** If it is not faster than the five tabs it replaces, people keep the five tabs. Speed and truth were the whole value proposition, so they got the most attention.
+
+## Where it stands
+
+SyncOrbit started as a tool to fix our own operations and became a product because the problem turned out to be everyone's problem. Building it forced us to take our own advice about scope, freshness, and data modelling more seriously than we ever had on a client project - because this time we were the client, and we used it every single day. That is the best test of software there is, and it is the reason we trust what we shipped.

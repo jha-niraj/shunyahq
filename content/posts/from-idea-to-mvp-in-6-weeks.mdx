@@ -1,0 +1,69 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Six weeks is enough time to turn a real idea into a live product that real people can use. It is not enough time to build everything you imagine. The entire skill of shipping an MVP this fast is knowing the difference - and we have run this playbook enough times to write it down.
+
+This is the week-by-week version of how we go from a founder's idea to a deployed MVP. It is deliberately concrete, because vague processes are how six weeks becomes sixteen.
+
+## Before week one: is this even an MVP?
+
+The fastest way to blow a six-week timeline is to start with the wrong target. An MVP is not "version one of the full product." It is the smallest live system that proves your core loop - the one thing a user does to get the value you are promising.
+
+If you cannot finish the sentence "a user signs up, does ___, and gets ___" in plain language, you are not ready to build yet. You are ready to talk, and that talk is where we start.
+
+<Callout type="tip">
+The core loop is one sentence, not a feature list. "A freelancer logs time against a client and sends an invoice" is a core loop. "A platform for freelancers" is not - it is a category. We will not start the clock until we have the sentence.
+</Callout>
+
+## The six-week playbook
+
+Here is the shape of it. The phases overlap a little in practice, but the discipline is in protecting the boundaries.
+
+<RateTable
+  headers={["Week", "Phase", "What exists at the end"]}
+  rows={[
+    ["1", "Discovery & spec", "Written spec, core loop defined, scope agreed"],
+    ["2", "Foundation", "Repo, auth, database, deploy pipeline, first screen live"],
+    ["3-4", "Core loop", "The one workflow working end to end on staging"],
+    ["5", "Polish & edges", "Real error states, empty states, the rough parts smoothed"],
+    ["6", "Launch", "QA pass, production deploy, handover, real users invited"],
+  ]}
+/>
+
+### Week 1 - Discovery and the written spec
+
+No code. We define the core loop, list what is explicitly out of scope, and write it down in a spec the founder signs off on. This is the cheapest place to change your mind - an edit to a document instead of two weeks of rework. The out-of-scope list matters as much as the in-scope one, because it is the contract that keeps the timeline honest when new ideas appear mid-build, which they always do.
+
+### Week 2 - Foundation that you do not redo later
+
+We stand up the boring, load-bearing infrastructure first: authentication, a real relational database, the deployment pipeline, and the project skeleton. By the end of week two there is a deployed app on a real URL with login working. It does almost nothing useful yet, but it is real software, deployed continuously from day one. We never leave deployment until the end - a "we'll deploy later" plan is how launch week becomes launch month.
+
+### Weeks 3-4 - The core loop, end to end
+
+This is the heart of it. We build the one workflow the product exists for, all the way through, on the foundation from week two. We deploy to staging continuously so the founder is clicking through real working software within days, not reviewing mockups. Misunderstandings surface here while they are still cheap to fix.
+
+<Callout type="warning">
+The biggest risk to the timeline is not engineering speed - it is scope creep dressed up as "small additions." Each one feels minor. Together they sink the launch. Everything new goes on the post-launch list unless it breaks the core loop. We protect this boundary aggressively because it is the only thing that makes six weeks possible.
+</Callout>
+
+### Week 5 - Polish and the edges that matter
+
+A demo handles the happy path. A product handles the unhappy ones. Week five is where we add the real error states, empty states, loading states, and the validation that stops a user from breaking things. This is not gold-plating - it is the difference between something that survives contact with a real user and something that falls over the first time someone does the unexpected.
+
+### Week 6 - Launch and handover
+
+QA pass, production deploy, documentation, and handover. Then the most important step, the entire point of moving this fast: real users get in and start using it. Everything before this week was setup. This week is when learning starts.
+
+## What makes six weeks possible
+
+The timeline is not magic and it is not heroics. It rests on a few specific choices:
+
+- **A small, opinionated stack we know cold.** We do not evaluate frameworks per project. The boring decisions are already made, so all our time goes into the product.
+- **Ruthless scope discipline.** We cut features, never quality. The out-of-scope list is a real document with real authority.
+- **Continuous deployment from week two.** The product is always live and always clickable, so nobody is ever guessing about progress.
+- **One team that owns the whole thing.** No handoffs between frontend, backend, and infra means no time lost re-explaining context across boundaries.
+
+## The honest caveat
+
+Not every idea fits in six weeks, and we say so when one does not. A product with heavy regulatory requirements, complex data migration, or a core loop that genuinely depends on a hard technical problem needs more time, and pretending otherwise just relocates the delay to launch week.
+
+But far more often, the idea fits in six weeks and the founder simply did not believe it could. The constraint is not capability. It is the willingness to ship the smallest real thing first, put it in front of users, and learn - instead of building in the dark for a year. Six weeks is enough. The discipline to use it well is the hard part, and that discipline is the playbook.

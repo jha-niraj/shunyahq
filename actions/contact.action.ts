@@ -1,6 +1,7 @@
 "use server"
 
-import prisma from "@/lib/prisma";
+import { db } from "@/lib/db";
+import { contact } from "@/lib/db/schema";
 import { z } from "zod";
 
 // Contact form validation schema
@@ -30,21 +31,22 @@ export async function submitContactForm(formData: ContactFormData) {
         }
 
         // Create contact record
-        const contact = await prisma.contact.create({
-            data: {
+        const [created] = await db
+            .insert(contact)
+            .values({
                 name: validatedData.data.name,
                 email: validatedData.data.email,
                 inquiryType: "GENERAL",
                 message: validatedData.data.message,
-            },
-        });
+            })
+            .returning();
 
-        console.log("Contact created:", contact); // Debug log
+        console.log("Contact created:", created); // Debug log
 
         return {
             success: true,
             message: "Thank you for your message. We'll get back to you soon!",
-            data: contact,
+            data: created,
         };
     } catch (error) {
         console.error("Server error in submitContactForm:", error); // Debug log

@@ -1,0 +1,43 @@
+import { Callout } from '@/mdx-components'
+
+There is a particular kind of meeting that happens on troubled software projects. The frontend team says the API is returning the wrong shape. The backend team says the frontend is calling it wrong. Infra says it works in staging. Design says nobody followed the spec. Everyone is partly right, the bug is still there, and no one owns it.
+
+That meeting is not a people problem. It is a structure problem. It is what happens when you build software through handoffs.
+
+## Every handoff is a place where context leaks
+
+A handoff is a moment where work crosses a team boundary, and at every boundary, two things leak: context and accountability.
+
+Context leaks because the person picking up the work was not in the room when the decisions were made. They get a ticket, not the reasoning behind it. They rebuild a mental model from artifacts, and the rebuild is always lossy.
+
+Accountability leaks because once work crosses a boundary, "done" becomes negotiable. The handing-off team's job is finished when they pass it on. Whether it actually works end to end is now somebody else's responsibility - and that somebody is a different team with a different definition of done.
+
+<Callout type="info">
+The cost of a handoff is not the time spent transferring the work. It is the time spent later re-discovering the context that was lost during the transfer - usually while a bug is in production.
+</Callout>
+
+## What full-stack ownership actually means
+
+At Shunya, one team owns a product end to end: frontend, backend, infrastructure, and deployment. There is no "throw it over the wall" moment because there is no wall.
+
+This does not mean every engineer is a generalist who does everything equally. People still have depth - someone is stronger on data modelling, someone else on UI. Ownership is about who is accountable, not about flattening everyone into the same skill set. The team is collectively responsible for whether the thing works in production, so nothing falls into the gap between specialists, because there is no gap.
+
+## Why ownership ships faster
+
+Three reasons, and none of them is heroics.
+
+- **The feedback loop is short.** The person who built a feature also deploys it and watches it run. They feel the bugs personally and quickly, instead of filing a ticket into another team's backlog.
+- **There is no translation tax.** Decisions that would cross a team boundary instead happen inside one team's head, or in one conversation. No spec has to survive a relay race.
+- **Accountability is unambiguous.** When something breaks, there is exactly one team that owns it. That clarity is not about blame - it is about knowing, instantly, who can fix it.
+
+<Callout type="tip">
+The fastest way to speed up a project is rarely to add people. It is often to remove a handoff - to put the people who were passing work between each other on the same team, owning the same outcome.
+</Callout>
+
+## Ownership is a structure choice, not a hours choice
+
+It is worth saying clearly: full-stack ownership works because of how the team is organised, not because the team works longer. Long hours are a symptom of broken structure, not a substitute for good structure.
+
+When one team owns the whole stack with a clear, bounded scope, the work gets calmer, not more frantic. Fewer surprises cross the boundary because there is no boundary. Fewer fires start in the gaps because there are no gaps.
+
+That is the real argument for ownership. Not that it makes people work harder - that it removes the parts of the work that were never building anything in the first place.

@@ -1,0 +1,65 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+A deployment pipeline has exactly one job: make shipping so safe and so boring that nobody is afraid to do it. When deploying is a tense, manual ritual reserved for Friday afternoons, a team ships rarely, batches up risk, and dreads the moment a release goes wrong. When deploying is a non-event that happens many times a day, the whole psychology changes.
+
+This is the CI/CD setup we put on every project, why each piece earns its place, and the principle that holds it all together: the pipeline should catch problems, not the user.
+
+## The principle: shift the failure left
+
+Every bug is cheapest to catch at the moment it is written and most expensive to catch in production. The entire design of a good pipeline is about moving the point of detection as early - as far "left" - as possible. A type error caught in the editor costs nothing. The same error caught by a user costs a support ticket, a hotfix, and some trust.
+
+So we build the pipeline as a series of gates, each one cheaper and faster than the failure it prevents.
+
+<RateTable
+  headers={["Stage", "Catches", "Time to run"]}
+  rows={[
+    ["Editor / pre-commit", "Formatting, lint, obvious type errors", "Instant"],
+    ["CI: typecheck + lint", "Type errors, style violations", "Seconds to a minute"],
+    ["CI: tests", "Broken logic, regressions", "1-5 minutes"],
+    ["CI: build", "Build-time and import errors", "1-3 minutes"],
+    ["Preview deploy", "Visual and integration issues", "On every PR"],
+    ["Production deploy", "Nothing, ideally", "Automatic on merge"],
+  ]}
+/>
+
+## What runs on every pull request
+
+Nothing reaches the main branch without passing through CI. On every pull request, automatically:
+
+- **Type checking.** With a fully typed stack, the compiler is the cheapest and most thorough reviewer you have. A green typecheck rules out a huge class of bugs for free.
+- **Linting and formatting.** Enforced by the machine, not by reviewers. Humans should review logic, not argue about whitespace.
+- **The test suite.** Focused on the core workflows - the loops that, if broken, mean the product does not work. We do not chase a coverage number; we cover the parts that matter.
+- **A production build.** Plenty of errors only appear at build time. Building in CI catches them before merge instead of during deploy.
+
+<Callout type="tip">
+Make CI fast or developers will route around it. If the pipeline takes twenty minutes, people batch up changes, push less often, and the feedback loop you built collapses. Cache aggressively, run jobs in parallel, and treat pipeline speed as a feature, not an afterthought.
+</Callout>
+
+## Preview deployments change everything
+
+This is the piece teams most often skip and most regret skipping. Every pull request gets its own live, deployed preview environment with a unique URL. Reviewers, designers, and the client click through the actual change running on real infrastructure - not a screenshot, not a description, not the reviewer's imagination.
+
+Preview deploys collapse the feedback loop. A misunderstanding that would otherwise be discovered after launch gets caught in code review, because someone actually used the feature. For an agency, this is also how we keep clients in the loop: they see the working change before it merges, on a link they can open on their phone.
+
+## Make production deploys a non-event
+
+When everything passes CI and the PR is merged, deploying to production should happen automatically, with no human ceremony. The drama is removed precisely because all the checking already happened. Merging is the decision; deploying is the consequence.
+
+Two things make automatic production deploys safe rather than reckless:
+
+- **Database migrations that are safe under load.** Schema changes run as part of the deploy, written to be online and reversible so a migration never locks a production table or strands the app between versions.
+- **A fast, obvious rollback.** When something does slip through, recovery has to be a single, well-rehearsed action - redeploy the previous version, flip a flag - not a frantic investigation. The question in an incident is "how do we get back to safe," and the answer must be instant.
+
+<Callout type="warning">
+Automatic deploys without a rollback plan are not confidence - they are gambling. The willingness to deploy on every merge is earned by knowing you can undo it in seconds. Build the rollback before you build the automation, not after your first bad night.
+</Callout>
+
+## Observability closes the loop
+
+The pipeline's job ends at deploy; observability tells you whether the deploy was actually fine. Error tracking, uptime monitoring, and basic performance metrics turn "I think it is working" into "I can see it is working." When an error rate spikes right after a deploy, you know which change to roll back. Without this, production is a black box and every report comes from an annoyed user instead of a dashboard.
+
+## Why this is worth the setup cost
+
+Standing up this pipeline takes real time at the start of a project, and it is tempting to skip it when you are racing to ship. We do not, because the pipeline is what lets us ship fast and keep shipping fast. It is the machinery that makes "deploy continuously from week two" possible instead of terrifying.
+
+A team with a good pipeline ships small changes constantly, catches problems while they are cheap, and recovers from mistakes in seconds. A team without one ships rarely, batches risk, and treats every release as an event. The difference is not talent or effort. It is whether the boring, automated safety net exists - and building that net is one of the first things we do on every project.

@@ -1,18 +1,25 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { 
-    Mail, Phone, MapPin, Loader2, Send 
+import {
+    Mail, Phone, MapPin, Loader2, Send, ArrowRight, Calculator
 } from "lucide-react"
 import { useState } from "react"
-import { 
-    submitContactForm, type ContactFormData 
+import {
+    submitContactForm, type ContactFormData
 } from "@/actions/contact.action"
 import { toast } from "sonner"
-import SmoothScroll from "@/components/smoothscroll"
+import { PageHero } from "@/components/landing/page-hero"
+import { PageBackground } from "@/components/landing/page-background"
+import { FadeIn } from "@/components/landing/animations"
+
+const CONTACT_INFO = [
+    { icon: Mail, title: "Email", value: "contact@shunyatech.com" },
+    { icon: Phone, title: "Direct line", value: "+91 (123) 456-7890" },
+    { icon: MapPin, title: "Office", value: "10 Green State, Unit 4 PMB 1058 Woodbridge, NJ 07095, United States" },
+]
 
 export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,130 +74,132 @@ export default function ContactPage() {
     };
 
     return (
-        <SmoothScroll>
-            <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-50 pt-32 pb-20">
-                <div className="fixed inset-0 z-0 pointer-events-none opacity-50 dark:opacity-20">
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
-                </div>
-                <div className="relative z-10 max-w-7xl mx-auto px-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center mb-16"
-                    >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 mb-6">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                            </span>
-                            <span className="text-xs font-mono font-medium text-neutral-600 dark:text-neutral-400">COMMUNICATION LINES OPEN</span>
-                        </div>
-                        <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-4">
-                            Initiate Collaboration
-                        </h1>
-                        <p className="text-xl text-neutral-500 max-w-2xl mx-auto font-light">
-                            Ready to engineer something remarkable? Provide your project parameters below.
-                        </p>
-                    </motion.div>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="bg-white dark:bg-neutral-900/50 backdrop-blur-sm p-8 rounded-3xl border border-neutral-200 dark:border-neutral-800 shadow-xl shadow-neutral-200/50 dark:shadow-black/50"
-                        >
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <main className="relative overflow-x-clip isolate">
+            <PageBackground className="z-0" />
+            <PageHero
+                palette="jade"
+                eyebrow="Contact"
+                title={
+                    <>
+                        Let&apos;s build{" "}
+                        <span className="so-serif italic">something.</span>
+                    </>
+                }
+                description="Ready to engineer something remarkable? Tell us your project parameters and we'll get back to you with a clear plan for how we'd ship it."
+            />
+
+            <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
+                <div className="so-container">
+                    <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 lg:gap-8 items-start">
+                        {/* Form */}
+                        <FadeIn>
+                            <div className="so-card p-[clamp(24px,4vw,40px)]">
+                                <span className="so-eyebrow">Start a conversation</span>
+                                <h2 className="mt-5 mb-8 text-[clamp(22px,2.6vw,30px)] tracking-[-0.02em] text-so-ink">
+                                    Tell us about your{" "}
+                                    <span className="so-serif italic">project.</span>
+                                </h2>
+
+                                <form onSubmit={handleSubmit} className="space-y-5">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                        <div className="space-y-2">
+                                            <label htmlFor="name" className="block text-[12.5px] font-medium text-so-ink-2">Name</label>
+                                            <Input
+                                                id="name"
+                                                value={formData.name}
+                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                className="h-12 bg-so-surface-2 border-so-line text-so-ink placeholder:text-so-ink-4 focus-visible:ring-1 focus-visible:ring-so-ink rounded-[var(--so-radius)]"
+                                                placeholder="John Doe"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label htmlFor="phone" className="block text-[12.5px] font-medium text-so-ink-2">Phone <span className="text-so-ink-4">(optional)</span></label>
+                                            <Input
+                                                id="phone"
+                                                value={formData.phone}
+                                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                                className="h-12 bg-so-surface-2 border-so-line text-so-ink placeholder:text-so-ink-4 focus-visible:ring-1 focus-visible:ring-so-ink rounded-[var(--so-radius)]"
+                                                placeholder="+1 (555) 000-0000"
+                                            />
+                                        </div>
+                                    </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="name" className="text-xs font-mono uppercase tracking-wider text-neutral-500">Name</label>
+                                        <label htmlFor="email" className="block text-[12.5px] font-medium text-so-ink-2">Email address</label>
                                         <Input
-                                            id="name"
-                                            value={formData.name}
-                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            className="h-12 bg-neutral-50 dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white rounded-xl"
-                                            placeholder="John Doe"
+                                            id="email"
+                                            type="email"
+                                            value={formData.email}
+                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                            className="h-12 bg-so-surface-2 border-so-line text-so-ink placeholder:text-so-ink-4 focus-visible:ring-1 focus-visible:ring-so-ink rounded-[var(--so-radius)]"
+                                            placeholder="john@example.com"
                                             required
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label htmlFor="phone" className="text-xs font-mono uppercase tracking-wider text-neutral-500">Phone</label>
-                                        <Input
-                                            id="phone"
-                                            value={formData.phone}
-                                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                            className="h-12 bg-neutral-50 dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white rounded-xl"
-                                            placeholder="+1 (555) 000-0000"
+                                        <label htmlFor="message" className="block text-[12.5px] font-medium text-so-ink-2">Project parameters</label>
+                                        <Textarea
+                                            id="message"
+                                            value={formData.message}
+                                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                            className="min-h-[150px] bg-so-surface-2 border-so-line text-so-ink placeholder:text-so-ink-4 focus-visible:ring-1 focus-visible:ring-so-ink rounded-[var(--so-radius)] resize-none p-4"
+                                            placeholder="Describe your requirements..."
+                                            required
                                         />
                                     </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <label htmlFor="email" className="text-xs font-mono uppercase tracking-wider text-neutral-500">Email Address</label>
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        className="h-12 bg-neutral-50 dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white rounded-xl"
-                                        placeholder="john@example.com"
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <label htmlFor="message" className="text-xs font-mono uppercase tracking-wider text-neutral-500">Project Parameters</label>
-                                    <Textarea
-                                        id="message"
-                                        value={formData.message}
-                                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                        className="min-h-[150px] bg-neutral-50 dark:bg-neutral-950 border-neutral-200 dark:border-neutral-800 focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white rounded-xl resize-none p-4"
-                                        placeholder="Describe your requirements..."
-                                        required
-                                    />
-                                </div>
-                                <Button
-                                    type="submit"
-                                    className="w-full h-14 bg-neutral-900 dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 rounded-xl text-lg font-bold transition-all shadow-lg"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <div className="flex items-center gap-2">Transmit Data <Send className="w-4 h-4" /></div>}
-                                </Button>
-                            </form>
-                        </motion.div>
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.4 }}
-                            className="space-y-8 flex flex-col justify-center"
-                        >
-                            {
-                                [
-                                    { icon: Mail, title: "Electronic Mail", value: "contact@shunyatech.com" },
-                                    { icon: Phone, title: "Direct Line", value: "+91 (123) 456-7890" },
-                                    { icon: MapPin, title: "Coordinates", value: "10 Green State, Unit 4 PMB 1058 Woodbridge, NJ 07095, United States" }
-                                ].map((item, i) => (
-                                    <div key={i} className="flex items-start gap-6 p-6 rounded-2xl border border-transparent hover:border-neutral-200 dark:hover:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-all group">
-                                        <div className="w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-900 dark:text-white group-hover:scale-110 transition-transform">
-                                            <item.icon className="w-5 h-5" />
+                                    <Button
+                                        type="submit"
+                                        className="so-btn so-btn-primary w-full h-12 text-[14px]"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? (
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <>Send message <Send className="w-4 h-4" /></>
+                                        )}
+                                    </Button>
+                                </form>
+                            </div>
+                        </FadeIn>
+
+                        {/* Contact info + estimator */}
+                        <FadeIn delay={0.1} className="space-y-5">
+                            <div className="so-card p-[clamp(20px,3vw,32px)]">
+                                <span className="so-eyebrow">Reach us directly</span>
+                                <div className="mt-6 space-y-2">
+                                    {CONTACT_INFO.map((item, i) => (
+                                        <div
+                                            key={i}
+                                            className="flex items-start gap-4 p-4 rounded-[var(--so-radius)] hover:bg-so-surface-2 transition-colors"
+                                        >
+                                            <div className="flex items-center justify-center w-10 h-10 shrink-0 rounded-xl bg-so-surface-2 text-so-ink">
+                                                <item.icon className="w-[18px] h-[18px]" />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-[12px] font-medium uppercase tracking-[0.1em] text-so-ink-3 mb-1">{item.title}</h3>
+                                                <p className="text-[14.5px] leading-[1.55] text-so-ink">{item.value}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="text-sm font-mono uppercase tracking-wider text-neutral-500 mb-1">{item.title}</h3>
-                                            <p className="text-xl font-medium text-neutral-900 dark:text-white">{item.value}</p>
-                                        </div>
-                                    </div>
-                                ))
-                            }
-                            <div className="p-8 mt-8 rounded-3xl bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900">
-                                <h3 className="text-2xl font-bold mb-2">Need a Budget Estimate?</h3>
-                                <p className="text-neutral-400 dark:text-neutral-600 mb-6">
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="so-card p-[clamp(24px,3vw,32px)] bg-so-surface-2">
+                                <div className="flex items-center justify-center w-11 h-11 mb-5 rounded-xl bg-so-surface text-so-ink border border-so-line">
+                                    <Calculator size={20} />
+                                </div>
+                                <h3 className="text-[19px] font-semibold text-so-ink mb-2 tracking-[-0.01em]">Need a budget estimate?</h3>
+                                <p className="text-[14px] leading-[1.7] text-so-ink-2 mb-6">
                                     Use our AI-powered calculator to get a rough estimate for your project.
                                 </p>
-                                <Button variant="outline" className="w-full bg-transparent border-neutral-700 dark:border-neutral-300 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-white dark:text-black">
-                                    Launch Calculator
+                                <Button variant="outline" className="so-btn so-btn-ghost w-full">
+                                    Launch calculator <ArrowRight size={13} />
                                 </Button>
                             </div>
-                        </motion.div>
+                        </FadeIn>
                     </div>
                 </div>
-            </div>
-        </SmoothScroll>
+            </section>
+        </main>
     )
 }

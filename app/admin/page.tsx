@@ -85,7 +85,7 @@ export default function AdminDashboard() {
                         <div>
                             <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
                             <p className="text-lg text-gray-600 dark:text-gray-300 mt-2">
-                                Welcome back! Here's what's happening with your business.
+                                Welcome back! Here&apos;s what&apos;s happening with your business.
                             </p>
                         </div>
                         <Badge className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-0">

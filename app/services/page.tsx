@@ -1,203 +1,109 @@
 "use client"
 
-import { motion } from "framer-motion"
-import {
-    Smartphone, Globe, Cloud, Bot, ArrowRight, Check, Shield, Layout
-} from "lucide-react"
-import {
-    Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription
-} from "@/components/ui/sheet"
-import SmoothScroll from "@/components/smoothscroll"
+import { ArrowRight } from "lucide-react"
 import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import Image from "next/image"
-
-const services = [
-    {
-        id: "web-dev",
-        title: "Web Engineering",
-        image: "/services/webdevelopment.png",
-        icon: Globe,
-        description: "High-performance web applications built on Next.js 15 and React Server Components.",
-        details: "We architect scalable, SEO-optimized, and globally distributed web systems. From simple landing pages to complex SaaS dashboards, we prioritize performance (Core Web Vitals) and maintainability.",
-        deliverables: ["Next.js 15 Architecture", "Responsive UI/UX (Tailwind)", "SEO Optimization Strategy", "Headless CMS Integration", "Performance Auditing"],
-        priceStart: "$1,500"
-    },
-    {
-        id: "mobile-app",
-        title: "Mobile Ecology",
-        image: "/services/mobileapp.png",
-        icon: Smartphone,
-        description: "Native-feel cross-platform applications using React Native and Flutter.",
-        details: "Reach users on both iOS and Android with a single codebase without compromising on performance or native capabilities. We handle the entire lifecycle from code to App Store submission.",
-        deliverables: ["iOS & Android Binary Build", "App Store & Play Store Submission", "Push Notification System", "Offline-First Architecture", "Native Module Bridging"],
-        priceStart: "$2,500"
-    },
-    {
-        id: "ai-systems",
-        title: "AI Integration",
-        image: "/services/aisystems.png",
-        icon: Bot,
-        description: "Custom LLM agents, RAG pipelines, and intelligent automation workflows.",
-        details: "Leverage the power of OpenAI, Anthropic, or open-source LLaMA models to automate customer support, data analysis, and content generation within your own secure infrastructure.",
-        deliverables: ["Custom RAG Pipelines (Vector DB)", "Chatbot UI/UX Interface", "Prompt Engineering Optimization", "API Integration (OpenAI/Anthropic)", "Fine-Tuning Datasets"],
-        priceStart: "$3,000"
-    },
-    {
-        id: "cloud-infra",
-        title: "Cloud Architecture",
-        image: "/services/cloudinfra.png",
-        icon: Cloud,
-        description: "Scalable backend systems on AWS, Azure, or Google Cloud.",
-        details: "We design serverless functions, container orchestration (Docker/K8s), and database optimization strategies to ensure your application can handle high-traffic loads with zero downtime.",
-        deliverables: ["CI/CD Automated Pipelines", "Database Schema Design", "Serverless Config (Lambda/Edge)", "Auto-scaling Rules", "Infrastructure as Code (Terraform)"],
-        priceStart: "$2,000"
-    },
-    {
-        id: "ui-ux",
-        title: "UI/UX Systems",
-        image: "/services/uiux.png",
-        icon: Layout,
-        description: "Atomic design systems and high-fidelity interactive prototyping.",
-        details: "We don't just design screens; we build comprehensive design systems. We focus on usability, accessibility, and creating a delightful user journey that converts visitors into customers.",
-        deliverables: ["Figma Design Files", "Interactive Prototypes", "Design System Documentation", "User Flow Diagrams", "Accessibility Audit (WCAG)"],
-        priceStart: "$1,200"
-    },
-    {
-        id: "security",
-        title: "System Security",
-        image: "/services/cybersecurity.png",
-        icon: Shield,
-        description: "Penetration testing, OAuth implementation, and data encryption.",
-        details: "Security is not an afterthought. We implement industry-standard security protocols to protect your user data and ensure compliance with regulations like GDPR and CCPA.",
-        deliverables: ["Penetration Testing Report", "OAuth 2.0 Implementation", "Data Encryption at Rest/Transit", "Security Headers Config", "Vulnerability Scanning"],
-        priceStart: "$1,800"
-    }
-]
+import { PageHero } from "@/components/landing/page-hero"
+import { PageBackground } from "@/components/landing/page-background"
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/landing/animations"
+import { CardVisual } from "@/components/landing/card-visuals"
+import { SERVICES } from "@/content/services"
+import { startingPrice, formatPrice } from "@/content/pricing"
 
 export default function ServicesPage() {
     return (
-        <SmoothScroll>
-            <main className="min-h-screen bg-white dark:bg-neutral-950 pt-32 pb-20 px-6">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-12">
-                        <Badge variant="outline" className="mb-4 border-neutral-300 dark:border-neutral-700">Capabilities Manifest</Badge>
-                        <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-neutral-900 dark:text-white mb-6">
-                            Technical Engineering
-                        </h1>
-                        <p className="text-xl text-neutral-500 max-w-2xl mx-auto font-light">
-                            We deliver end-to-end solutions. Select a module to inspect technical specifications and deliverables.
-                        </p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {
-                            services.map((service, index) => (
-                                <Sheet key={index}>
-                                    <SheetTrigger asChild>
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.95 }}
-                                            whileInView={{ opacity: 1, scale: 1 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: index * 0.1 }}
-                                            className="group relative overflow-hidden rounded-3xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 cursor-pointer min-h-[400px]"
-                                        >
-                                            <Image
-                                                src={service.image}
-                                                alt="Servie Image"
-                                                fill
+        <main className="relative overflow-x-clip isolate">
+            <PageBackground className="z-0" />
+            <PageHero
+                palette="jade"
+                eyebrow="Capabilities Manifest"
+                title={
+                    <>
+                        Technical engineering,{" "}
+                        <span className="so-serif italic">end to end.</span>
+                    </>
+                }
+                description="We deliver complete solutions across the stack. Choose a capability to explore its deliverables, process, tech stack, and starting investment in full detail."
+            />
+
+            <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
+                <div className="so-container">
+                    <span className="so-eyebrow">What we build</span>
+                    <h2 className="mt-5 mb-12 text-[clamp(26px,3.4vw,40px)] tracking-[-0.025em] text-so-ink max-w-[24ch]">
+                        Six engineering capabilities,{" "}
+                        <span className="so-serif italic">one team.</span>
+                    </h2>
+
+                    <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {SERVICES.map((service, index) => {
+                            const from = service.pricingKey ? startingPrice(service.pricingKey) : 0
+                            return (
+                                <StaggerItem key={service.slug} className="h-full">
+                                    <Link
+                                        href={`/services/${service.slug}`}
+                                        className="group so-card h-full w-full text-left flex flex-col overflow-hidden hover:shadow-md transition-all"
+                                    >
+                                        <div className="relative">
+                                            <CardVisual
+                                                name={service.slug}
+                                                className="h-40 w-full border-b border-so-line transition-transform duration-500 group-hover:scale-[1.03]"
                                             />
-                                            <div className="absolute inset-0 opacity-10 dark:opacity-20 pointer-events-none">
-                                                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-                                            </div>
-
-                                            <div className="absolute inset-0 bg-gradient-to-t from-neutral-200 via-transparent to-transparent dark:from-neutral-950 dark:via-transparent dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                                            <div className="absolute inset-0 p-8 flex flex-col justify-end transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                                <div className="relative z-10">
-                                                    <div className="w-12 h-12 rounded-xl bg-white dark:bg-neutral-800 flex items-center justify-center mb-6 text-neutral-900 dark:text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
-                                                        <service.icon className="w-6 h-6" />
-                                                    </div>
-
-                                                    <h3 className="text-2xl font-bold text-white mb-2">{service.title}</h3>
-
-                                                    <div className="h-0 group-hover:h-auto overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
-                                                        <p className="text-neutral-800 dark:text-neutral-200 text-sm font-light leading-relaxed mb-6">
-                                                            {service.description}
-                                                        </p>
-                                                        <div className="flex items-center gap-2 text-sm font-bold text-neutral-900 dark:text-white">
-                                                            Inspect Module <ArrowRight className="w-4 h-4" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="absolute top-6 right-6 text-4xl font-bold text-neutral-200 dark:text-neutral-800 select-none transition-colors group-hover:text-neutral-300 dark:group-hover:text-neutral-700">
+                                            <span className="absolute top-3 left-3 so-eyebrow bg-so-bg/80 backdrop-blur px-2 py-1 rounded-md border border-so-line">
+                                                {service.eyebrow}
+                                            </span>
+                                            <span className="absolute top-3 right-3 font-mono text-[12px] text-so-ink-4 tabular-nums bg-so-bg/80 backdrop-blur px-1.5 py-0.5 rounded-md">
                                                 0{index + 1}
-                                            </div>
-                                        </motion.div>
-                                    </SheetTrigger>
-                                    <SheetContent className="w-full sm:max-w-xl bg-white dark:bg-neutral-950 border-l border-neutral-200 dark:border-neutral-800 overflow-y-auto">
-                                        <SheetHeader className="mt-6">
-                                            <div className="w-14 h-14 rounded-2xl bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center mb-4 text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-800">
-                                                <service.icon className="w-7 h-7" />
-                                            </div>
-                                            <SheetTitle className="text-3xl font-bold tracking-tight">{service.title}</SheetTitle>
-                                            <SheetDescription className="text-lg text-neutral-500 font-light">
-                                                {service.description}
-                                            </SheetDescription>
-                                        </SheetHeader>
-                                        <div className="space-y-6 p-6">
-                                            <div className="space-y-4">
-                                                <h4 className="text-xs font-mono uppercase tracking-widest text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 pb-2">
-                                                    System Architecture
-                                                </h4>
-                                                <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">
-                                                    {service.details}
-                                                </p>
-                                            </div>
-                                            <div className="space-y-4">
-                                                <h4 className="text-xs font-mono uppercase tracking-widest text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 pb-2">
-                                                    Deliverable Manifest
-                                                </h4>
-                                                <ul className="grid gap-3">
-                                                    {
-                                                        service.deliverables.map((item, i) => (
-                                                            <li key={i} className="flex items-start gap-3 text-neutral-600 dark:text-neutral-300 group">
-                                                                <div className="w-5 h-5 rounded-full bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center text-neutral-900 dark:text-white shrink-0 mt-0.5 group-hover:bg-green-100 dark:group-hover:bg-green-900/30 group-hover:text-green-600 transition-colors">
-                                                                    <Check className="w-3 h-3" />
-                                                                </div>
-                                                                <span className="text-sm">{item}</span>
-                                                            </li>
-                                                        ))
-                                                    }
-                                                </ul>
-                                            </div>
-                                            <div className="p-6 bg-neutral-50 dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800">
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <span className="text-sm font-medium text-neutral-500">Starting Investment</span>
-                                                    <span className="text-2xl font-bold text-neutral-900 dark:text-white">{service.priceStart}</span>
-                                                </div>
-                                                <p className="text-xs text-neutral-400 mb-6">Final pricing depends on scope, complexity, and timeline.</p>
-                                                <div className="grid gap-3">
-                                                    <Link href="/pricing" className="w-full">
-                                                        <button className="cursor-pointer w-full py-3 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-xl font-bold hover:opacity-90 transition-opacity">
-                                                            View Pricing Model
-                                                        </button>
-                                                    </Link>
-                                                    <Link href="/contactus" className="w-full">
-                                                        <button className="cursor-pointer w-full py-3 bg-transparent border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white rounded-xl font-bold hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
-                                                            Request Proposal
-                                                        </button>
-                                                    </Link>
-                                                </div>
+                                            </span>
+                                        </div>
+                                        <div className="p-7 flex flex-col flex-1">
+                                            <h3 className="text-[20px] font-semibold text-so-ink mb-2 tracking-[-0.01em]">
+                                                {service.name}
+                                            </h3>
+                                            <p className="text-[14px] leading-[1.7] text-so-ink-2 mb-6 flex-1">
+                                                {service.tagline}
+                                            </p>
+                                            <div className="flex items-center justify-between pt-4 border-t border-so-line">
+                                                <span className="font-mono text-[12px] uppercase tracking-[0.08em] text-so-ink-3">
+                                                    {from > 0 ? `From ${formatPrice(from, "USD")}` : "Custom scope"}
+                                                </span>
+                                                <span className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-so-ink-3 group-hover:text-so-ink transition-colors">
+                                                    Explore
+                                                    <ArrowRight
+                                                        size={14}
+                                                        className="group-hover:translate-x-0.5 transition-transform"
+                                                    />
+                                                </span>
                                             </div>
                                         </div>
-                                    </SheetContent>
-                                </Sheet>
-                            ))
-                        }
-                    </div>
+                                    </Link>
+                                </StaggerItem>
+                            )
+                        })}
+                    </StaggerContainer>
                 </div>
-            </main>
-        </SmoothScroll>
+            </section>
+
+            <section className="relative z-[1] bg-so-surface so-section border-t border-so-line">
+                <div className="so-container">
+                    <FadeIn className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
+                        <span className="so-eyebrow">Ready to scope it?</span>
+                        <h2 className="mt-5 mb-4 text-[clamp(28px,4vw,46px)] tracking-[-0.03em] text-so-ink max-w-[20ch]">
+                            Tell us what you&apos;re{" "}
+                            <span className="so-serif italic">building.</span>
+                        </h2>
+                        <p className="text-[15px] leading-[1.7] text-so-ink-2 max-w-[52ch] mb-8">
+                            Whatever capability you need, one conversation is enough for us to scope it and tell you exactly how we&apos;d ship it.
+                        </p>
+                        <div className="flex flex-col sm:flex-row items-center gap-3">
+                            <Link href="/contactus" className="so-btn so-btn-primary">
+                                Start a project <ArrowRight size={13} />
+                            </Link>
+                            <Link href="/projects" className="so-btn so-btn-ghost">
+                                See our work <ArrowRight size={13} />
+                            </Link>
+                        </div>
+                    </FadeIn>
+                </div>
+            </section>
+        </main>
     )
 }

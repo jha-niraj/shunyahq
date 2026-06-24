@@ -1,0 +1,78 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Almost every product conversation we have with a founder eventually arrives at the same fork: should this be a native mobile app, a web app, or a progressive web app? It is usually framed as a technology question. It is actually a question about who your users are, where they will use the product, and what you can afford to build and maintain. Pick wrong and you either burn months building app-store machinery you never needed, or you ship a web app to users who were only ever going to engage through an icon on their home screen.
+
+This is how we help clients decide - not by declaring a winner, but by matching the platform to the product. Each option is the right answer for some products and an expensive mistake for others.
+
+## The three options, plainly
+
+Before comparing them, it is worth being precise about what each one actually is, because the terms get used loosely.
+
+A **web app** runs in the browser. Users reach it by typing a URL or clicking a link. There is nothing to install, nothing to approve, and one codebase serves every device with a browser.
+
+A **native mobile app** is built specifically for iOS and Android, distributed through the App Store and Google Play, and installed on the device. It can reach into the hardware - camera, GPS, secure storage, push notifications, background processing - with the fewest restrictions.
+
+A **progressive web app (PWA)** is a web app that has been built to behave more like an installed app: it can be added to the home screen, work offline through a service worker, and send push notifications on supported platforms. It is the middle path - web reach with some app-like capability.
+
+<Callout type="info">
+A PWA is not a fourth kind of technology. It is a web app that opted into a set of browser capabilities. That means you can often start with a plain web app and progressively enhance it into a PWA later, without rebuilding from scratch - which is exactly why we like it as a default for products that are unsure where they will land.
+</Callout>
+
+## What actually differs between them
+
+The decision comes down to a handful of dimensions that genuinely diverge across the three. We lay them side by side for every client facing this choice.
+
+<RateTable
+  headers={["Dimension", "Web app", "PWA", "Native mobile"]}
+  rows={[
+    ["Install friction", "None - open a URL", "Low - add to home screen", "High - app store download"],
+    ["Reach across devices", "Every device with a browser", "Every modern browser", "Per-platform (iOS + Android builds)"],
+    ["Hardware access", "Limited", "Moderate, improving", "Full - camera, sensors, secure storage"],
+    ["Push notifications", "No (true push)", "Yes, with platform caveats", "Yes, first-class"],
+    ["Offline support", "Minimal", "Yes, via service worker", "Yes, fully"],
+    ["App-store presence", "None", "None (or via wrapper)", "Yes - discoverability + trust"],
+    ["Build + maintenance cost", "Lowest - one codebase", "Low - one codebase + extras", "Highest - two platforms + review cycles"],
+    ["Update speed", "Instant on refresh", "Instant on refresh", "Gated by app-store review"],
+  ]}
+/>
+
+The pattern in that table is the whole decision in miniature. As you move left to right, you gain capability and lose reach, speed, and cheapness. Native gives you everything the device can do, but you pay for it in two codebases, app-store review cycles, and download friction at the top of the funnel.
+
+## When native is genuinely the right call
+
+Native earns its cost when the product depends on something only native can do well. We reach for native - and tell clients to budget for it - when:
+
+- **The product lives in the user's pocket.** A daily-use consumer app that competes for a home-screen slot needs the polish, performance, and presence that native delivers. A fitness tracker, a ride-hailing app, a mobile game.
+- **It needs deep hardware integration.** Continuous GPS in the background, Bluetooth peripherals, the camera as a core feature, biometric auth, secure on-device storage. Web can touch some of this; native does all of it reliably.
+- **Reliable push is central to the model.** If re-engagement through notifications is how the product works, native push is still meaningfully more dependable than web push, especially on iOS.
+- **App-store presence is part of the strategy.** For some consumer products, simply being in the store confers discoverability and trust that a URL does not.
+
+<Callout type="warning">
+Native is the most expensive option to build and, more importantly, to maintain. You are signing up for two codebases, two release pipelines, and app-store review on every update - including the urgent hotfix you need out in an hour but cannot ship until Apple approves it. Do not choose native for prestige. Choose it because the product genuinely needs what only native provides.
+</Callout>
+
+## When a web app is the obvious answer
+
+For a large share of the products we build - especially B2B tools, dashboards, internal systems, and SaaS - a plain web app is not a compromise. It is the correct, cheapest, fastest choice.
+
+A web app wins when users sit at a desk, when the product is bought and used through a browser anyway, and when you need to ship changes constantly without waiting on a review queue. One codebase, instant updates, every device covered, no install step between a prospect and their first session. For most early-stage SaaS, the friction of an app-store download would actively hurt adoption. You want a link you can put in an email and have someone using the product thirty seconds later.
+
+The update story alone often settles it for our agency work. We deploy continuously, sometimes several times a day. A model where every change is gated by a store review is fundamentally at odds with how we - and most modern teams - like to ship.
+
+## Where the PWA fits
+
+The PWA is our default recommendation when a product wants app-like behaviour without committing to native's cost, and when the audience is mobile-leaning but not native-dependent. You get the home-screen icon, offline resilience, and (with caveats) push, all from the single web codebase you were already going to build.
+
+The honest caveat is platform support. PWA capabilities are excellent on Android and in Chromium-based browsers and have improved markedly on iOS, but iOS still treats web push and installation with more restrictions than Android does. So a PWA is a strong fit when your users skew Android or desktop, or when app-like features are a nice enhancement rather than the core of the product. If iOS push reliability is mission-critical, that is a signal pointing back toward native.
+
+What we like most about the PWA is that it is a hedge. Build the web app well, enhance it into a PWA, and you have kept the door open. If the product later proves it truly needs native, you have lost nothing - the web app keeps serving everyone while you build the native client for the cases that demand it.
+
+## How we actually decide
+
+We do not start from the technology. We start from three questions about the product:
+
+1. **Where are the users when they use this?** At a desk points to web. In their pocket all day points to PWA or native.
+2. **What does it need from the device?** Mostly screens and forms points to web or PWA. Deep hardware, background processing, or first-class push points to native.
+3. **What can the team afford to build and maintain?** One codebase that updates instantly is web or PWA. Two platforms and a review cycle on every change is the standing cost of native.
+
+For most products that come through our door, the answer is "build it on the web, make it a PWA if mobile matters, and go native only when the product earns it." That ordering is deliberate. It is cheapest to start where reach is widest and cost is lowest, and to add platform-specific capability only when there is a real user need pulling for it - not a hunch that you ought to have an app. The right platform is the one that fits the product, and the most expensive mistakes here come from choosing the platform first and discovering the fit later.

@@ -1,0 +1,73 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Postgres will take a SaaS product a remarkably long way before it needs anything exotic. We have watched teams reach for sharding, read replicas, and a separate analytics warehouse while their primary database was still drowning in problems that a single index would have fixed. Most "we need to scale our database" conversations are really "we never tuned our database" conversations.
+
+This is how we scale Postgres for a growing SaaS - in the order the problems actually show up, not in the order the conference talks present them.
+
+## Start by looking, not guessing
+
+The first scaling mistake is acting before measuring. You cannot tune what you cannot see. Before touching anything, we turn on the tools Postgres already ships with:
+
+- **`pg_stat_statements`** to find the queries that consume the most total time. The slowest single query is rarely the problem; the mediocre query run ten thousand times a minute usually is.
+- **`EXPLAIN (ANALYZE, BUFFERS)`** on those queries to see whether they are doing sequential scans, where the time goes, and how much they read from disk versus cache.
+- **Slow query logging** with a sane threshold so regressions surface in logs instead of in support tickets.
+
+<Callout type="tip">
+Sort `pg_stat_statements` by total execution time, not mean. A query that takes 8ms but runs a million times a day is a bigger problem than one that takes 2 seconds and runs twice. Optimise for total load, not the scariest single number.
+</Callout>
+
+## Indexes fix most "scaling" problems
+
+The overwhelming majority of slow SaaS queries are missing an index, using the wrong one, or written so the database cannot use the one that exists. Before any architectural change, we make sure the basics are right:
+
+- Every foreign key used in a join or filter has an index.
+- Columns in `WHERE`, `ORDER BY`, and `JOIN` clauses are covered, often with composite indexes in the right column order.
+- We use partial indexes for the common "only active rows" case - indexing `WHERE deleted_at IS NULL` is far smaller and faster than indexing the whole table.
+
+But indexes are not free. Every index slows down writes and consumes storage. We periodically check `pg_stat_user_indexes` for indexes that are never scanned and drop them. A pile of unused indexes is a tax you pay on every insert for no benefit.
+
+## Connection management is the silent killer
+
+This is the problem that ambushes growing SaaS apps, especially on serverless. Postgres connections are expensive - each one is a backend process with real memory overhead. A serverless function that opens a connection per invocation will exhaust the database's connection limit long before CPU or disk is the bottleneck.
+
+The fix is a connection pooler. We put PgBouncer (or a managed equivalent) in front of Postgres in transaction-pooling mode, so hundreds of application connections multiplex over a small pool of real database connections.
+
+<Callout type="warning">
+If you are on serverless and seeing intermittent "too many connections" or "remaining connection slots reserved" errors, do not raise `max_connections`. That trades one problem for memory exhaustion. Put a pooler in front of the database. This is the single highest-leverage change for serverless SaaS on Postgres.
+</Callout>
+
+## When to actually scale the architecture
+
+Once the database is tuned, indexed, and pooled, you have bought enormous headroom. Only then does it make sense to change the shape of the system. Here is the rough order we reach for things, and the signal that justifies each.
+
+<RateTable
+  headers={["Move", "When it makes sense", "What it costs you"]}
+  rows={[
+    ["Tune + index", "Always, first", "Engineering time only"],
+    ["Connection pooler", "Many short-lived connections", "One more component to run"],
+    ["Read replicas", "Read-heavy load, dashboards, reports", "Replication lag, eventual consistency"],
+    ["Caching layer", "Repeated identical reads", "Cache invalidation complexity"],
+    ["Partitioning", "Huge time-series or event tables", "Migration effort, query rewrites"],
+    ["Sharding", "Genuinely beyond one machine", "Major complexity - avoid as long as possible"],
+  ]}
+/>
+
+### Read replicas before anything fancy
+
+Most SaaS workloads are read-heavy. Dashboards, reports, and list views hammer the database with reads while writes stay modest. Routing those reads to one or more replicas takes pressure off the primary with minimal application change. The catch is replication lag: a replica is slightly behind the primary, so read-after-write flows (a user creates something and immediately expects to see it) must still hit the primary.
+
+### Partitioning for the tables that never stop growing
+
+Event logs, audit trails, and time-series data grow without bound and eventually make even indexed queries slow. Partitioning by time range keeps each partition small, makes old data trivial to archive or drop, and lets Postgres skip irrelevant partitions entirely. We reach for this when a single table is in the hundreds of millions of rows and clearly time-structured.
+
+## The things we never skip
+
+Scaling is not only about speed. A fast database that loses data is not a win. Across every SaaS we run, these are non-negotiable from day one:
+
+- **Automated backups with tested restores.** A backup you have never restored is a hope, not a backup.
+- **Migrations that are safe under load.** Adding a column with a default or a non-concurrent index lock can take a production table down. We write migrations to be online and reversible.
+- **Sensible defaults reviewed early.** Default `shared_buffers` and `work_mem` are conservative; on a real workload they often need raising.
+
+## The takeaway
+
+Scaling Postgres is mostly discipline, not heroics. Measure before you change anything. Fix the indexes. Put a pooler in front of it. Add read replicas when reads dominate. Reach for partitioning and sharding only when the numbers genuinely demand them - which, for most SaaS products, is much later than the team fears. The boring path keeps you on a single, well-understood database for years, and that simplicity is itself a feature.

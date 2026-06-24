@@ -69,7 +69,7 @@ export default function TermsPage() {
                         <section>
                             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-4">5. Liability Protocol</h2>
                             <p className="text-neutral-600 dark:text-neutral-300 leading-relaxed">
-                                ShunyaTech operates on a "best effort" basis. We are not liable for indirect or consequential damages arising from system downtime, API deprecations by third parties, or force majeure events.
+                                ShunyaTech operates on a &quot;best effort&quot; basis. We are not liable for indirect or consequential damages arising from system downtime, API deprecations by third parties, or force majeure events.
                             </p>
                         </section>
                         <div className="pt-8 mt-8 border-t border-neutral-200 dark:border-neutral-800 text-center">

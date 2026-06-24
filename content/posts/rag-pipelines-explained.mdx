@@ -1,0 +1,62 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Retrieval-Augmented Generation is the most over-demoed and under-engineered pattern in applied AI. The demo is trivial: load a few PDFs, embed them, ask a question, get a grounded answer. Everyone is impressed. Then it meets production - thousands of messy documents, ambiguous queries, and users who notice when it is wrong - and it falls apart.
+
+We have built RAG systems that survive that transition. The difference is almost never the model. It is the unglamorous engineering around it.
+
+## What RAG actually is
+
+RAG retrieves relevant passages from your own data and hands them to a language model as context, so the model answers from your knowledge base instead of relying only on what it memorised during training. The promise is real: current, source-grounded answers over data the model has never seen.
+
+The pipeline has four stages, and every one of them can quietly ruin the output:
+
+<RateTable
+  headers={["Stage", "What it does", "How it fails"]}
+  rows={[
+    ["Chunking", "Splits documents into retrievable units", "Chunks too big or too small; context split mid-thought"],
+    ["Embedding", "Turns chunks into vectors", "Wrong model for the domain; no metadata"],
+    ["Retrieval", "Fetches relevant chunks for a query", "Returns plausible-but-wrong passages"],
+    ["Generation", "LLM writes the answer from context", "Ignores context or invents details"],
+  ]}
+/>
+
+## RAG fails at retrieval, not generation
+
+Here is the counterintuitive part. When a RAG system gives a wrong answer, the instinct is to blame the model or rewrite the prompt. Usually the model did its job - it faithfully answered using the chunks it was given. The chunks were just wrong.
+
+If retrieval hands the model the wrong passages, the best model on earth will give you a confident, well-written, wrong answer. **Retrieval quality is the ceiling on your entire system.** No prompt fixes a fetch problem.
+
+<Callout type="tip">
+When debugging a bad RAG answer, do not look at the prompt first. Look at what was retrieved. Nine times out of ten, the right passage was never in the context window at all.
+</Callout>
+
+## Chunking and metadata beat the embedding model
+
+Teams obsess over which embedding model to use. In our experience, chunking strategy and metadata matter more. A sensible chunking approach with a mediocre embedding model beats a great embedding model over poorly split documents.
+
+A few things that consistently help:
+
+- **Chunk on semantic boundaries**, not arbitrary character counts. Keep a heading with its section.
+- **Attach metadata to every chunk** - source, section, date, document type - so you can filter and re-rank.
+- **Overlap chunks slightly** so an idea that straddles a boundary is not cut in half.
+- **Store the original location** so you can cite it and let users verify.
+
+## Grounding and citations are non-negotiable
+
+Every answer should be grounded in retrieved context and should cite the passages it used. This is not just a trust feature for users - it is a debugging tool for you. When you can see which sources an answer came from, a wrong answer becomes a traceable retrieval bug instead of a mystery.
+
+Instruct the model explicitly to answer only from the provided context and to say when it does not know. A system that admits uncertainty is far more useful than one that confidently fills gaps with invention.
+
+## You cannot improve what you do not measure
+
+Before you tune anything, build an evaluation set: a list of real questions paired with the correct answers and the passages that should be retrieved. Then you can measure retrieval quality (did the right chunk show up?) separately from answer quality (did the model use it well?).
+
+Without this, every "improvement" is a vibe. With it, you can change one variable - chunk size, the embedding model, the re-ranker - and actually know whether it helped.
+
+<Callout type="warning">
+The LLM is the last 10% of a RAG system. The other 90% is data preparation, chunking, retrieval, metadata, and evaluation. Teams that spend 90% of their effort on prompt engineering are optimising the wrong 10%.
+</Callout>
+
+## The takeaway
+
+Treat the language model as the easy part. The engineering - clean data, thoughtful chunking, measurable retrieval, honest grounding - is what turns an impressive demo into a system people can actually trust. That is the work, and it is the work we do.

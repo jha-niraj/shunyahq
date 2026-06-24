@@ -2,13 +2,23 @@
 
 import { useParams, notFound } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 import { ArrowLeft, Users, Calendar, MapPin, Building, Briefcase, Globe, Mail, Phone } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { PageBackground } from "@/components/landing/page-background"
+
+function stageBadgeClass(stage: string) {
+    switch (stage) {
+        case "Scaling Up":
+            return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300"
+        case "MVP":
+            return "bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300"
+        case "Prototype Ready":
+            return "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
+        default:
+            return "bg-so-surface-2 text-so-ink-2"
+    }
+}
 
 // Sample data for startup submissions - same as in discover page
 const STARTUP_SUBMISSIONS = [
@@ -333,212 +343,161 @@ export default function StartupDetailPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-            <div className="container max-w-6xl mx-auto px-4 py-12">
-                <div className="mb-6">
+        <main className="relative overflow-x-clip isolate bg-so-bg min-h-screen">
+            <PageBackground className="z-0" />
+            <div className="relative z-[1] so-container py-[clamp(80px,10vw,120px)]">
+                <div className="mb-8">
                     <Link
                         href="/discover"
-                        className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                        className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-so-ink-3 hover:text-so-ink transition-colors"
                     >
-                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        <ArrowLeft size={15} />
                         Back to Discover
                     </Link>
                 </div>
-                <div className="grid md:grid-cols-3 gap-8">
-                    <div className="md:col-span-2">
-                        <div className="bg-white rounded-xl shadow-sm p-8 mb-8">
-                            <div className="flex flex-col md:flex-row md:items-center gap-6 mb-6">
-                                <Image
-                                    src={startup.logo || "/placeholder.svg"}
-                                    alt={startup.name}
-                                    width={100}
-                                    height={100}
-                                    className="rounded-full"
-                                />
+                <div className="grid lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2">
+                        <div className="so-card p-[clamp(24px,4vw,40px)]">
+                            <div className="flex flex-col md:flex-row md:items-center gap-5 mb-8 pb-8 border-b border-so-line">
+                                <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-so-surface-2 text-so-ink shrink-0">
+                                    <Users size={26} />
+                                </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold mb-2">{startup.name}</h1>
-                                    <p className="text-xl text-muted-foreground mb-4">{startup.summary}</p>
+                                    <h1 className="text-[clamp(26px,4vw,38px)] font-semibold text-so-ink tracking-[-0.025em] mb-2">
+                                        {startup.name}
+                                    </h1>
+                                    <p className="text-[16px] leading-[1.6] text-so-ink-2 mb-4">{startup.summary}</p>
                                     <div className="flex flex-wrap gap-2">
-                                        <Badge variant="outline">{startup.industry}</Badge>
-                                        <Badge
-                                            variant="secondary"
-                                            className={
-                                                startup.stage === "Scaling Up"
-                                                    ? "bg-green-100 text-green-800"
-                                                    : startup.stage === "MVP"
-                                                        ? "bg-blue-100 text-blue-800"
-                                                        : startup.stage === "Prototype Ready"
-                                                            ? "bg-yellow-100 text-yellow-800"
-                                                            : "bg-gray-100 text-gray-800"
-                                            }
-                                        >
+                                        <span className="inline-flex items-center text-[11.5px] font-medium px-2.5 py-1 rounded-full border border-so-line text-so-ink-2">
+                                            {startup.industry}
+                                        </span>
+                                        <span className={`inline-flex items-center text-[11.5px] font-medium px-2.5 py-1 rounded-full ${stageBadgeClass(startup.stage)}`}>
                                             {startup.stage}
-                                        </Badge>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                             <Tabs defaultValue="overview">
-                                <TabsList className="mb-4">
+                                <TabsList className="mb-6">
                                     <TabsTrigger value="overview">Overview</TabsTrigger>
                                     <TabsTrigger value="team">Team</TabsTrigger>
                                     <TabsTrigger value="milestones">Milestones</TabsTrigger>
                                 </TabsList>
-                                <TabsContent value="overview" className="space-y-6">
-                                    <div>
-                                        <h2 className="text-xl font-bold mb-3">Description</h2>
-                                        <p className="text-muted-foreground">{startup.description}</p>
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-bold mb-3">Problem</h2>
-                                        <p className="text-muted-foreground">{startup.problem}</p>
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-bold mb-3">Solution</h2>
-                                        <p className="text-muted-foreground">{startup.solution}</p>
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-bold mb-3">Traction</h2>
-                                        <p className="text-muted-foreground">{startup.traction}</p>
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-bold mb-3">Business Model</h2>
-                                        <p className="text-muted-foreground">{startup.businessModel}</p>
-                                    </div>
+                                <TabsContent value="overview" className="space-y-7">
+                                    {[
+                                        { label: "Description", value: startup.description },
+                                        { label: "Problem", value: startup.problem },
+                                        { label: "Solution", value: startup.solution },
+                                        { label: "Traction", value: startup.traction },
+                                        { label: "Business Model", value: startup.businessModel },
+                                    ].map((block) => (
+                                        <div key={block.label}>
+                                            <span className="so-eyebrow">{block.label}</span>
+                                            <p className="mt-2.5 text-[15px] leading-[1.7] text-so-ink-2">{block.value}</p>
+                                        </div>
+                                    ))}
                                 </TabsContent>
-                                <TabsContent value="team" className="space-y-6">
-                                    <h2 className="text-xl font-bold mb-4">Team Members</h2>
-                                    <div className="grid gap-4">
-                                        {
-                                        startup.team?.map((member, index) => (
-                                            <div key={index} className="flex items-start gap-4 p-4 border rounded-lg">
-                                                <div className="bg-muted rounded-full p-3">
-                                                    <Users className="h-6 w-6" />
+                                <TabsContent value="team" className="space-y-5">
+                                    <span className="so-eyebrow">Team Members</span>
+                                    <div className="grid gap-3">
+                                        {startup.team?.map((member, index) => (
+                                            <div key={index} className="flex items-start gap-4 p-5 rounded-xl border border-so-line bg-so-surface">
+                                                <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-so-surface-2 text-so-ink shrink-0">
+                                                    <Users size={18} />
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-bold">{member.name}</h3>
-                                                    <p className="text-sm text-muted-foreground mb-1">{member.role}</p>
-                                                    <p className="text-sm">{member.bio}</p>
+                                                    <h3 className="text-[15px] font-semibold text-so-ink">{member.name}</h3>
+                                                    <p className="text-[13px] text-emerald-700 dark:text-emerald-400 mb-1">{member.role}</p>
+                                                    <p className="text-[13.5px] leading-[1.6] text-so-ink-2">{member.bio}</p>
                                                 </div>
                                             </div>
-                                        ))
-                                        }
+                                        ))}
                                     </div>
                                 </TabsContent>
-                                <TabsContent value="milestones" className="space-y-6">
-                                    <h2 className="text-xl font-bold mb-4">Company Milestones</h2>
-                                    <div className="relative border-l border-muted pl-6 ml-3 space-y-6">
-                                        {
-                                        startup.milestones?.map((milestone, index) => (
+                                <TabsContent value="milestones" className="space-y-5">
+                                    <span className="so-eyebrow">Company Milestones</span>
+                                    <div className="relative border-l border-so-line pl-6 ml-2 space-y-6">
+                                        {startup.milestones?.map((milestone, index) => (
                                             <div key={index} className="relative">
-                                                <div className="absolute -left-9 mt-1.5 h-4 w-4 rounded-full bg-primary"></div>
-                                                <div>
-                                                    <p className="text-sm text-muted-foreground">{milestone.date}</p>
-                                                    <h3 className="font-medium">{milestone.title}</h3>
-                                                </div>
+                                                <div className="absolute -left-[31px] mt-1 h-3 w-3 rounded-full bg-emerald-600 dark:bg-emerald-400 ring-4 ring-so-bg" />
+                                                <p className="text-[12.5px] uppercase tracking-[0.06em] text-so-ink-3">{milestone.date}</p>
+                                                <h3 className="text-[15px] font-medium text-so-ink">{milestone.title}</h3>
                                             </div>
-                                        ))
-                                        }
+                                        ))}
                                     </div>
                                 </TabsContent>
                             </Tabs>
                         </div>
                     </div>
-                    <div>
-                        <Card className="mb-6">
-                            <CardHeader>
-                                <CardTitle>Company Info</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="flex items-center gap-2">
-                                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Founded</p>
-                                        <p>{startup.foundedYear}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Location</p>
-                                        <p>{startup.location}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Users className="h-4 w-4 text-muted-foreground" />
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Team Size</p>
-                                        <p>{startup.teamSize} employees</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Building className="h-4 w-4 text-muted-foreground" />
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Founder</p>
-                                        <p>{startup.founder}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Briefcase className="h-4 w-4 text-muted-foreground" />
-                                    <div>
-                                        <p className="text-sm text-muted-foreground">Funding</p>
-                                        <p>{startup.funding}</p>
-                                    </div>
-                                </div>
-                                {
-                                startup.website && (
-                                    <div className="flex items-center gap-2">
-                                        <Globe className="h-4 w-4 text-muted-foreground" />
+                    <div className="space-y-5">
+                        <div className="so-card p-7">
+                            <span className="so-eyebrow">Company Info</span>
+                            <div className="mt-5 space-y-4">
+                                {[
+                                    { icon: Calendar, label: "Founded", value: String(startup.foundedYear) },
+                                    { icon: MapPin, label: "Location", value: startup.location },
+                                    { icon: Users, label: "Team Size", value: `${startup.teamSize} employees` },
+                                    { icon: Building, label: "Founder", value: startup.founder },
+                                    { icon: Briefcase, label: "Funding", value: startup.funding },
+                                ].map((item) => {
+                                    const Icon = item.icon
+                                    return (
+                                        <div key={item.label} className="flex items-start gap-3">
+                                            <Icon size={16} className="text-so-ink-3 mt-0.5 shrink-0" />
+                                            <div>
+                                                <p className="text-[12px] uppercase tracking-[0.06em] text-so-ink-3">{item.label}</p>
+                                                <p className="text-[14px] text-so-ink">{item.value}</p>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                                {startup.website && (
+                                    <div className="flex items-start gap-3">
+                                        <Globe size={16} className="text-so-ink-3 mt-0.5 shrink-0" />
                                         <div>
-                                            <p className="text-sm text-muted-foreground">Website</p>
-                                            <a href={startup.website} className="text-primary hover:underline">
+                                            <p className="text-[12px] uppercase tracking-[0.06em] text-so-ink-3">Website</p>
+                                            <a href={startup.website} className="text-[14px] text-emerald-700 dark:text-emerald-400 hover:underline">
                                                 Visit Website
                                             </a>
                                         </div>
                                     </div>
-                                )
-                                }
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Contact Information</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {
-                                startup.contact?.email && (
-                                    <div className="flex items-center gap-2">
-                                        <Mail className="h-4 w-4 text-muted-foreground" />
+                                )}
+                            </div>
+                        </div>
+                        <div className="so-card p-7">
+                            <span className="so-eyebrow">Contact Information</span>
+                            <div className="mt-5 space-y-4">
+                                {startup.contact?.email && (
+                                    <div className="flex items-start gap-3">
+                                        <Mail size={16} className="text-so-ink-3 mt-0.5 shrink-0" />
                                         <div>
-                                            <p className="text-sm text-muted-foreground">Email</p>
-                                            <a href={`mailto:${startup.contact.email}`} className="text-primary hover:underline">
+                                            <p className="text-[12px] uppercase tracking-[0.06em] text-so-ink-3">Email</p>
+                                            <a href={`mailto:${startup.contact.email}`} className="text-[14px] text-emerald-700 dark:text-emerald-400 hover:underline break-all">
                                                 {startup.contact.email}
                                             </a>
                                         </div>
                                     </div>
-                                )
-                                }
-                                {
-                                startup.contact?.phone && (
-                                    <div className="flex items-center gap-2">
-                                        <Phone className="h-4 w-4 text-muted-foreground" />
+                                )}
+                                {startup.contact?.phone && (
+                                    <div className="flex items-start gap-3">
+                                        <Phone size={16} className="text-so-ink-3 mt-0.5 shrink-0" />
                                         <div>
-                                            <p className="text-sm text-muted-foreground">Phone</p>
-                                            <a href={`tel:${startup.contact.phone}`} className="text-primary hover:underline">
+                                            <p className="text-[12px] uppercase tracking-[0.06em] text-so-ink-3">Phone</p>
+                                            <a href={`tel:${startup.contact.phone}`} className="text-[14px] text-emerald-700 dark:text-emerald-400 hover:underline">
                                                 {startup.contact.phone}
                                             </a>
                                         </div>
                                     </div>
-                                )
-                                }
-                            </CardContent>
-                        </Card>
-                        <div className="mt-6">
-                            <Button className="w-full">Connect with Founder</Button>
+                                )}
+                            </div>
                         </div>
+                        <Link href="/contactus" className="so-btn so-btn-primary w-full justify-center">
+                            Connect with Founder
+                        </Link>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     )
 }
 

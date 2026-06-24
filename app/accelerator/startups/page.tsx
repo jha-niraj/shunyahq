@@ -2,15 +2,43 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { Search, Filter, Users, ArrowRight, ExternalLink } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { PageHero } from "@/components/landing/page-hero"
+import { PageBackground } from "@/components/landing/page-background"
+
+function stageBadgeClass(stage: string) {
+    switch (stage) {
+        case "Scaling Up":
+            return "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300"
+        case "MVP":
+            return "bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300"
+        case "Prototype Ready":
+            return "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300"
+        default:
+            return "bg-so-surface-2 text-so-ink-2"
+    }
+}
+
+function StageBadge({ stage }: { stage: string }) {
+    return (
+        <span className={`inline-flex items-center text-[11.5px] font-medium px-2.5 py-1 rounded-full ${stageBadgeClass(stage)}`}>
+            {stage}
+        </span>
+    )
+}
+
+function IndustryBadge({ industry }: { industry: string }) {
+    return (
+        <span className="inline-flex items-center text-[11.5px] font-medium px-2.5 py-1 rounded-full border border-so-line text-so-ink-2">
+            {industry}
+        </span>
+    )
+}
 
 const STARTUP_SUBMISSIONS = [
     {
@@ -212,19 +240,26 @@ export default function DiscoverPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-            <div className="container max-w-6xl mx-auto px-4 py-12">
-                <header className="text-center mb-12">
-                    <h1 className="text-4xl font-bold tracking-tight mb-3">Discover Startup Submissions</h1>
-                    <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                        Explore innovative startup ideas from our community and connect with founders.
-                    </p>
-                </header>
+        <main className="relative overflow-x-clip isolate">
+            <PageBackground className="z-0" />
+            <PageHero
+                palette="emerald"
+                eyebrow="Discover startups"
+                title={
+                    <>
+                        Startup ideas from our{" "}
+                        <span className="so-serif italic">community.</span>
+                    </>
+                }
+                description="Explore innovative startup ideas from our community of student founders and connect with the people building them."
+            />
 
-                <div className="mb-8">
-                    <div className="flex flex-col md:flex-row gap-4">
+            <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
+                <div className="so-container">
+                    {/* Search + filters */}
+                    <div className="flex flex-col md:flex-row gap-3 mb-10">
                         <div className="relative flex-grow">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-so-ink-3" />
                             <Input
                                 placeholder="Search by name, industry, or keywords..."
                                 className="pl-9"
@@ -232,7 +267,7 @@ export default function DiscoverPage() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <div className="flex gap-4">
+                        <div className="flex gap-3">
                             <Select value={industryFilter} onValueChange={setIndustryFilter}>
                                 <SelectTrigger className="w-[180px]">
                                     <div className="flex items-center">
@@ -267,150 +302,125 @@ export default function DiscoverPage() {
                             </Select>
                         </div>
                     </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {
-                        filteredStartups.map((startup) => (
-                            <Card
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {filteredStartups.map((startup) => (
+                            <div
                                 key={startup.id}
-                                className="cursor-pointer transition-all duration-300 hover:shadow-md"
+                                className="so-card p-7 flex flex-col cursor-pointer hover:shadow-md transition-all"
                                 onClick={() => handleStartupClick(startup)}
                             >
-                                <CardContent className="p-6">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <Image
-                                            src={startup.logo || "/placeholder.svg"}
-                                            alt={startup.name}
-                                            width={50}
-                                            height={50}
-                                            className="rounded-full"
-                                        />
-                                        <div>
-                                            <h3 className="text-xl font-bold">{startup.name}</h3>
-                                            <p className="text-sm text-muted-foreground">{startup.founder}</p>
-                                        </div>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-so-surface-2 text-so-ink shrink-0">
+                                        <Users size={18} />
                                     </div>
-                                    <p className="text-muted-foreground mb-4">{startup.summary}</p>
-                                    <div className="flex flex-wrap gap-2 mb-4">
-                                        <Badge variant="outline">{startup.industry}</Badge>
-                                        <Badge
-                                            variant="secondary"
-                                            className={
-                                                startup.stage === "Scaling Up"
-                                                    ? "bg-green-100 text-green-800"
-                                                    : startup.stage === "MVP"
-                                                        ? "bg-blue-100 text-blue-800"
-                                                        : startup.stage === "Prototype Ready"
-                                                            ? "bg-yellow-100 text-yellow-800"
-                                                            : "bg-gray-100 text-gray-800"
-                                            }
-                                        >
-                                            {startup.stage}
-                                        </Badge>
+                                    <div>
+                                        <h3 className="text-[18px] font-semibold text-so-ink tracking-[-0.01em]">{startup.name}</h3>
+                                        <p className="text-[13px] text-so-ink-3">{startup.founder}</p>
                                     </div>
-                                </CardContent>
-                                <CardFooter className="px-6 py-4 bg-muted/50 flex justify-between">
-                                    <div className="flex items-center text-sm">
-                                        <Users className="h-4 w-4 mr-1" />
+                                </div>
+                                <p className="text-[14px] leading-[1.7] text-so-ink-2 mb-5 flex-1">{startup.summary}</p>
+                                <div className="flex flex-wrap gap-2 mb-5">
+                                    <IndustryBadge industry={startup.industry} />
+                                    <StageBadge stage={startup.stage} />
+                                </div>
+                                <div className="flex items-center justify-between pt-4 border-t border-so-line">
+                                    <div className="flex items-center gap-1.5 text-[13px] text-so-ink-3">
+                                        <Users size={14} />
                                         <span>{startup.advisorsInterested} Advisors Interested</span>
                                     </div>
-                                    <Link href={`/startups/${startup.id}`}>
-                                        <Button variant="ghost" size="sm">
-                                            View Details
-                                        </Button>
+                                    <Link
+                                        href={`/startups/${startup.id}`}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="inline-flex items-center gap-1 text-[13px] font-medium text-so-ink-3 hover:text-so-ink transition-colors"
+                                    >
+                                        View details <ArrowRight size={13} />
                                     </Link>
-                                </CardFooter>
-                            </Card>
-                        ))
-                    }
-                </div>
-                {
-                    filteredStartups.length === 0 && (
-                        <div className="text-center py-12">
-                            <p className="text-muted-foreground mb-4">No startups match your search criteria</p>
-                            <Button
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {filteredStartups.length === 0 && (
+                        <div className="so-card p-12 text-center flex flex-col items-center">
+                            <p className="text-[15px] text-so-ink-2 mb-5">No startups match your search criteria.</p>
+                            <button
+                                className="so-btn so-btn-ghost"
                                 onClick={() => {
                                     setSearchTerm("")
                                     setIndustryFilter("")
                                     setStageFilter("")
                                 }}
                             >
-                                Clear Filters
-                            </Button>
+                                Clear filters
+                            </button>
                         </div>
-                    )
-                }
-                <div className="mt-16 text-center">
-                    <h2 className="text-2xl font-bold mb-6">Have a Startup Idea?</h2>
-                    <Link href="/submit">
-                        <Button size="lg" className="group">
-                            Submit Your Idea
-                            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                        </Button>
-                    </Link>
+                    )}
                 </div>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    {
-                        selectedStartup && (
-                            <DialogContent className="max-w-3xl">
-                                <DialogHeader>
-                                    <DialogTitle className="text-2xl">{selectedStartup.name}</DialogTitle>
-                                    <DialogDescription className="text-base mt-2">{selectedStartup.summary}</DialogDescription>
-                                </DialogHeader>
-                                <div className="flex flex-wrap gap-2 mb-4">
-                                    <Badge variant="outline">{selectedStartup.industry}</Badge>
-                                    <Badge
-                                        variant="secondary"
-                                        className={
-                                            selectedStartup.stage === "Scaling Up"
-                                                ? "bg-green-100 text-green-800"
-                                                : selectedStartup.stage === "MVP"
-                                                    ? "bg-blue-100 text-blue-800"
-                                                    : selectedStartup.stage === "Prototype Ready"
-                                                        ? "bg-yellow-100 text-yellow-800"
-                                                        : "bg-gray-100 text-gray-800"
-                                        }
-                                    >
-                                        {selectedStartup.stage}
-                                    </Badge>
+            </section>
+
+            <section className="relative z-[1] bg-so-surface so-section border-t border-so-line">
+                <div className="so-container">
+                    <div className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
+                        <span className="so-eyebrow">Have a startup idea?</span>
+                        <h2 className="mt-5 mb-4 text-[clamp(28px,4vw,46px)] tracking-[-0.03em] text-so-ink max-w-[20ch]">
+                            Submit your{" "}
+                            <span className="so-serif italic">idea.</span>
+                        </h2>
+                        <p className="text-[15px] leading-[1.7] text-so-ink-2 max-w-[52ch] mb-8">
+                            Tell us what you&apos;re building and the areas you need help with-we&apos;ll take it from there.
+                        </p>
+                        <Link href="/submit" className="so-btn so-btn-primary">
+                            Submit your idea <ArrowRight size={13} />
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                {selectedStartup && (
+                    <DialogContent className="max-w-3xl">
+                        <DialogHeader>
+                            <DialogTitle className="text-[24px] tracking-[-0.015em] text-so-ink">{selectedStartup.name}</DialogTitle>
+                            <DialogDescription className="text-[15px] mt-2 text-so-ink-2">{selectedStartup.summary}</DialogDescription>
+                        </DialogHeader>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                            <IndustryBadge industry={selectedStartup.industry} />
+                            <StageBadge stage={selectedStartup.stage} />
+                        </div>
+                        <div className="space-y-4">
+                            <p className="text-[14px] leading-[1.7] text-so-ink-2">{selectedStartup.description}</p>
+                            <div className="grid grid-cols-2 gap-4 text-[13.5px] text-so-ink-2">
+                                <div>
+                                    <span className="font-medium text-so-ink">Founded:</span> {selectedStartup.foundedYear}
                                 </div>
-                                <div className="space-y-4">
-                                    <p>{selectedStartup.description}</p>
-                                    <div className="grid grid-cols-2 gap-4 text-sm">
-                                        <div>
-                                            <span className="font-medium">Founded:</span> {selectedStartup.foundedYear}
-                                        </div>
-                                        <div>
-                                            <span className="font-medium">Location:</span> {selectedStartup.location}
-                                        </div>
-                                        <div>
-                                            <span className="font-medium">Team Size:</span> {selectedStartup.teamSize}
-                                        </div>
-                                        <div>
-                                            <span className="font-medium">Funding:</span> {selectedStartup.funding}
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center text-sm">
-                                        <Users className="h-4 w-4 mr-1" />
-                                        <span>{selectedStartup.advisorsInterested} Advisors Interested</span>
-                                    </div>
+                                <div>
+                                    <span className="font-medium text-so-ink">Location:</span> {selectedStartup.location}
                                 </div>
-                                <div className="flex justify-end gap-4 mt-4">
-                                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                                        Close
-                                    </Button>
-                                    <Link href={`/startups/${selectedStartup.id}`}>
-                                        <Button>
-                                            <ExternalLink className="mr-2 h-4 w-4" />
-                                            View Full Details
-                                        </Button>
-                                    </Link>
+                                <div>
+                                    <span className="font-medium text-so-ink">Team Size:</span> {selectedStartup.teamSize}
                                 </div>
-                            </DialogContent>
-                        )
-                    }
-                </Dialog>
-            </div>
-        </div>
+                                <div>
+                                    <span className="font-medium text-so-ink">Funding:</span> {selectedStartup.funding}
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[13.5px] text-so-ink-3">
+                                <Users size={14} />
+                                <span>{selectedStartup.advisorsInterested} Advisors Interested</span>
+                            </div>
+                        </div>
+                        <div className="flex justify-end gap-3 mt-4">
+                            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                                Close
+                            </Button>
+                            <Link href={`/startups/${selectedStartup.id}`} className="so-btn so-btn-primary">
+                                <ExternalLink size={14} />
+                                View full details
+                            </Link>
+                        </div>
+                    </DialogContent>
+                )}
+            </Dialog>
+        </main>
     )
 }

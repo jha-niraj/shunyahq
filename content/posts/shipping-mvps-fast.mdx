@@ -1,0 +1,64 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Most "fast" MVPs are fast because they are fake. A clickable Figma file, a no-code mockup, a landing page with a waitlist - these ship quickly because nobody can actually use them. At Shunya, a production MVP means something stricter: a live system, on a real domain, with real authentication and a real database, that a real person can sign up for and use to do the one thing your product exists to do.
+
+We ship that in four to eight weeks. Here is exactly how - and, more importantly, what we leave out to make it possible.
+
+## A production MVP is a live system, not a prototype
+
+The single biggest reason MVPs slip is scope confusion. "MVP" gets stretched to mean "the first version of everything." It does not. The minimum viable product is the smallest thing that proves your core loop works and that someone will use it.
+
+Concretely, every Shunya MVP ships with:
+
+- **One core workflow, working end to end.** Sign up, do the main thing, see the result.
+- **Real authentication.** We do not fake auth in an MVP. It is table stakes and it is cheap with modern tooling.
+- **A real, relational database.** Data you can trust and migrate later, not a spreadsheet.
+- **A live deployment.** On a real URL, with a real domain, that we hand over.
+
+<Callout type="tip">
+If you cannot describe your product's core loop in one sentence - "a user does X and gets Y" - you are not ready to build an MVP yet. You are ready to talk. That is what the discovery phase is for.
+</Callout>
+
+## We scope in weeks, not quarters
+
+Before a single line of code, there is a one-to-two week discovery phase. The output is a written spec document: what we are building, what the core loop is, what is explicitly out of scope, and how we will know it works. You sign off on it before engineering starts.
+
+This sounds slow. It is the fastest thing we do. A written spec is where we have the cheap argument - the one where changing your mind costs an email instead of two weeks of rework.
+
+<RateTable
+  headers={["Phase", "Duration", "What you get"]}
+  rows={[
+    ["Discovery", "Week 1-2", "Written spec, architecture blueprint, scope agreement"],
+    ["Engineering", "Week 3-6", "Bi-weekly deploys to staging - real, clickable software"],
+    ["Launch", "Final week", "QA pass, production deploy, docs, handover"],
+  ]}
+/>
+
+## Speed comes from a small, opinionated stack
+
+We do not evaluate frameworks per project. We reach for a stack we know deeply - Next.js, tRPC, and Prisma - because the boring decisions are already made. End-to-end type safety means a change to the database schema shows up as a type error in the UI before it ships, not as a bug after launch.
+
+The lesson generalises beyond our specific tools: **velocity is a function of how little you have to think about the foundation.** A team using one stack fluently will out-ship a team assembling a "perfect" bespoke stack every time.
+
+## What we deliberately leave out
+
+This is the part teams skip, and it is the whole game. To ship in weeks, we cut:
+
+- Admin dashboards and internal tooling - until you have data worth administering.
+- Granular roles and permissions - until you have more than one type of user.
+- Exotic integrations - until the core loop proves people want the product.
+- Edge-case handling for flows nobody has used yet.
+
+None of this is "technical debt." It is deferred scope, and deferring it is a decision, not an accident.
+
+<Callout type="warning">
+Cutting scope is not the same as cutting corners. We never skip auth, never skip the real database, and never skip the production deploy. Those are the load-bearing walls. Everything else is furniture you can add once people move in.
+</Callout>
+
+## You see real software every two weeks
+
+From week three, we deploy to a staging environment every two weeks. You click through working software, not a status deck. This does two things: it catches misunderstandings while they are cheap to fix, and it keeps everyone honest about what "done" means.
+
+By the final week, the product is QA'd, deployed to production, documented, and handed over. Four to eight weeks after the first conversation, you have a live system - and the only thing left to do is the most important one: put it in front of real users and learn.
+
+That is the point of shipping fast. Not to be done. To start learning sooner.

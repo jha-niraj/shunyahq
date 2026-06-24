@@ -1,324 +1,320 @@
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, ExternalLink, CheckCircle, ArrowRight } from "lucide-react"
-import SmoothScroll from "@/components/smoothscroll"
+import {
+    ArrowLeft,
+    ArrowRight,
+    ExternalLink,
+    CheckCircle2,
+    Calendar,
+    Clock,
+    UserCircle,
+    Activity,
+} from "lucide-react"
+import { PageHero } from "@/components/landing/page-hero"
+import { PageBackground } from "@/components/landing/page-background"
+import { PageFAQ } from "@/components/landing/page-faq"
+import { TechBadge } from "@/components/landing/tech-icon"
+import { PROJECTS, getProjectBySlug } from "@/content/projects"
+import { SITE_URL, SITE_NAME } from "@/lib/site"
 
-interface Outcome {
-    metric: string
-    label: string
+export function generateStaticParams() {
+    return PROJECTS.map((p) => ({ projectslug: p.slug }))
 }
 
-interface Project {
-    projectslug: string
-    title: string
-    tagline: string
-    industry: string
-    client: string
-    timeline: string
-    role: string
-    image: string
-    link: string
-    stack: string[]
-    challenge: string
-    solution: string
-    features: string[]
-    outcomes: Outcome[]
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ projectslug: string }>
+}): Promise<Metadata> {
+    const { projectslug } = await params
+    const project = getProjectBySlug(projectslug)
+    if (!project) return {}
+
+    const title = `${project.title} - ${project.tagline}`
+    const url = `${SITE_URL}/projects/${project.slug}`
+
+    return {
+        title,
+        description: project.description,
+        keywords: [project.title, project.industry, ...project.technologies, "case study", "Shunya"],
+        alternates: { canonical: url },
+        openGraph: {
+            title,
+            description: project.description,
+            url,
+            type: "article",
+            siteName: SITE_NAME,
+        },
+        twitter: {
+            card: "summary_large_image",
+            title,
+            description: project.description,
+        },
+    }
 }
 
-const getProjectData = async (slug: string): Promise<Project | undefined> => {
-    const projects: Project[] = [
-        {
-            projectslug: "coderzai",
-            title: "CodrzAI",
-            tagline: "Engineering Intelligence Suite for CS Students",
-            industry: "Education",
-            client: "CodrzAI",
-            timeline: "4 Months",
-            role: "Full Product Development",
-            image: "/thecoderz.png",
-            link: "https://coderzai.xyz",
-            stack: ["Next.js", "Node.js", "MongoDB", "OpenAI API", "Redis", "WebSockets", "Tailwind CSS"],
-            challenge: "CS students in India were piecing together five different tools to navigate their technical journey — LeetCode for DSA, GitHub for projects, YouTube for learning, Discord for community, and ChatGPT for help. There was no single platform connecting these workflows, no AI that understood their specific academic and career context, and no way to build verifiable, real-world project experience before graduating. Students were learning in isolation with no proof of what they could actually ship.",
-            solution: "We built CodrzAI from scratch as a full engineering intelligence suite. The platform gives students a structured learning OS with AI-generated roadmaps, six specialized AI agents for DSA coaching, system design guidance, and real-time code review. A Project Foundry generates complete full-stack codebases from natural language prompts. An open-source contribution marketplace connects students with real bounties — so they graduate with a portfolio that proves what they can do, not just what they studied. Certifications are blockchain-verified so they can't be faked.",
-            features: [
-                "AI Learning Roadmap Generator",
-                "6+ Specialized AI Agents (DSA, System Design, Code Review)",
-                "Full-Stack Project Scaffolding Engine",
-                "Open Source Contribution Marketplace with Bounties",
-                "Blockchain-Verified Certifications",
-                "Credit-Based Flexible Access Model",
-                "Real-Time Collaborative IDE",
-                "Peer Mentorship & Community Forums"
-            ],
-            outcomes: [
-                { metric: "500+", label: "Active Students" },
-                { metric: "$50k+", label: "Bounties Available" },
-                { metric: "6+", label: "AI Agents Shipped" },
-                { metric: "4mo", label: "Time to Ship" }
-            ]
-        },
-        {
-            projectslug: "eventeye",
-            title: "EventEye",
-            tagline: "End-to-End Event Platform for Colleges & Institutions",
-            industry: "Events",
-            client: "EventEye",
-            timeline: "3 Months",
-            role: "Full Product Development",
-            image: "/eventeye.png",
-            link: "https://eventeye.in",
-            stack: ["React", "Node.js", "PostgreSQL", "Razorpay", "Tailwind CSS"],
-            challenge: "College event organizers across India were running events on a patchwork of WhatsApp announcements, Google Form registrations, and manual attendance tracking. Attendees had no way to discover events outside their own campus. Organizers had zero visibility into who was attending, no real-time data, and no tools to build a community around their events. Every event was a logistical scramble with no infrastructure to support it.",
-            solution: "We built EventEye as a dual-sided platform with two completely distinct user experiences. On the attendee side: a discovery feed across institutions, an optimized checkout that gets users from intent to confirmed ticket in under 30 seconds, and a personal event history. On the organizer side: a full event management dashboard with real-time attendance tracking, analytics, community tools, and role-based team access. One codebase, two powerful products — organizers and attendees each get exactly what they need without compromise.",
-            features: [
-                "Dual-Pathway Architecture (Attendee & Organizer)",
-                "Cross-Institution Event Discovery Feed",
-                "Fast Ticket Checkout (Under 30 Seconds)",
-                "Real-Time Attendance Management Dashboard",
-                "Organizer Analytics & Reporting",
-                "Community & Social Layer for Events",
-                "Role-Based Team Access for Organizers",
-                "Mobile-First Responsive Design"
-            ],
-            outcomes: [
-                { metric: "< 30s", label: "Checkout Time" },
-                { metric: "2", label: "User Pathways Built" },
-                { metric: "Multi", label: "Institution Support" },
-                { metric: "3mo", label: "Time to Ship" }
-            ]
-        },
-        {
-            projectslug: "mp-solutions",
-            title: "M.P. Solutions",
-            tagline: "Real-Time Pharmaceutical Inventory for B2B Supply Chains",
-            industry: "Healthcare",
-            client: "M.P. Solutions",
-            timeline: "2 Months",
-            role: "Full Stack Development",
-            image: "/mpsolutions.png",
-            link: "https://mpsolutions.vercel.app/",
-            stack: ["Next.js", "tRPC", "Prisma", "PostgreSQL", "Tailwind CSS"],
-            challenge: "A pharmaceutical distributor was managing inventory across multiple pharmacy partners entirely through phone calls and WhatsApp messages. Stockouts happened weekly. Surplus sat unsold. There was zero visibility into demand patterns across the network, and reorders were delayed because no one had a single source of truth for what was in stock where. The business was running on memory and goodwill, both of which have limits.",
-            solution: "We built a centralized B2B procurement platform in 8 weeks. Pharmacies can check real-time stock availability, place orders, and configure automated reorder thresholds — no calls required. Distributors get a unified dashboard showing live demand patterns, low-stock alerts across the entire network, and a complete order audit trail. Built on Next.js with tRPC for fully type-safe end-to-end APIs and Prisma for reliable, relational data — every layer of the stack is predictable and maintainable.",
-            features: [
-                "Real-Time Inventory Sync Across Network",
-                "Automated Reorder Threshold Alerts",
-                "Supplier & Pharmacy Dual Dashboards",
-                "Demand Forecasting & Analytics",
-                "Complete Order History & Audit Trail",
-                "Mobile-Accessible Interface for Field Teams"
-            ],
-            outcomes: [
-                { metric: "2mo", label: "Time to Ship" },
-                { metric: "100%", label: "Network Visibility" },
-                { metric: "0", label: "Phone Calls Needed" },
-                { metric: "Real-time", label: "Stock Updates" }
-            ]
-        }
+export default async function ProjectCaseStudyPage({
+    params,
+}: {
+    params: Promise<{ projectslug: string }>
+}) {
+    const { projectslug } = await params
+    const project = getProjectBySlug(projectslug)
+    if (!project) notFound()
+
+    const url = `${SITE_URL}/projects/${project.slug}`
+
+    const articleSchema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: `${project.title} - ${project.tagline}`,
+        description: project.description,
+        url,
+        ...(project.image ? { image: `${SITE_URL}${project.image}` } : {}),
+        author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+        publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+        about: project.industry,
+        keywords: project.technologies.join(", "),
+    }
+
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+            { "@type": "ListItem", position: 2, name: "Projects", item: `${SITE_URL}/projects` },
+            { "@type": "ListItem", position: 3, name: project.title, item: url },
+        ],
+    }
+
+    const metaItems = [
+        { icon: Calendar, label: "Year", value: String(project.year) },
+        { icon: Clock, label: "Timeline", value: project.timeline },
+        { icon: UserCircle, label: "Role", value: project.role },
+        { icon: Activity, label: "Status", value: project.status },
     ]
 
-    await new Promise(resolve => setTimeout(resolve, 50))
-    return projects.find(p => p.projectslug === slug)
+    return (
+        <main className="relative overflow-x-clip isolate">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+            />
+
+            <PageBackground className="z-0" />
+            <PageHero
+                palette="goldNoir"
+                eyebrow={`Case Study · ${project.industry}`}
+                title={<>{project.title}</>}
+                description={project.tagline}
+            />
+
+            <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
+                <div className="so-container">
+                    {/* Back link */}
+                    <Link
+                        href="/projects"
+                        className="group inline-flex items-center gap-2 text-[13.5px] text-so-ink-3 hover:text-so-ink transition-colors mb-10"
+                    >
+                        <span className="flex items-center justify-center p-2 rounded-full border border-so-line group-hover:border-so-ink-4 transition-colors">
+                            <ArrowLeft className="w-4 h-4" />
+                        </span>
+                        All work
+                    </Link>
+
+                    {/* Meta strip + live link */}
+                    <div className="so-card p-6 mb-12 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 flex-1">
+                            {metaItems.map(({ icon: Icon, label, value }) => (
+                                <div key={label} className="flex items-start gap-3">
+                                    <Icon className="w-4 h-4 text-so-ink-3 mt-0.5 shrink-0" />
+                                    <div>
+                                        <div className="so-eyebrow mb-1">{label}</div>
+                                        <div className="text-[14px] font-semibold text-so-ink leading-snug">
+                                            {value}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <Link
+                            href={project.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="so-btn so-btn-primary justify-center shrink-0"
+                        >
+                            Visit live site <ExternalLink className="w-4 h-4" />
+                        </Link>
+                    </div>
+
+                    {/* Hero visual: screenshot or branded SVG panel */}
+                    {project.image ? (
+                        <div className="relative aspect-video w-full overflow-hidden rounded-[var(--so-radius-lg)] border border-so-line bg-so-surface-2 mb-16">
+                            <Image
+                                src={project.image}
+                                alt={`${project.title} - product screenshot`}
+                                fill
+                                className="object-cover"
+                                priority
+                            />
+                        </div>
+                    ) : (
+                        <BrandedPanel title={project.title} tagline={project.tagline} />
+                    )}
+
+                    {/* Overview */}
+                    <section className="max-w-3xl mb-16">
+                        <span className="so-eyebrow">Overview</span>
+                        <h2 className="mt-5 text-[clamp(22px,2.6vw,30px)] tracking-[-0.02em] text-so-ink leading-[1.25]">
+                            {project.description}
+                        </h2>
+                    </section>
+
+                    {/* Challenge + What we built */}
+                    <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 mb-20">
+                        <section className="so-card p-7 lg:p-9">
+                            <span className="so-eyebrow">The Challenge</span>
+                            <p className="mt-5 text-[15.5px] leading-[1.8] text-so-ink-2">
+                                {project.challenge}
+                            </p>
+                        </section>
+                        <section className="so-card p-7 lg:p-9">
+                            <span className="so-eyebrow">What We Built</span>
+                            <p className="mt-5 text-[15.5px] leading-[1.8] text-so-ink-2">
+                                {project.whatWeBuilt}
+                            </p>
+                        </section>
+                    </div>
+
+                    {/* Key capabilities */}
+                    <section className="mb-20">
+                        <div className="flex items-center gap-4 mb-8">
+                            <span className="so-eyebrow shrink-0">Key Capabilities</span>
+                            <span className="h-px flex-1 bg-so-line" />
+                        </div>
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                            {project.keyCapabilities.map((cap) => (
+                                <div key={cap.title} className="so-card p-6 h-full flex flex-col">
+                                    <CheckCircle2 className="w-5 h-5 text-so-ink mb-4" />
+                                    <h3 className="text-[16px] font-semibold text-so-ink mb-2 tracking-[-0.01em]">
+                                        {cap.title}
+                                    </h3>
+                                    <p className="text-[14px] leading-[1.7] text-so-ink-2">{cap.body}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Outcomes */}
+                    <section className="mb-20">
+                        <div className="flex items-center gap-4 mb-8">
+                            <span className="so-eyebrow shrink-0">Outcomes</span>
+                            <span className="h-px flex-1 bg-so-line" />
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            {project.outcomes.map((o) => (
+                                <div
+                                    key={o.label}
+                                    className="so-card p-7 text-center flex flex-col items-center justify-center"
+                                >
+                                    <div className="text-[clamp(28px,3.4vw,40px)] font-semibold tracking-[-0.03em] text-so-ink leading-none">
+                                        {o.value}
+                                    </div>
+                                    <div className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-so-ink-3 mt-3 leading-snug">
+                                        {o.label}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* Tech stack */}
+                    <section className="mb-4">
+                        <div className="flex items-center gap-4 mb-8">
+                            <span className="so-eyebrow shrink-0">Tech Stack</span>
+                            <span className="h-px flex-1 bg-so-line" />
+                        </div>
+                        <div className="flex flex-wrap gap-2.5">
+                            {project.technologies.map((tech) => (
+                                <TechBadge key={tech} name={tech} className="px-4 py-2 text-[13px]" />
+                            ))}
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            {/* Project FAQ */}
+            <section className="relative z-[1] bg-so-surface border-t border-so-line">
+                <PageFAQ
+                    items={project.faqs}
+                    eyebrow="Project FAQ"
+                    title="About this"
+                    titleAccent="build"
+                    description={`Common questions about how we approached and shipped ${project.title}.`}
+                />
+            </section>
+
+            {/* CTA */}
+            <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
+                <div className="so-container">
+                    <div className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
+                        <span className="so-eyebrow">Like what you see?</span>
+                        <h2 className="mt-5 mb-4 text-[clamp(28px,4vw,46px)] tracking-[-0.03em] text-so-ink max-w-[22ch]">
+                            Let&apos;s ship something{" "}
+                            <span className="so-serif italic">like this.</span>
+                        </h2>
+                        <p className="text-[15px] leading-[1.7] text-so-ink-2 max-w-[52ch] mb-8">
+                            {project.title} went from concept to production in {project.timeline}. Tell us
+                            what you&apos;re building and we&apos;ll scope exactly how we&apos;d ship it.
+                        </p>
+                        <div className="flex flex-col sm:flex-row items-center gap-3">
+                            <Link href="/contactus" className="so-btn so-btn-primary">
+                                Start a project <ArrowRight size={13} />
+                            </Link>
+                            <Link href="/projects" className="so-btn so-btn-ghost">
+                                All work <ArrowRight size={13} />
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    )
 }
 
-export default async function ProjectDetailsPage({ params }: { params: Promise<{ projectslug: string }> }) {
-    const { projectslug } = await params
-    const project = await getProjectData(projectslug)
-
-    if (!project) return notFound()
-
+// Branded decorative panel rendered when a project has no screenshot asset.
+function BrandedPanel({ title, tagline }: { title: string; tagline: string }) {
     return (
-        <SmoothScroll>
-            <main className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-50">
-                <div className="fixed inset-0 z-0 pointer-events-none opacity-20 dark:opacity-10">
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="relative aspect-video w-full overflow-hidden rounded-[var(--so-radius-lg)] border border-so-line bg-so-surface-2 mb-16 flex items-center justify-center">
+            <svg
+                aria-hidden
+                className="absolute inset-0 h-full w-full text-so-line"
+                preserveAspectRatio="xMidYMid slice"
+            >
+                <defs>
+                    <pattern id={`grid-${title}`} width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M40 0H0V40" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.5" />
+                    </pattern>
+                    <radialGradient id={`glow-${title}`} cx="50%" cy="45%" r="60%">
+                        <stop offset="0%" stopColor="rgba(201,169,97,0.18)" />
+                        <stop offset="100%" stopColor="rgba(201,169,97,0)" />
+                    </radialGradient>
+                </defs>
+                <rect width="100%" height="100%" fill={`url(#grid-${title})`} />
+                <rect width="100%" height="100%" fill={`url(#glow-${title})`} />
+            </svg>
+            <div className="relative text-center px-8">
+                <div className="so-serif italic text-[clamp(48px,9vw,96px)] leading-none text-so-ink select-none">
+                    {title}
                 </div>
-
-                <div className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-24">
-                    {/* Navigation */}
-                    <div className="flex justify-between items-center mb-12">
-                        <Link
-                            href="/projects"
-                            className="group flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors"
-                        >
-                            <div className="p-2 rounded-full border border-neutral-200 dark:border-neutral-800 group-hover:border-neutral-400 transition-colors">
-                                <ArrowLeft className="w-4 h-4" />
-                            </div>
-                            <span>All Projects</span>
-                        </Link>
-                        <span className="px-3 py-1 rounded-full border border-neutral-200 dark:border-neutral-800 text-xs font-mono uppercase tracking-wider text-neutral-500">
-                            {project.industry}
-                        </span>
-                    </div>
-
-                    {/* Header */}
-                    <div className="mb-8">
-                        <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4">
-                            {project.title}
-                        </h1>
-                        <p className="text-xl md:text-2xl text-neutral-500 font-light">
-                            {project.tagline}
-                        </p>
-                    </div>
-
-                    {/* Meta Strip */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 p-6 rounded-2xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800">
-                        <div>
-                            <div className="text-xs font-mono text-neutral-400 uppercase tracking-wider mb-1">Client</div>
-                            <div className="font-semibold">{project.client}</div>
-                        </div>
-                        <div>
-                            <div className="text-xs font-mono text-neutral-400 uppercase tracking-wider mb-1">Timeline</div>
-                            <div className="font-semibold">{project.timeline}</div>
-                        </div>
-                        <div>
-                            <div className="text-xs font-mono text-neutral-400 uppercase tracking-wider mb-1">Role</div>
-                            <div className="font-semibold">{project.role}</div>
-                        </div>
-                        <div>
-                            <div className="text-xs font-mono text-neutral-400 uppercase tracking-wider mb-1">Status</div>
-                            <div className="font-semibold flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-green-500 inline-block animate-pulse" />
-                                Live in Production
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Hero Image */}
-                    <div className="relative aspect-video w-full overflow-hidden rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 mb-20 shadow-2xl shadow-neutral-200/50 dark:shadow-black/50">
-                        <Image
-                            src={project.image}
-                            alt={project.title}
-                            fill
-                            className="object-cover"
-                            priority
-                        />
-                    </div>
-
-                    {/* Main Content + Sidebar */}
-                    <div className="grid lg:grid-cols-3 gap-16">
-                        <div className="lg:col-span-2 space-y-16">
-                            {/* Challenge */}
-                            <section>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 flex items-center justify-center shrink-0">
-                                        <div className="w-3 h-3 rounded-full bg-red-500" />
-                                    </div>
-                                    <h2 className="text-xs font-mono uppercase tracking-widest text-neutral-500">
-                                        The Challenge
-                                    </h2>
-                                </div>
-                                <p className="text-lg leading-relaxed text-neutral-600 dark:text-neutral-300">
-                                    {project.challenge}
-                                </p>
-                            </section>
-
-                            {/* Solution */}
-                            <section>
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-8 h-8 rounded-lg bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-900 flex items-center justify-center shrink-0">
-                                        <div className="w-3 h-3 rounded-full bg-green-500" />
-                                    </div>
-                                    <h2 className="text-xs font-mono uppercase tracking-widest text-neutral-500">
-                                        What We Built
-                                    </h2>
-                                </div>
-                                <p className="text-lg leading-relaxed text-neutral-600 dark:text-neutral-300">
-                                    {project.solution}
-                                </p>
-                            </section>
-
-                            {/* Features */}
-                            <section>
-                                <h2 className="text-xs font-mono uppercase tracking-widest text-neutral-500 mb-6">
-                                    Key Capabilities
-                                </h2>
-                                <ul className="grid sm:grid-cols-2 gap-3">
-                                    {project.features.map((feature, idx) => (
-                                        <li
-                                            key={idx}
-                                            className="flex items-start gap-3 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800"
-                                        >
-                                            <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
-                                            <span className="text-sm font-medium">{feature}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </section>
-                        </div>
-
-                        {/* Sidebar */}
-                        <div className="lg:col-span-1">
-                            <div className="sticky top-24 space-y-6">
-                                {/* Outcomes */}
-                                <div className="p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
-                                    <h3 className="text-xs font-mono text-neutral-500 uppercase tracking-wider mb-4">
-                                        Outcomes
-                                    </h3>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        {project.outcomes.map((outcome, idx) => (
-                                            <div
-                                                key={idx}
-                                                className="text-center p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800"
-                                            >
-                                                <div className="text-xl font-bold text-neutral-900 dark:text-white">
-                                                    {outcome.metric}
-                                                </div>
-                                                <div className="text-[10px] font-mono text-neutral-500 mt-1 uppercase tracking-wide">
-                                                    {outcome.label}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Tech Stack */}
-                                <div className="p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
-                                    <h3 className="text-xs font-mono text-neutral-500 uppercase tracking-wider mb-4">
-                                        Tech Stack
-                                    </h3>
-                                    <div className="flex flex-wrap gap-2">
-                                        {project.stack.map(tech => (
-                                            <span
-                                                key={tech}
-                                                className="px-3 py-1.5 text-xs font-mono border border-neutral-200 dark:border-neutral-700 rounded-lg bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300"
-                                            >
-                                                {tech}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Live Link */}
-                                <Link
-                                    href={project.link}
-                                    target="_blank"
-                                    className="flex items-center justify-center gap-2 w-full py-4 bg-neutral-900 dark:bg-white text-white dark:text-black rounded-2xl font-bold hover:opacity-90 transition-opacity"
-                                >
-                                    View Live Product <ExternalLink className="w-4 h-4" />
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Footer CTA */}
-                    <div className="mt-24 pt-12 border-t border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row justify-between items-center gap-6">
-                        <Link
-                            href="/projects"
-                            className="flex items-center gap-2 font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors"
-                        >
-                            <ArrowLeft className="w-4 h-4" /> All Projects
-                        </Link>
-                        <Link
-                            href="/contactus"
-                            className="flex items-center gap-2 px-6 py-3 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-black font-bold text-sm hover:opacity-90 transition-opacity"
-                        >
-                            Start a Similar Project <ArrowRight className="w-4 h-4" />
-                        </Link>
-                    </div>
-                </div>
-            </main>
-        </SmoothScroll>
+                <p className="mt-4 text-[14px] text-so-ink-3 max-w-[40ch] mx-auto">{tagline}</p>
+            </div>
+        </div>
     )
 }
