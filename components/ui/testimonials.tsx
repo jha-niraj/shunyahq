@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
 
@@ -23,8 +24,7 @@ const TestimonialCard = ({ data }: { data: typeof testimonials[0] }) => (
             &quot;{data.text}&quot;
         </p>
         <div className="flex items-center gap-3 pt-4 border-t border-[var(--so-line)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={data.image} alt={data.name} width={32} height={32} className="h-8 w-8 rounded-full grayscale" />
+            <Image src={data.image} alt={data.name} width={32} height={32} className="h-8 w-8 rounded-full grayscale" />
             <div className="flex flex-col">
                 <div className="font-[family-name:var(--font-mono)] text-[11px] font-bold text-[var(--so-ink)] uppercase tracking-[0.06em]">{data.name}</div>
                 <div className="font-[family-name:var(--font-mono)] text-[10px] text-[var(--so-ink-4)] uppercase tracking-[0.06em]">{data.role}</div>

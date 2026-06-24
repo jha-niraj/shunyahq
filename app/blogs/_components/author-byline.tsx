@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { AUTHORS, type AuthorKey } from '@/content/authors'
 import { formatBlogDate } from './format-date'
 
@@ -25,8 +26,7 @@ export function AuthorByline({
 			<div className="flex items-start gap-4">
 				{
 					author.image ? (
-						// eslint-disable-next-line @next/next/no-img-element
-						<img
+						<Image
 							src={author.image}
 							alt={author.name}
 							width={56}

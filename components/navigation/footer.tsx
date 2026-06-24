@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import {
     ArrowRight, ArrowUp, MapPin, Mail
 } from "lucide-react"
@@ -97,8 +98,7 @@ export function Footer() {
                     <div className="md:col-span-3 space-y-8">
                         <div className="space-y-5">
                             <Link href="/" className="inline-flex items-center gap-2 text-neutral-900 dark:text-white">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src="/shunya-mark.png" alt="Shunya" width={32} height={32} className="h-8 w-8 dark:invert" />
+                                <Image src="/shunya-mark.png" alt="Shunya" width={32} height={32} className="h-8 w-8 dark:invert" />
                                 <span className="font-bold tracking-tight text-lg">Shunya</span>
                                 <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-white/40">Tech</span>
                             </Link>

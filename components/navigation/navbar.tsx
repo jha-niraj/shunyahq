@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import {
     ChevronRight, ChevronDown, Menu, X, ArrowRight, Code2, Smartphone, BrainCircuit,
@@ -462,8 +463,7 @@ export function Navbar({ active: activeProp }: NavbarProps) {
             >
                 <div className="flex items-center justify-between gap-6">
                     <Link href="/" className="flex items-center gap-2 shrink-0 text-neutral-900 dark:text-white">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/shunya-mark.png" alt="Shunya" width={30} height={30} className="h-7 w-7 dark:invert" />
+                        <Image src="/shunya-mark.png" alt="Shunya" width={30} height={30} className="h-7 w-7 dark:invert" />
                         <span className="font-bold tracking-tight text-lg leading-none">Shunya</span>
                         <span className="hidden sm:block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400 leading-none">
                             Tech
