@@ -1,20 +1,21 @@
 "use client"
 
-import { useRef, useCallback, useEffect } from "react"
+import { useRef, useState } from "react"
+import Link from "next/link"
+import { motion, useScroll, useTransform, useMotionValueEvent, type MotionValue } from "framer-motion"
 import {
     BookOpen, Smartphone, FileSearch, Users, Search, ArrowRight, Shield, Clock,
     Bell, BarChart3, Zap, MessageSquare, Cloud, Layout, Cpu, Globe, GitBranch
 } from "lucide-react"
-import { useSlideSnap } from "@/hooks/use-slide-snap"
 
 type BulletItem = { icon: React.ElementType; text: string }
 
 type Feature = {
     id: string
+    href: string
     label: string
     eyebrow: string
     bigStat: string
-    bigStatSuffix: string
     title: string
     description: string
     bullets: BulletItem[]
@@ -384,10 +385,10 @@ function DevOpsSecurityIllustration() {
 const FEATURES: Feature[] = [
     {
         id: "web-engineering",
+        href: "/services/web-engineering",
         label: "Web Engineering",
         eyebrow: "Web Engineering",
         bigStat: "90+",
-        bigStatSuffix: "Lighthouse score on the apps we ship - built on Next.js 15 and React Server Components.",
         title: "Scalable SaaS platforms and complex web apps.",
         description: "We architect SEO-optimized, globally distributed web systems on Next.js 15 and React Server Components. From marketing sites to multi-tenant dashboards, we obsess over Core Web Vitals, maintainability, and clean architecture.",
         bullets: [
@@ -402,10 +403,10 @@ const FEATURES: Feature[] = [
     },
     {
         id: "mobile-ecology",
+        href: "/services/mobile-ecology",
         label: "Mobile Ecology",
         eyebrow: "Mobile Ecology",
         bigStat: "1",
-        bigStatSuffix: "codebase that ships native-feel apps to both iOS and Android - React Native and Flutter.",
         title: "High-performance cross-platform mobile apps.",
         description: "Reach users on iOS and Android from a single codebase without compromising native capabilities. We handle the full lifecycle - from native module bridging to App Store and Play Store submission.",
         bullets: [
@@ -420,10 +421,10 @@ const FEATURES: Feature[] = [
     },
     {
         id: "ai-integration",
+        href: "/services/ai-integration",
         label: "AI Integration",
         eyebrow: "AI Integration",
         bigStat: "Custom",
-        bigStatSuffix: "LLM agents and RAG pipelines wired into your own secure infrastructure.",
         title: "Custom LLM agents and intelligent automation.",
         description: "We build retrieval-augmented generation pipelines, agentic workflows, and chatbot interfaces on OpenAI, Anthropic, or open-source models - grounded in your data, with citations you can trust.",
         bullets: [
@@ -439,10 +440,10 @@ const FEATURES: Feature[] = [
     },
     {
         id: "cloud-architecture",
+        href: "/services/cloud-architecture",
         label: "Cloud Architecture",
         eyebrow: "Cloud Architecture",
         bigStat: "0",
-        bigStatSuffix: "downtime deploys - serverless AWS/Azure infra, Docker, and Kubernetes orchestration.",
         title: "Cloud infrastructure that scales with zero downtime.",
         description: "We design serverless functions, container orchestration, and database strategies that handle high-traffic loads. Everything is codified with Terraform and shipped through automated CI/CD pipelines.",
         bullets: [
@@ -457,10 +458,10 @@ const FEATURES: Feature[] = [
     },
     {
         id: "uiux-systems",
+        href: "/services/ui-ux-systems",
         label: "UI/UX Systems",
         eyebrow: "UI/UX Systems",
         bigStat: "Pixel",
-        bigStatSuffix: "perfect - atomic design systems, high-fidelity prototypes, and micro-interaction engineering.",
         title: "Design systems engineered down to the pixel.",
         description: "We don't just design screens; we build comprehensive, documented design systems. The focus is usability, accessibility, and a delightful journey that turns visitors into customers.",
         bullets: [
@@ -475,10 +476,10 @@ const FEATURES: Feature[] = [
     },
     {
         id: "devops-security",
+        href: "/services/system-security",
         label: "DevOps & Security",
         eyebrow: "DevOps & Security",
         bigStat: "24/7",
-        bigStatSuffix: "monitoring on automated pipelines hardened with enterprise-grade security.",
         title: "Automated pipelines and enterprise-grade security.",
         description: "Security is not an afterthought. We ship automated deployment pipelines, infrastructure as code, and real-time monitoring - backed by penetration testing, OAuth, and encryption at rest and in transit.",
         bullets: [
@@ -493,93 +494,153 @@ const FEATURES: Feature[] = [
     },
 ]
 
-function clamp(v: number, lo: number, hi: number) {
-    return Math.min(hi, Math.max(lo, v))
+/**
+ * ## The stack
+ *
+ * The section header stays pinned for the whole stack, so the reader never loses the frame the
+ * cards belong to. Two numbers make that work, and they have to agree with each other:
+ *
+ *  - `NAV_BOTTOM` is where the floating navbar's bottom edge lands (`top-2` + the pill's height).
+ *    The pinned bar sits below it with clear air, so it reads as its own object rather than as part
+ *    of the navbar's shadow.
+ *  - `STACK_TOP` is that plus the bar's own height, and it is where the CARDS pin. Deriving it
+ *    rather than writing a third number is the point: if the bar's height changes, the cards follow
+ *    it instead of sliding underneath it.
+ */
+const NAV_BOTTOM = 112
+const BAR_H = 56
+const STACK_TOP = NAV_BOTTOM + BAR_H
+
+/** How far each earlier card lifts above the active one, so its header strip stays visible. */
+const STACK_STEP = 18
+/** The gap we actually want between the pinned bar and the top of the stack. */
+const STACK_GAP = 24
+
+/**
+ * Every card pins in its own viewport. As the next card scrolls up it settles on top while the
+ * previous one shrinks and lifts slightly behind it, so its title strip stays visible. The active
+ * card is always full-size, so the last one is never pushed below anything.
+ */
+function StackCard({
+    feature, i, n, progress, play,
+}: {
+    feature: Feature
+    i: number
+    n: number
+    progress: MotionValue<number>
+    play: boolean
+}) {
+    const targetScale = 1 - (n - 1 - i) * 0.045
+    const scale = useTransform(progress, [i / n, 1], [1, targetScale])
+    // Earlier cards lift above centre so their header strips peek; the newest sits at rest.
+    const offset = -(n - 1 - i) * STACK_STEP
+
+    // `items-start`, not `items-center`. Centring splits the box's leftover height evenly, which
+    // puts a different gap between the pinned bar and every card depending on how tall that card
+    // happens to be. Anchoring to the top makes that distance a number we choose (STACK_GAP), so
+    // every card starts at exactly the same place under the header.
+    return (
+        <div
+            className="sticky flex items-start justify-center px-5 pb-10 sm:px-7"
+            style={{
+                top: STACK_TOP,
+                minHeight: `calc(100svh - ${STACK_TOP}px)`,
+                // DERIVED, not a guess. The first card lifts `(n-1) * STACK_STEP` above its flow
+                // position to expose the peeking strips, so a hand-picked padding smaller than that
+                // lift would send the top of the stack straight through the pinned bar and under
+                // the navbar. Adding the lift back means the gap below the bar is exactly
+                // STACK_GAP, and it stays exactly that if a seventh feature is added.
+                paddingTop: (n - 1) * STACK_STEP + STACK_GAP,
+                ["--anim-play" as string]: play ? "running" : "paused",
+            }}
+        >
+            <motion.div
+                style={{ scale, top: offset }}
+                className="relative w-full max-w-7xl overflow-hidden rounded-[28px] border border-[var(--vi-line)] bg-[var(--vi-bg)] shadow-[0_40px_90px_-46px_rgba(0,0,0,0.4)]"
+            >
+                {/* Header strip - stays visible as the next card stacks on top of this one. */}
+                <div className="flex items-center gap-3 border-b border-[var(--vi-line)] bg-[var(--vi-surface)] px-5 py-4 sm:px-8">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[var(--vi-ink)] text-[12.5px] font-semibold tabular-nums text-[var(--vi-bg)]">
+                        {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="truncate text-[15px] font-semibold tracking-[-0.01em] text-[var(--vi-ink)] sm:text-[16px]">
+                        {feature.label}
+                    </span>
+                    <span className="hidden shrink-0 rounded-full border border-[var(--vi-line)] bg-[var(--vi-bg2)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--vi-ink3)] sm:inline">
+                        {feature.bigStat}
+                    </span>
+                    {feature.extraBadge && (
+                        <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--vi-ink4)] lg:inline">
+                            {feature.extraBadge}
+                        </span>
+                    )}
+                    <Link
+                        href={feature.href}
+                        className="group ml-auto inline-flex shrink-0 items-center gap-1.5 text-[13px] font-semibold text-[var(--vi-ink)]"
+                    >
+                        Explore
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                </div>
+
+                {/* Body */}
+                <div className="grid grid-cols-1 items-center gap-7 p-6 sm:gap-9 sm:p-8 lg:grid-cols-[1fr_1.05fr] lg:gap-12 lg:p-10">
+                    <div className="min-w-0">
+                        <h3 className="text-[clamp(22px,3vw,36px)] font-bold leading-[1.07] tracking-[-0.025em] text-[var(--vi-ink)] text-balance">
+                            {feature.title}
+                        </h3>
+                        <p className="mt-4 max-w-[46ch] text-[15px] leading-relaxed text-[var(--vi-ink2)]">
+                            {feature.description}
+                        </p>
+                        <ul className="mt-6 hidden gap-x-6 gap-y-2.5 sm:grid sm:grid-cols-2">
+                            {feature.bullets.map((b, bi) => (
+                                <li key={bi} className="flex items-start gap-2.5">
+                                    <b.icon size={15} strokeWidth={2} className="mt-[2px] shrink-0 text-[var(--vi-ink3)]" />
+                                    <span className="text-[13.5px] leading-snug text-[var(--vi-ink2)]">{b.text}</span>
+                                </li>
+                            ))}
+                        </ul>
+                        <div className="mt-6 flex items-center gap-3">
+                            <span className="h-7 w-px shrink-0 bg-[var(--vi-gold)]" />
+                            <span className="shrink-0 text-[16px] font-bold tracking-tight text-[var(--vi-ink)]">
+                                {feature.accentMetric}
+                            </span>
+                            <span className="text-[12.5px] leading-snug text-[var(--vi-ink3)]">{feature.accentLabel}</span>
+                        </div>
+                    </div>
+
+                    <div className="min-w-0">
+                        <div className="flex items-center justify-center rounded-2xl border border-[var(--vi-line)] bg-[var(--vi-surface)] p-4 shadow-[0_24px_50px_-34px_rgba(0,0,0,0.28)] sm:p-6">
+                            {feature.illustration}
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
+    )
 }
 
 export function FeatureStack() {
-    const containerRef = useRef<HTMLDivElement>(null)
-    useSlideSnap(containerRef, FEATURES.length)
-    const cardRefs = useRef<(HTMLDivElement | null)[]>([])
-    const dotRefs = useRef<(HTMLDivElement | null)[]>([])
-    const activeLabelRef = useRef<HTMLSpanElement>(null)
-    const triggeredRef = useRef<boolean[]>(new Array(FEATURES.length).fill(false))
-    const activeRef = useRef<number>(0)
+    const container = useRef<HTMLDivElement>(null)
+    const { scrollYProgress } = useScroll({ target: container, offset: ["start start", "end end"] })
+    const n = FEATURES.length
 
-    const triggerCard = useCallback((i: number) => {
-        if (triggeredRef.current[i]) return
-        triggeredRef.current[i] = true
-        cardRefs.current[i]?.style.setProperty("--anim-play", "running")
-    }, [])
+    // Which card is on top right now. Read from scroll rather than from an observer on each card,
+    // because the cards are all pinned at the same offset - they never leave the viewport, so there
+    // is no intersection to observe.
+    const [active, setActive] = useState(0)
+    // Latched high-water mark: the card illustrations animate with fill-mode `both`, so once a card
+    // has been reached its animation should stay running rather than re-pausing on the way back up.
+    const [seen, setSeen] = useState(0)
 
-    const setActive = useCallback((i: number) => {
-        if (activeRef.current === i) return
-        activeRef.current = i
-        dotRefs.current.forEach((dot, j) => {
-            if (!dot) return
-            dot.style.background = j === i ? "var(--vi-ink)" : "var(--vi-ink5)"
-            dot.style.transform = j === i ? "scale(1.5)" : "scale(1)"
-        })
-        if (activeLabelRef.current) {
-            activeLabelRef.current.textContent = FEATURES[i]?.label ?? ""
-        }
-    }, [])
-
-    const update = useCallback(() => {
-        const container = containerRef.current
-        if (!container || typeof window === "undefined") return
-        const vh = window.innerHeight
-        const rect = container.getBoundingClientRect()
-        const rel = clamp(-rect.top, 0, container.offsetHeight - vh)
-        const cur = clamp(rel / vh, 0, FEATURES.length - 1)
-        const idx = Math.floor(cur)
-        const frac = cur - idx
-        const eased = frac < 0.5 ? 2 * frac * frac : 1 - Math.pow(-2 * frac + 2, 2) / 2
-        const curEased = idx + eased
-
-        setActive(Math.round(cur))
-
-        FEATURES.forEach((_, i) => {
-            const el = cardRefs.current[i]
-            if (!el) return
-            const offset = i - curEased
-            const dist = Math.abs(offset)
-            const scale = 1 - Math.min(dist, 1) * 0.04
-            el.style.transform = `translateX(${offset * 100}vw) scale(${scale})`
-            el.style.opacity = dist > 1.05 ? "0" : "1"
-            el.style.zIndex = String(Math.round((2 - Math.min(dist, 2)) * 10) + 1)
-            if (dist < 0.5) triggerCard(i)
-        })
-    }, [triggerCard, setActive])
-
-    useEffect(() => {
-        window.addEventListener("scroll", update, { passive: true })
-        update()
-        return () => window.removeEventListener("scroll", update)
-    }, [update])
-
-    useEffect(() => {
-        const container = containerRef.current
-        if (!container) return
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0]?.isIntersecting) { triggerCard(0); observer.disconnect() }
-            },
-            { threshold: 0.1 }
-        )
-        observer.observe(container)
-        return () => observer.disconnect()
-    }, [triggerCard])
-
-    const scrollToFeature = (i: number) => {
-        const container = containerRef.current
-        if (!container) return
-        const containerTop = container.getBoundingClientRect().top + window.scrollY
-        window.scrollTo({ top: containerTop + i * window.innerHeight, behavior: "smooth" })
-    }
+    useMotionValueEvent(scrollYProgress, "change", (v) => {
+        const idx = Math.min(n - 1, Math.max(0, Math.floor(v * n)))
+        setActive(idx)
+        setSeen((s) => (idx > s ? idx : s))
+    })
 
     return (
-        <section className="vi-fs">
+        <section className="vi-fs relative">
             <style>{`
                 .vi-fs {
                     --vi-bg: #ffffff; --vi-surface: #fafafa; --vi-bg2: #f3f4f6;
@@ -595,134 +656,67 @@ export function FeatureStack() {
                 }
             `}</style>
 
-            <div ref={containerRef} style={{ height: `${FEATURES.length * 100}vh` }}>
-                <div className="sticky top-0 h-screen overflow-hidden">
-                    <div className="absolute top-0 left-0 right-0 z-[200] px-6 py-[14px] flex items-center gap-4 bg-white/55 dark:bg-neutral-950/70 backdrop-blur-md border-b border-[var(--vi-line)]">
-                        <div className="w-full max-w-7xl mx-auto flex">
-                            <span className="font-sm text-[12.5px] tracking-[0.14em] uppercase text-[var(--vi-ink4)] shrink-0">
-                                Full-spectrum engineering
-                            </span>
-                            <div className="h-px flex-1 bg-[var(--vi-line)]" />
-                            <span
-                                ref={activeLabelRef}
-                                className="font-mono text-[9.5px] tracking-[0.14em] uppercase text-[var(--vi-ink3)] shrink-0 transition-all duration-300"
-                            >
-                                {FEATURES[0]?.label ?? ""}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="absolute inset-0" style={{ top: 44 }}>
-                        {
-                            FEATURES.map((feature, i) => (
-                                <div
-                                    key={feature.id}
-                                    ref={(el) => { cardRefs.current[i] = el }}
-                                    className="absolute inset-0 will-change-transform"
-                                    style={{
-                                        zIndex: i + 1,
-                                        transform: i === 0 ? "translateX(0vw) scale(1)" : "translateX(100vw) scale(1)",
-                                        transformOrigin: "center center",
-                                        opacity: i === 0 ? 1 : 0,
-                                        ["--anim-play" as string]: "paused",
-                                    }}
-                                >
-                                    <div className="absolute inset-0 flex items-center justify-center pt-12">
-                                        <div className="w-full max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-center gap-10 lg:gap-20">
-                                            <div
-                                                className="max-w-[440px]"
-                                                style={{ order: i % 2 === 0 ? 1 : 2 }}
-                                            >
-                                                <div className="flex items-center gap-3 mb-7">
-                                                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--vi-ink3)]">
-                                                        {feature.eyebrow}
-                                                    </p>
-                                                    {
-                                                        feature.extraBadge && (
-                                                            <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-[var(--vi-line)] bg-[var(--vi-bg2)] text-[var(--vi-ink3)]">
-                                                                {feature.extraBadge}
-                                                            </span>
-                                                        )
-                                                    }
-                                                </div>
-
-                                                <h3 className="text-[28px] xl:text-[38px] font-bold leading-[1.08] mb-6 text-[var(--vi-ink)] tracking-[-0.02em] text-balance">
-                                                    {feature.title}
-                                                </h3>
-
-                                                <div className="flex items-baseline gap-3 mb-6">
-                                                    <span className="text-[26px] xl:text-[32px] font-bold leading-none tabular-nums text-[var(--vi-gold)] tracking-tight shrink-0">
-                                                        {feature.bigStat}
-                                                    </span>
-                                                    <span className="text-[14px] leading-snug text-[var(--vi-ink3)]">
-                                                        {feature.bigStatSuffix}
-                                                    </span>
-                                                </div>
-
-                                                <p className="text-[15px] leading-relaxed mb-8 text-[var(--vi-ink2)]">
-                                                    {feature.description}
-                                                </p>
-
-                                                <ul className="space-y-4 mb-8">
-                                                    {
-                                                        feature.bullets.slice(0, 3).map((b, bi) => (
-                                                            <li key={bi} className="flex items-start gap-3.5">
-                                                                <span className="mt-0.5 shrink-0 flex items-center justify-center w-7 h-7 rounded-lg border border-[var(--vi-line)] bg-[var(--vi-bg2)]">
-                                                                    <b.icon size={14} strokeWidth={2} className="text-[var(--vi-ink3)]" />
-                                                                </span>
-                                                                <span className="text-[14px] leading-snug text-[var(--vi-ink2)] pt-1">{b.text}</span>
-                                                            </li>
-                                                        ))
-                                                    }
-                                                </ul>
-
-                                                <div className="inline-flex items-center gap-3 pl-1">
-                                                    <span className="h-8 w-px bg-[var(--vi-gold)]" />
-                                                    <span className="text-[18px] font-bold text-[var(--vi-ink)] tracking-tight">{feature.accentMetric}</span>
-                                                    <span className="text-[13px] leading-snug text-[var(--vi-ink3)] max-w-[180px]">{feature.accentLabel}</span>
-                                                </div>
-                                            </div>
-                                            <div className="min-w-0 flex items-center justify-center" style={{ order: i % 2 === 0 ? 2 : 1 }}>
-                                                <div
-                                                    className="relative w-full rounded-[28px] border border-[var(--vi-line)] bg-white/80 dark:bg-neutral-900/70 backdrop-blur-xl overflow-hidden shadow-[0_40px_110px_-20px_rgba(0,0,0,0.28)] ring-1 ring-black/[0.03] dark:ring-white/[0.04] p-8 xl:p-12 flex items-center justify-center"
-                                                    style={{ aspectRatio: "4/3", maxHeight: "70vh" }}
-                                                >
-                                                    {feature.illustration}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        }
-                    </div>
-                    <div className="absolute bottom-6 left-0 right-0 z-[200] flex items-center justify-center gap-2">
-                        {
-                            FEATURES.map((f, i) => (
-                                <div
-                                    key={f.id}
-                                    ref={(el) => { dotRefs.current[i] = el }}
-                                    onClick={() => scrollToFeature(i)}
-                                    role="button"
-                                    aria-label={`Go to ${f.label}`}
-                                    tabIndex={0}
-                                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") scrollToFeature(i) }}
-                                    className="w-2 h-2 rounded-full cursor-pointer transition-all duration-300 focus:outline-none"
-                                    style={{
-                                        background: i === 0 ? "var(--vi-ink)" : "var(--vi-ink5)",
-                                        transform: i === 0 ? "scale(1.5)" : "scale(1)",
-                                    }}
-                                />
-                            ))
-                        }
-                    </div>
+            <div className="mx-auto max-w-6xl px-6 pt-24 sm:pt-28">
+                <div className="mx-auto max-w-2xl text-center">
+                    <p className="mb-4 flex items-center justify-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
+                        <span className="h-1.5 w-1.5 rounded-full bg-neutral-300 dark:bg-neutral-600" />
+                        Full-spectrum engineering
+                    </p>
+                    <h2 className="text-[clamp(30px,4.6vw,52px)] font-bold leading-[1.04] tracking-[-0.03em] text-neutral-900 text-balance dark:text-white">
+                        One team for every layer of the product.
+                    </h2>
                 </div>
             </div>
-            <div className="border-t border-[var(--vi-line)]">
-                <div className="max-w-7xl mx-auto px-6 py-7 flex items-center justify-between gap-4">
-                    <p className="text-[13px] text-[var(--vi-ink4)]">
-                        One team that owns it all - web, mobile, AI, cloud, and security, from concept to production.
-                    </p>
+
+            <div ref={container} className="relative mt-10">
+                {/*
+                  The pinned header. It carries the section's title in condensed form plus a step
+                  readout, and it is INSIDE the scroll container so it unpins the moment the stack
+                  ends - a bar pinned to the whole page would follow the reader into the next
+                  section.
+
+                  It needs a near-opaque ground: cards pass directly underneath it, and a
+                  transparent bar would let card content show through the title.
+                */}
+                <div
+                    className="sticky z-30 border-y border-[var(--vi-line)] bg-white/85 backdrop-blur-md dark:bg-neutral-950/85"
+                    style={{ top: NAV_BOTTOM, height: BAR_H }}
+                >
+                    <div className="mx-auto flex h-full max-w-7xl items-center gap-4 px-5 sm:px-7">
+                        <span className="hidden shrink-0 items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--vi-ink4)] sm:inline-flex">
+                            <span className="h-1 w-1 rounded-full bg-[var(--vi-ink)]" />
+                            Full-spectrum engineering
+                        </span>
+                        <span className="truncate text-[14px] font-semibold tracking-[-0.01em] text-[var(--vi-ink)] sm:text-[15px]">
+                            One team for every layer of the product.
+                        </span>
+
+                        {/* Step readout + progress ticks, so a six-card stack tells you where you
+                            are in it instead of feeling unbounded. */}
+                        <span className="ml-auto flex shrink-0 items-center gap-3">
+                            <span className="hidden items-center gap-1.5 sm:flex">
+                                {FEATURES.map((f, i) => (
+                                    <span
+                                        key={f.id}
+                                        className="h-1 rounded-full transition-all duration-300"
+                                        style={{
+                                            width: i === active ? 20 : 8,
+                                            background: i <= active ? "var(--vi-ink)" : "var(--vi-ink5)",
+                                        }}
+                                    />
+                                ))}
+                            </span>
+                            <span className="text-[12px] font-semibold tabular-nums text-[var(--vi-ink3)]">
+                                {String(active + 1).padStart(2, "0")}
+                                <span className="text-[var(--vi-ink4)]">/{String(n).padStart(2, "0")}</span>
+                            </span>
+                        </span>
+                    </div>
                 </div>
+
+                {FEATURES.map((f, i) => (
+                    <StackCard key={f.id} feature={f} i={i} n={n} progress={scrollYProgress} play={i <= seen} />
+                ))}
             </div>
         </section>
     )
