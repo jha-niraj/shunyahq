@@ -14,9 +14,8 @@ export default function manifest(): MetadataRoute.Manifest {
         lang: "en",
         categories: ["business", "productivity", "developer", "technology"],
         icons: [
-            { src: "/shunya-mark.png", sizes: "500x500", type: "image/png", purpose: "any" },
-            { src: "/shunyatech.png", sizes: "1254x1254", type: "image/png", purpose: "any" },
-            { src: "/shunyatech.png", sizes: "1254x1254", type: "image/png", purpose: "maskable" },
+            { src: "/shunyahq-icon-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+            { src: "/shunyahq-icon-maskable.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
         ],
     }
 }

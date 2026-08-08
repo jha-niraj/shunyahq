@@ -463,11 +463,9 @@ export function Navbar({ active: activeProp }: NavbarProps) {
             >
                 <div className="flex items-center justify-between gap-6">
                     <Link href="/" className="flex items-center gap-2 shrink-0 text-neutral-900 dark:text-white">
-                        <Image src="/shunya-mark.png" alt="Shunya" width={30} height={30} className="h-7 w-7 dark:invert" />
-                        <span className="font-bold tracking-tight text-lg leading-none">Shunya</span>
-                        <span className="hidden sm:block text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400 leading-none">
-                            Tech
-                        </span>
+                        {/* The mark ships white on transparency, so light mode is the inverted one. */}
+                        <Image src="/shunyahqmainlogo.png" alt="ShunyaHQ" width={30} height={30} priority className="h-7 w-7 invert dark:invert-0" />
+                        <span className="font-bold tracking-tight text-lg leading-none">ShunyaHQ</span>
                     </Link>
                     <nav className="hidden lg:flex items-center gap-0.5 relative" onMouseLeave={handleLeave}>
                         <div className="relative" onMouseEnter={() => handleEnter("services")}>

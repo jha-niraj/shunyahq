@@ -10,7 +10,7 @@
 
 /* ============================================================
    Vidhica — SyncOrbit Design System
-   Calm editorial aesthetic · Geist + Instrument Serif
+   Calm editorial aesthetic · Bricolage Grotesque throughout
    Cream/sage palette · Light + Dark mode
    ============================================================ */
 
@@ -34,10 +34,14 @@
   --so-warn: #B8714A;
   --so-ok: #4F7A55;
 
-  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-serif: "Instrument Serif", "Times New Roman", serif;
-  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --font-internal: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  /* Bricolage Grotesque is the only typeface on the platform. Every slot - sans, serif, mono,
+     internal - resolves to it, so nothing can quietly fall back to a system face.
+     next/font hashes the real family name, so these must reference the generated variable;
+     spelling the family out by hand silently falls through to the system stack. */
+  --font-sans: var(--font-bricolage), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-internal: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
 
   --so-container: 1280px;
   --so-gutter: clamp(20px, 4vw, 56px);
@@ -192,6 +196,13 @@
   --color-so-ok: var(--so-ok);
   --color-so-warn: var(--so-warn);
   --color-so-glass: var(--so-glass);
+
+  /* Point Tailwind's own font utilities at Bricolage too. Without these, `font-mono` and
+     `font-sans` resolve to Tailwind's built-in stacks (ui-monospace, system-ui, ...) and would
+     render in a system face regardless of what the --font-* tokens above say. */
+  --font-sans: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ── Base ── */
@@ -432,7 +443,7 @@
 .prose-custom a:hover { opacity: 0.8; }
 .prose-custom strong { color: var(--so-ink); font-weight: 650; }
 .prose-custom em { font-style: italic; }
-.prose-custom code { font-family: var(--font-mono, monospace); font-size: 0.875em; padding: 2px 6px; border-radius: 5px; background: var(--so-surface-2); color: var(--so-accent); border: 1px solid var(--so-line); }
+.prose-custom code { font-family: var(--font-mono); font-size: 0.875em; padding: 2px 6px; border-radius: 5px; background: var(--so-surface-2); color: var(--so-accent); border: 1px solid var(--so-line); }
 .prose-custom pre { background: var(--so-surface); border: 1px solid var(--so-line); border-radius: 12px; padding: 18px 20px; overflow-x: auto; margin: 1.5em 0; }
 .prose-custom pre code { background: none; border: none; padding: 0; font-size: 13px; color: var(--so-ink-2); }
 .prose-custom blockquote { padding: 16px 20px; border-left: 3px solid var(--so-accent); background: var(--so-surface); border-radius: 0 10px 10px 0; margin: 1.5em 0; font-style: italic; color: var(--so-ink-2); }
@@ -704,7 +715,7 @@
 }
 .scroll-pretty::-webkit-scrollbar-thumb:hover { background: var(--so-ink-4); }
 
-/* ── Internal pages (admin + app) use Space Grotesk ── */
+/* ── Internal pages (admin + app) share the platform sans ── */
 [data-internal] {
   font-family: var(--font-internal);
   letter-spacing: -0.01em;

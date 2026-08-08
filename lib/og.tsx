@@ -5,17 +5,39 @@ import { SITE_NAME, SITE_DOMAIN } from "@/lib/site"
 
 // Shared 1200x630 branded Open Graph image, rendered via ImageResponse (Satori).
 // Used by the homepage, blog posts, and topic hubs so every social/AI card is
-// on-brand with the Vidhica mark - the VC monogram in a white tile on the dark
-// brand gradient.
+// on-brand with the Shunya mark on the dark brand gradient.
 
 export const OG_SIZE = { width: 1200, height: 630 }
 export const OG_CONTENT_TYPE = "image/png"
 
+// Satori renders outside the browser, so it cannot see the next/font face - it needs the actual
+// font bytes. These are the same Bricolage Grotesque instances Google serves, checked in as TTF
+// (Satori does not read woff2) so the OG cards use the brand face and not a generic sans.
+const FONT_FILES = [
+    { file: "BricolageGrotesque-400.ttf", weight: 400 as const },
+    { file: "BricolageGrotesque-700.ttf", weight: 700 as const },
+]
+
+const OG_FONTS = FONT_FILES.flatMap(({ file, weight }) => {
+    try {
+        return [{
+            name: "Bricolage Grotesque",
+            data: readFileSync(join(process.cwd(), "lib/fonts", file)),
+            weight,
+            style: "normal" as const,
+        }]
+    } catch {
+        return []
+    }
+})
+
 // Read the brand mark once at module scope as a base64 data URI so Satori can
 // embed it. Falls back to the drawn mark if the file cannot be read.
+// The mark is white on transparency and the card is a dark gradient, so it sits
+// straight on the background - no white tile behind it.
 const LOGO = (() => {
     try {
-        return "data:image/png;base64," + readFileSync(join(process.cwd(), "public/shunya-mark.png")).toString("base64")
+        return "data:image/png;base64," + readFileSync(join(process.cwd(), "public/shunyahqmainlogo.png")).toString("base64")
     } catch {
         return null
     }
@@ -40,7 +62,7 @@ export function ogImage({ title, eyebrow, footer }: OgOptions): ImageResponse {
                     padding: "72px 80px",
                     background: "linear-gradient(135deg, #1A1A18 0%, #0C0B0A 100%)",
                     color: "#FAF8F2",
-                    fontFamily: "sans-serif",
+                    fontFamily: "Bricolage Grotesque",
                 }}
             >
                 {/* Brand row */}
@@ -52,15 +74,12 @@ export function ogImage({ title, eyebrow, footer }: OgOptions): ImageResponse {
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    width: 112,
-                                    height: 112,
-                                    borderRadius: 22,
-                                    background: "#FFFFFF",
-                                    padding: 8,
+                                    width: 96,
+                                    height: 96,
                                 }}
                             >
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={LOGO} width={96} height={96} alt={SITE_NAME} style={{ borderRadius: 14 }} />
+                                <img src={LOGO} width={88} height={88} alt={SITE_NAME} />
                             </div>
                         ) : (
                             <div
@@ -127,6 +146,6 @@ export function ogImage({ title, eyebrow, footer }: OgOptions): ImageResponse {
                 </div>
             </div>
         ),
-        { ...OG_SIZE },
+        { ...OG_SIZE, ...(OG_FONTS.length > 0 ? { fonts: OG_FONTS } : {}) },
     )
 }

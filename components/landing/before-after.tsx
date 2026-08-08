@@ -35,27 +35,27 @@ function AfterResearchSVG({ animKey }: { animKey: number }) {
             <rect x="8" y="8" width="324" height="184" rx="10" fill="var(--vi-surface)" stroke="var(--vi-line)" strokeWidth="1" />
             <rect x="8" y="8" width="324" height="28" rx="10" fill="var(--vi-bg2)" />
             <rect x="8" y="24" width="324" height="12" fill="var(--vi-bg2)" />
-            <text x="170" y="26" textAnchor="middle" fontSize="8" fill="var(--vi-ink3)" fontFamily="monospace">eventeye.in</text>
+            <text x="170" y="26" textAnchor="middle" fontSize="8" fill="var(--vi-ink3)" fontFamily="inherit">eventeye.in</text>
             <g className="vra1">
                 <rect x="130" y="44" width="192" height="20" rx="9" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="226" y="57" textAnchor="middle" fontSize="8" fill="var(--vi-ink2)" fontFamily="system-ui">Find an event and grab a ticket</text>
+                <text x="226" y="57" textAnchor="middle" fontSize="8" fill="var(--vi-ink2)" fontFamily="inherit">Find an event and grab a ticket</text>
             </g>
             <g className="vra2">
                 <circle cx="22" cy="78" r="7" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
                 <text x="22" y="82" textAnchor="middle" fontSize="9" fill="var(--vi-ink3)">S</text>
             </g>
-            <text x="38" y="90" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="system-ui" className="vra3">Discovery feed → event page → checkout in one flow.</text>
-            <text x="38" y="102" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="system-ui" className="vra3" style={{ clipPath: "inset(0 100% 0 0)", animationDelay: "1.1s" }}>One unified platform replaces five disconnected tools.</text>
+            <text x="38" y="90" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="inherit" className="vra3">Discovery feed → event page → checkout in one flow.</text>
+            <text x="38" y="102" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="inherit" className="vra3" style={{ clipPath: "inset(0 100% 0 0)", animationDelay: "1.1s" }}>One unified platform replaces five disconnected tools.</text>
             <g className="vra4">
                 <rect x="38" y="112" width="80" height="14" rx="7" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="78" y="122" textAnchor="middle" fontSize="7" fill="var(--vi-gold)" fontFamily="monospace">Discovery feed</text>
+                <text x="78" y="122" textAnchor="middle" fontSize="7" fill="var(--vi-gold)" fontFamily="inherit">Discovery feed</text>
             </g>
             <g className="vra5">
                 <rect x="126" y="112" width="96" height="14" rx="7" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="174" y="122" textAnchor="middle" fontSize="7" fill="var(--vi-gold)" fontFamily="monospace">Checkout · Razorpay</text>
+                <text x="174" y="122" textAnchor="middle" fontSize="7" fill="var(--vi-gold)" fontFamily="inherit">Checkout · Razorpay</text>
             </g>
             <rect x="238" y="112" width="56" height="14" rx="7" fill="var(--vi-ink)" className="vra5" opacity="0.9" />
-            <text x="266" y="122" textAnchor="middle" fontSize="7" fill="var(--vi-bg)" fontFamily="monospace" style={{ animation: "vra-pop 0.3s cubic-bezier(0.22,1,0.36,1) 2.4s both", animationPlayState: "var(--anim-play,paused)" }}>28s ✓</text>
+            <text x="266" y="122" textAnchor="middle" fontSize="7" fill="var(--vi-bg)" fontFamily="inherit" style={{ animation: "vra-pop 0.3s cubic-bezier(0.22,1,0.36,1) 2.4s both", animationPlayState: "var(--anim-play,paused)" }}>28s ✓</text>
         </svg>
     )
 }
@@ -72,7 +72,7 @@ function BeforeResearchSVG({ animKey }: { animKey: number }) {
             `}</style>
             <g className="vbr1">
                 <rect x="20" y="16" width="120" height="170" rx="6" fill="var(--vi-surface)" stroke="var(--vi-line)" strokeWidth="1.2" />
-                <text x="80" y="30" textAnchor="middle" fontSize="8" fill="var(--vi-ink3)" fontFamily="monospace">WhatsApp group</text>
+                <text x="80" y="30" textAnchor="middle" fontSize="8" fill="var(--vi-ink3)" fontFamily="inherit">WhatsApp group</text>
                 <line x1="20" y1="36" x2="140" y2="36" stroke="var(--vi-line)" strokeWidth="0.75" />
                 {
                     [44, 54, 64, 74, 84, 94, 104, 114, 124, 134, 144, 154].map(y => (
@@ -82,7 +82,7 @@ function BeforeResearchSVG({ animKey }: { animKey: number }) {
             </g>
             <g className="vbr2">
                 <rect x="160" y="16" width="160" height="170" rx="6" fill="var(--vi-surface)" stroke="var(--vi-line)" strokeWidth="1.2" />
-                <text x="240" y="30" textAnchor="middle" fontSize="8" fill="var(--vi-ink3)" fontFamily="monospace">registrations.xlsx</text>
+                <text x="240" y="30" textAnchor="middle" fontSize="8" fill="var(--vi-ink3)" fontFamily="inherit">registrations.xlsx</text>
                 <line x1="160" y1="36" x2="320" y2="36" stroke="var(--vi-line)" strokeWidth="0.75" />
                 {
                     [44, 54, 64, 74, 84, 94, 104, 114, 124, 134, 144, 154].map(y => (
@@ -94,7 +94,7 @@ function BeforeResearchSVG({ animKey }: { animKey: number }) {
                 <circle cx="174" cy="178" r="7" fill="#c2553f" opacity="0.2" />
                 <text x="174" y="182" textAnchor="middle" fontSize="9" fill="#c2553f" fontWeight="700">?</text>
             </g>
-            <text x="204" y="182" fontSize="7" fill="#c2553f" fontFamily="system-ui">Five tools, every launch a scramble.</text>
+            <text x="204" y="182" fontSize="7" fill="#c2553f" fontFamily="inherit">Five tools, every launch a scramble.</text>
         </svg>
     )
 }
@@ -126,9 +126,9 @@ function AfterComplianceSVG({ animKey }: { animKey: number }) {
                     <g key={y} className={`vac${i < 4 ? i + 1 : 4}`}>
                         <rect x="12" y={y - 10} width="316" height="20" rx="5" fill={urgent ? "rgba(194,85,63,0.06)" : "transparent"} />
                         {urgent && <rect x="12" y={y - 10} width="3" height="20" rx="1.5" fill="#c2553f" />}
-                        <text x={urgent ? "20" : "16"} y={y + 3} fontSize="8.5" fill="var(--vi-ink)" fontFamily="system-ui">{label}</text>
-                        <text x="200" y={y + 3} fontSize="8" fill="var(--vi-ink3)" fontFamily="monospace">{date}</text>
-                        <text x="280" y={y + 3} fontSize="10" fontWeight="700" fill={urgent ? "#c2553f" : "var(--vi-ink)"} fontFamily="monospace">{days}</text>
+                        <text x={urgent ? "20" : "16"} y={y + 3} fontSize="8.5" fill="var(--vi-ink)" fontFamily="inherit">{label}</text>
+                        <text x="200" y={y + 3} fontSize="8" fill="var(--vi-ink3)" fontFamily="inherit">{date}</text>
+                        <text x="280" y={y + 3} fontSize="10" fontWeight="700" fill={urgent ? "#c2553f" : "var(--vi-ink)"} fontFamily="inherit">{days}</text>
                     </g>
                 ))
             }
@@ -137,7 +137,7 @@ function AfterComplianceSVG({ animKey }: { animKey: number }) {
                 <path d="M24 162 c0 0 -8 6 -8 10 l16 0 c0 -4 -8 -10 -8 -10 Z" fill="var(--vi-ink)" opacity="0.3" />
                 <circle cx="24" cy="162" r="2" fill="var(--vi-ink)" opacity="0.5" />
             </g>
-            <text x="38" y="172" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="monospace">Automated on every push · always working software</text>
+            <text x="38" y="172" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit">Automated on every push · always working software</text>
         </svg>
     )
 }
@@ -160,7 +160,7 @@ function BeforeComplianceSVG({ animKey }: { animKey: number }) {
                     [50, 72, 94, 116, 138, 160].map((y, i) => (
                         <g key={y}>
                             <rect x="30" y={y - 8} width="140" height="16" rx="3" fill={i === 2 ? "rgba(194,85,63,0.12)" : "var(--vi-bg2)"} />
-                            {i === 2 && <text x="100" y={y + 3} textAnchor="middle" fontSize="7" fill="#c2553f" fontFamily="monospace">FAILED!</text>}
+                            {i === 2 && <text x="100" y={y + 3} textAnchor="middle" fontSize="7" fill="#c2553f" fontFamily="inherit">FAILED!</text>}
                             {i !== 2 && <rect x="38" y={y - 4} width={70 + (y % 20)} height="4" rx="2" fill="var(--vi-line)" />}
                         </g>
                     ))
@@ -173,8 +173,8 @@ function BeforeComplianceSVG({ animKey }: { animKey: number }) {
                 <text x="268" y="104" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)">broke on release</text>
             </g>
             <g className="vbc3">
-                <text x="214" y="145" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="system-ui">Release broke in production</text>
-                <text x="214" y="158" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="system-ui">because there was no pipeline.</text>
+                <text x="214" y="145" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="inherit">Release broke in production</text>
+                <text x="214" y="158" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="inherit">because there was no pipeline.</text>
             </g>
         </svg>
     )
@@ -193,7 +193,7 @@ function AfterFinanceActSVG({ animKey }: { animKey: number }) {
             `}</style>
             <rect x="8" y="8" width="324" height="184" rx="10" fill="var(--vi-surface)" stroke="var(--vi-line)" strokeWidth="1" />
             <text x="20" y="28" fontSize="9.5" fontWeight="700" fill="var(--vi-ink)">Inventory Dashboard</text>
-            <text x="250" y="28" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="monospace">live · realtime</text>
+            <text x="250" y="28" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="inherit">live · realtime</text>
             <line x1="8" y1="34" x2="332" y2="34" stroke="var(--vi-line)" strokeWidth="0.75" />
             {
                 [
@@ -204,15 +204,15 @@ function AfterFinanceActSVG({ animKey }: { animKey: number }) {
                 ].map(({ y, change, tag }, i) => (
                     <g key={y} className={`vfa${i < 3 ? i + 1 : 3}`}>
                         <rect x="12" y={y - 12} width="316" height="22" rx="5" fill="var(--vi-bg2)" />
-                        <text x="20" y={y + 2} fontSize="7.5" fill="var(--vi-ink)" fontFamily="system-ui">{change}</text>
+                        <text x="20" y={y + 2} fontSize="7.5" fill="var(--vi-ink)" fontFamily="inherit">{change}</text>
                         <rect x={270} y={y - 9} width={50} height={14} rx="7" fill={tag === "LOW" ? "var(--vi-ink)" : "var(--vi-bg2)"} stroke={tag === "OK" ? "var(--vi-line)" : "none"} />
-                        <text x={295} y={y + 2} textAnchor="middle" fontSize="7" fill={tag === "LOW" ? "var(--vi-bg)" : "var(--vi-ink3)"} fontFamily="monospace">{tag}</text>
+                        <text x={295} y={y + 2} textAnchor="middle" fontSize="7" fill={tag === "LOW" ? "var(--vi-bg)" : "var(--vi-ink3)"} fontFamily="inherit">{tag}</text>
                     </g>
                 ))
             }
             <g className="vfa4">
                 <rect x="12" y="158" width="316" height="22" rx="7" fill="var(--vi-ink)" />
-                <text x="170" y="172" textAnchor="middle" fontSize="8.5" fill="var(--vi-bg)" fontWeight="600" fontFamily="system-ui">100% network visibility · automated reorder alerts</text>
+                <text x="170" y="172" textAnchor="middle" fontSize="8.5" fill="var(--vi-bg)" fontWeight="600" fontFamily="inherit">100% network visibility · automated reorder alerts</text>
             </g>
         </svg>
     )
@@ -263,7 +263,7 @@ function AfterDocumentSVG({ animKey }: { animKey: number }) {
             <g className="vad1">
                 <rect x="16" y="8" width="148" height="184" rx="8" fill="var(--vi-bg)" stroke="var(--vi-line)" strokeWidth="1.2" />
                 <line x1="16" y1="26" x2="164" y2="26" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="90" y="20" textAnchor="middle" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="monospace">app.production</text>
+                <text x="90" y="20" textAnchor="middle" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit">app.production</text>
                 <rect x="26" y="34" width="100" height="4" rx="2" fill="var(--vi-line)" />
                 <rect x="26" y="44" width="124" height="4" rx="2" fill="var(--vi-line)" />
                 <rect x="26" y="54" width="110" height="4" rx="2" fill="var(--vi-line)" />
@@ -271,24 +271,24 @@ function AfterDocumentSVG({ animKey }: { animKey: number }) {
             <g className="vad2">
                 <rect x="24" y="62" width="136" height="16" rx="3" fill="var(--vi-gold)" opacity="0.2" />
                 <rect x="24" y="62" width="136" height="16" rx="3" stroke="var(--vi-gold)" strokeWidth="0.8" />
-                <text x="30" y="73" fontSize="7.5" fill="var(--vi-ink)" fontFamily="system-ui">Status: Live in production</text>
+                <text x="30" y="73" fontSize="7.5" fill="var(--vi-ink)" fontFamily="inherit">Status: Live in production</text>
             </g>
             <rect x="26" y="84" width="114" height="4" rx="2" fill="var(--vi-line)" className="vad1" />
             <rect x="26" y="94" width="130" height="4" rx="2" fill="var(--vi-line)" className="vad1" />
             <g className="vad3">
                 <rect x="24" y="102" width="136" height="16" rx="3" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.8" />
                 <rect x="24" y="102" width="3" height="16" rx="1.5" fill="var(--vi-ink4)" />
-                <text x="32" y="113" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="system-ui">Active users: real people</text>
+                <text x="32" y="113" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit">Active users: real people</text>
             </g>
             <rect x="26" y="124" width="120" height="4" rx="2" fill="var(--vi-line)" className="vad1" />
             <rect x="26" y="134" width="98" height="4" rx="2" fill="var(--vi-line)" className="vad1" />
             <g className="vad4">
                 <rect x="176" y="8" width="148" height="72" rx="8" fill="var(--vi-surface)" stroke="var(--vi-gold)" strokeWidth="1" />
-                <text x="186" y="24" fontSize="7.5" fill="var(--vi-gold)" fontFamily="monospace" fontWeight="600">SHIPPED · LIVE</text>
-                <text x="186" y="38" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="system-ui">A system people</text>
-                <text x="186" y="50" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="system-ui">actually use every day.</text>
+                <text x="186" y="24" fontSize="7.5" fill="var(--vi-gold)" fontFamily="inherit" fontWeight="600">SHIPPED · LIVE</text>
+                <text x="186" y="38" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="inherit">A system people</text>
+                <text x="186" y="50" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="inherit">actually use every day.</text>
                 <rect x="186" y="58" width="106" height="14" rx="4" fill="var(--vi-ink)" />
-                <text x="239" y="68" textAnchor="middle" fontSize="7" fill="var(--vi-bg)" fontFamily="system-ui" fontWeight="600">View Live Site →</text>
+                <text x="239" y="68" textAnchor="middle" fontSize="7" fill="var(--vi-bg)" fontFamily="inherit" fontWeight="600">View Live Site →</text>
             </g>
         </svg>
     )
@@ -306,7 +306,7 @@ function BeforeDocumentSVG({ animKey }: { animKey: number }) {
             <g className="vbd1">
                 <rect x="20" y="16" width="180" height="168" rx="6" fill="var(--vi-surface)" stroke="var(--vi-line)" strokeWidth="1.5" transform="rotate(-2 110 100)" />
                 <rect x="26" y="10" width="180" height="168" rx="6" fill="var(--vi-surface)" stroke="var(--vi-line)" strokeWidth="1.2" />
-                <text x="116" y="26" textAnchor="middle" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="system-ui">prototype_final_v3.fig</text>
+                <text x="116" y="26" textAnchor="middle" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit">prototype_final_v3.fig</text>
                 <line x1="36" y1="34" x2="196" y2="34" stroke="var(--vi-line)" />
                 {
                     [44, 54, 64, 74, 84, 94, 104, 114, 124, 134, 144, 154, 164].map(y => (
@@ -316,8 +316,8 @@ function BeforeDocumentSVG({ animKey }: { animKey: number }) {
             </g>
             <circle cx="282" cy="100" r="30" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="1.5" />
             <line x1="282" y1="100" x2="282" y2="78" stroke="var(--vi-ink2)" strokeWidth="2.2" strokeLinecap="round" className="vbd-spin" />
-            <text x="282" y="150" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)" fontFamily="system-ui">never reaches</text>
-            <text x="282" y="162" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)" fontFamily="system-ui">real users</text>
+            <text x="282" y="150" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)" fontFamily="inherit">never reaches</text>
+            <text x="282" y="162" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)" fontFamily="inherit">real users</text>
         </svg>
     )
 }
@@ -362,7 +362,7 @@ function AfterBookingSVG({ animKey }: { animKey: number }) {
                                 fill={slot.active ? "var(--vi-ink)" : "var(--vi-bg2)"}
                                 stroke={slot.active ? "var(--vi-ink)" : "var(--vi-line)"} strokeWidth="0.75" />
                             <text x="208" y={slot.y + 9} textAnchor="middle" fontSize="7.5"
-                                fill={slot.active ? "var(--vi-bg)" : "var(--vi-ink3)"} fontFamily="monospace">{slot.t}</text>
+                                fill={slot.active ? "var(--vi-bg)" : "var(--vi-ink3)"} fontFamily="inherit">{slot.t}</text>
                         </g>
                     ))
                 }
@@ -381,7 +381,7 @@ function AfterBookingSVG({ animKey }: { animKey: number }) {
             </g>
             <g className="vab5">
                 <rect x="260" y="48" width="64" height="22" rx="6" fill="var(--vi-ink)" opacity="0.9" />
-                <text x="292" y="62" textAnchor="middle" fontSize="8" fill="var(--vi-bg)" fontFamily="monospace">6s build</text>
+                <text x="292" y="62" textAnchor="middle" fontSize="8" fill="var(--vi-bg)" fontFamily="inherit">6s build</text>
             </g>
         </svg>
     )
@@ -451,7 +451,7 @@ function AfterBilingualSVG({ animKey }: { animKey: number }) {
 
             <g className="vbi1">
                 <rect x="16" y="36" width="240" height="22" rx="8" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="26" y="51" fontSize="9" fill="var(--vi-ink2)" fontFamily="system-ui">Scaffold a full-stack project for me</text>
+                <text x="26" y="51" fontSize="9" fill="var(--vi-ink2)" fontFamily="inherit">Scaffold a full-stack project for me</text>
                 <rect x="264" y="36" width="52" height="22" rx="8" fill="var(--vi-ink)" opacity="0.9" />
                 <text x="290" y="51" textAnchor="middle" fontSize="8" fill="var(--vi-bg)">Build</text>
             </g>
@@ -473,9 +473,9 @@ function AfterBilingualSVG({ animKey }: { animKey: number }) {
                             fill={r.gold ? "var(--vi-gold)" : "var(--vi-bg2)"}
                             fillOpacity={r.gold ? 0.1 : 1}
                             stroke={r.gold ? "var(--vi-gold)" : "var(--vi-line)"} strokeWidth="0.75" />
-                        <text x="26" y={r.y + 10} fontSize="7.5" fill={r.gold ? "var(--vi-gold)" : "var(--vi-ink3)"} fontFamily="monospace">{r.src}</text>
-                        <text x="26" y={r.y + 20} fontSize="8" fill="var(--vi-ink)" fontFamily="system-ui" fontWeight="500">{r.result}</text>
-                        <text x="200" y={r.y + 20} fontSize="7" fill="var(--vi-ink3)" fontFamily="system-ui">{r.en}</text>
+                        <text x="26" y={r.y + 10} fontSize="7.5" fill={r.gold ? "var(--vi-gold)" : "var(--vi-ink3)"} fontFamily="inherit">{r.src}</text>
+                        <text x="26" y={r.y + 20} fontSize="8" fill="var(--vi-ink)" fontFamily="inherit" fontWeight="500">{r.result}</text>
+                        <text x="200" y={r.y + 20} fontSize="7" fill="var(--vi-ink3)" fontFamily="inherit">{r.en}</text>
                     </g>
                 ))
             }

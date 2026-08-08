@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import "./globals.css"
-import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google"
+import { Bricolage_Grotesque } from "next/font/google"
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { ThemeProvider } from "@/components/themeprovider"
 import { Providers } from "./providers"
@@ -9,23 +9,12 @@ import SmoothScroll from "@/components/smooth-scroll"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 
-const geist = Geist({
+// Bricolage Grotesque is the ONLY typeface on the platform - sans, display, mono slots and all.
+// It ships as a variable font, so the full 200-800 weight range comes from one file.
+const bricolage = Bricolage_Grotesque({
     subsets: ["latin"],
     display: "swap",
-    variable: "--font-geist",
-})
-
-const geistMono = Geist_Mono({
-    subsets: ["latin"],
-    display: "swap",
-    variable: "--font-geist-mono",
-})
-
-const spaceGrotesk = Space_Grotesk({
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700"],
-    display: "swap",
-    variable: "--font-space-grotesk",
+    variable: "--font-bricolage",
 })
 
 export const metadata: Metadata = {
@@ -130,17 +119,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-                <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+                {/* No external font requests: Bricolage Grotesque is the only face and next/font
+                    self-hosts it, so the Google Fonts preconnects and stylesheet are gone. */}
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
                 />
             </head>
             <body
-                className={`${spaceGrotesk.className} ${geist.variable} ${geistMono.variable} ${spaceGrotesk.variable} antialiased`}
+                className={`${bricolage.className} ${bricolage.variable} antialiased`}
             >
                 <Providers>
                     <ThemeProvider

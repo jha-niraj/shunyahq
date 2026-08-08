@@ -90,7 +90,7 @@ export function Footer() {
     const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" })
 
     return (
-        <footer className="relative text-neutral-900 dark:text-white dark:bg-neutral-950 overflow-hidden pt-24 pb-10 border-t border-neutral-200 dark:border-white/5">
+        <footer className="relative text-neutral-900 dark:text-white dark:bg-neutral-950 overflow-hidden pt-24 pb-0 border-t border-neutral-200 dark:border-white/5">
             <PageBackground />
 
             <div className="max-w-7xl mx-auto px-6 md:px-8 relative z-10">
@@ -98,9 +98,8 @@ export function Footer() {
                     <div className="md:col-span-3 space-y-8">
                         <div className="space-y-5">
                             <Link href="/" className="inline-flex items-center gap-2 text-neutral-900 dark:text-white">
-                                <Image src="/shunya-mark.png" alt="Shunya" width={32} height={32} className="h-8 w-8 dark:invert" />
-                                <span className="font-bold tracking-tight text-lg">Shunya</span>
-                                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-white/40">Tech</span>
+                                <Image src="/shunyahqmainlogo.png" alt="ShunyaHQ" width={32} height={32} className="h-8 w-8 invert dark:invert-0" />
+                                <span className="font-bold tracking-tight text-lg">ShunyaHQ</span>
                             </Link>
                             <p className="text-neutral-600 dark:text-white/50 text-sm leading-relaxed max-w-xs">
                                 Engineering intelligence for the digital age. We build high-performance systems for forward-thinking companies.
@@ -173,7 +172,7 @@ export function Footer() {
                 </div>
                 <div className="border-t border-neutral-200 dark:border-white/10 py-7 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-neutral-500 dark:text-white/40">
                     <div className="flex items-center gap-4">
-                        <span className="text-xs">&copy; {year} Shunya Tech</span>
+                        <span className="text-xs">&copy; {year} ShunyaHQ</span>
                         <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider">
                             <span className="relative flex h-2 w-2">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
@@ -195,6 +194,17 @@ export function Footer() {
                         </button>
                     </div>
                 </div>
+            </div>
+
+            {/* Oversized brand wordmark bleeding off the bottom edge. Decorative only - the accessible
+                name is already on the logo link above, so this is aria-hidden and inert. */}
+            <div className="relative w-full border-t border-neutral-200 dark:border-white/5 pt-2 pointer-events-none select-none overflow-hidden">
+                <p
+                    aria-hidden
+                    className="relative z-10 text-center text-[17.5vw] font-bold leading-[0.82] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-b from-neutral-900/25 dark:from-white/[0.16] to-transparent"
+                >
+                    ShunyaHQ
+                </p>
             </div>
         </footer>
     )

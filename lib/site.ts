@@ -1,16 +1,20 @@
 export const SITE_URL =
   process.env.MAIN_APP_URL ?? 'https://shunyahq.com'
 
-export const SITE_NAME = 'Shunya'
+// Brand name as it is shown - titles, OG cards, the wordmark. `SITE_ORG.legalName` below is the
+// registered entity and deliberately still reads "Shunya Tech".
+export const SITE_NAME = 'ShunyaHQ'
 
 // Display domain (no protocol), derived from SITE_URL - used in OG cards, footers, etc.
 export const SITE_DOMAIN = SITE_URL.replace(/^https?:\/\//, '')
 
 export const SITE_DESCRIPTION =
-  'Shunya is a software engineering studio that architects, builds, and scales production-grade digital products. Web, mobile, AI, and cloud - one team that owns everything from concept to launch.'
+  'ShunyaHQ is a software engineering studio that architects, builds, and scales production-grade digital products. Web, mobile, AI, and cloud - one team that owns everything from concept to launch.'
 
 // Brand assets used in metadata, manifest, and structured data.
-export const SITE_LOGO = '/shunyatech.png'
+// The raw mark is white on transparency, which disappears against the white surfaces search engines
+// and social cards render logos on - so the structured-data logo points at the ink-plate version.
+export const SITE_LOGO = '/shunyahq-icon-512.png'
 
 // Organization details used to build the Organization JSON-LD (knowledge-panel signals).
 export const SITE_ORG = {

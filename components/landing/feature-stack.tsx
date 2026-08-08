@@ -46,11 +46,11 @@ function WebEngineeringIllustration() {
             <circle cx="22" cy="22" r="4" fill="var(--vi-line)" />
             <circle cx="36" cy="22" r="4" fill="var(--vi-line)" />
             <circle cx="50" cy="22" r="4" fill="var(--vi-line)" />
-            <text x="170" y="26" textAnchor="middle" fontSize="8" fill="var(--vi-ink3)" fontFamily="monospace">app/page.tsx - Next.js 15</text>
+            <text x="170" y="26" textAnchor="middle" fontSize="8" fill="var(--vi-ink3)" fontFamily="inherit">app/page.tsx - Next.js 15</text>
 
             <g className="ar1">
                 <rect x="140" y="44" width="180" height="22" rx="10" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="230" y="59" textAnchor="middle" fontSize="8.5" fill="var(--vi-ink2)" fontFamily="system-ui">export default async function Page() {"{"}</text>
+                <text x="230" y="59" textAnchor="middle" fontSize="8.5" fill="var(--vi-ink2)" fontFamily="inherit">export default async function Page() {"{"}</text>
             </g>
 
             <g className="ar2">
@@ -58,31 +58,31 @@ function WebEngineeringIllustration() {
                 <path d="M21 79 L24 85 L27 79" fill="none" stroke="var(--vi-ink3)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
             </g>
 
-            <text x="38" y="94" fontSize="8" fill="var(--vi-ink2)" fontFamily="monospace" className="ar3" style={{ clipPath: "inset(0 100% 0 0)" }}>
+            <text x="38" y="94" fontSize="8" fill="var(--vi-ink2)" fontFamily="inherit" className="ar3" style={{ clipPath: "inset(0 100% 0 0)" }}>
                 const data = await fetch(api, {"{"} next: {"{"} revalidate: 60 {"}"} {"}"})
             </text>
-            <text x="38" y="107" fontSize="8" fill="var(--vi-ink2)" fontFamily="monospace" className="ar3" style={{ clipPath: "inset(0 100% 0 0)", animationDelay: "1.0s" }}>
+            <text x="38" y="107" fontSize="8" fill="var(--vi-ink2)" fontFamily="inherit" className="ar3" style={{ clipPath: "inset(0 100% 0 0)", animationDelay: "1.0s" }}>
                 return &lt;Dashboard data={"{"}data{"}"} /&gt; // React Server Component
             </text>
             <rect x="39" y="88" width="4" height="10" rx="1" fill="var(--vi-ink)" className="ar-cursor" />
 
             <g className="ar4">
                 <line x1="38" y1="115" x2="300" y2="115" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="38" y="126" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="monospace" letterSpacing="0.06em">CORE WEB VITALS</text>
+                <text x="38" y="126" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit" letterSpacing="0.06em">CORE WEB VITALS</text>
             </g>
 
             <g className="ar5">
                 <rect x="38" y="132" width="88" height="16" rx="8" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="82" y="143" textAnchor="middle" fontSize="7.5" fill="var(--vi-gold)" fontFamily="monospace">LCP 0.9s</text>
+                <text x="82" y="143" textAnchor="middle" fontSize="7.5" fill="var(--vi-gold)" fontFamily="inherit">LCP 0.9s</text>
             </g>
             <g className="ar6">
                 <rect x="134" y="132" width="104" height="16" rx="8" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="186" y="143" textAnchor="middle" fontSize="7.5" fill="var(--vi-gold)" fontFamily="monospace">Lighthouse · SEO 100</text>
+                <text x="186" y="143" textAnchor="middle" fontSize="7.5" fill="var(--vi-gold)" fontFamily="inherit">Lighthouse · SEO 100</text>
             </g>
 
             <g className="ar4">
                 <rect x="248" y="132" width="64" height="16" rx="8" fill="var(--vi-ink)" opacity="0.9" />
-                <text x="280" y="143" textAnchor="middle" fontSize="7" fill="var(--vi-bg)" fontFamily="monospace">Deploy ✓</text>
+                <text x="280" y="143" textAnchor="middle" fontSize="7" fill="var(--vi-bg)" fontFamily="inherit">Deploy ✓</text>
             </g>
         </svg>
     )
@@ -109,11 +109,11 @@ function MobileEcologyIllustration() {
                 <rect x="16" y="14" width="308" height="26" rx="8" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
                 <circle cx="30" cy="27" r="5" stroke="var(--vi-ink3)" strokeWidth="1.2" fill="none" />
                 <line x1="34" y1="31" x2="37" y2="34" stroke="var(--vi-ink3)" strokeWidth="1.2" strokeLinecap="round" />
-                <text x="44" y="31" fontSize="8.5" fill="var(--vi-ink3)" fontFamily="system-ui">expo build - react native</text>
-                <text x="304" y="31" textAnchor="end" fontSize="7.5" fill="var(--vi-gold)" fontFamily="monospace">1 codebase</text>
+                <text x="44" y="31" fontSize="8.5" fill="var(--vi-ink3)" fontFamily="inherit">expo build - react native</text>
+                <text x="304" y="31" textAnchor="end" fontSize="7.5" fill="var(--vi-gold)" fontFamily="inherit">1 codebase</text>
             </g>
 
-            <text x="16" y="56" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="monospace" letterSpacing="0.06em">BUILD MATRIX - 4 targets from one source</text>
+            <text x="16" y="56" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="inherit" letterSpacing="0.06em">BUILD MATRIX - 4 targets from one source</text>
 
             {
                 [
@@ -125,9 +125,9 @@ function MobileEcologyIllustration() {
                     <g key={y} className={`ld${i + 2}`}>
                         <rect x="16" y={y} width="308" height="26" rx="6" fill={i === 0 ? "var(--vi-bg2)" : "transparent"} stroke={i === 0 ? "var(--vi-line)" : "none"} strokeWidth="0.75" />
                         {i === 0 && <rect x="16" y={y} width="3" height="26" rx="1.5" fill="var(--vi-ink)" className="ld-hl" />}
-                        <text x="28" y={y + 11} fontSize="7.5" fill="var(--vi-ink)" fontFamily="monospace" fontWeight="600">{act}</text>
-                        <text x="28" y={y + 22} fontSize="7.5" fill="var(--vi-ink3)" fontFamily="system-ui">{section}</text>
-                        <text x="308" y={y + 11} textAnchor="end" fontSize="7" fill="var(--vi-ink4)" fontFamily="system-ui">{match}</text>
+                        <text x="28" y={y + 11} fontSize="7.5" fill="var(--vi-ink)" fontFamily="inherit" fontWeight="600">{act}</text>
+                        <text x="28" y={y + 22} fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit">{section}</text>
+                        <text x="308" y={y + 11} textAnchor="end" fontSize="7" fill="var(--vi-ink4)" fontFamily="inherit">{match}</text>
                     </g>
                 ))
             }
@@ -157,10 +157,10 @@ function CloudArchitectureIllustration() {
             <circle cx="310" cy="22" r="6" fill="transparent" stroke="var(--vi-ink)" strokeWidth="0.5" className="cc-ring" />
             <text x="310" y="26" textAnchor="middle" fontSize="7" fill="var(--vi-bg)" fontWeight="700">4</text>
 
-            <text x="20" y="52" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="monospace" letterSpacing="0.08em">STAGE</text>
-            <text x="148" y="52" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="monospace" letterSpacing="0.08em">PROVIDER</text>
-            <text x="230" y="52" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="monospace" letterSpacing="0.08em">DURATION</text>
-            <text x="290" y="52" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="monospace" letterSpacing="0.08em">STATE</text>
+            <text x="20" y="52" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="inherit" letterSpacing="0.08em">STAGE</text>
+            <text x="148" y="52" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="inherit" letterSpacing="0.08em">PROVIDER</text>
+            <text x="230" y="52" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="inherit" letterSpacing="0.08em">DURATION</text>
+            <text x="290" y="52" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="inherit" letterSpacing="0.08em">STATE</text>
             <line x1="12" y1="56" x2="328" y2="56" stroke="var(--vi-line)" strokeWidth="0.75" />
 
             {
@@ -173,11 +173,11 @@ function CloudArchitectureIllustration() {
                     <g key={y} className={`cc${i + 1}`}>
                         <rect x="12" y={y - 9} width="316" height="18" rx="5" fill={urgent ? "rgba(22,163,74,0.08)" : "transparent"} />
                         {urgent && <rect x="12" y={y - 9} width="3" height="18" rx="1.5" fill="#16a34a" />}
-                        <text x={urgent ? "20" : "16"} y={y + 3} fontSize="8.5" fill="var(--vi-ink)" fontFamily="system-ui">{label}</text>
-                        <text x="148" y={y + 3} fontSize="8" fill="var(--vi-ink3)" fontFamily="monospace">{date}</text>
-                        <text x="230" y={y + 3} fontSize="10" fontWeight="700" fill={dayColor} fontFamily="monospace">{days}</text>
+                        <text x={urgent ? "20" : "16"} y={y + 3} fontSize="8.5" fill="var(--vi-ink)" fontFamily="inherit">{label}</text>
+                        <text x="148" y={y + 3} fontSize="8" fill="var(--vi-ink3)" fontFamily="inherit">{date}</text>
+                        <text x="230" y={y + 3} fontSize="10" fontWeight="700" fill={dayColor} fontFamily="inherit">{days}</text>
                         <rect x="286" y={y - 7} width="30" height="13" rx="5" fill="var(--vi-bg2)" />
-                        <text x="301" y={y + 2} textAnchor="middle" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="monospace">{tag}</text>
+                        <text x="301" y={y + 2} textAnchor="middle" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit">{tag}</text>
                     </g>
                 ))
             }
@@ -185,7 +185,7 @@ function CloudArchitectureIllustration() {
             <line x1="12" y1="150" x2="328" y2="150" stroke="var(--vi-line)" strokeWidth="0.75" />
             <g className="cc4">
                 <circle cx="22" cy="164" r="4" fill="#16a34a" opacity="0.8" className="cc-pulse" />
-                <text x="32" y="168" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="monospace" letterSpacing="0.04em">Zero-downtime rollout · Auto-scaling enabled · IaC managed by Terraform</text>
+                <text x="32" y="168" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit" letterSpacing="0.04em">Zero-downtime rollout · Auto-scaling enabled · IaC managed by Terraform</text>
             </g>
         </svg>
     )
@@ -209,7 +209,7 @@ function AIIntegrationIllustration() {
             <g className="da1">
                 <rect x="20" y="10" width="160" height="180" rx="8" fill="var(--vi-bg)" stroke="var(--vi-line)" strokeWidth="1.2" />
                 <line x1="20" y1="30" x2="180" y2="30" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="32" y="24" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="monospace">knowledge-base.md</text>
+                <text x="32" y="24" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit">knowledge-base.md</text>
                 <rect x="28" y="36" width="100" height="4" rx="2" fill="var(--vi-line)" />
                 <rect x="28" y="46" width="130" height="4" rx="2" fill="var(--vi-line)" />
                 <rect x="28" y="56" width="120" height="4" rx="2" fill="var(--vi-line)" />
@@ -218,7 +218,7 @@ function AIIntegrationIllustration() {
             <g className="da2">
                 <rect x="28" y="68" width="144" height="16" rx="3" fill="var(--vi-gold)" opacity="0.18" />
                 <rect x="28" y="68" width="144" height="16" rx="3" stroke="var(--vi-gold)" strokeWidth="0.8" />
-                <text x="32" y="79.5" fontSize="7.5" fill="var(--vi-ink)" fontFamily="system-ui">chunk → embed → vector store</text>
+                <text x="32" y="79.5" fontSize="7.5" fill="var(--vi-ink)" fontFamily="inherit">chunk → embed → vector store</text>
             </g>
 
             <rect x="28" y="92" width="110" height="4" rx="2" fill="var(--vi-line)" className="da1" />
@@ -226,7 +226,7 @@ function AIIntegrationIllustration() {
 
             <g className="da3">
                 <rect x="28" y="112" width="144" height="16" rx="3" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.8" />
-                <text x="32" y="123.5" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="system-ui">retrieved top-k: 5 passages</text>
+                <text x="32" y="123.5" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit">retrieved top-k: 5 passages</text>
                 <rect x="28" y="112" width="3" height="16" rx="1.5" fill="var(--vi-ink4)" />
             </g>
 
@@ -236,19 +236,19 @@ function AIIntegrationIllustration() {
 
             <g className="da4">
                 <rect x="190" y="10" width="142" height="52" rx="8" fill="var(--vi-surface)" stroke="var(--vi-gold)" strokeWidth="1" />
-                <text x="200" y="24" fontSize="7.5" fill="var(--vi-gold)" fontFamily="monospace" fontWeight="600">AGENT RESPONSE</text>
-                <text x="200" y="37" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="system-ui">Grounded answer generated</text>
-                <text x="200" y="49" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="system-ui">with inline source citations.</text>
+                <text x="200" y="24" fontSize="7.5" fill="var(--vi-gold)" fontFamily="inherit" fontWeight="600">AGENT RESPONSE</text>
+                <text x="200" y="37" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="inherit">Grounded answer generated</text>
+                <text x="200" y="49" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="inherit">with inline source citations.</text>
             </g>
             <g className="da5">
                 <rect x="190" y="72" width="142" height="40" rx="8" fill="var(--vi-surface)" stroke="var(--vi-line)" strokeWidth="1" />
-                <text x="200" y="86" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="monospace">MODEL</text>
-                <text x="200" y="100" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="system-ui">Claude / GPT-4o · tools enabled</text>
-                <text x="200" y="109" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="system-ui">temperature 0.2 · streamed</text>
+                <text x="200" y="86" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit">MODEL</text>
+                <text x="200" y="100" fontSize="7.5" fill="var(--vi-ink2)" fontFamily="inherit">Claude / GPT-4o · tools enabled</text>
+                <text x="200" y="109" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit">temperature 0.2 · streamed</text>
             </g>
             <g className="da6">
                 <rect x="190" y="122" width="142" height="28" rx="8" fill="var(--vi-ink)" />
-                <text x="261" y="140" textAnchor="middle" fontSize="8.5" fill="var(--vi-bg)" fontWeight="600" fontFamily="system-ui">Open Chatbot UI →</text>
+                <text x="261" y="140" textAnchor="middle" fontSize="8.5" fill="var(--vi-bg)" fontWeight="600" fontFamily="inherit">Open Chatbot UI →</text>
             </g>
         </svg>
     )
@@ -274,28 +274,28 @@ function UIUXSystemsIllustration() {
 
             <g className="cn1">
                 <rect x="29" y="29" width="52" height="52" rx="12" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="1" />
-                <text x="55" y="61" textAnchor="middle" fontSize="18" fill="var(--vi-ink3)" fontFamily="system-ui" fontWeight="600">Aa</text>
+                <text x="55" y="61" textAnchor="middle" fontSize="18" fill="var(--vi-ink3)" fontFamily="inherit" fontWeight="600">Aa</text>
             </g>
 
             <g className="cn2">
-                <text x="95" y="42" fontSize="13" fontWeight="700" fill="var(--vi-ink)" fontFamily="system-ui">Design System</text>
-                <text x="95" y="56" fontSize="8.5" fill="var(--vi-ink3)" fontFamily="system-ui">Atomic tokens · 64 components</text>
-                <text x="95" y="68" fontSize="8" fill="var(--vi-ink4)" fontFamily="system-ui">Figma · documented · pixel perfect</text>
+                <text x="95" y="42" fontSize="13" fontWeight="700" fill="var(--vi-ink)" fontFamily="inherit">Design System</text>
+                <text x="95" y="56" fontSize="8.5" fill="var(--vi-ink3)" fontFamily="inherit">Atomic tokens · 64 components</text>
+                <text x="95" y="68" fontSize="8" fill="var(--vi-ink4)" fontFamily="inherit">Figma · documented · pixel perfect</text>
             </g>
 
             <g className="cn3">
                 <rect x="95" y="76" width="48" height="14" rx="7" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="119" y="86" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)" fontFamily="monospace">Tokens</text>
+                <text x="119" y="86" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)" fontFamily="inherit">Tokens</text>
                 <rect x="150" y="76" width="32" height="14" rx="7" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="166" y="86" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)" fontFamily="monospace">Grid</text>
+                <text x="166" y="86" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)" fontFamily="inherit">Grid</text>
                 <rect x="189" y="76" width="36" height="14" rx="7" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                <text x="207" y="86" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)" fontFamily="monospace">WCAG</text>
+                <text x="207" y="86" textAnchor="middle" fontSize="7" fill="var(--vi-ink3)" fontFamily="inherit">WCAG</text>
             </g>
 
             <line x1="12" y1="100" x2="328" y2="100" stroke="var(--vi-line)" strokeWidth="0.75" />
 
             <g className="cn4">
-                <text x="20" y="118" fontSize="8" fill="var(--vi-ink3)" fontFamily="monospace" letterSpacing="0.08em">COMPONENTS</text>
+                <text x="20" y="118" fontSize="8" fill="var(--vi-ink3)" fontFamily="inherit" letterSpacing="0.08em">COMPONENTS</text>
                 {
                     [
                         { x: 20, label: "Button" },
@@ -304,26 +304,26 @@ function UIUXSystemsIllustration() {
                     ].map(({ x, label }) => (
                         <g key={x}>
                             <rect x={x} y="124" width="60" height="20" rx="6" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.75" />
-                            <text x={x + 30} y="137" textAnchor="middle" fontSize="8" fill="var(--vi-ink2)" fontFamily="monospace">{label}</text>
+                            <text x={x + 30} y="137" textAnchor="middle" fontSize="8" fill="var(--vi-ink2)" fontFamily="inherit">{label}</text>
                         </g>
                     ))
                 }
             </g>
 
             <g className="cn5">
-                <text x="20" y="162" fontSize="8" fill="var(--vi-ink3)" fontFamily="monospace" letterSpacing="0.08em">CONTRAST RATIO</text>
-                <text x="20" y="176" fontSize="16" fontWeight="700" fill="var(--vi-ink)" fontFamily="system-ui">AAA</text>
-                <text x="68" y="176" fontSize="8.5" fill="var(--vi-ink4)" fontFamily="system-ui">/ accessible</text>
+                <text x="20" y="162" fontSize="8" fill="var(--vi-ink3)" fontFamily="inherit" letterSpacing="0.08em">CONTRAST RATIO</text>
+                <text x="20" y="176" fontSize="16" fontWeight="700" fill="var(--vi-ink)" fontFamily="inherit">AAA</text>
+                <text x="68" y="176" fontSize="8.5" fill="var(--vi-ink4)" fontFamily="inherit">/ accessible</text>
             </g>
 
             <g className="cn6">
                 <rect x="220" y="155" width="100" height="28" rx="8" fill="var(--vi-ink)" />
-                <text x="270" y="173" textAnchor="middle" fontSize="9" fill="var(--vi-bg)" fontWeight="600" fontFamily="system-ui">Open in Figma →</text>
+                <text x="270" y="173" textAnchor="middle" fontSize="9" fill="var(--vi-bg)" fontWeight="600" fontFamily="inherit">Open in Figma →</text>
             </g>
 
             <g className="cn-badge">
                 <rect x="248" y="14" width="72" height="18" rx="9" fill="var(--vi-bg2)" stroke="var(--vi-gold)" strokeWidth="1" />
-                <text x="284" y="26" textAnchor="middle" fontSize="7.5" fill="var(--vi-gold)" fontFamily="monospace" fontWeight="600">Prototype ✓</text>
+                <text x="284" y="26" textAnchor="middle" fontSize="7.5" fill="var(--vi-gold)" fontFamily="inherit" fontWeight="600">Prototype ✓</text>
             </g>
         </svg>
     )
@@ -349,11 +349,11 @@ function DevOpsSecurityIllustration() {
             <text x="20" y="27" fontSize="9.5" fontWeight="600" fill="var(--vi-ink)">Security & Monitoring</text>
             <g className="ds5">
                 <rect x="248" y="14" width="72" height="18" rx="9" fill="var(--vi-bg2)" stroke="var(--vi-gold)" strokeWidth="1" />
-                <text x="284" y="26" textAnchor="middle" fontSize="7.5" fill="var(--vi-gold)" fontFamily="monospace" fontWeight="600">Hardened ✓</text>
+                <text x="284" y="26" textAnchor="middle" fontSize="7.5" fill="var(--vi-gold)" fontFamily="inherit" fontWeight="600">Hardened ✓</text>
             </g>
 
-            <text x="20" y="56" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="monospace" letterSpacing="0.08em">CONTROL</text>
-            <text x="200" y="56" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="monospace" letterSpacing="0.08em">STATUS</text>
+            <text x="20" y="56" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="inherit" letterSpacing="0.08em">CONTROL</text>
+            <text x="200" y="56" fontSize="7.5" fill="var(--vi-ink4)" fontFamily="inherit" letterSpacing="0.08em">STATUS</text>
             <line x1="12" y1="60" x2="328" y2="60" stroke="var(--vi-line)" strokeWidth="0.75" />
 
             {
@@ -366,8 +366,8 @@ function DevOpsSecurityIllustration() {
                     <g key={y} className={cls}>
                         <rect x="12" y={y - 11} width="316" height="20" rx="6" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.5" />
                         <circle cx="24" cy={y - 1} r="3.5" fill="#16a34a" opacity="0.85" />
-                        <text x="36" y={y + 2} fontSize="8.5" fill="var(--vi-ink)" fontFamily="system-ui">{label}</text>
-                        <text x="316" y={y + 2} textAnchor="end" fontSize="8" fill="var(--vi-gold)" fontFamily="monospace">{status}</text>
+                        <text x="36" y={y + 2} fontSize="8.5" fill="var(--vi-ink)" fontFamily="inherit">{label}</text>
+                        <text x="316" y={y + 2} textAnchor="end" fontSize="8" fill="var(--vi-gold)" fontFamily="inherit">{status}</text>
                     </g>
                 ))
             }
@@ -375,7 +375,7 @@ function DevOpsSecurityIllustration() {
             <line x1="12" y1="158" x2="328" y2="158" stroke="var(--vi-line)" strokeWidth="0.75" />
             <g className="ds4">
                 <circle cx="22" cy="172" r="4" fill="#16a34a" opacity="0.8" className="ds-pulse" />
-                <text x="32" y="176" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="monospace" letterSpacing="0.04em">Real-time alerting · automated incident response · 24/7 monitoring</text>
+                <text x="32" y="176" fontSize="7.5" fill="var(--vi-ink3)" fontFamily="inherit" letterSpacing="0.04em">Real-time alerting · automated incident response · 24/7 monitoring</text>
             </g>
         </svg>
     )

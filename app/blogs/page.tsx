@@ -17,7 +17,8 @@ const breadcrumbSchema = {
 }
 
 export const metadata: Metadata = {
-    title: `Engineering & Product Blog - ${SITE_NAME}`,
+    // No brand suffix here - the root layout's title template already appends `| ShunyaHQ`.
+    title: "Engineering & Product Blog",
     description:
         "How Shunya architects, builds, and ships production software - engineering deep dives, AI guides, product thinking, and real case studies from the team that owns the whole stack.",
     alternates: { canonical: `${SITE_URL}/blogs` },
