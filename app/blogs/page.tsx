@@ -5,7 +5,7 @@ import { BLOG_CATEGORIES, BLOG_CATEGORY_KEYS, getPublishedPosts } from "@/conten
 import { SITE_URL } from "@/lib/site"
 import { PageHero } from "@/components/landing/page-hero"
 import { PageBackground } from "@/components/landing/page-background"
-import { formatBlogDate } from "./_components/format-date"
+import { PostCard, CATEGORY_BADGE } from "./_components/post-card"
 import { pageMeta } from "@/lib/seo"
 import { TopicGlyph } from "@/components/blog/topic-glyph"
 
@@ -27,9 +27,6 @@ export const metadata: Metadata = pageMeta({
     // explicitly - without it this page ships with no og:image at all.
     ogImage: "/opengraph-image",
 })
-
-const CATEGORY_BADGE =
-    "bg-neutral-100 text-neutral-700 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700"
 
 export default function BlogPage() {
     // Published only - the ledger in content/active-posts.ts is the gate.
@@ -163,40 +160,7 @@ export default function BlogPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {
                                     rest.map(([slug, meta]) => (
-                                        <Link
-                                            key={slug}
-                                            href={`/blogs/${slug}`}
-                                            className="group so-card overflow-hidden flex flex-col hover:shadow-md transition-all"
-                                        >
-                                            <div
-                                                className="aspect-[16/9] bg-cover bg-center bg-so-accent-soft"
-                                                style={{ backgroundImage: `url(/blogs/${slug}/opengraph-image)` }}
-                                            />
-                                            <div className="p-5 flex flex-col flex-1">
-                                                <div className="flex items-center gap-2 mb-3">
-                                                    <span
-                                                        className={`px-2.5 py-1 rounded-full text-[11px] font-medium border ${CATEGORY_BADGE}`}
-                                                    >
-                                                        {BLOG_CATEGORIES[meta.category]}
-                                                    </span>
-                                                    <span className="text-[11px] text-so-ink-3">
-                                                        {meta.readingTime} min
-                                                    </span>
-                                                </div>
-                                                <h2 className="text-[16px] font-semibold leading-snug mb-2 group-hover:opacity-80 transition-opacity text-so-ink">
-                                                    {meta.title}
-                                                </h2>
-                                                <p className="text-[13px] leading-relaxed line-clamp-2 flex-1 text-so-ink-2">
-                                                    {meta.description}
-                                                </p>
-                                                <time
-                                                    dateTime={meta.datePublished}
-                                                    className="mt-4 text-[11.5px] so-mono text-so-ink-4"
-                                                >
-                                                    {formatBlogDate(meta.datePublished)}
-                                                </time>
-                                            </div>
-                                        </Link>
+                                        <PostCard key={slug} slug={slug} meta={meta} />
                                     ))
                                 }
                             </div>

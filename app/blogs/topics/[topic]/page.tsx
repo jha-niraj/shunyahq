@@ -13,7 +13,7 @@ import {
 import { SITE_URL, SITE_NAME } from "@/lib/site"
 import { PageHero } from "@/components/landing/page-hero"
 import { PageBackground } from "@/components/landing/page-background"
-import { formatBlogDate } from "../../_components/format-date"
+import { PostCard } from "../../_components/post-card"
 
 function isBlogCategory(value: string): value is BlogCategory {
     return (BLOG_CATEGORY_KEYS as string[]).includes(value)
@@ -164,30 +164,7 @@ export default async function TopicHubPage({
                             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {
                                     posts.map((post) => (
-                                        <Link
-                                            key={post.slug}
-                                            href={`/blogs/${post.slug}`}
-                                            className="group so-card p-6 flex flex-col hover:shadow-md transition-all"
-                                        >
-                                            <div className="flex items-center gap-2 mb-4">
-                                                <span className="px-2.5 py-1 rounded-full text-[11px] font-medium border bg-neutral-100 text-neutral-700 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700">
-                                                    {BLOG_CATEGORIES[post.category]}
-                                                </span>
-                                                <span className="text-[11px] text-so-ink-3">{post.readingTime} min</span>
-                                            </div>
-                                            <h2 className="text-[16px] font-semibold leading-snug mb-2 group-hover:opacity-80 transition-opacity text-so-ink">
-                                                {post.title}
-                                            </h2>
-                                            <p className="text-[13px] leading-relaxed line-clamp-2 flex-1 text-so-ink-2">
-                                                {post.description}
-                                            </p>
-                                            <time
-                                                dateTime={post.datePublished}
-                                                className="mt-4 text-[11.5px] so-mono text-so-ink-4"
-                                            >
-                                                {formatBlogDate(post.datePublished)}
-                                            </time>
-                                        </Link>
+                                        <PostCard key={post.slug} slug={post.slug} meta={post} />
                                     ))
                                 }
                             </div>
