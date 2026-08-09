@@ -1,0 +1,255 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Nobody decides to outgrow their software. There is no moment where a tool stops working and everyone agrees it is time to move. What happens instead is quieter: a spreadsheet appears next to the system, then a WhatsApp group, then a person whose job is partly to move information between two places. Each step is small and sensible. Together they become the actual system, and nobody can see it.
+
+That is why this decision usually gets made two years late, and made in a panic, when a compliance requirement or a failed integration forces it. The expensive version is not the migration. It is the two years you spent paying for a system plus the workarounds that compensate for it.
+
+This is a list of the signals that the calculation has changed, roughly in order of how reliably each one predicts that a change is due. Any two together is worth a proper look.
+
+## The eight signals
+
+### 1. Someone's job is partly moving data between systems
+
+The clearest signal there is, and the easiest to quantify. If a person spends an hour a day exporting from one place and typing into another, you are paying a salary to compensate for a software gap.
+
+Do the arithmetic: an hour a day at a modest loaded cost is roughly $7,000 a year, every year, forever. It also does not scale - double the volume and you need two hours, or a second person.
+
+<Callout type="info">
+Count this honestly across the whole team. It is rarely one person doing one hour. It is four people doing twenty minutes each, which nobody has ever added up.
+</Callout>
+
+### 2. The spreadsheet beside the tool has become load-bearing
+
+Not a scratch pad. An actual part of the process: new staff are taught it, decisions depend on it, and if it were deleted tomorrow the business would stop.
+
+The tell is whether it has a filename convention. `Orders_Master_v4_FINAL_USE_THIS.xlsx` is a system, not a note.
+
+Ask three questions about it: is it backed up, does more than one person know how it works, and what happens if two people edit it at once? If the answers are no, no, and "we tell each other", you have an unmanaged production system.
+
+### 3. You have stopped asking whether the tool can do something
+
+This is the most dangerous stage because the cost becomes invisible. The team has internalised the limits, routes around them automatically, and no longer experiences the workaround as a workaround.
+
+You can surface it by asking a new starter what surprised them in their first month. People who have been there three years cannot see it any more; someone who arrived in March can.
+
+### 4. Reporting means exporting and joining by hand
+
+Every month someone pulls two CSVs and builds a pivot table to answer a question the business asks routinely. The question is routine. The answer is manual. That gap is the whole problem.
+
+Worse, the number produced this way is unverifiable. Nobody else can reproduce it, so nobody challenges it, and decisions get made on a figure that lives in one person's spreadsheet.
+
+### 5. Per-seat cost has outgrown the value
+
+A tool at $30 per user is cheap at ten people and $54,000 a year at 150. Costs scale with headcount; the value usually does not, because the tool is genuinely essential to twenty of those users and merely present for the rest.
+
+<RateTable
+  headers={['Team size', 'Annual licence at $30/seat', 'What a focused custom build costs to run']}
+  rows={[
+    ['15', '$5,400', 'Not worth building'],
+    ['40', '$14,400', 'Marginal'],
+    ['90', '$32,400', 'Crossover territory'],
+    ['150', '$54,000', 'Building is usually cheaper'],
+  ]}
+/>
+
+Cost alone is rarely a good enough reason on its own - we go through why in [custom software vs off-the-shelf](/blogs/custom-software-vs-off-the-shelf) - but at the bottom of that table it stops being a rounding error.
+
+### 6. You are two or more major versions behind
+
+Because upgrading would break the customisations. This is the configuration trap closing, and it has a hard deadline attached: once you are far enough behind, the vendor stops supporting your version and you stop receiving security patches. The [OWASP Top 10](https://owasp.org/www-project-top-ten/) has listed vulnerable and outdated components for years precisely because this is how systems get compromised.
+
+### 7. Onboarding takes a week of tribal knowledge
+
+If a new person needs a week of someone sitting beside them, the process is not in the software. It is in people's heads, and it leaves when they do.
+
+### 8. You are declining work the software cannot handle
+
+The most expensive signal and the least often attributed to software. A customer asks for something your competitors offer, and the honest internal reason you say no is that your system cannot model it.
+
+## Score yourself
+
+Be honest. Tick everything that is true today, not what you intend to fix.
+
+<RateTable
+  headers={['Signal', 'Weight']}
+  rows={[
+    ['Someone spends 30+ min/day moving data between systems', 'High'],
+    ['A spreadsheet is part of the official process', 'High'],
+    ['Two or more major versions behind on the vendor product', 'High'],
+    ['Routine reporting requires manual export and joining', 'Medium'],
+    ['Per-seat cost above $25,000/yr for a non-core tool', 'Medium'],
+    ['New starters need a week of shadowing', 'Medium'],
+    ['You have declined revenue the system could not support', 'High'],
+    ['Nobody asks any more whether the tool could do it', 'Medium'],
+  ]}
+/>
+
+**Three or more, with at least one High:** worth a proper evaluation this quarter.
+**One or two:** note them and re-check in six months. Not yet.
+**Five or more:** you are already paying for a replacement, just not in a form that shows up on an invoice.
+
+## Quantify it before you act
+
+The single most useful thing you can do before talking to anyone is put a number on the current cost. It takes an afternoon and it changes every conversation afterwards.
+
+**Time cost.** For two weeks, ask everyone touching the process to note minutes spent on: manual entry, chasing information, fixing errors, building reports. Multiply out.
+
+**Error cost.** How often does something go wrong, and what does each instance cost in credits, re-delivery, apology time?
+
+**Licence cost.** Current annual spend, plus anything paid to consultants to make the tool fit.
+
+**Opportunity cost.** Revenue declined or deferred because the system could not support it. Hardest to estimate and often the biggest.
+
+<Callout type="tip">
+Write these four numbers on one page. If the annual total is under $10,000, the honest answer is usually "live with it and revisit next year". If it is over $40,000, you have a business case that does not need embellishing.
+</Callout>
+
+## A worked example
+
+A 60-person distributor running order intake on a mature CRM plus two spreadsheets.
+
+<RateTable
+  headers={['Cost line', 'Detail', 'Annual']}
+  rows={[
+    ['Manual entry', '2 staff x 45 min/day', '$16,000'],
+    ['Error correction', '~3 wrong deliveries/month', '$7,200'],
+    ['Monthly reporting', '1 day/month of a senior person', '$9,000'],
+    ['CRM licences', '60 seats, ~30 barely use it', '$21,600'],
+    ['Consultant customisation', 'Two changes a year', '$6,000'],
+    ['Total', '', '$59,800'],
+  ]}
+/>
+
+Against that, a focused replacement for the order-intake portion - not the CRM, just the part that is broken - scoped at roughly $55,000 to build and $9,000 a year to maintain. It pays back inside eighteen months, and the CRM stays for what it is genuinely good at.
+
+Note what did **not** happen: they did not replace everything. Five of the six cost lines came from one workflow. That is the normal shape, and jumping from "we have outgrown this" to "we need to build everything ourselves" is the most common way this goes wrong.
+
+## What to do next, in order
+
+**1. Separate the tool from the rollout.** Failed implementations are more often about training, data migration and change management than about software. If the tool was never properly configured or nobody was trained, replacing it will reproduce the same outcome with a different logo.
+
+**2. Re-check the market.** "Nobody makes software for our industry" is often "we have not looked in three years". Vertical products have improved a great deal. Check before you build.
+
+**3. Identify the smallest thing that would fix most of it.** Look back at your cost lines. Usually one workflow accounts for most of the total. That workflow is your project.
+
+**4. Decide build or buy on fit, not price.** The test is whether the process is a source of advantage or overhead. Buy the overhead. Build the advantage.
+
+**5. Scope the thin version.** Get one written estimate for replacing only the broken part, connected to whatever you keep. Our guide to [writing a brief](/blogs/how-to-write-a-web-development-brief) covers how to ask for that in a way that gets comparable answers.
+
+## Objections, answered honestly
+
+**"We just spent a lot on this system, we cannot replace it now."** Sunk cost. The money is gone whichever way you decide. The only question is what the next three years cost under each option. That said, it is a genuine argument for replacing *part* rather than all of it.
+
+**"Our team will not adopt anything new."** A real risk and a solvable one, but only if you treat it as a project in its own right. The systems people refuse are usually the ones imposed without involvement. Bring two of the loudest sceptics into the evaluation and let them break the shortlist.
+
+**"We do not have time for a migration right now."** Nobody ever does, and the workarounds compound while you wait. If the timing genuinely is bad, pick a date, put it in the plan, and in the meantime stop adding new workarounds - each one makes the eventual migration harder.
+
+**"What if we build something and outgrow that too?"** You will, eventually, and that is fine. The difference is that with software you own, outgrowing it means changing it. With software you rent, it means migrating away from it. Design for the first case: your own repository, your own data, documented interfaces. See [who owns the code](/blogs/who-owns-the-code-web-development).
+
+**"Could we just customise what we have?"** Sometimes, and it is the cheapest answer when it works. Track what you spend annually on making the tool fit, separately from the licence. When that figure approaches 40% of what a purpose-built system would cost to maintain, you are funding a bespoke build with worse foundations.
+
+## The migration question
+
+If you do decide to move, the thing that determines whether it goes well is almost never the new software. It is the data.
+
+Expect the migration to take longer than you were told, because the work is not moving records - it is discovering that the old system permitted things the new one should not. Duplicate customers, orders with no line items, dates in three formats, a status field that seven people used differently.
+
+Budget for a data-cleaning phase explicitly, run the old and new systems in parallel for at least one full cycle, and do not decommission anything until the numbers agree. We go through the sequencing in [how to migrate off a legacy system](/blogs/how-to-migrate-off-a-legacy-system).
+
+## The four questions to ask your team
+
+You can run this in one meeting and it produces better information than any vendor evaluation.
+
+**"What do you do that the system does not know about?"** The single most productive question. Every answer is a workaround, and every workaround is either a requirement or a habit. You need to know which.
+
+**"What takes longer than it should?"** People are surprisingly precise about this. They will tell you the exact screen, the exact number of clicks, and how many times a day.
+
+**"What have we told a customer we cannot do?"** Sales and support hold this knowledge and it rarely reaches whoever approves software budgets. It is also the closest thing to a revenue figure you will get.
+
+**"If you could change one thing, what would it be?"** Then ask why. The first answer is usually a feature. The second or third is the actual problem.
+
+Run this with the people doing the work, not their managers. Managers know the official process. Staff know the real one, and the difference between them is the whole story.
+
+<Callout type="tip">
+Write down every answer verbatim, including the ones that sound trivial. "I have to remember to tick the box or the invoice goes to the wrong address" is a defect that has been reclassified as a personal responsibility, and there will be several.
+</Callout>
+
+## What the vendor will say, and what it means
+
+When you raise these problems with your current supplier, the responses fall into a small number of categories.
+
+**"That is on the roadmap."** Ask for a date and what release. A roadmap without dates is a hope. Also ask what shipped in the last two quarters - a vendor who cannot name three recent releases is in maintenance mode regardless of what the roadmap says.
+
+**"You can do that with a customisation."** The beginning of the configuration trap. Ask what happens to that customisation at the next major upgrade, and who pays to repair it.
+
+**"Other customers manage fine with that workflow."** Possibly true, and it tells you their product is built for a segment you are not in. Not dishonest, but decisive.
+
+**"You are not using it properly."** Occasionally fair. If nobody was trained and the configuration was never finished, replacing the tool will reproduce the outcome with a different logo. Worth testing honestly before you conclude the software is wrong.
+
+**"We can build that for you."** Now you are commissioning custom development from a vendor whose incentive is to keep you on their platform, at their rates, with the result locked inside their system. Sometimes right, often the most expensive version of building.
+
+## What happens if you do nothing
+
+A legitimate option, and sometimes the correct one. But it is a decision with a cost, and the cost is not flat.
+
+**Year one:** the workarounds hold. Costs are roughly what they are today. Nobody notices anything worsening.
+
+**Year two:** headcount grows and the manual work scales with it. The spreadsheet acquires a second sheet. One person becomes the only one who understands the reconciliation.
+
+**Year three:** you are two versions behind because upgrading would break the customisations, so security patches stop arriving. Two of the people who held the tribal knowledge have left. The workaround documentation, which was always in their heads, left with them.
+
+**Year four:** a compliance requirement, a failed integration or a security finding forces the issue, and now you are migrating under a deadline set by someone else, with worse data than you would have had three years earlier.
+
+That last sentence is the actual risk. Not that you will pay to replace the system - you will, eventually, either way. It is that you will do it in a hurry, with no leverage, having spent three years paying for the old system plus the workarounds.
+
+<Callout type="warning">
+The moment to move is when you still have a choice. Every year of deferral removes options and adds data to migrate.
+</Callout>
+
+## Building the case internally
+
+Getting approval is a separate skill from being right, and this decision is often lost in the meeting rather than in the analysis.
+
+**Lead with the number, not the frustration.** "Our order process costs us $59,800 a year in manual effort and errors" lands very differently from "the system is terrible". The four-number exercise above is how you get there.
+
+**Name the smallest project.** A proposal to replace one workflow for $55,000 is approvable. A proposal to replace everything for $250,000 goes to committee and dies there.
+
+**Show the do-nothing cost over three years.** Most cases are made against the build cost alone, which makes the build look expensive. Against three years of the current cost, it usually looks obvious.
+
+**Bring a sceptic in early.** The person most likely to object in the approval meeting should be in the evaluation. People rarely block something they helped design.
+
+**Have an answer for "why now".** Growth, a compliance deadline, a departing member of staff who holds the knowledge, or a vendor version reaching end of support. There is almost always a real one, and without it the decision defers by default.
+
+## Where we come in
+
+We build the part that is genuinely broken and leave the rest alone. Quite often a discovery conversation ends with us saying the market has caught up and you should buy something, which is a good outcome and happens more than you would expect.
+
+If you want a straight read, [describe the process to us](/contactus) with the four numbers from the section above. That is enough to tell you whether this is a project or something to revisit next year.
+
+## What to do in the next thirty days
+
+If the score above suggests a change is due, this is the sequence that costs least and tells you most.
+
+**Week 1: measure.** Run the four-number exercise. Ask the four questions. You now have a business case or you have discovered you do not have one, and either answer is worth having.
+
+**Week 2: re-check the market.** Trial two current products with your real data. Not demos - trials. The market may have moved since you last looked, and buying is almost always cheaper than building when the fit is there.
+
+**Week 3: identify the smallest fix.** Look at where your cost concentrates. Usually one workflow accounts for most of it. Scope that, not everything.
+
+**Week 4: get one written estimate** for the thin version, and one internal decision on whether to proceed this year or next.
+
+At the end of the month you either have an approved project with a real business case, or a documented decision to wait with a review date. Both are better than the default, which is drifting for another year while the workarounds compound.
+
+## Related reading
+
+- [How to Migrate Off a Legacy System](/blogs/how-to-migrate-off-a-legacy-system) - what to do once you are sure
+- [Scaling Postgres for SaaS: The Order Problems Actually Show Up](/blogs/scaling-postgres-for-saas) - when the ceiling is a query rather than the system
+- [Choosing a Database for Your Application](/blogs/choosing-a-database) - distinguishing a real limit from a fixable one
+- [Website Redesign vs Rebuild](/blogs/website-redesign-vs-rebuild) - the smaller version of the same decision
+
+## Sources and further reading
+
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/) - why running versions behind is a security position, not just an inconvenience
+- [W3Techs CMS usage statistics](https://w3techs.com/technologies/overview/content_management) - how much of the market runs on off-the-shelf platforms before you conclude nothing fits
+- [Nielsen Norman Group on UX research](https://www.nngroup.com/articles/ux-research-cheat-sheet/) - practical methods for finding out what your team actually does, rather than what the process document says
+- [Martin Fowler on technical debt](https://martinfowler.com/bliki/TechnicalDebt.html) - the vocabulary for why small compromises compound

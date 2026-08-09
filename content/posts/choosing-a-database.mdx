@@ -1,0 +1,198 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Database choice is presented to non-technical decision makers as a technical detail and treated by technical teams as a matter of taste. It is neither. It is a decision with a ten-year shadow, because the database is the one component of your system that is genuinely expensive to change once real data is in it.
+
+You can replace a front end. You can swap a hosting provider in a weekend. Moving a database with five years of customer records into a different kind of database is a project with its own budget, its own risk register and its own chance of losing something.
+
+This is what you need to know to have a useful conversation about it, without needing to write a query.
+
+## The one recommendation that fits most cases
+
+Start with a relational database, and specifically start with PostgreSQL, unless you have a concrete reason not to.
+
+That is not a fashionable answer and it is the right one for the overwhelming majority of business software. Here is the reasoning rather than the assertion.
+
+**Relational databases enforce structure.** They insist that an order has a customer, that a price is a number, and that you cannot delete a customer who still has orders without saying what should happen. This sounds restrictive and is the reason your data is still correct in year four. Systems without those guarantees accumulate contradictions, quietly, and nobody notices until a report is wrong.
+
+**They handle transactions properly.** When a payment is recorded and stock is decremented, either both happen or neither does. Getting this wrong produces the worst class of bug in business software - the kind where the data is inconsistent and nobody can tell when it started.
+
+**They answer questions you have not thought of yet.** SQL lets you ask a new question of existing data without changing how it is stored. This matters more than any performance characteristic, because the questions your business asks in year three are not the ones you designed for in year one.
+
+**PostgreSQL specifically** is open source, has no licensing cost, is available as a managed service from every cloud provider, has a large hiring pool, and has absorbed most of the features people used to leave relational databases for - JSON documents, full-text search, geospatial queries, and more. Its own [architectural overview](https://www.postgresql.org/docs/current/tutorial-arch.html) is readable, and the [Stack Overflow developer survey](https://survey.stackoverflow.co/2025/) has had it at or near the top of most-used and most-admired databases for several years running, which matters for the practical question of who you can hire.
+
+<Callout type="info">
+The useful question is not "which database is best?" It is "do we have a specific reason not to use the boring one?" A team that can answer that clearly has thought about it. A team that reaches for something else by default is choosing on taste.
+</Callout>
+
+## The categories, and when each earns its place
+
+**Relational (PostgreSQL, MySQL, SQL Server).** Tables with defined columns and enforced relationships. The default, for the reasons above. Right for essentially all transactional business data: users, orders, bookings, invoices, content, permissions.
+
+**Document (MongoDB, DynamoDB, Firestore).** Stores flexible records without a fixed shape. Genuinely useful when records really do vary - event payloads from many sources, product catalogues where every category has different attributes, or where write volume is extreme and relationships are few. The [MongoDB manual](https://www.mongodb.com/docs/manual/) is honest about the modelling discipline this requires; the failure mode is teams choosing it to avoid schema design and discovering that the schema still exists, just undocumented and enforced nowhere.
+
+**Key-value and cache (Redis).** Extremely fast storage for things you can afford to lose: sessions, rate-limit counters, cached results, job queues. Almost every system of any size ends up with one alongside its main database, and that is a healthy pattern rather than a compromise. [Redis's documentation](https://redis.io/docs/latest/) covers the patterns worth knowing.
+
+**Search (Elasticsearch, OpenSearch, Typesense).** Purpose-built for text search with relevance ranking, typo tolerance and faceting. Worth adding when search is a core feature. Not worth adding when a database query with a text index would do, which is more often than people think - PostgreSQL's full-text search is adequate up to a surprisingly large scale.
+
+**Analytical (ClickHouse, BigQuery, Snowflake).** Built for aggregating enormous volumes rather than for transactions. Right when you have genuine analytics needs at scale. Wrong as a primary store.
+
+**Embedded (SQLite).** A database in a file, with no server. Frequently dismissed and frequently correct - it is the most widely deployed database in the world. [The project's own guidance on when to use it](https://sqlite.org/whentouse.html) is unusually candid, and worth reading precisely because it tells you when not to.
+
+**Vector (pgvector, Pinecone, Qdrant).** Stores embeddings for similarity search, which is what AI features need. Note that the first item on that list is a PostgreSQL extension, which is the point - most teams adding AI search do not need a separate database for it.
+
+<RateTable
+  headers={['Need', 'Reach for', 'Not']}
+  rows={[
+    ['Orders, users, bookings, invoices', 'PostgreSQL', 'A document store'],
+    ['Sessions, caching, rate limits', 'Redis', 'Your main database'],
+    ['Text search as a core feature', 'A search engine', 'LIKE queries'],
+    ['High-volume event or log data', 'Analytical or time-series store', 'Your main database'],
+    ['Records with genuinely no fixed shape', 'Document store', 'Fifty nullable columns'],
+    ['AI similarity search', 'pgvector first', 'A new vendor by default'],
+  ]}
+/>
+
+## The mistakes that cost the most
+
+**Choosing a document store to avoid designing a schema.** The schema does not disappear when the database stops enforcing it - it moves into the application code, where it is enforced inconsistently by whoever wrote each function. Three years later you have records in six different shapes and every query has to handle all of them. This is the single most expensive database mistake we see, and it is nearly always made for the reason of moving faster in month one.
+
+**Adding a second database too early.** Every additional data store is another thing to back up, monitor, patch, secure and keep consistent with the others. The moment data exists in two places, you have a synchronisation problem, and synchronisation problems are permanent. Add the second store when the first one is demonstrably failing at a job, not in anticipation.
+
+**Optimising for scale you do not have.** Architectures designed for millions of users cost more to build, more to run and more to change. A well-configured PostgreSQL instance on modest hardware handles volumes far beyond what most businesses reach - tens of thousands of transactions a minute is unremarkable. Design for an order of magnitude beyond today, not three.
+
+**Ignoring indexes.** The most common cause of a slow application is not the choice of database; it is missing indexes. A query that scans a whole table is fine at a thousand rows and catastrophic at ten million, and the transition is sudden. [Use The Index, Luke](https://use-the-index-luke.com/) is the best free resource on this, and the [PostgreSQL indexing documentation](https://www.postgresql.org/docs/current/indexes.html) is the reference. If your application slowed down as you grew, this is the first place to look, before anyone proposes a migration.
+
+**Storing files in the database.** Images, PDFs and videos belong in object storage with a reference in the database. Storing them as binary columns bloats backups, slows queries and makes restores painful.
+
+**No backup restore test.** Everyone has backups. Far fewer have ever restored one. An untested backup is a belief, not a control. Test it quarterly, with a stopwatch, and write down how long it took - that number is your actual recovery time.
+
+<Callout type="warn">
+If your team proposes a database you have not heard of, ask three questions: how many people can we hire who know it, is there a managed version so we are not operating it ourselves, and what happens to us if the company behind it is acquired? Novel databases have real advantages and real abandonment risk.
+</Callout>
+
+## Managed or self-hosted
+
+Almost always managed. A managed database from a cloud provider handles backups, patching, failover, monitoring and version upgrades. Self-hosting saves perhaps 40% of the monthly bill and costs considerably more than that in engineer time the first time something goes wrong at 2am.
+
+Self-hosting makes sense at genuine scale, where the percentage becomes a large absolute number and you have the operations capability to justify it, or where a regulatory requirement dictates it. For a business under a few hundred thousand in infrastructure spend, managed is not the lazy option, it is the correct one.
+
+<RateTable
+  headers={['Setup', 'Monthly cost', 'Operational burden']}
+  rows={[
+    ['Managed small (dev/early stage)', '$25 - $150', 'Essentially none'],
+    ['Managed production with replica', '$300 - $1,200', 'Low'],
+    ['Managed at scale', '$2,000 - $15,000+', 'Moderate, tuning and capacity'],
+    ['Self-hosted equivalent', '40-60% less', 'A meaningful share of an engineer'],
+  ]}
+/>
+
+## The operational decisions that matter more than the brand
+
+Once you have picked an engine, a short list of settings determines whether it serves you well. These are worth asking your team about explicitly, because each one is invisible until the day it is not.
+
+**Backup frequency and retention.** How often, kept how long, and stored where. Daily with 30 days of history is a reasonable baseline for most businesses. Point-in-time recovery - the ability to restore to any moment rather than to last night - costs a little more and is worth it for anything transactional.
+
+**Recovery time and recovery point.** Two numbers, both business decisions rather than technical ones. How long can you be down, and how much data can you afford to lose? An hour and five minutes are very different requirements from a day and a day, and they cost differently. Decide them deliberately; most teams have never stated either.
+
+**Failover.** If the primary machine dies, what happens? With a managed service and a standby replica, usually an automatic switch in under a minute. Without one, a restore from backup and a bad afternoon.
+
+**Connection limits.** A quiet source of outages. Databases accept a finite number of simultaneous connections, and a serverless application can exhaust them under load in a way a traditional server never would. Connection pooling is the fix and it should be in place before you need it.
+
+**Migrations.** How schema changes reach production. Version-controlled migration files, applied automatically as part of deployment, reviewed like any other code. Manual changes typed into a production console are how environments drift apart and how a restore stops matching the application.
+
+**Who can read production data.** Covered in more depth under [data privacy](/blogs/data-privacy-for-web-applications), but it belongs on this list too. Direct query access to production should be exceptional, logged and time-limited.
+
+None of these are exotic. All of them are cheap to establish at the start and awkward to introduce during an incident.
+
+## The questions that actually determine your answer
+
+**What is the shape of your core data?** If you can draw it as boxes with lines between them - customers have orders, orders have items - it is relational. Draw it on paper before anyone opens a terminal.
+
+**How bad is losing one record?** For a social feed, a lost item is a shrug. For a financial ledger, it is an incident. Your tolerance sets the durability requirements, and durability is where the boring choices win.
+
+**Do two things ever have to be true together?** Money moved and balance updated. Seat booked and payment taken. If yes, you need proper transactions, and that narrows the field considerably. [Jepsen's consistency reference](https://jepsen.io/consistency) is the serious treatment of what different databases actually guarantee, as opposed to what their marketing says.
+
+**How will you query it in three years?** Not how you will write to it - how you will ask questions of it. Relational databases are dramatically better at questions nobody anticipated.
+
+**Who is going to run it?** If the answer is nobody in particular, choose the thing with a managed service and a large community.
+
+## A worked example
+
+A subscription box business came to us with a platform that had become unusably slow at around 12,000 customers. Their previous team's diagnosis was that they had outgrown their database and needed to move to a distributed system, quoted at $95,000 and four months.
+
+The measurements told a different story.
+
+The database was PostgreSQL on a modest managed instance. The slow pages were the order history and the admin customer search. Both were running queries with no supporting index, so every page load was reading the entire orders table - by then 380,000 rows - and doing it several times per page because of a query pattern that ran one lookup per row displayed.
+
+The work that fixed it:
+
+- **Four indexes added.** Two hours, including verification. The order history page went from 4.8 seconds to 90 milliseconds.
+- **The per-row query pattern rewritten** to fetch related records in one go. Three days. Admin search went from 11 seconds to under 300 milliseconds.
+- **Redis added** for session storage and for caching the dashboard summary, which was recalculating identical figures for every request. Two days.
+- **A read replica** provisioned so reporting queries stopped competing with customer traffic. Half a day, $180 a month.
+
+Total: nine days and roughly $11,000, against a proposed $95,000 rewrite. Two years later the same database is serving 40,000 customers on an instance one size larger.
+
+The general lesson is worth stating plainly, because it recurs: **"we have outgrown our database" is usually "we have never looked at our queries."** Distributed databases exist for problems that a single well-indexed PostgreSQL instance genuinely cannot solve, and most businesses never reach that point. Before funding a migration, fund a week of measurement. If the answer is that you really have hit a wall, the measurement tells you which wall, which makes the migration far more likely to target the right thing.
+
+## What "it can't scale" usually means
+
+The phrase gets used to mean five different things, and separating them is most of the diagnosis.
+
+**"A page is slow."** Almost always a query problem - a missing index, or a pattern that issues hundreds of small queries where one would do. Fixed in days, not months.
+
+**"It slows down at peak times."** Usually contention: reporting queries competing with customer traffic, or a lock held longer than it should be. A read replica and a look at the longest transactions resolves most cases.
+
+**"It falls over under load."** Frequently connection exhaustion rather than capacity. Check the connection count before the CPU.
+
+**"The dataset is too large to query."** Sometimes real, and the answer is usually partitioning or archiving old rows rather than a different engine. Most businesses have a table where 95% of the rows are older than anyone ever queries.
+
+**"We cannot accept writes fast enough."** The only one of the five that is genuinely about the database's ceiling, and by far the rarest.
+
+Insisting on which of these is happening, with a number attached, converts an architectural argument into a work item. It is also the fastest way to tell whether the person proposing a migration has diagnosed the problem or recognised a shape.
+
+## When you genuinely should change
+
+There are real reasons, and they look like this.
+
+**Your write volume exceeds what one machine can accept**, sustained, after tuning. Rare, real, and measurable.
+
+**Your data is genuinely not relational** - you are storing millions of documents with no stable shape and few relationships, and you are fighting the schema constantly rather than occasionally.
+
+**A specific workload needs a specific engine.** Search, analytics or time-series data belongs somewhere purpose-built. Note that this is adding a store for one job, not replacing your primary one.
+
+**Your licensing cost has become material.** A commercial database licence at scale is a genuine line item, and migrating to PostgreSQL to eliminate it has a clear payback calculation.
+
+**The product is unsupported.** A database version past [end of life](https://endoflife.date/nodejs) - the same principle applies across runtimes and engines - is a security exposure, and the upgrade is not optional.
+
+What is not a reason: a new engineer prefers something else, a conference talk was persuasive, or the current system is slow and nobody has looked at why.
+
+## What we do differently
+
+We model the data before choosing the store, on paper, with the people who understand the business. Almost every database argument dissolves once the entities and relationships are written down, because the shape of the data answers the question.
+
+We default to PostgreSQL and we say why when we do not, in writing, so the decision can be revisited by someone else later.
+
+And when a system is slow, we measure before we architect. A migration proposal that has not been preceded by a query analysis is a guess with a large invoice attached.
+
+Most of all we resist the pull of novelty. The database is the least fashionable place to be adventurous and the most expensive place to be wrong, and a boring, well-understood store that three of your next four hires already know is worth more than a marginally better fit nobody can operate.
+
+If you have been told you need to move databases, [get a second opinion first](/contactus). It is a week of work to find out, and it frequently saves a quarter.
+
+## Related reading
+
+- [Scaling Postgres for SaaS](/blogs/scaling-postgres-for-saas) - the technical detail behind the indexing and replica work above
+- [Choosing your stack](/blogs/choosing-your-stack) - the surrounding technology decisions
+- [Signs you have outgrown your current system](/blogs/signs-you-have-outgrown-your-current-system) - distinguishing real ceilings from fixable ones
+- [How much does a SaaS platform cost](/blogs/how-much-does-a-saas-platform-cost) - where infrastructure sits in the overall budget
+
+## Sources and further reading
+
+- [PostgreSQL architecture overview](https://www.postgresql.org/docs/current/tutorial-arch.html) - a readable starting point on how it actually works
+- [PostgreSQL indexing documentation](https://www.postgresql.org/docs/current/indexes.html) - the reference for the most common cause of slowness
+- [Use The Index, Luke](https://use-the-index-luke.com/) - the best free explanation of why queries are slow and how to fix them
+- [Jepsen consistency models](https://jepsen.io/consistency) - what different databases actually guarantee under failure
+- [When to use SQLite](https://sqlite.org/whentouse.html) - unusually honest guidance from a project about its own limits
+- [MongoDB manual](https://www.mongodb.com/docs/manual/) - if you are considering a document store, read the modelling chapters first
+- [Redis documentation](https://redis.io/docs/latest/) - the patterns worth knowing for caching and queues
+- [Stack Overflow developer survey](https://survey.stackoverflow.co/2025/) - useful for the hiring-pool question

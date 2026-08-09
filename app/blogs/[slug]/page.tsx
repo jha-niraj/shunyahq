@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { BLOG_POSTS, BLOG_CATEGORIES, getRelatedPosts } from '@/content/blog'
+import { BLOG_POSTS, BLOG_CATEGORIES, getRelatedPosts, isPublished } from '@/content/blog'
 import { AUTHORS } from '@/content/authors'
 import { SITE_URL, SITE_NAME, SITE_LOGO } from '@/lib/site'
 import { ShaderHeroBg } from '@/components/landing/hero-shader-bg'
@@ -27,10 +27,13 @@ export async function generateMetadata({
     if (!meta) return {}
 
     return {
-        title: meta.pageTitle,
+        title: { absolute: meta.pageTitle },
         description: meta.description,
         keywords: [...meta.keywords],
         authors: [{ name: AUTHORS[meta.author].name }],
+        // Drafted-ahead posts are real, working pages - so internal links between posts never
+        // 404 - but stay out of the index until their slug enters content/active-posts.ts.
+        robots: isPublished(slug) ? undefined : { index: false, follow: true },
         alternates: {
             canonical: `${SITE_URL}/blogs/${slug}`,
         },
@@ -39,6 +42,7 @@ export async function generateMetadata({
             description: meta.description,
             url: `${SITE_URL}/blogs/${slug}`,
             type: 'article',
+            locale: 'en_US',
             publishedTime: meta.datePublished,
             modifiedTime: meta.dateModified,
             authors: [AUTHORS[meta.author].name],
@@ -202,7 +206,7 @@ export default async function BlogPostPage({
                             Have a product to build?
                         </p>
                         <p className="text-[14px] text-so-ink-2 leading-[1.65] mb-5">
-                            Shunya ships production software - web, mobile, AI, and cloud - with one team
+                            Shunya ships production software - web applications end to end - with one team
                             that owns the whole stack from concept to launch. Tell us what you want to build.
                         </p>
                         <div className="flex gap-2.5 flex-wrap">

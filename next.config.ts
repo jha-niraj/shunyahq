@@ -26,6 +26,20 @@ const nextConfig: NextConfig = {
 
     trailingSlash: false,
 
+    async redirects() {
+        return [
+            // The studio now offers one service, so a /services index would be a near-duplicate of
+            // the service page itself - two thin URLs competing for the same query instead of one
+            // strong one. The five retired offerings redirect here too rather than 404.
+            { source: "/services", destination: "/services/web-engineering", permanent: true },
+            { source: "/services/mobile-ecology", destination: "/services/web-engineering", permanent: true },
+            { source: "/services/ai-integration", destination: "/services/web-engineering", permanent: true },
+            { source: "/services/cloud-architecture", destination: "/services/web-engineering", permanent: true },
+            { source: "/services/ui-ux-systems", destination: "/services/web-engineering", permanent: true },
+            { source: "/services/system-security", destination: "/services/web-engineering", permanent: true },
+        ]
+    },
+
     async headers() {
         return [
             {

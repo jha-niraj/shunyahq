@@ -1,1 +1,1 @@
-export { Navbar, default } from "./navigation/navbar"
+export { SiteNav as Navbar, default } from "./navigation/site-nav"

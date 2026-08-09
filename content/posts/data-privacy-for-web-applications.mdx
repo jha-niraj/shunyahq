@@ -1,0 +1,210 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Most privacy conversations in software projects happen in the wrong order. Someone asks "are we GDPR compliant?" three weeks before launch, a developer adds a cookie banner, and everyone agrees the box is ticked. Six months later a customer asks for a copy of their data and it turns out nobody knows where all of it is.
+
+This is a practical guide for the person responsible for a web application, not for a lawyer. It covers what the main regimes actually ask for, which of those requirements are engineering work rather than paperwork, and what it costs to get right during a build instead of after one.
+
+<Callout type="warn">
+Nothing here is legal advice. Privacy law is jurisdiction-specific and fact-specific. What this article can do is tell you which questions to take to a lawyer and which ones your engineering team should have already answered.
+</Callout>
+
+## The shared core, across every regime
+
+The specific laws differ, but the obligations that reach your codebase converge on a short list. If your application handles these five things properly, you are in a defensible position under most regimes and you will pass most enterprise procurement reviews.
+
+**Know what you hold.** You cannot protect, delete or disclose data you have not inventoried. This sounds administrative and is actually the hardest engineering problem in privacy, because personal data leaks sideways into logs, analytics, error reports, backups, support tickets and that spreadsheet on someone's laptop.
+
+**Collect only what you need, and only for a stated reason.** Data minimisation is the principle. In practice it means someone has to justify each field in each form, and "it might be useful later" is not a justification.
+
+**Have a lawful basis for holding it.** Under [the GDPR](https://gdpr-info.eu/) this is explicit - consent, contract, legitimate interests and a few others. Even where a regime does not name it that way, the question "why are we allowed to have this?" is the right one.
+
+**Be able to give it back and to delete it.** Access requests and deletion requests are the two operations that expose whether your data model was designed with privacy in mind. [Article 17](https://gdpr-info.eu/art-17-gdpr/) sets out the right to erasure; the engineering consequence is that "delete" must reach everywhere, including the places you forgot.
+
+**Keep it secure and know when it has not been.** Breach notification duties have short clocks - 72 hours under the GDPR for the supervisory authority - which is only achievable if you have logging that tells you what happened.
+
+## Which laws might apply to you
+
+Determined by where your users are, not where your servers are. This trips up small teams constantly.
+
+<RateTable
+  headers={['Regime', 'Triggered by', 'Notable requirement']}
+  rows={[
+    ['EU GDPR', 'Offering goods or services to people in the EU', 'Lawful basis, DSARs, 72-hour breach notice'],
+    ['UK GDPR', 'Same, for the UK', 'Broadly aligned, separate regulator'],
+    ['CCPA / CPRA (California)', 'Revenue or data-volume thresholds', 'Right to opt out of sale or sharing'],
+    ['Other US state laws', 'Varies by state', 'Similar shape, differing thresholds'],
+    ['Sector rules (health, finance, payments)', 'What the data is', 'Often far stricter than the general regime'],
+  ]}
+/>
+
+The UK regulator's [guidance for organisations](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/) is the most readable official material on any of this, and it is useful even outside the UK because it explains the reasoning rather than reciting the statute. The [European Data Protection Board](https://edpb.europa.eu/) publishes the interpretations that actually get enforced. On the US side, the [FTC's privacy and security guidance](https://www.ftc.gov/business-guidance/privacy-security) and the [California Attorney General's CCPA pages](https://oag.ca.gov/privacy/ccpa) are the primary sources worth reading before you pay anyone to summarise them for you.
+
+<Callout type="info">
+A small B2B SaaS with 40 customers, three of them in Germany, is inside the GDPR. Size is not the trigger. Some obligations scale with size, but applicability does not.
+</Callout>
+
+## The engineering work, itemised
+
+Here is what "make it compliant" decomposes into once you stop treating it as a policy exercise.
+
+### A data map that is real
+
+A list of every place personal data lives: database tables and columns, log files, analytics platforms, error tracking, email service, support desk, CRM, backups, and any third party you send data to. For each one, what data, why, how long, and who can see it.
+
+Most teams produce this in a spreadsheet in a day and are unpleasantly surprised by two or three entries. Error tracking is the usual culprit - a stack trace that includes the request body, quietly retaining email addresses and sometimes passwords in a third-party system nobody listed.
+
+### Deletion that actually deletes
+
+The hard part of the right to erasure is not the button. It is that a user's data is in eleven places and one of them is a nightly backup with a 90-day retention, and another is an analytics platform you cannot selectively delete from.
+
+Workable positions on each:
+
+- **Primary database** - hard delete, or anonymise if records are needed for financial reporting. Replacing a name with a placeholder and severing the link is usually acceptable where retention is legally required for other reasons.
+- **Backups** - you generally cannot surgically edit a backup. The defensible position is a documented retention window after which the backup expires, plus a rule that restored backups are re-processed against the deletion log.
+- **Logs** - stop writing personal data into them. This is the fix; filtering afterwards is a losing battle.
+- **Third parties** - each processor needs its own deletion path, and you need to know it exists before you sign with them.
+
+### Consent that is not theatre
+
+If you use consent as your lawful basis, it has to be freely given, specific, informed and as easy to withdraw as to give. That has direct engineering implications: analytics and marketing scripts must not load before consent, the rejection path must be as prominent as the acceptance path, and the choice must be stored and honoured.
+
+The pattern that fails audits is the banner that loads all the tracking regardless and only changes what the banner says. It is also, incidentally, a performance problem - third-party scripts are usually the largest contributor to poor [Core Web Vitals](/blogs/core-web-vitals-for-business-owners) on business sites, so removing the ones nobody consented to helps twice.
+
+### Data subject access requests
+
+Someone emails and asks for everything you hold on them. You have a deadline, typically one month. If satisfying that means a developer writing ad-hoc queries across six systems, it will take two days of engineering time every time, and you will miss deadlines when the developer is on holiday.
+
+Build the export once. A single function that assembles everything for a given user, in a readable format. A day or two of work during the build; a permanent cost avoided.
+
+### Encryption and access control
+
+Encryption in transit is table stakes - HTTPS everywhere, no exceptions, and free via [Let's Encrypt](https://letsencrypt.org/) if cost was ever the excuse. Encryption at rest is standard on managed databases and usually just needs enabling.
+
+The part teams get wrong is *access*. Who on your team can query the production database? How would you know if they did? Read-only access with an audit trail for support staff, break-glass procedures for engineers, and no shared credentials.
+
+### Vendors, and the contracts nobody reads
+
+Every third party that touches your users' data is part of your compliance position. Your hosting provider, your email sender, your analytics tool, your support desk, your error tracker, the AI service summarising your tickets. Under the GDPR's vocabulary they are processors and you are the controller, which means the obligation stays with you regardless of who is doing the processing.
+
+Three practical things follow.
+
+**You need an agreement with each of them.** Most serious vendors publish a standard data processing agreement you can accept without negotiation. If a vendor does not have one, that is informative.
+
+**You need to list them.** Your privacy policy should name the categories of recipient, and enterprise questionnaires will ask for the actual list. Maintaining it is trivial if you do it as you add vendors and miserable if you reconstruct it two years later.
+
+**You need to know where they store data.** Which brings us to the part that catches out small teams.
+
+### International transfers
+
+If personal data about people in the EU or UK leaves that jurisdiction, there are rules about it. The mechanism most businesses rely on is a set of standard contractual clauses, which your vendors will usually have already incorporated into their agreements, plus in some cases an adequacy decision covering the destination country.
+
+What this means in practice is not that you need to be a lawyer. It means you need to *know the answer* to "where is our data stored?" for each vendor, and to have chosen a region deliberately rather than accepting the default. Most cloud providers let you pick, and picking an EU region at setup costs nothing. Changing it later means a migration.
+
+The question also arrives from a different direction now: every AI feature you add sends data somewhere. If your support tool started summarising tickets with a model hosted in another jurisdiction, personal data is being transferred, and it happened via a settings toggle rather than a project. This is the current version of the third-party-script problem, and it deserves the same rule - review before enablement.
+
+<Callout type="info">
+Ask each vendor two questions and write the answers down: which region stores our data, and what is your deletion timeline once we terminate? Ten minutes per vendor, and it answers most of a procurement questionnaire in advance.
+</Callout>
+
+## What it costs
+
+<RateTable
+  headers={['Work item', 'During a build', 'Retrofitted']}
+  rows={[
+    ['Data map and retention policy', '$1,000 - $3,000', '$3,000 - $8,000'],
+    ['Consent management, done properly', '$1,500 - $5,000', '$3,000 - $9,000'],
+    ['Deletion pipeline across systems', '$2,000 - $6,000', '$8,000 - $25,000'],
+    ['DSAR export tooling', '$1,500 - $4,000', '$4,000 - $12,000'],
+    ['Log and error-report scrubbing', '$1,000 - $3,000', '$4,000 - $15,000'],
+    ['Access control and audit trail', '$2,000 - $6,000', '$6,000 - $20,000'],
+  ]}
+/>
+
+The pattern is consistent and it is the whole argument for doing this early: **retrofitting costs three to four times as much**, because during a build you are making a decision once, and afterwards you are changing a decision that other things now depend on.
+
+## The mistakes that show up most often
+
+**Personal data in logs.** Almost universal. A request logger that captures the full body, an error handler that dumps the user object. It ends up in a third-party log aggregator with a two-year retention and a dozen people's access. Fix at the source: an allowlist of fields safe to log, rather than a denylist of fields to strip.
+
+**Analytics loading before consent.** The script tag is in the layout, the banner is a separate component, and the script has already fired by the time anyone clicks anything.
+
+**Copy-pasted policies.** A privacy policy naming a processor you do not use and omitting two you do. This is worse than a short honest one, because it demonstrates you did not check. Regulators and enterprise buyers both read the policy against the reality; a mismatch is the cheapest possible way to fail a review.
+
+**Treating pseudonymisation as anonymisation.** Replacing a name with a user ID does not take the record outside the regulation if you still hold the mapping. Genuine anonymisation means the link is gone and cannot be reconstructed, including by combining the record with anything else you hold. Most "anonymised" analytics datasets are pseudonymised, and that distinction matters when someone asks you to delete.
+
+**No retention limits.** Every record kept forever because nobody decided otherwise. Retention is a decision. Making it explicitly - "support tickets, three years; marketing contacts, two years of inactivity; server logs, 90 days" - is most of the work.
+
+**Test data that is real data.** A copy of production in a staging environment with weaker access control, no monitoring and a URL someone shared in a chat. If you need realistic data for testing, generate it or anonymise properly.
+
+**Assuming your processors are your problem solved.** Using a compliant vendor does not make you compliant. You remain the controller. Their certifications help your case; they do not replace your obligations.
+
+<Callout type="warn">
+The single highest-risk item on most projects is a third-party script added by marketing without engineering review. It runs with full access to the page, can read form fields, and is invisible in your codebase. A policy that all third-party scripts go through review is free and prevents more incidents than any amount of encryption.
+</Callout>
+
+## What privacy by design means when you strip the phrase of ceremony
+
+The regulation uses the term and it sounds like a poster. The operational version is four habits that cost almost nothing during a build.
+
+**Default to not collecting.** Every field on every form should have a named reason. A "how did you hear about us?" field with no owner and no report reading it is pure liability. Delete the field, not just the data.
+
+**Separate identity from behaviour.** Where you need analytics, you rarely need it tied to a named person. Aggregate counts answer almost every question a business actually asks, and they carry a fraction of the obligation.
+
+**Make retention a column, not a memory.** If every record carries the date it becomes deletable, expiry is a scheduled job. If it does not, expiry is a project.
+
+**Give the user the controls before they ask.** A visible page where someone can see what you hold, download it and delete their account converts your two most expensive manual processes into self-service, and it is a genuinely good look for a product.
+
+None of these require a privacy specialist. They require the decision to be made at the point the feature is designed, by whoever is designing it.
+
+## A worked example
+
+A recruitment platform holding CVs - unavoidably sensitive data - came to us after a client's procurement team sent a 60-question security and privacy questionnaire they could not answer.
+
+The audit found seven places CVs or contact details existed beyond the two the team knew about: the search index, the email provider's sent-message archive, the error tracker, a legacy S3 bucket from a previous version, the support desk, an analytics tool capturing form contents, and a shared drive where the sales team kept examples.
+
+The remediation took five weeks:
+
+- **Week 1** - data map completed, the analytics form capture switched off the same day, the legacy bucket inventoried and deleted after confirming nothing referenced it.
+- **Week 2** - logging rewritten to an allowlist, error tracker configured to strip request bodies, retention set on both.
+- **Weeks 3-4** - a single deletion routine covering database, search index, file storage and support desk, plus a documented process for the email archive. A DSAR export built alongside it, since it walks the same systems.
+- **Week 5** - access control tightened to role-based with an audit log, backup retention formalised at 35 days, and the questionnaire answered honestly.
+
+Cost was $22,000. Doing the same work as part of the original build would have been roughly $7,000. The client won the contract, which was worth considerably more than either number - and that is the actual commercial argument for privacy engineering at this end of the market. Enterprise buyers ask these questions now, and "we'll get back to you" loses deals.
+
+## What to do in the next fortnight
+
+If you want a defensible position quickly, in this order:
+
+1. **List every third-party script and service that touches user data.** An hour. You will find at least one you forgot.
+2. **Check what your logs and error tracker contain.** Search a real user's email address across both. If it appears, that is your first fix.
+3. **Write down a retention period for each data type.** Even if you cannot enforce it yet, the decision is the hard part.
+4. **Try a deletion.** Pick a test account and remove it everywhere. Time it, and note every system you had to touch by hand.
+5. **Try an export.** Same account, assemble everything. Whatever that takes is what every future DSAR will take.
+6. **Read your own privacy policy against what you found.** Correct it.
+
+Steps 4 and 5 are the ones that produce the real to-do list, because they replace an assumption with a measurement.
+
+## What we do differently
+
+We treat the data map as a build artefact rather than a compliance document - it lives in the repository, gets updated when a migration adds a column, and is reviewed in the same pull request as the feature that changed it.
+
+We build the deletion and export routines during the project rather than after it, because they are cheap while the data model is fresh and expensive once it is not. And we hold the line on the two rules that prevent most incidents: no personal data in logs, and no third-party script without review.
+
+If you are answering a security questionnaire you cannot honestly complete, [tell us what it is asking](/contactus) and we will tell you how much of it is engineering work.
+
+## Related reading
+
+- [Web application security checklist](/blogs/web-application-security-checklist) - the controls that sit alongside these obligations
+- [Web accessibility: what is actually required](/blogs/web-accessibility-legal-requirements) - the other compliance area procurement asks about
+- [What is technical debt](/blogs/what-is-technical-debt) - why retrofitting costs a multiple of building in
+- [Questions to ask in a software demo](/blogs/questions-to-ask-in-a-software-demo) - including the privacy ones vendors hope you skip
+
+## Sources and further reading
+
+- [GDPR full text](https://gdpr-info.eu/) - searchable, article by article
+- [GDPR Article 17, right to erasure](https://gdpr-info.eu/art-17-gdpr/) - the provision with the largest engineering consequence
+- [ICO guidance for organisations](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/) - the clearest official explanation of the reasoning
+- [European Data Protection Board](https://edpb.europa.eu/) - the interpretations that get enforced across the EU
+- [FTC privacy and security guidance](https://www.ftc.gov/business-guidance/privacy-security) - the US federal starting point
+- [California Attorney General on the CCPA](https://oag.ca.gov/privacy/ccpa) - primary source for California obligations
+- [Let's Encrypt](https://letsencrypt.org/) - free TLS, so there is no remaining excuse for unencrypted transport

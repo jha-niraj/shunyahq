@@ -10,6 +10,8 @@ The fragmentation was the obvious problem. The deeper one was proof. A student c
 
 We framed the product around closing that gap: take a student from "I am learning" to "here is what I have shipped," inside one platform.
 
+That framing did more work than it looks like. It ruled things in and out for four months. A feature that helped a student learn but produced nothing verifiable was second-tier. A feature that produced proof - a merged contribution, a working project, a credential someone else could check - was first-tier, even where it was harder to build. Every scope argument during the project was settled by returning to that sentence, which is the entire value of writing one down.
+
 ## What we built
 
 CodrzAI is a full engineering intelligence suite. The pieces that mattered most:
@@ -30,6 +32,26 @@ CodrzAI is a full engineering intelligence suite. The pieces that mattered most:
   ]}
 />
 
+## How four months was actually spent
+
+The timeline is the thing people ask about most, so here is the honest distribution rather than the tidy version.
+
+<RateTable
+  headers={['Phase', 'Duration', 'What existed at the end']}
+  rows={[
+    ['Discovery and product definition', '3 weeks', 'Core loop, data model, agent inventory'],
+    ['Foundation and agent framework', '4 weeks', 'Auth, database, pipeline, one working agent'],
+    ['Agents two through six', '5 weeks', 'All six agents, behind a consistent surface'],
+    ['Project foundry and bounties', '3 weeks', 'Codebase generation, marketplace'],
+    ['Certifications and verification', '2 weeks', 'Verifiable credential issuance'],
+    ['Hardening and launch', '3 weeks', 'Load testing, monitoring, production'],
+  ]}
+/>
+
+Note the shape: nearly two months before the second agent existed. That is the framework decision made visible, and it is the choice the whole project turned on. Building agent one as a bespoke thing would have had two agents live by week five and would have made agents four, five and six progressively more expensive as each carried its own context handling, its own tool wiring and its own guardrails.
+
+The three weeks of discovery are the other line worth defending. Six agents, a marketplace, code generation and a credentialling system is a large surface, and the only reason it fitted into four months is that the scope was fixed before anyone wrote code. Three specific things came out of those weeks that saved months later: the agent inventory, which established that six agents shared 80% of their machinery; the decision that roadmaps would be regenerated rather than incrementally edited, which removed an entire class of state-synchronisation problem; and the out-of-scope list, which held.
+
 ## The hard part was not the AI
 
 This surprises people. Calling a language model is easy. The hard engineering was shipping six distinct agents in four months without building each one as a bespoke one-off that we would have to maintain forever.
@@ -39,6 +61,22 @@ So we invested early in a shared agent framework: common context handling, a con
 <Callout type="tip">
 When you know you are going to build many of something - agents, integrations, report types - spend the first chunk of time building the thing that builds them. The upfront framework cost pays back by the third instance.
 </Callout>
+
+## The architecture, briefly
+
+For readers who want the shape rather than the narrative.
+
+**One Next.js application** serving both the student-facing product and the internal tooling, with the agent framework as a service behind it. One deployable, one pipeline, one place to look when something breaks - the reasoning is in [full-stack ownership](/blogs/full-stack-ownership).
+
+**MongoDB for the content and progress layer**, chosen because learning content genuinely varies in shape between roadmap types, project templates and bounty listings, and because the access patterns were overwhelmingly document reads by identifier. This is one of the minority of cases where the document store is the right call rather than an avoidance of schema design - the general argument is in [choosing a database](/blogs/choosing-a-database).
+
+**Redis for agent context, caching and rate limits.** Three jobs, one component, all of them things you can afford to lose on a restart.
+
+**WebSockets for streaming and live code review.** The code-review agent needed to respond as a student typed rather than on submit, and that is a persistent-connection problem rather than a request-response one.
+
+**Everything expensive behind a queue.** Codebase generation takes tens of seconds. Running it inside a request means a timeout and a confused student; running it as a job with a status the interface polls means a progress indicator and a result that survives a page refresh.
+
+None of this is unusual, and that is deliberate. The novel part of the product was the agent framework and the surface it fed; everywhere else the boring answer was chosen precisely so that the attention could go to the part that was genuinely new.
 
 ## The product surface was the real challenge
 
@@ -50,12 +88,108 @@ We treated the AI as a capability and the product as the thing that made it usef
 A common failure mode in AI products is shipping impressive models behind a clumsy surface. Users do not experience your model - they experience your product. If the AI is brilliant but buried, it might as well not exist.
 </Callout>
 
+## The technical decisions that mattered
+
+Five choices, and the reasoning behind each, since the reasoning is more transferable than the choice.
+
+**One agent framework, six configurations.** Covered above. Each agent is a role definition, a toolset and a set of guardrails, sharing context handling, retry logic, streaming, logging and cost controls. Adding a seventh agent after launch took two days rather than three weeks.
+
+**Tools rather than recall for anything factual.** Agents were never asked to remember a student's progress, a submission's status or a bounty's value. Those came from scoped tool calls against the real data. This removes the highest-value error class in an educational product - a confidently wrong statement about a student's own record - and it is the same discipline set out in [designing AI agents that do not hallucinate](/blogs/designing-ai-agents-that-dont-hallucinate).
+
+**Streaming everywhere, from day one.** Agent responses take seconds. A student staring at a spinner for eight seconds is a student who tabs away. Streaming the response as it generates changed perceived responsiveness more than any actual latency work, and retrofitting it would have touched every surface.
+
+**Redis in front of everything expensive.** Roadmap generation, code review results and agent context were all cached with deliberate expiry. This is the difference between a per-interaction cost that scales linearly with users and one that flattens, and on a product aimed at students it was the line between viable and not.
+
+**Hard limits before launch, not after.** Per-user daily caps on agent interactions, a ceiling on generation size, and a per-request step limit. Not optimisations - controls. An AI product without spend limits is a product whose costs are set by its most enthusiastic user.
+
+## Six agents, and what each one actually needed
+
+Listing them is more useful than the count, because the differences between them are where the framework earned its cost.
+
+**DSA coaching.** Socratic rather than answering, because the point is that the student solves it rather than reads a solution. Needed conversation memory across a session and a hard rule against producing a complete solution. Cheapest agent to run and the most used.
+
+**System design.** Long-form, needs to ask clarifying questions before answering, and benefits from producing a diagram description rather than prose. The only agent where a longer response is a better response.
+
+**Code review, real-time.** The hardest engineering. Runs as the student types rather than on submit, so it needs debouncing, cancellation of in-flight requests, and a cost model that survives someone typing for an hour. Nine times the per-interaction cost of the others until caching was added.
+
+**Roadmap generation.** Not conversational at all - a structured generation task producing a validated object rather than text. Different enough in shape that it nearly justified sitting outside the framework, and keeping it inside forced the framework to support non-chat agents, which turned out to be the right pressure.
+
+**Project foundry.** Generates a codebase, runs it, and only shows the student something that built successfully. See the failure below.
+
+**Interview practice.** Adversarial by design, stays in role, and needed the strongest guardrails of any of them, because a model asked to be challenging will drift towards being discouraging without explicit constraint - and a discouraging interview coach is worse than none for the audience this was built for.
+
+The pattern worth extracting: they differ in tone, in output shape, in cost profile and in whether they are conversational at all. A framework that only supported chat would have handled two of the six. Designing for the awkward cases early - the structured generator, the streaming reviewer - is what made the framework a framework rather than a chat wrapper.
+
+## The measurement problem, and how it was solved
+
+The thing that separates an AI product that improves from one that plateaus is whether anyone can tell if a change helped. With six agents this is harder than with one, because a change to the shared framework affects all of them.
+
+What was built, in week six:
+
+**An evaluation set per agent.** Between 30 and 60 real questions each, drawn from student support requests and forum posts rather than invented, with expected behaviour recorded. Roughly a fifth of each set were questions the agent should decline or escalate, because a set containing only answerable questions cannot detect the most important behaviour a teaching agent has.
+
+**Two measurements kept separate.** Whether the agent retrieved or fetched the right facts, and whether it used them well. These fail differently and have different fixes, and conflating them is how teams spend a month on prompting when the problem was in the data layer.
+
+**Cost per interaction, tracked per agent.** The code-review agent turned out to cost roughly nine times the DSA coaching agent, which was invisible until it was measured and which changed how it was cached. On a product priced for students, a single agent quietly consuming most of the compute budget is a commercial problem discovered late unless someone instruments it early.
+
+**A run on every framework change.** Because the framework was shared, a change intended to improve one agent could quietly degrade another. The suite catching that automatically is what made the shared framework safe to keep improving after launch.
+
+## What went wrong
+
+A case study with no failures is a brochure. Three things did not go to plan.
+
+**The project foundry generated code that did not run.** The first version produced plausible full-stack codebases that failed on install roughly a third of the time - missing dependencies, mismatched versions, imports referencing files it had not created. The fix was not a better prompt. It was generating into a template with a known-good dependency set and a build step that actually ran before the result was shown to the student. Failure rate went from about 33% to under 4%, and the lesson - verify the output mechanically rather than trusting it - has been carried into every generation feature since.
+
+**The roadmap went stale.** The initial design generated a roadmap once and tracked progress against it. Students' goals changed, they skipped ahead, they did things outside the platform, and within three weeks the roadmap described someone else. Regenerating on a cadence, seeded with what the student had actually done, fixed it - but it was a fortnight of rework caused by an assumption made in discovery that nobody had marked as an assumption.
+
+**Six agents felt like six chatbots for the first month.** Each was individually good and the whole was incoherent, because they had different tones, different levels of formality and no shared memory of the conversation. Unifying the voice and giving them shared context was product work, not model work, and it was the change that made the surface feel like one assistant.
+
 ## What we took away
 
 Three lessons we carry into every AI product since:
 
-- **Build the framework before the instances** when you know there will be many.
+- **Build the framework before the instances** when you know there will be many of something. The upfront cost feels indulgent at instance one and has paid for itself by instance three.
 - **The model is a capability, not the product** - the workflow around it decides whether it lands.
-- **Verifiable output beats impressive output.** The bounty marketplace and verified certs mattered to students precisely because they produced proof, not just practice.
+- **Verifiable output beats impressive output.** The bounty marketplace and verified certificates mattered to students precisely because they produced proof rather than practice - something a hiring manager could check without taking the student's word for it.
 
 CodrzAI went from idea to production in four months. The AI got the attention. The engineering that made the AI usable is what made it real.
+
+## What we would do differently
+
+Three things, with hindsight.
+
+**Mark assumptions explicitly in the spec.** The roadmap-staleness problem came from an unmarked assumption - that a student's goals are stable over months. Had it been on a list headed "things we are assuming and have not verified", someone would have questioned it in week two rather than week eleven. This is now a standard discovery artefact on every project, and it is described in [managing a software project as a client](/blogs/managing-a-software-project-as-a-client).
+
+**Build the evaluation set in week two, not week six.** Four weeks of agent work happened before there was any way to measure whether a change helped. Nothing was demonstrably damaged by that, and we also cannot prove it was not, which is exactly the problem.
+
+**Design the shared voice before building the second agent.** The incoherence was predictable and cheap to prevent, and it was expensive to fix across six surfaces after the fact. It is the same argument as building a [design system](/blogs/design-systems-for-business) early: consistency is a property of the framework, not something you apply afterwards.
+
+## What transfers to other products
+
+CodrzAI is an education platform, and four of its lessons are not about education at all.
+
+**When you know you will build many of something, build the thing that builds them.** Agents here; elsewhere it has been report types, integrations and tenant-specific workflows. The framework pays back around the third instance and compounds after that.
+
+**The model is a capability. The workflow is the product.** Users do not experience your model, they experience where it appears and what it does with their data. An excellent agent in the wrong place is worse than a mediocre one in the right place, because it cost more and is used equally little.
+
+**Verify generated output mechanically.** If a system produces code, a document or a calculation, check it programmatically before a human sees it. Generation that is confidently wrong is worse than generation that fails visibly.
+
+**Cost controls are architecture, not tuning.** Per-user limits, caching and a measured cost per interaction belong in the first version. Retrofitting them onto a product that has already set price expectations is a commercial problem rather than a technical one, and it is covered in [adding AI features to your product](/blogs/adding-ai-features-to-your-product).
+
+CodrzAI went from idea to production in four months. The AI got the attention. The engineering that made the AI usable is what made it real.
+
+## Related reading
+
+- [Designing AI agents that do not hallucinate](/blogs/designing-ai-agents-that-dont-hallucinate) - the grounding discipline behind the six agents
+- [RAG pipelines explained](/blogs/rag-pipelines-explained) - the retrieval layer underneath
+- [Adding AI features to your product](/blogs/adding-ai-features-to-your-product) - deciding what to build before building it
+- [From idea to MVP in six weeks](/blogs/from-idea-to-mvp-in-6-weeks) - the delivery model this scaled up from
+
+## Sources and further reading
+
+- [OWASP Top 10 for LLM applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/) - the attack surface a multi-agent product inherits
+- [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework) - structuring the risk conversation across several agents
+- [Prompt engineering guidance](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview) - the layer the shared framework standardised
+- [Redis documentation](https://redis.io/docs/latest/) - the caching patterns that flattened the cost curve
+- [Continuous integration](https://martinfowler.com/articles/continuousIntegration.html) - running the evaluation suite on every framework change
+- [Google SRE book](https://sre.google/sre-book/table-of-contents/) - monitoring a system whose output quality is a spectrum

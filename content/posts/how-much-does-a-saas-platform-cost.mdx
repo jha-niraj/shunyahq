@@ -1,0 +1,229 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+The question sounds answerable and is not, in the same way "how much does a building cost?" is not. But there is a useful answer available, which is a structure: what the components are, which ones vary the most, and what a realistic number looks like for the four or five shapes of SaaS product people actually commission.
+
+This article gives ranges with the reasoning attached, so you can adjust them for your own case rather than trusting a number from someone who has not seen your requirements.
+
+## The honest headline numbers
+
+For a competent team building something maintainable, not a prototype and not an enterprise programme:
+
+<RateTable
+  headers={['What you are building', 'Range', 'Typical timeline']}
+  rows={[
+    ['Single-purpose tool, one user type', '$40,000 - $90,000', '3-5 months'],
+    ['Standard B2B SaaS with teams and billing', '$90,000 - $220,000', '5-9 months'],
+    ['Multi-tenant platform with roles and integrations', '$180,000 - $450,000', '8-14 months'],
+    ['Marketplace with two sides and payments', '$220,000 - $600,000', '10-18 months'],
+    ['Regulated or data-intensive platform', '$350,000 - $1M+', '12-24 months'],
+  ]}
+/>
+
+Two things to notice before you use these.
+
+The ranges overlap heavily, and the same product description can land at either end depending on decisions you have not made yet. The gap between $90,000 and $220,000 for "standard B2B SaaS" is almost entirely scope discipline.
+
+And these are build costs. They are roughly **half to two thirds of what you will spend in the first two years**, because a live platform costs money to run, fix and improve. Budgeting only the build is the most common financial mistake in this category, and we will get to the running costs.
+
+<Callout type="info">
+If you want to know whether a quote is plausible, divide it by a realistic day rate to get the days, then ask whether the feature list could be built, tested and deployed in that many days. Numbers that fail this test fail it obviously.
+</Callout>
+
+## What every SaaS platform pays for regardless of what it does
+
+There is a floor to this category. Before you build a single feature that is specific to your idea, a multi-tenant product needs the following, and every one of them is work.
+
+**Accounts, authentication and sessions.** Signup, login, password reset, email verification, session management, and the security properties that make all of it safe. Using a hosted identity provider reduces this considerably and does not eliminate it. Reckon on 8-20 days depending on whether you need social login, SSO, or two-factor. The [OWASP authentication guidance](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) is the reference for what "safe" means here; [NIST 800-63B](https://pages.nist.gov/800-63-3/sp800-63b.html) is the standard behind most modern password policy.
+
+**Organisations and multi-tenancy.** Almost every B2B product needs accounts that contain several users, with data separated between them. This is not a feature, it is a property of the entire data model, and retrofitting it is one of the most expensive changes you can make. 10-25 days if designed in, dramatically more later.
+
+**Roles and permissions.** Who can see what and do what. Two roles is cheap. A permission matrix with custom roles is a subsystem of its own. 5-30 days across that spread.
+
+**Billing.** Plans, upgrades, downgrades, proration, failed payments, dunning, tax, invoices, and the state machine that keeps your product's access in step with the payment provider's view of reality. Using [Stripe Billing](https://docs.stripe.com/billing) or equivalent removes most of the hard parts and leaves the integration and the edge cases. 12-30 days.
+
+**Admin tooling for your own team.** Support cannot help a customer without a way to look at their account. Skipping this is the most common false economy in early SaaS - it converts every support request into a developer request. 8-20 days.
+
+**Notifications.** Transactional email at minimum, usually in-app too, with preferences and unsubscribe handling. 5-15 days.
+
+**Onboarding.** Getting a new customer from signup to first value. Underinvested in almost universally, and the single largest lever on activation rate. 5-20 days.
+
+Add those up at a mid-market blended rate and the floor before your actual product is roughly **$55,000 to $130,000**. That is the honest reason SaaS costs what it does, and it is why "it's basically a CRUD app" is a sentence that precedes a bad estimate.
+
+## What drives the variance
+
+Given the floor is fixed, the spread comes from a predictable set of multipliers.
+
+**Number of distinct user types.** Each one is a separate set of screens, permissions and flows. A product with buyers, sellers and administrators is close to three products sharing a database. This is the single biggest driver and it is the one people underweight, because in conversation "sellers can also list items" sounds like one feature.
+
+**Integrations.** Each external system is its own project. See [what API integration actually involves](/blogs/api-integration-for-businesses) for why the range per integration is $3,000 to $60,000.
+
+**Real-time behaviour.** Anything that must update live for several users at once - collaborative editing, live dashboards, chat - adds infrastructure and a class of bug that is expensive to find. Adds 20-50% to affected areas.
+
+**Data volume and reporting.** A product that stores records is straightforward. A product that analyses millions of them and renders charts in under a second is an engineering problem with its own architecture.
+
+**Compliance.** Health, financial or payment data brings audit requirements, encryption specifics, retention rules and questionnaire work. Handling card data directly means [PCI DSS](https://www.pcisecuritystandards.org/) applies, which is why almost everyone uses a payment provider and never touches a card number. Compliance adds 15-40% depending on the regime, and touches everything from [privacy engineering](/blogs/data-privacy-for-web-applications) to access control.
+
+**Design ambition.** A clean, consistent interface built from a component library is efficient. A bespoke, heavily art-directed product with custom interactions is a different budget.
+
+**Mobile.** A responsive web application is included in the numbers above. Native applications are a separate build, and the question of whether you need them is worth answering deliberately - [web, mobile or PWA](/blogs/mobile-vs-web-vs-pwa) covers the trade.
+
+<Callout type="warn">
+Two multipliers that look like features and behave like architecture: multi-tenancy and permissions. If either might be needed within eighteen months, design for it now. Both are cheap upfront and brutal to retrofit.
+</Callout>
+
+## The costs that arrive after launch
+
+This is the section that makes budgets survive contact with reality.
+
+<RateTable
+  headers={['Ongoing cost', 'Early stage', 'At scale']}
+  rows={[
+    ['Hosting and infrastructure', '$200 - $1,500/mo', '$3,000 - $30,000/mo'],
+    ['Third-party services (email, monitoring, auth)', '$300 - $1,200/mo', '$2,000 - $15,000/mo'],
+    ['Payment processing', '~2.9% + fixed per transaction', 'Negotiable at volume'],
+    ['Maintenance and dependency updates', '15-20% of build cost/yr', 'Similar, larger base'],
+    ['Support tooling and staff', 'Founder time', '1 FTE per ~200 accounts'],
+    ['Continued development', '$8,000 - $30,000/mo', 'A permanent team'],
+  ]}
+/>
+
+Cloud pricing calculators - [AWS's](https://aws.amazon.com/pricing/) is the most detailed - are worth an hour of your time before you commit to an architecture, because the difference between an efficient design and a careless one shows up here every month forever.
+
+The line that surprises people is **continued development**. A SaaS product is not finished at launch; a product that stops changing loses to one that does not. If you cannot fund ongoing engineering, you are funding a project rather than a product, and the economics are different.
+
+Maintenance at 15-20% of build cost annually is not optional either. Dependencies release security patches, runtimes reach [end of life](https://endoflife.date/nodejs), browsers change, and providers deprecate APIs. Deferring it does not save the money; it accrues it as [technical debt](/blogs/what-is-technical-debt) with interest.
+
+## How to get a smaller number honestly
+
+There are legitimate ways to reduce this and there are ways that just move cost into the future. The legitimate ones:
+
+**Cut user types before you cut features.** One user type doing eight things is far cheaper than three user types doing three things each.
+
+**Buy the undifferentiated parts.** Authentication, billing, email, search, file storage, error tracking. None of these make your product distinctive, all of them are expensive to build properly, and mature services exist for each. The instinct to build them "so we control it" costs six figures and buys nothing a customer notices.
+
+**Sequence rather than descope.** Everything on the list gets built eventually; the question is what is in the first release. A version that serves one customer segment completely beats one that serves three segments partially, and it starts generating feedback and revenue months earlier. [How to scope an MVP](/blogs/how-to-scope-an-mvp) is the longer version of this argument.
+
+**Use a component library.** Bespoke design for every screen is a large fraction of front-end cost. A well-chosen library, themed to your brand, gets you 85% of the visual quality for 30% of the effort, and you can art-direct the three screens that matter.
+
+**Defer the admin panel one step, not entirely.** Database access plus a few scripts is an acceptable bridge for the first two months with ten customers. It is not acceptable at a hundred.
+
+**Do not build reporting in version one.** Almost every SaaS spec includes a dashboard with charts. Almost none of them are used in the first six months, because customers do not have enough data yet for the charts to say anything.
+
+The ways that only appear to save money: skipping tests, skipping deployment automation, using a cheaper team without review, and treating security as a later phase. Each of these produces a lower invoice and a higher two-year cost, reliably enough that it is worth stating as a rule. [The cost of cutting corners](/blogs/cost-of-cutting-corners) puts numbers on it.
+
+## Where the money goes inside a project
+
+It helps to know the rough shape of the spend, because it tells you which conversations change the number and which do not.
+
+<RateTable
+  headers={['Area', 'Share of build', 'What it covers']}
+  rows={[
+    ['Discovery and design', '10-18%', 'Scope, flows, interface design, data model'],
+    ['Front end', '25-35%', 'Every screen, state and interaction'],
+    ['Back end and data', '25-35%', 'Logic, storage, APIs, jobs, integrations'],
+    ['Infrastructure and deployment', '5-10%', 'Environments, pipeline, monitoring'],
+    ['Testing and QA', '10-15%', 'Automated tests plus manual passes'],
+    ['Project management', '8-12%', 'Coordination, reporting, decisions'],
+  ]}
+/>
+
+Two observations people find useful.
+
+**Front end is usually the largest single line**, which surprises those who think of the database as the hard part. Screens are where scope lives - every state, every empty case, every error, every permission variant of the same page. When a feature list grows, the front end absorbs most of it.
+
+**Testing and infrastructure are the first things cut** and the two whose absence costs the most. A team without a deployment pipeline ships less often and more nervously, and the compounding effect over a year is larger than the line item. The [DORA research programme](https://dora.dev/) has the data linking deployment practice to delivery performance, and it is the best available answer to "why are we paying for a pipeline?"
+
+If a quote allocates 3% to testing and 0% to infrastructure, it is not a cheaper way to build the same thing. It is a different thing.
+
+## Team shape, and what it costs per month
+
+Most people find monthly burn easier to reason about than a total, particularly when deciding between agency and in-house.
+
+<RateTable
+  headers={['Arrangement', 'Monthly cost', 'Notes']}
+  rows={[
+    ['Solo contractor', '$8,000 - $16,000', 'Fast on small scope, single point of failure'],
+    ['Small agency team (3-4)', '$28,000 - $60,000', 'Covers design, front end, back end, PM'],
+    ['In-house team (3-4)', '$35,000 - $70,000 fully loaded', 'Plus recruitment lag and management'],
+    ['Offshore team (4-6)', '$15,000 - $35,000', 'Requires strong specification and overlap hours'],
+  ]}
+/>
+
+In-house looks comparable per month and is not comparable in timing: hiring a team of four takes three to six months before anyone writes code, and the cost of a bad hire at that stage is the whole quarter. [Agency vs freelancer vs in-house](/blogs/agency-vs-freelancer-vs-in-house) covers the trade properly, but the short version for a first platform is that agencies win on time-to-start and in-house wins on year three.
+
+## A worked example
+
+A logistics company wanted a platform for their customers to book, track and reconcile shipments. Their initial brief listed 47 features and they had been quoted between $110,000 and $480,000 by four suppliers - a spread wide enough that the numbers carried no information.
+
+We worked through the brief in two sessions and separated it into three groups.
+
+**Group one, the actual product.** Booking a shipment, tracking it, seeing history, downloading documents. Two user types: their customer's staff, and their own operations team. 18 of the 47 features.
+
+**Group two, needed but not first.** Customer-configurable reporting, bulk upload, an approval workflow for large bookings, a second integration to a partner network. 16 features, all genuinely valuable, none blocking a first customer.
+
+**Group three, aspirational.** A mobile app, predictive delivery estimates, a public API for customers to build against, white-labelling. 13 features that had been included because they sounded like things a platform should have.
+
+Group one, built properly - multi-tenant from day one, permissions designed for the roles they knew were coming, Stripe for billing, an admin panel for their operations team, one integration to their existing routing system - came to **$156,000 over seven months**.
+
+Group two was funded from revenue over the following year at roughly $12,000 a month, prioritised by what customers actually asked for. Two of the sixteen were quietly dropped because nobody requested them. That is the strongest argument for sequencing: it lets customers cancel your least valuable work for you.
+
+Group three has not been built. Eighteen months on, the mobile app remains unnecessary because the responsive site works on a phone in a warehouse, and the public API is now planned because three customers asked, which is a very different basis than assuming.
+
+Running costs settled at about $2,100 a month for infrastructure and services at 40 customer organisations.
+
+## The questions that move the number most
+
+If you have one hour with a prospective supplier before they estimate, spend it on these six. Each one has, in our experience, changed a quote by five figures.
+
+**How many distinct types of person use this, and does each need their own screens?** The answer to this predicts the total better than the feature count does.
+
+**Which of these features does the first paying customer genuinely require?** Not "would like" - require, as in they will not sign without it. This list is always shorter than the brief and it is the real version one.
+
+**Does any data need to be seen by people outside a single organisation?** If yes, you have cross-tenant visibility, which is a permissions and privacy problem rather than a screen.
+
+**What has to be true for you to charge someone?** This defines the minimum billing scope. Sometimes it is a subscription with three tiers; sometimes it is an invoice you send by hand for the first year, which costs nothing to build.
+
+**What existing systems does this have to agree with?** Each answer is an integration and integrations are priced separately for good reason.
+
+**What is the consequence of being wrong for an hour?** A platform where an hour of downtime costs a sale needs different infrastructure from one where it costs an apology. This one question sets the entire reliability budget, and it is frequently never asked.
+
+## Reading a quote
+
+Four checks that separate a considered estimate from a hopeful one.
+
+**Is it decomposed?** A single number for the whole platform tells you nothing and cannot be negotiated. A breakdown by area lets you see where the money is and make choices.
+
+**Does it include the invisible work?** Testing, deployment pipeline, monitoring, documentation, and a security pass. If these are absent, they are either not being done or not being charged for, and the second is not a thing that happens.
+
+**Does it name the assumptions?** Good estimates say what they assume - number of user types, which integrations, whether content is supplied, who does UAT. Assumptions written down are assumptions you can correct.
+
+**Is there a contingency?** Software estimates are estimates. A quote with no allowance for the unknown is not more accurate; it is less honest. 15-20% is normal and its absence usually means it will arrive as change requests instead.
+
+[Red flags in a software quote](/blogs/red-flags-in-a-software-quote) covers the rest of the pattern, including what a suspiciously low number is usually pricing.
+
+## What we do differently
+
+We quote by area rather than as a single figure, and we separate what must exist for the first customer from what can be funded by the first customers. That structure is more useful than a smaller number, because it gives you levers rather than a yes-or-no.
+
+We design multi-tenancy and permissions in from the start even when the first release only needs one of each, because those two are the retrofits that hurt, and the upfront cost is a fraction of the later one.
+
+And we quote the running cost alongside the build cost, because a platform you cannot afford to operate is not a cheaper platform.
+
+If you have a brief and a spread of quotes you cannot reconcile, [send us both](/contactus) and we will tell you what the difference is actually pricing.
+
+## Related reading
+
+- [How much does a web application cost](/blogs/web-application-development-cost) - the broader version of this question
+- [Web application maintenance cost](/blogs/web-application-maintenance-cost) - the running number in detail
+- [How to scope an MVP](/blogs/how-to-scope-an-mvp) - the sequencing discipline that produces the smaller first number
+- [Fixed price vs time and materials](/blogs/fixed-price-vs-time-and-materials) - how the contract shape changes what you pay
+
+## Sources and further reading
+
+- [Stripe Billing documentation](https://docs.stripe.com/billing) - what subscription billing involves once you look at it honestly
+- [OWASP authentication cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) - the baseline your accounts system has to meet
+- [NIST SP 800-63B](https://pages.nist.gov/800-63-3/sp800-63b.html) - the standard behind modern password and authentication guidance
+- [PCI Security Standards Council](https://www.pcisecuritystandards.org/) - what applies if you ever consider handling card data yourself
+- [AWS pricing](https://aws.amazon.com/pricing/) - for modelling infrastructure cost before you commit to an architecture
+- [Google SRE book](https://sre.google/sre-book/table-of-contents/) - the operational practices behind the running-cost line
+- [endoflife.date](https://endoflife.date/nodejs) - why maintenance is a recurring cost rather than an optional one

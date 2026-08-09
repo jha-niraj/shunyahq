@@ -14,6 +14,16 @@ If you cannot finish the sentence "a user signs up, does ___, and gets ___" in p
 The core loop is one sentence, not a feature list. "A freelancer logs time against a client and sends an invoice" is a core loop. "A platform for freelancers" is not - it is a category. We will not start the clock until we have the sentence.
 </Callout>
 
+## What six weeks buys, and what it does not
+
+Worth setting expectations precisely, because "MVP in six weeks" is a phrase that has been devalued by people using it to mean a prototype.
+
+**What you get:** a live system on your own domain, real accounts, a real database, one complete workflow, deployed through an automated pipeline, with error tracking and monitoring, documented, in a repository you own. Something a stranger can sign up for and use unaided.
+
+**What you do not get:** every feature in your original description, a bespoke visual identity across every screen, an admin panel, reporting, a mobile app, or handling for scenarios that have never occurred. These are deferred, deliberately and in writing, and most of them turn out to be cheaper to build later against real usage than earlier against assumption.
+
+**What you specifically do not get, ever, regardless of the timeline:** faked authentication, a throwaway data store, a manual deployment, or unhandled failures. Those four are the difference between a foundation and a prototype, and cutting them is what turns a six-week build into a nine-month rescue eighteen months later. The distinction is set out at length in [the cost of cutting corners](/blogs/cost-of-cutting-corners).
+
 ## The six-week playbook
 
 Here is the shape of it. The phases overlap a little in practice, but the discipline is in protecting the boundaries.
@@ -53,6 +63,40 @@ A demo handles the happy path. A product handles the unhappy ones. Week five is 
 
 QA pass, production deploy, documentation, and handover. Then the most important step, the entire point of moving this fast: real users get in and start using it. Everything before this week was setup. This week is when learning starts.
 
+## What the founder has to do, week by week
+
+The playbook above describes our side. Roughly a third of the schedule risk sits on the other side of the table, and it is worth being explicit about it because on a six-week build there is no slack to absorb a slow answer.
+
+**Week 1: the heaviest week for you.** Two or three working sessions, plus reviewing and signing off the spec. Expect to answer forty questions you have not thought about, several of which will be uncomfortable because they expose a decision you had been deferring. That discomfort is the discovery working.
+
+**Week 2: light, but not zero.** Brand assets, domain access, any third-party accounts, and legal text if you need terms and a privacy policy. Each of these has a lead time that is invisible until it is on the critical path; requesting them now prevents them blocking week five.
+
+**Weeks 3-4: half a day a week.** Attend both demos. Answer questions within a day. This is the period where a week of silence costs a week of the project, because we either wait or guess.
+
+**Week 5: your testing week.** Two half-days, on real devices, following complete journeys. Not a review - actual use. The [testing guide](/blogs/testing-software-before-launch) covers how to do this so it produces findings rather than impressions.
+
+**Week 6: recruit your first users.** This one is genuinely yours and it is frequently left until the day of launch, at which point the product is live and nobody is looking at it. Twenty people lined up in advance to try it in the first fortnight is what converts the build into learning, and finding twenty people takes longer than founders expect - start in week three.
+
+The single highest-value commitment is a named decision maker who can answer without escalating. On a six-week project, a decision that takes a week has consumed a sixth of the timeline.
+
+## Where the six weeks actually goes
+
+For anyone trying to reconcile the timeline with a cost, here is the rough distribution of effort on a typical build.
+
+<RateTable
+  headers={['Area', 'Share', 'Notes']}
+  rows={[
+    ['Discovery and spec', '12%', 'The cheapest week to change your mind'],
+    ['Foundation - auth, DB, pipeline', '15%', 'Never skipped, never redone later'],
+    ['Core loop, front end', '30%', 'Every screen, state and error case'],
+    ['Core loop, back end', '22%', 'Logic, data, jobs'],
+    ['Polish, edges, testing', '14%', 'The difference between demo and product'],
+    ['Launch and handover', '7%', 'QA, deploy, documentation'],
+  ]}
+/>
+
+Two things people find surprising. The front end is the largest single line, because screens are where scope lives - every state, every empty case, every permission variant. And the foundation is 15% for something with no visible output, which is exactly why it is the first thing offered up when someone wants the number lower.
+
 ## What makes six weeks possible
 
 The timeline is not magic and it is not heroics. It rests on a few specific choices:
@@ -62,8 +106,96 @@ The timeline is not magic and it is not heroics. It rests on a few specific choi
 - **Continuous deployment from week two.** The product is always live and always clickable, so nobody is ever guessing about progress.
 - **One team that owns the whole thing.** No handoffs between frontend, backend, and infra means no time lost re-explaining context across boundaries.
 
+## The five ways a six-week build slips
+
+We have run enough of these to know exactly where the time goes when it goes. None of these are exotic.
+
+**A slow decision.** Covered above and worth repeating because it is the most common by a distance. Not a disagreement - just an unanswered question sitting for four days.
+
+**An integration nobody validated.** A third-party system with no sandbox, undocumented behaviour, or a credential that takes three weeks to issue inside a large organisation. We validate access in week one for exactly this reason, and when it cannot be validated, the integration comes out of the first release.
+
+**Content that does not arrive.** Copy, images, legal text, product data. Everyone assumes it is quick and it is nobody's actual job. The fix is a named owner and a date in week one, treated as a deliverable like any other.
+
+**A discovery in week three that invalidates the spec.** A real requirement nobody surfaced. This is not a failure - it is better found now than in month six - but it means stopping, re-scoping and restarting the build phase rather than absorbing it silently.
+
+**Scope creep by increments.** Four small additions are a week on a six-week project. We price them even when they are trivial, not to be awkward, but because the alternative is a timeline that quietly stops being true while everyone still believes it.
+
+<Callout type="tip">
+If you want one safeguard, make it this: agree in week one that any new idea goes on a written post-launch list rather than into the build, and review that list together at launch. Nothing is lost, nothing is argued about mid-sprint, and the list itself turns out to be a useful prioritisation input once real users have had a look.
+</Callout>
+
+## What happens in week seven
+
+The six weeks are the setup. What follows determines whether they were worth spending.
+
+**Get twenty real users on it within a fortnight.** Not a waitlist - people completing the loop. Twenty is enough to see patterns and few enough to speak to all of them.
+
+**Watch the drop-off point.** Where people stop is the single most valuable thing you will learn this quarter, and it is almost never where the team predicted. Fixing it is usually hours of work rather than a feature, which is why the retained budget goes so far in the first month.
+
+**Talk to ten of them.** Fifteen minutes each. The analytics tell you what happened; only a conversation tells you why, and the why is what determines the next thing to build.
+
+**Hold back 10-15% of the budget for this.** Unspent at launch, allocated to whatever the first fortnight reveals. A project that spends everything by launch day reaches the most informative moment of the whole endeavour with no capacity to act on it. [What happens after launch](/blogs/what-happens-after-launch) covers this properly.
+
+**Be prepared for a negative answer.** The reason to build the smallest real thing is that finding out nobody wants it costs six weeks instead of a year. A founder who cannot hear that answer has bought information they will not use.
+
 ## The honest caveat
 
 Not every idea fits in six weeks, and we say so when one does not. A product with heavy regulatory requirements, complex data migration, or a core loop that genuinely depends on a hard technical problem needs more time, and pretending otherwise just relocates the delay to launch week.
 
+It is also worth saying that six weeks is a shape rather than a promise applied uniformly. Some products are a four-week version of themselves and we say that too - charging for six weeks of calendar because the number sounds credible would be its own kind of dishonesty. What the range describes is the point at which one team, working on a defined core loop with a decided stack, can put real software in front of real people.
+
 But far more often, the idea fits in six weeks and the founder simply did not believe it could. The constraint is not capability. It is the willingness to ship the smallest real thing first, put it in front of users, and learn - instead of building in the dark for a year. Six weeks is enough. The discipline to use it well is the hard part, and that discipline is the playbook.
+
+## When six weeks is the wrong shape
+
+Three situations where the honest answer is a different plan, and we say so rather than compressing something that will not compress.
+
+**The core loop depends on an unsolved technical problem.** If the product only works given a hard algorithmic result, a novel integration nobody has done, or model accuracy above a threshold you have not yet demonstrated, the first piece of work is a spike to establish feasibility, not a build. Two weeks answering "can this work at all" before committing six to building it is the cheaper order.
+
+**Regulatory approval sits on the critical path.** Health, financial and public-sector work frequently has a review process whose timeline you do not control. The build may still take six weeks; the launch does not.
+
+**You are replacing something people already depend on.** A migration with real data and existing users is a different project. The new system has to reach parity on the parts users rely on before it can replace anything, and parity is a much longer list than a first release. [How to migrate off a legacy system](/blogs/how-to-migrate-off-a-legacy-system) covers the incremental approach that works.
+
+There is also a case that looks like a fit and is not: a founder who cannot name the core loop. That is not a scoping problem to be solved in week one, it is a signal that the product question is still open. The right response is a short paid discovery to answer it, not a build against a description that will change in week three.
+
+## A worked example
+
+A founder with a background in commercial property came to us wanting a platform for managing tenant maintenance requests. The original description covered tenants, landlords, contractors and a property manager role, with scheduling, quoting, invoicing, photo evidence, SLA tracking and a reporting dashboard.
+
+Week one reduced it to one sentence: **a tenant reports a problem and it reaches the right contractor.**
+
+Everything was measured against that. Invoicing was deferred because their first customers already had accounting systems. SLA tracking needed months of data before it could mean anything. The reporting dashboard was, on inspection, three numbers that could sit at the top of an existing screen. Contractors did not need accounts in version one - they needed a link in an email that worked without a login.
+
+What shipped in six weeks:
+
+- Tenant reports an issue with photos, from a phone.
+- The property manager sees a queue, triages, and assigns.
+- The contractor receives an emailed link with the details and marks it complete.
+- The tenant is notified at each step.
+- Nine screens, two authenticated roles, one unauthenticated flow, no integrations.
+
+Cost was $52,000 against an earlier quote of $210,000 over eight months for the full description.
+
+What the first month taught them:
+
+- **Photos were the product.** 94% of reports included one, and the property manager's own account was that photographs removed most of the phone calls that used to precede a visit. Nothing in the original brief had identified this as central.
+- **The contractor email link had a 78% completion rate.** The full contractor portal in the original scope would have been the largest single piece of work and, on this evidence, would have reduced completion by adding a login.
+- **The triage queue was too slow at 60 items.** A real problem, found in week three of live use, fixed in two days.
+
+They spent the retained $7,000 on queue filtering and a second notification channel. Invoicing arrived four months later, built against what customers actually asked for rather than what the brief had assumed.
+
+## Related reading
+
+- [Shipping MVPs fast](/blogs/shipping-mvps-fast) - the philosophy behind the timeline
+- [How to scope an MVP](/blogs/how-to-scope-an-mvp) - the scoping method in detail
+- [Managing a software project as a client](/blogs/managing-a-software-project-as-a-client) - your side of the six weeks
+- [What happens after launch](/blogs/what-happens-after-launch) - week seven onwards
+
+## Sources and further reading
+
+- [The Agile Manifesto](https://agilemanifesto.org/) - the origin of the continuous-deploy, working-software cadence
+- [GOV.UK agile delivery guidance](https://www.gov.uk/service-manual/agile-delivery) - what iterative delivery looks like inside an organisation
+- [Continuous integration](https://martinfowler.com/articles/continuousIntegration.html) - the practice behind deploying from week two
+- [Nielsen Norman Group UX research cheat sheet](https://www.nngroup.com/articles/ux-research-cheat-sheet/) - talking to the first twenty users
+- [OWASP authentication cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) - the baseline for the week-two foundation
+- [DORA research](https://dora.dev/) - the evidence behind small batches and frequent deployment

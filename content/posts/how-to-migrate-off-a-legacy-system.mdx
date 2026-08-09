@@ -1,0 +1,299 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Every legacy migration story that ends badly has the same shape. The new system is built, a date is chosen, everyone works a weekend, and on Monday the business discovers that the old system was doing eleven things nobody had written down.
+
+The software is rarely the hard part. The hard part is that a system which has been running for eight years has absorbed eight years of exceptions, workarounds and undocumented rules, and none of that lives in the code. It lives in the data, and in the heads of the three people who have been there longest.
+
+This is a practical sequence for getting off a legacy system without a bad Monday.
+
+## Why these projects overrun
+
+**The data is worse than anyone believes.** Not because people were careless, but because eight years of a permissive system produces duplicate customers, orders with no line items, dates in three formats, and a status field that four departments used differently. Every one of those is a decision the new system will force you to make.
+
+**The rules are undocumented.** "We always waive the fee for accounts that started before 2019." Nobody wrote that down. It exists as a habit in one person's workflow, and it surfaces in week two of the new system when a customer complains.
+
+**The old system is still running.** You are not building in a vacuum; you are building while the business continues to generate new data in the thing you are replacing. Whatever you migrate on Tuesday is stale by Thursday.
+
+**Nobody owns the cutover decision.** Technical readiness is measurable. Business readiness is a judgement call, and if no single person owns it, the date slips indefinitely or happens before anyone is ready.
+
+<Callout type="warning">
+The most common failure is treating a migration as a build project with a data task at the end. It is a data project with a build attached. Sequence it accordingly.
+</Callout>
+
+## The eight-phase sequence
+
+### Phase 1: Inventory what the old system actually does
+
+Not what it was designed to do. What it does now.
+
+Sit with each group of users for an hour and watch them work. Do not ask what the process is - ask them to show you, including the bits they apologise for. Every spreadsheet, every workaround, every "I always have to remember to" is a requirement in disguise.
+
+Write down every report anyone runs, every integration that pushes or pulls data, and every scheduled job. The overnight process nobody has thought about in four years is exactly the one that breaks.
+
+**Output:** a written list of functions, users, reports, integrations and scheduled tasks. Typically 3 - 8 days.
+
+### Phase 2: Profile the data before designing anything
+
+This is the phase most often skipped and the one that most determines the outcome.
+
+Run counts against the real database. How many customers? How many have no email? How many are duplicates by name, by email, by phone? What are the distinct values in every status field, and how many rows use each?
+
+You are looking for the gap between what the schema permits and what the data contains. That gap is your migration scope.
+
+<RateTable
+  headers={['What to measure', 'What a bad answer looks like']}
+  rows={[
+    ['Row counts per table', 'Far higher than anyone estimated'],
+    ['Duplicate rate on key entities', 'Above 5%'],
+    ['Null rate on fields the new system requires', 'Anything above 0 needs a decision'],
+    ['Distinct values in status/type fields', 'Twenty-three values where the manual says six'],
+    ['Date range', 'Records from before the company existed'],
+    ['Orphaned records', 'Line items whose order was deleted'],
+    ['Encoding issues', 'Names with mangled characters'],
+  ]}
+/>
+
+**Output:** a data quality report with a decision required against each finding. Typically 2 - 5 days, and it will change the project plan.
+
+### Phase 3: Decide what does not come across
+
+The most valuable meeting in the whole project.
+
+Not all data should migrate. Options for each entity: migrate fully, migrate a recent subset, archive to read-only storage, or discard. A common and sensible pattern is to migrate two years of live data and keep the full history in a read-only archive that people can search but not edit.
+
+This decision alone often halves the migration effort, and the reason it gets skipped is that nobody wants to be the person who agreed to leave data behind. Make it an explicit, minuted decision with a named owner.
+
+### Phase 4: Build the mapping, and write it down
+
+For every field in the new system: where does it come from, and what happens when the source is empty, invalid or ambiguous?
+
+That last column is the whole document. "Customer type" in the old system has 23 distinct values including three spellings of "Retail" and one that is just a space. The mapping says exactly which of those becomes which value in the new system, and what happens to the ones that match nothing.
+
+### Phase 5: Rehearse the migration, repeatedly
+
+Run the whole migration into a copy of the new system. Not a sample - all of it.
+
+Then check it, with three different techniques:
+
+**Counts.** Rows in, rows out, rows rejected. They must reconcile, and every rejected row needs a reason.
+
+**Financial totals.** Sum the same figure in both systems. If total outstanding invoice value differs by a cent, find out why before you continue. This check catches more real errors than any other.
+
+**Spot checks by humans who know the data.** Give the longest-serving person in each department twenty records and ask if anything looks wrong. They will find things no automated check would.
+
+Then do it again. A migration you have rehearsed once is a migration you have not rehearsed - the second run is where you find the things that only break at scale or on the second pass.
+
+<Callout type="tip">
+Time each rehearsal. If the full migration takes nine hours, your cutover window is not a Saturday morning. Knowing this in rehearsal rather than on the night is the difference between a plan and an incident.
+</Callout>
+
+### Phase 6: Run in parallel
+
+For at least one full business cycle - a month for most businesses, a quarter if your process is quarterly - both systems run and the numbers are compared.
+
+This is expensive and tedious and it is the single thing that most reliably prevents disaster. It is how you discover the undocumented rule about pre-2019 accounts while the old system is still there to fall back on.
+
+Decide up front which system is authoritative during parallel running, and make sure everyone knows. Ambiguity here creates the worst possible outcome: two divergent sets of real data.
+
+### Phase 7: Cut over
+
+By this point the cutover itself should be dull. Have written:
+
+- The exact sequence, with times and owners.
+- The freeze point on the old system and who enforces it.
+- The verification checks that must pass before you open the doors.
+- **The rollback plan, and the deadline for deciding to use it.** If verification is not green by 6am, you roll back. Agree that in advance, when nobody is tired.
+
+Do it at the quietest point in your business cycle, not the most convenient point in the project plan.
+
+### Phase 8: Keep the old system readable
+
+Do not decommission on cutover day. Keep the legacy system available read-only for at least three months, and keep a database backup for as long as your retention obligations require.
+
+You will need it. Somebody will ask a question in week six that only the old data answers.
+
+## Big bang or incremental
+
+<RateTable
+  headers={['', 'Big bang', 'Incremental (strangler)']}
+  rows={[
+    ['How it works', 'One cutover, everything at once', 'Replace one function at a time'],
+    ['Best for', 'Small systems, tightly coupled data', 'Large systems, separable functions'],
+    ['Risk profile', 'Concentrated on one night', 'Spread, and each step reversible'],
+    ['Total cost', 'Lower', 'Higher (two systems in parallel)'],
+    ['Time to first value', 'End of project', 'Weeks'],
+    ['Rollback', 'All or nothing', 'Per component'],
+  ]}
+/>
+
+The incremental approach is [Martin Fowler's strangler fig pattern](https://martinfowler.com/bliki/StranglerFigApplication.html): stand the new system alongside the old, route one function to it, prove it, then the next. The old system is gradually starved of responsibilities until nothing is left on it.
+
+It costs more and it is almost always the right choice for anything large, because it converts one catastrophic risk into a series of small recoverable ones. Big bang is defensible for a small system where the data is genuinely inseparable.
+
+## A realistic plan
+
+For a mid-sized operational system, roughly 200 users, eight years of data.
+
+<RateTable
+  headers={['Phase', 'Elapsed', 'What you get']}
+  rows={[
+    ['Inventory and process capture', '2 weeks', 'Written function list, undocumented rules surfaced'],
+    ['Data profiling', '1 week', 'Quality report, decisions required'],
+    ['Scope decisions', '1 week', 'What migrates, what archives, what goes'],
+    ['Build (parallel with above from wk 3)', '10 - 16 weeks', 'The new system'],
+    ['Mapping and migration tooling', '3 weeks', 'Repeatable, scripted, not manual'],
+    ['Rehearsal x3', '3 weeks', 'Timings, reconciliation, fixes'],
+    ['Parallel running', '4 - 12 weeks', 'Confidence, and the rules nobody wrote down'],
+    ['Cutover and stabilisation', '2 weeks', 'Live, with the old system still readable'],
+  ]}
+/>
+
+Six to nine months elapsed. If someone has told you three, ask which of those phases they have removed.
+
+## The costs people forget
+
+**Staff time.** Your people are in interviews, rehearsal checks and parallel running. That is real capacity taken out of the business for months and it belongs in the budget.
+
+**Running two systems.** Licences, hosting and support for both, for the whole parallel period.
+
+**Data cleaning.** Sometimes genuinely manual. Deduplicating 4,000 customer records is somebody's job for two weeks.
+
+**Training.** Every user, plus written material, plus the productivity dip in the first fortnight.
+
+**The stabilisation tail.** Budget 10 - 15% of build cost for the eight weeks after cutover. Something always needs fixing, and having no budget left is how a good migration becomes a bad memory.
+
+## Objections, answered
+
+**"Can we skip parallel running? It doubles the work."** You can, and it is the highest-risk saving available. If you must, at minimum run a full rehearsal with financial reconciliation and keep the old system live and writable for two weeks after cutover so you can fall back.
+
+**"The vendor says they will handle the migration."** Some do it well. Ask three questions: will you profile our data before quoting, how many rehearsals are included, and what is the rollback plan? Vague answers to any of those means the migration is a line item rather than a plan.
+
+**"Our data is clean."** It is not. Nobody's is. Profiling takes two days and will tell you exactly how clean, which is a much better foundation than optimism.
+
+**"We want to improve the process while we migrate."** Tempting and usually a mistake. Changing the system and the process simultaneously means you cannot tell which one caused a problem. Migrate the process as it is, stabilise, then improve. The exception is where the old process only existed to work around a limitation you are removing.
+
+**"Can we go live with partial data?"** Often yes, and it is underused. Migrating active customers now and dormant ones later is frequently fine, and it shrinks the cutover considerably. It needs a clear rule for what "active" means and a plan for the rest.
+
+## Who needs to be involved, and when
+
+A migration fails on people as often as on data. These roles need naming before you start.
+
+**An executive sponsor** who can make the cutover decision and absorb the cost of a delay. Not a committee.
+
+**A business owner per functional area** - finance, operations, sales - who can answer "what should happen when..." without escalating. These people are your requirements, and they need real time allocated, not goodwill.
+
+**A data owner** who has authority to decide what gets archived and what gets discarded. Without this, the scope decision never gets made and you migrate everything by default.
+
+**The longest-serving person in each department.** Not for their job title but for their memory. They hold the undocumented rules, and their spot checks during rehearsal will find things no automated reconciliation catches.
+
+**A trainer**, or a plan for who does training. Frequently forgotten, then improvised badly in the last fortnight.
+
+<Callout type="warning">
+The most common staffing mistake is treating the business participants as part-time volunteers on top of their day jobs. During phases 1, 5 and 6 they are genuinely needed for hours a week. Budget that capacity or the project waits on them.
+</Callout>
+
+## Communicating it internally
+
+Migrations are unpopular because they impose change on people who did not ask for it, and because the benefits accrue to the organisation while the disruption accrues to individuals.
+
+**Say why, in their terms.** Not "we are modernising our technology stack" but "you will stop re-typing orders every evening".
+
+**Be honest that the first fortnight is worse.** Everyone knows it will be. Pretending otherwise costs credibility you will need later.
+
+**Show it early and often.** People fear what they have not seen. A ten-minute demo at week six removes more anxiety than any announcement.
+
+**Name the people who shaped it.** Nothing reduces resistance like a colleague saying they were consulted.
+
+**Have a visible route for problems** in the first month, and respond to the first few fast. How the first three complaints are handled sets the tone for adoption.
+
+## How we run migrations
+
+Data profiling happens before we quote the build, because a quote that has not looked at your data is a guess. Migration tooling is scripted and repeatable rather than manual, so a rehearsal costs hours instead of days and we can afford to run it three times. Financial reconciliation is a launch-blocking check, not a nice-to-have. And the rollback plan is written and agreed before the cutover night, with the decision deadline in it.
+
+If you are looking at a legacy system and want an honest read on the size of the job, [tell us about it](/contactus). The related reading is [signs you have outgrown your current system](/blogs/signs-you-have-outgrown-your-current-system) if you are still deciding whether to move at all.
+
+## A cutover runbook template
+
+Write this a fortnight before, rehearse against it, and have it printed on the night.
+
+```
+CUTOVER RUNBOOK - [date]
+
+ROLES
+  Cutover lead:        [name, phone]
+  Data lead:           [name, phone]
+  Business sign-off:   [name, phone]
+  Rollback authority:  [name, phone]
+
+TIMELINE
+  18:00  Announce freeze. Old system read-only.
+         Owner: [name]  Verify: no writes in audit log
+  18:15  Final incremental export
+         Owner: [name]  Expected duration: 25 min
+  18:45  Run migration
+         Owner: [name]  Expected duration: 3h 10m (from rehearsal 3)
+  22:00  Automated reconciliation
+         Row counts, financial totals, orphan check
+  22:30  Human spot checks (20 records per department)
+         Owners: [names]
+  23:15  GO / NO-GO DECISION
+         Authority: [name]
+         Criteria: all counts reconcile, totals match to the cent,
+                   no critical spot-check failures
+  23:30  DNS / access switch, smoke test
+  00:00  Done, or rollback begins
+
+ROLLBACK
+  Trigger:   Any criterion above unmet at 23:15
+  Decision:  [name] only. No extensions.
+  Steps:     1. Do not switch access
+             2. Re-enable writes on old system
+             3. Notify all staff by [channel] before 06:00
+  Deadline:  Rollback must complete by 02:00
+
+MORNING
+  06:00  Two people on support, in the office
+  07:00  Verify first real transactions end to end
+  09:00  Check-in with each department head
+```
+
+The most important line is the go/no-go criteria, written down in advance. At 23:15, tired, with a deadline behind you, the temptation to accept "close enough" is enormous. Deciding the threshold a fortnight earlier, when nobody is tired, is what makes that decision survivable.
+
+## What to do in the first week after
+
+**Two people on support, visibly.** Not a ticket queue. People need to be able to ask someone.
+
+**Daily reconciliation for the first five days.** Same financial totals check you ran at cutover.
+
+**A visible list of known issues** with owners and expected fix dates. Nothing corrodes confidence faster than the impression that reports go nowhere.
+
+**Resist all new feature requests for two weeks.** They will come immediately, because people can finally see what is possible. Log them, thank people, and change nothing until the system is stable.
+
+**Do not decommission anything.** Old system read-only for three months minimum.
+
+## Objections about the data specifically
+
+Data is where migrations actually fail, and it attracts a different set of objections from the ones above - usually from whoever owns the numbers rather than whoever owns the system.
+
+**"Can we not just export and import?"** For a small, clean dataset with a matching schema, sometimes, and it is worth asking early because it occasionally is that simple. For anything with years of history, the export is the easy part and the mapping decisions are the project. Profiling tells you which situation you are in, in two days.
+
+**"The new vendor says migration is included."** Ask what "included" covers. Usually it means loading a correctly formatted file that you provide. Producing that file - deduplicating, mapping, cleaning - is the work, and it is frequently yours.
+
+**"Our data is clean, we keep it tidy."** Profiling costs two days and settles it. Every organisation believes this and the counts almost always disagree, not through carelessness but because permissive systems accumulate exceptions.
+
+**"We cannot afford parallel running."** Then at minimum: rehearse fully with financial reconciliation, and keep the old system live and writable for two weeks after cutover so falling back remains possible. Parallel running is insurance, and skipping insurance is a decision rather than a saving.
+
+## Related reading
+
+- [Signs You Have Outgrown Your Current System](/blogs/signs-you-have-outgrown-your-current-system) - establishing whether you need to move at all
+- [Website Redesign vs Rebuild](/blogs/website-redesign-vs-rebuild) - the smaller version of the same decision
+- [Choosing a Database for Your Application](/blogs/choosing-a-database) - the store underneath, and whether it has to change
+- [Testing Software Before Launch](/blogs/testing-software-before-launch) - why a data migration needs its own testing
+
+## Sources and further reading
+
+- [Martin Fowler on the strangler fig pattern](https://martinfowler.com/bliki/StranglerFigApplication.html) - the standard reference for incremental replacement
+- [Martin Fowler on technical debt](https://martinfowler.com/bliki/TechnicalDebt.html) - why legacy systems accumulate the exceptions that make migration hard
+- [PostgreSQL architecture documentation](https://www.postgresql.org/docs/current/tutorial-arch.html) - useful grounding if you are profiling a relational source
+- [GDPR](https://gdpr-info.eu/) and [FTC privacy guidance](https://www.ftc.gov/business-guidance/privacy-security) - retention and deletion obligations that affect what you are allowed to archive
+- [Google SRE Book](https://sre.google/sre-book/table-of-contents/) - on rollback planning and treating cutovers as operations rather than events

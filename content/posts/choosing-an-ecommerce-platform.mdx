@@ -1,0 +1,227 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+The e-commerce platform decision is made badly more often than almost any other technology choice, and for an unusual reason: everybody has an opinion, most of those opinions are correct for a business other than yours, and the differences that matter only become visible at a scale you have not reached yet.
+
+This is a framework for the decision rather than a recommendation, because the honest answer depends on four things about your business that nobody selling you a platform is going to ask about.
+
+## The four questions that decide it
+
+Answer these before you look at a single platform.
+
+**1. How many products, and how do they vary?** Forty products with one price each is a completely different problem from 40,000 products with size, colour, material and regional pricing. Product complexity - variants, bundles, configurable items, subscriptions - is the biggest driver of what you need.
+
+**2. Does anything have to agree with another system?** An ERP, an accounting package, a warehouse system, a point of sale. If yes, the integration capability of the platform matters more than any front-end feature, and the question becomes which platform talks to your existing systems most easily.
+
+**3. Who is going to run it day to day?** A merchandiser adding products, or a developer deploying changes? A platform your team cannot operate is a platform you will pay an agency to operate forever.
+
+**4. Is the buying experience itself a differentiator?** For most retailers, no - customers want to find the thing and buy it without friction, and a conventional store does that. For some, the experience is the product: a configurator, a personalised journey, a complex quote flow. That is the case that justifies a custom front end.
+
+<Callout type="info">
+If your answers are "a few hundred simple products, no critical integrations, run by non-technical staff, conventional buying experience," you want a hosted platform and you can stop reading the technical comparisons. That is not a compromise - it is the correct answer for the majority of retailers.
+</Callout>
+
+## The categories
+
+**Hosted platforms (Shopify and similar).** You rent the whole thing. Hosting, security, updates, PCI compliance and the checkout are their problem. You configure rather than build. Fast to launch, low operational burden, and constrained in ways that only matter to some businesses. [Shopify](https://www.shopify.com/) is the reference point in this category.
+
+**Self-hosted platforms (WooCommerce, Magento and similar).** You install and run the software. More control, more flexibility through plugins, and you now own hosting, security, updates and performance. [WooCommerce](https://woocommerce.com/) is the most widely used, largely because it sits on WordPress and a great many businesses already have WordPress.
+
+**Headless commerce.** A commerce engine handling products, cart, orders and payments, with a completely custom front end consuming it through an API. Maximum control over the experience, highest cost, and it inherits everything discussed in [headless CMS explained](/blogs/headless-cms-explained), including the editor-experience trap.
+
+**Fully custom.** Building the commerce logic yourself. Almost never right. Cart, checkout, tax, shipping, refunds, fraud and payment edge cases represent thousands of hours of accumulated correctness in existing platforms, and reproducing them is a genuine engineering programme with no differentiation at the end of it.
+
+<RateTable
+  headers={['', 'Hosted', 'Self-hosted', 'Headless']}
+  rows={[
+    ['Time to launch', '2-8 weeks', '6-14 weeks', '12-28 weeks'],
+    ['Build cost', '$6,000 - $40,000', '$15,000 - $80,000', '$60,000 - $300,000'],
+    ['Monthly platform cost', '$30 - $2,500', '$50 - $800 hosting', '$300 - $3,000+'],
+    ['Transaction fees', 'Sometimes', 'Payment provider only', 'Payment provider only'],
+    ['Who maintains it', 'Them', 'You', 'You'],
+    ['Front-end freedom', 'Themed', 'Themed with effort', 'Total'],
+    ['Non-technical operation', 'Excellent', 'Good', 'Depends entirely on the build'],
+    ['Performance ceiling', 'Good', 'Variable', 'Excellent'],
+  ]}
+/>
+
+## What people get wrong
+
+**Choosing for scale they will not reach.** The most common and most expensive error. A business doing $400,000 a year selects an enterprise platform because they intend to do $40 million, and pays for four years of complexity they never use. Choose for where you will be in two years, and accept that a genuinely successful business can afford to replatform.
+
+**Underestimating the operational burden of self-hosting.** A self-hosted store is a live application that needs patching, monitoring, backups and performance attention. Free software is not free to run, and the difference is frequently larger than the licence fee you avoided. [Web application maintenance cost](/blogs/web-application-maintenance-cost) applies here in full.
+
+**Choosing headless for the front end without budgeting the back office.** Headless gives you a beautiful storefront and, unless you pay for it, an internal experience where merchandisers cannot preview anything and every campaign needs a developer.
+
+**Ignoring the plugin count.** A self-hosted store with 34 plugins is 34 things that can conflict, break on update, or be abandoned by their author. Each one seemed reasonable individually. Together they are the reason the site is slow and the upgrade is frightening.
+
+**Forgetting tax and shipping complexity.** Tax rules by jurisdiction, shipping rates by weight and zone, thresholds, exemptions, returns. This is unglamorous and it is where a surprising share of project time goes. If you sell internationally, ask about it explicitly and early.
+
+**Treating search as a solved problem.** On a catalogue above a few hundred products, internal search is one of the highest-value things you can improve, and default search on most platforms is poor. Budget for it separately.
+
+## Replatforming, and when not to
+
+If you already have a store, the question is not only which platform but whether to move at all. Replatforming is disruptive, and it is frequently proposed as the answer to problems that have cheaper solutions.
+
+**Reasons that justify a move:**
+
+- The platform is unsupported or the version you are on is past end of life, and upgrading in place is not viable.
+- Operating it consumes agency time out of proportion to the business - the plugin-maintenance treadmill.
+- A capability you genuinely need is not achievable, after someone competent has actually checked rather than assumed.
+- The total cost of the current arrangement, honestly counted including agency retainers, exceeds an alternative.
+
+**Reasons that do not:**
+
+- The site is slow. Measure first. Most commerce performance problems are images, third-party scripts and layout shift, all of which are cheaper to fix than to replatform around. [Why your website is slow](/blogs/why-your-website-is-slow) works through the diagnosis in order.
+- The design looks dated. That is a theme, not a platform.
+- A new agency prefers a different platform. Sometimes legitimate, and worth asking whether the recommendation would change if they had to work in your current one.
+- Someone read that a competitor uses something else.
+
+The honest test: write down the three problems you want solved, then ask what each would cost to fix in place. Sometimes the answer is genuinely a move. Frequently it is $8,000 of targeted work against $60,000 of migration and three months of disruption.
+
+## The costs nobody quotes
+
+<RateTable
+  headers={['Item', 'Typical cost', 'Notes']}
+  rows={[
+    ['Product data preparation', '$2,000 - $20,000', 'Frequently the largest hidden cost'],
+    ['Photography', '$30 - $200 per product', 'Scales badly with catalogue size'],
+    ['Migration from an existing store', '$4,000 - $25,000', 'Including redirects for old URLs'],
+    ['ERP or accounting integration', '$6,000 - $40,000', 'See the integration guide'],
+    ['Search improvement', '$3,000 - $15,000', 'Above a few hundred products'],
+    ['Payment gateway setup', '$1,000 - $5,000', 'More with multiple currencies'],
+    ['Ongoing platform fees', '$360 - $30,000/yr', 'Plus transaction percentages'],
+  ]}
+/>
+
+Product data is the one that catches people. Migrating 6,000 products means 6,000 descriptions, images, attributes, categories and price points, all of which need cleaning because the old data is inconsistent. Nobody quotes for it because it is the client's data, and it routinely takes longer than the store build. Ask for it to be a named line in the proposal with an owner against it, even if the owner is you - an unowned task of that size is how launch dates slip by a month.
+
+<Callout type="warn">
+When replatforming, the redirects from your old URLs to the new ones are not an optional finishing touch. Getting them wrong loses accumulated search visibility that took years to build, and it is the single most common way a replatform destroys traffic. Plan the URL mapping before the build, not after.
+</Callout>
+
+## Payments, briefly
+
+Almost all of this is a solved problem and you should treat it as such.
+
+**Use a payment provider. Do not handle card data.** The moment card numbers touch your systems, [PCI DSS](https://www.pcisecuritystandards.org/) obligations expand dramatically. Every mainstream provider keeps card data out of your infrastructure, which is why nobody builds this any more. [Stripe's payments documentation](https://docs.stripe.com/payments) is a good reference for what a modern integration involves.
+
+**Compare the total rate, not the headline.** Percentage, fixed fee, currency conversion, chargeback fee, payout timing. The cheapest headline rate is frequently not the cheapest arrangement.
+
+**Offer the methods your customers use.** This varies enormously by market. Cards dominate in some, bank transfer or wallets in others, and buy-now-pay-later matters in some categories and not at all in others. Getting this wrong is a direct conversion cost with no compensating benefit.
+
+**Test the failure paths.** Declined card, expired card, 3D Secure challenge, network drop mid-payment. These are the paths that lose orders, and they are the ones nobody tests.
+
+**Decide how refunds work before launch.** Who can issue one, whether it is partial, how it reaches the accounting system, and what the customer sees. Refunds are always an afterthought and always needed in week one.
+
+## SEO considerations specific to commerce
+
+Commerce sites have failure modes ordinary sites do not, and they are worth knowing before the build rather than after.
+
+**Faceted navigation creates infinite URLs.** Colour, size, price, brand, sorted six ways. Left unmanaged, this generates tens of thousands of near-identical pages that consume crawl attention and dilute the pages you care about. Google's [e-commerce SEO guidance](https://developers.google.com/search/docs/specialty/ecommerce) covers the handling.
+
+**Out-of-stock and discontinued products.** Deleting the page loses its accumulated value. Leaving it live with no way to buy frustrates visitors. The usual answer is to keep the page, state availability clearly, and offer alternatives.
+
+**Duplicate product descriptions.** If you use the manufacturer's copy, so does every other retailer. Original descriptions on your top products are a real, if unglamorous, advantage.
+
+**Structured data for products.** Price, availability and reviews marked up so they can appear in results. Low effort, visible benefit, and increasingly what automated shopping surfaces read to decide whether to include you at all.
+
+More broadly, [SEO for web applications](/blogs/seo-for-web-applications) covers the technical foundation, all of which applies here.
+
+## Questions to ask a platform or agency
+
+Take these to any demo. Each one has a specific answer and vagueness on any of them is informative.
+
+**"Show me the back office, not the storefront."** Ten minutes of a merchandiser adding a product with variants, scheduling a promotion and correcting a price. This is where your team will live and it is almost never demonstrated.
+
+**"How does this handle our tax and shipping situation?"** Be specific about jurisdictions and rules. Answers become noticeably less confident when the question is concrete.
+
+**"What happens to product URLs when we migrate?"** You want a mapping plan, not reassurance.
+
+**"Which integrations exist already, and which need building?"** An existing connector versus a bespoke integration is a difference of tens of thousands.
+
+**"What are the transaction fees, in total?"** Platform percentage, payment percentage, fixed fee, currency conversion, chargebacks. Ask for the total on a representative order.
+
+**"What happens if we outgrow this?"** A good answer describes an export path and what a future migration would involve. A bad answer is that you will not.
+
+**"Who fixes it at 11pm on Black Friday?"** For a retailer this is not a rhetorical question, and the answer differs sharply between hosted and self-hosted.
+
+## A worked example
+
+A homewares retailer with 1,800 products and $2.1M in annual sales was on a self-hosted platform that had become a liability: 41 plugins, a page load time over six seconds on mobile, and an upgrade nobody dared perform because two plugins were incompatible with the current version.
+
+They had two proposals: $140,000 for a headless rebuild, and $35,000 to move to a hosted platform.
+
+The four questions gave a clear answer. Their products were moderately complex - size and colour variants, some made-to-order - but well within what a hosted platform handles. They had one critical integration, to their accounting system, and a connector already existed. Their team was three merchandisers with no technical staff. Their buying experience was conventional.
+
+They moved to a hosted platform. The build was $38,000, slightly over the quote because of the data work:
+
+- **Store build and theming:** $16,000.
+- **Product data cleanup and migration:** $11,000. The largest line, and unavoidable - the old catalogue had four different conventions for expressing dimensions and 300 products with no category.
+- **Accounting integration:** $6,500, using the existing connector with mapping work.
+- **URL redirect mapping:** $2,500 for 1,800 product URLs plus 60 category URLs. Tedious, and the reason their organic traffic survived the move.
+- **Search configuration and improvement:** $2,000.
+
+Results after six months: mobile page load 6.2s to 1.6s, mobile conversion up 51%, organic traffic within 4% of pre-migration within eight weeks and above it by month five. Their operational cost went from $580 a month of hosting plus roughly $900 a month of agency time keeping plugins working, to $299 a month of platform fees plus almost no agency time.
+
+The headless proposal was not wrong in the abstract. It was wrong for a three-person merchandising team with a conventional catalogue, and it would have delivered a faster site at four times the cost with a worse day-to-day experience for the people using it.
+
+## The conversion work that matters more than the platform
+
+Once a store is running, the platform stops being the variable and the experience starts being it. The improvements that reliably move revenue, in rough order of return:
+
+**Checkout friction.** Every additional field, step and account requirement loses people. Guest checkout, address autocomplete, saved details for returning customers, and a visible progress indicator. This is the highest-return area in commerce and it is largely a matter of removing things.
+
+**Product images.** More of them, larger, zoomable, showing scale and context. The single most requested thing in customer research and frequently the weakest part of a catalogue.
+
+**Delivery information, early.** Cost and date shown before checkout, not after. Unexpected shipping cost at the final step is the most cited reason for abandonment in every study of the subject.
+
+**Internal search.** On a large catalogue, the search box is the primary navigation. Typo tolerance, synonyms and sensible ranking convert far better than a category tree.
+
+**Stock and availability honesty.** Showing what is actually available, with dates, beats optimism. Cancelled orders cost more than lost ones.
+
+**Page speed.** Covered elsewhere, and worth restating here because commerce is where the conversion relationship is most direct.
+
+None of this is platform-specific, which is the point. A well-run store on a modest platform outperforms a poorly-run store on an expensive one, consistently, and the second is a much more common situation than the first.
+
+## When headless genuinely is right
+
+To be fair to the option, there are cases where it is clearly correct:
+
+**The buying experience is genuinely unusual.** A configurator, a quoting flow, a booking process with complex rules. If the storefront is an application rather than a catalogue, you need application freedom.
+
+**Commerce is one part of a larger product.** Where purchasing sits inside a platform that does other things, bolting a store onto the side is worse than integrating a commerce engine.
+
+**You sell through several channels from one catalogue.** Website, app, in-store, marketplace, partner feeds. This is the strongest case, and it is the same argument as for headless content.
+
+**Performance is a competitive requirement at scale.** Above a certain traffic level, the difference between good and excellent load times is measurable revenue.
+
+If none of those apply, headless is buying capability you will not use - and paying for it every month in operational complexity as well as once in build cost.
+
+A middle path worth knowing about: several hosted platforms now allow a custom front end against their commerce engine while keeping their back office, checkout and PCI scope. You get most of the front-end freedom without owning the parts that are genuinely hard to build correctly. Where the storefront needs to be distinctive but the operation does not, that is usually a better trade than full headless.
+
+## What we do differently
+
+We ask the four questions before discussing platforms, because the platform conversation is unresolvable without those answers and endlessly arguable with them.
+
+We quote product data work explicitly rather than leaving it as a client task, because it is the largest hidden cost in every replatform and pretending otherwise makes the estimate a fiction.
+
+And we plan URL redirects before the build starts. It is the least interesting part of a commerce project and the one most likely to cost you a year of accumulated search visibility if it is left to the last week.
+
+If you have two proposals with very different numbers and no way to judge between them, [tell us the four answers](/contactus) and we will tell you which one fits.
+
+## Related reading
+
+- [Headless CMS explained](/blogs/headless-cms-explained) - the same architectural trade, for content
+- [Next.js vs WordPress for business websites](/blogs/nextjs-vs-wordpress-for-business-websites) - the adjacent platform decision
+- [Why your website is slow](/blogs/why-your-website-is-slow) - diagnosing the performance problem before replatforming for it
+- [API integration for businesses](/blogs/api-integration-for-businesses) - costing the ERP and accounting connections
+
+## Sources and further reading
+
+- [Google e-commerce SEO guidance](https://developers.google.com/search/docs/specialty/ecommerce) - faceted navigation, product markup and availability handling
+- [Stripe payments documentation](https://docs.stripe.com/payments) - what a modern payment integration involves
+- [PCI Security Standards Council](https://www.pcisecuritystandards.org/) - the obligations that apply if card data touches your systems
+- [Shopify](https://www.shopify.com/) - the reference hosted platform
+- [WooCommerce](https://woocommerce.com/) - the most widely used self-hosted option
+- [W3Techs CMS usage](https://w3techs.com/technologies/overview/content_management) - context on platform market share
+- [HTTP Archive Web Almanac](https://almanac.httparchive.org/en/2024/) - population data on commerce site performance

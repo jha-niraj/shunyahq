@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
+import { pageMeta } from "@/lib/seo"
 import Link from "next/link"
 import { ArrowRight, Compass, Layers, GaugeCircle, ShieldCheck } from "lucide-react"
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site"
+import { SITE_URL } from "@/lib/site"
 import { PageHero } from "@/components/landing/page-hero"
 import { PageBackground } from "@/components/landing/page-background"
 import { CardVisual } from "@/components/landing/card-visuals"
@@ -9,24 +10,15 @@ import { USE_CASES, USE_CASE_SLUGS } from "@/content/use-cases"
 
 const PAGE_URL = `${SITE_URL}/solutions`
 
-export const metadata: Metadata = {
-    title: `Solutions - ${SITE_NAME}`,
+export const metadata: Metadata = pageMeta({
+    title: "Solutions - Who We Build For",
     description:
-        "Whether you're a founder shipping an MVP, a business modernizing legacy systems, an enterprise scaling secure distributed systems, or a product team chasing velocity - Shunya is the engineering team that owns it end to end.",
-    alternates: { canonical: PAGE_URL },
-    openGraph: {
-        title: `Solutions - ${SITE_NAME}`,
-        description: SITE_DESCRIPTION,
-        url: PAGE_URL,
-        type: "website",
-        siteName: SITE_NAME,
-    },
-    twitter: {
-        card: "summary_large_image",
-        title: `Solutions - ${SITE_NAME}`,
-        description: SITE_DESCRIPTION,
-    },
-}
+        "Whether you are a founder shipping an MVP, a business replacing legacy systems, or a product team short on capacity - how we work with each.",
+    path: "/solutions",
+    // Next does not inherit the root opengraph-image into this segment, so it is named
+    // explicitly - without it this page ships with no og:image at all.
+    ogImage: "/opengraph-image",
+})
 
 const APPROACH = [
     {
@@ -54,7 +46,7 @@ const APPROACH = [
 const STATS = [
     { value: "4-8 wks", label: "From kickoff to a live MVP" },
     { value: "1 team", label: "Owns design, build, and deploy" },
-    { value: "4", label: "Domains: web, mobile, AI, cloud" },
+    { value: "1", label: "Focus: custom web engineering" },
     { value: "30 days", label: "Post-launch support included" },
 ]
 

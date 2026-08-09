@@ -9,7 +9,7 @@ export const SITE_NAME = 'ShunyaHQ'
 export const SITE_DOMAIN = SITE_URL.replace(/^https?:\/\//, '')
 
 export const SITE_DESCRIPTION =
-  'ShunyaHQ is a software engineering studio that architects, builds, and scales production-grade digital products. Web, mobile, AI, and cloud - one team that owns everything from concept to launch.'
+  'ShunyaHQ is a web engineering studio. We design, build and ship custom web applications - SaaS platforms, dashboards and marketing sites - end to end.'
 
 // Brand assets used in metadata, manifest, and structured data.
 // The raw mark is white on transparency, which disappears against the white surfaces search engines

@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
+import { pageMeta } from "@/lib/seo"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site"
+import { SITE_URL } from "@/lib/site"
 import { PageHero } from "@/components/landing/page-hero"
 import { PageBackground } from "@/components/landing/page-background"
 import { CardVisual } from "@/components/landing/card-visuals"
@@ -9,24 +10,15 @@ import { PRODUCT_TOOLS } from "./tools-meta"
 
 const PAGE_URL = `${SITE_URL}/tools`
 
-export const metadata: Metadata = {
-    title: `Tools - ${SITE_NAME}`,
+export const metadata: Metadata = pageMeta({
+    title: "Tools - Free Utilities from ShunyaHQ",
     description:
-        "Products and utilities from Shunya - SyncOrbit for engineering teams, a transparent project budget estimator, our global rate card, and a free technical strategy call.",
-    alternates: { canonical: PAGE_URL },
-    openGraph: {
-        title: `Tools - ${SITE_NAME}`,
-        description: SITE_DESCRIPTION,
-        url: PAGE_URL,
-        type: "website",
-        siteName: SITE_NAME,
-    },
-    twitter: {
-        card: "summary_large_image",
-        title: `Tools - ${SITE_NAME}`,
-        description: SITE_DESCRIPTION,
-    },
-}
+        "Products and free utilities we ship: SyncOrbit for engineering teams, a project budget estimator, our global rate card, and a technical strategy call.",
+    path: "/tools",
+    // Next does not inherit the root opengraph-image into this segment, so it is named
+    // explicitly - without it this page ships with no og:image at all.
+    ogImage: "/opengraph-image",
+})
 
 function StatusBadge({ status }: { status: string }) {
     const live = status === "Live"
@@ -140,7 +132,7 @@ export default function ToolsIndexPage() {
                                 <Link href="/contactus" className="so-btn so-btn-primary">
                                     Start a project <ArrowRight size={13} />
                                 </Link>
-                                <Link href="/services" className="so-btn so-btn-ghost">
+                                <Link href="/services/web-engineering" className="so-btn so-btn-ghost">
                                     View services <ArrowRight size={13} />
                                 </Link>
                             </div>

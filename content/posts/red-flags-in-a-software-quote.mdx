@@ -1,0 +1,277 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+A software quote is a document written by people who know exactly what they are doing, for someone who mostly does not. That asymmetry is not sinister - it is the normal condition of buying any expertise - but it does mean the useful skill is not judging the price. It is reading what the document leaves out.
+
+Almost every quote that turns into a bad project was legible as such before anyone signed. The warning signs are consistent, they are mostly structural rather than about the number, and you can spot them in twenty minutes.
+
+Here they are, ranked by how reliably each one predicts trouble.
+
+## The red flags, ranked
+
+### 1. It does not say who will do the work
+
+Ranked first because it is both the strongest signal and the easiest to check. A quote that names no individuals - "our expert team", "senior engineers" - is reserving the right to staff the project with whoever is free.
+
+This is not necessarily bad. Juniors supervised properly produce good work. But you should know the shape of the team before you sign rather than after, and reluctance to tell you is the reddest flag in the whole process.
+
+**What to ask:** "Who specifically, and can I speak to them before we sign?"
+
+### 2. There are no exclusions
+
+A scope with no boundaries is a scope that will be argued about. Every real project has things that are deliberately not in it, and a supplier who has thought about the work knows what those are.
+
+Counter-intuitively, a proposal that lists what it does *not* include is more trustworthy than one that appears to include everything. Exclusions mean someone drew a line.
+
+<Callout type="warning">
+"Everything you need is included" is not reassurance. It means either the supplier has not scoped the work, or they intend to define "need" narrowly later, when you are already committed.
+</Callout>
+
+### 3. It is one line
+
+"Development: $45,000." This cannot be compared with anything, cannot be reduced by cutting scope, and cannot be checked for missing phases. It also tells you the supplier has not broken the work down internally, which means the number is a feeling rather than an estimate.
+
+**What good looks like:** phases with days or ranges against each, so you can see where the money goes and which parts you could defer.
+
+### 4. Testing, deployment and monitoring are absent
+
+If a quote is 90% "development" with nothing for infrastructure, CI/CD, testing or hardening, that work has not been removed from the project. It has been removed from the quote.
+
+You will do it eventually - under time pressure, after something breaks - and it will cost more. A healthy quote spends roughly 10 - 15% on architecture and another 10 - 15% on infrastructure and hardening.
+
+### 5. No assumptions are stated
+
+Every estimate rests on assumptions: how many user roles, what your review turnaround is, that the third-party API works as documented, that you will provide content. A quote that does not list them has hidden them, and each hidden assumption is a future change request.
+
+**What to ask:** "What have you assumed that, if wrong, would change this number?"
+
+### 6. Pressure to sign quickly
+
+Discounts expiring on Friday. Capacity that is "about to be allocated". Real capacity constraints exist and get explained calmly, with dates and options. Artificial urgency is a sales technique and it correlates with everything else on this list.
+
+### 7. Production would run in their infrastructure
+
+Not always stated in the quote, so you have to ask. If the live system will run in an account the supplier controls, you have accidental lock-in and a maintenance retainer that is difficult to leave. It is trivial to avoid at the start and painful to unwind later - see [who owns the code](/blogs/who-owns-the-code-web-development).
+
+### 8. The timeline is a single end date
+
+No milestones, no dependencies, no decision points. That is a wish, not a plan. In particular, a plan that does not mark *your* obligations - content, feedback, third-party access - is one that will blame you later without having warned you first.
+
+### 9. Payment is heavily front-loaded
+
+A deposit is normal and fair. Fifty percent up front on a three-month project, with the balance at the end, puts all the risk on you and removes the supplier's incentive to finish. Milestone payments tied to delivered, reviewable work protect both sides.
+
+### 10. It is dramatically cheaper than the others
+
+Last on the list deliberately, because on its own it is weak evidence. A low quote usually means the scope was read narrowly, the team is more junior, or something is excluded. Any of those can be fine. It becomes a red flag only in combination with the ones above.
+
+## A scoring sheet
+
+Score each quote out of 10. Anything under 6 needs a conversation before it needs a decision.
+
+<RateTable
+  headers={['Check', 'Present?']}
+  rows={[
+    ['Names the people who will do the work', '1 point'],
+    ['Lists explicit exclusions', '1 point'],
+    ['Broken into phases with effort against each', '1 point'],
+    ['Testing is a named line item', '1 point'],
+    ['Deployment, CI/CD and monitoring included', '1 point'],
+    ['Assumptions stated explicitly', '1 point'],
+    ['Timeline shows milestones AND your dependencies', '1 point'],
+    ['Change-request process defined and priced', '1 point'],
+    ['Payment tied to delivered milestones', '1 point'],
+    ['Post-launch support scope and duration stated', '1 point'],
+  ]}
+/>
+
+Notice that none of those points are about the price. You have already set the budget range; what you are choosing between is understanding and risk.
+
+## Comparing two quotes properly
+
+Put them side by side and ignore the totals until the end.
+
+**Step 1: normalise the scope.** Write out every deliverable each one mentions. The differences are the whole story. Typically you find the cheaper quote does not include the admin panel, data migration, or the second user role.
+
+**Step 2: find the assumption gaps.** One quote assumes you supply finished designs; the other includes design. That is not a price difference, it is a different project.
+
+**Step 3: check the shape of the effort.** If quote A spends 12% on infrastructure and quote B spends 0%, B has not removed the work.
+
+**Step 4: read the change process.** A low base price with expensive change requests can land well above a higher honest quote. Ask both suppliers what a typical mid-project change costs.
+
+**Step 5: only now compare the totals.** Often they have converged.
+
+<Callout type="tip">
+Send both suppliers the same five clarifying questions and compare the answers rather than the documents. Written answers under a little pressure are far more revealing than a proposal that has been polished for a fortnight.
+</Callout>
+
+## A worked comparison
+
+Two quotes for the same booking system.
+
+<RateTable
+  headers={['Line', 'Supplier A', 'Supplier B']}
+  rows={[
+    ['Headline price', '$28,000', '$47,000'],
+    ['Discovery', 'Not mentioned', '6 days, itemised'],
+    ['User roles priced', 'Unstated', '3, named'],
+    ['Admin panel', 'Not mentioned', 'Included, 8 days'],
+    ['Data migration', 'Not mentioned', 'Included, 4 days'],
+    ['Testing', 'Not mentioned', '7 days'],
+    ['CI/CD and environments', 'Not mentioned', '5 days'],
+    ['Post-launch support', '2 weeks', '30 days'],
+    ['Assumptions listed', 'None', 'Nine'],
+    ['Named team', 'No', 'Yes, three people'],
+  ]}
+/>
+
+Supplier A is not necessarily dishonest. They may well have scoped a smaller project in good faith - patient-facing booking only, no admin, no migration, you handle testing.
+
+But the two documents are not answering the same question, and the $19,000 gap is largely the four line items A never mentions. When those get added mid-project as change requests, A's total will very likely exceed B's, and you will have spent the difference under time pressure rather than at the negotiating table.
+
+**The lesson is not "pick the expensive one".** It is that a quote you cannot compare is not a quote yet. Go back to A and ask them to price the same four items. If they come back at $44,000, you now have a real choice between two comparable options.
+
+## Warning signs in the contract, not the quote
+
+Once you get to paperwork, a different set applies.
+
+**No copyright assignment clause.** A contract saying deliverables are a "work made for hire" and nothing more may transfer no copyright at all for software. You need an explicit assignment alongside it.
+
+**A licence rather than ownership.** "Client receives a licence to use the deliverables" means you are renting what you paid to build. Ask why.
+
+**A revocable licence to the supplier's own components.** Their internal libraries staying theirs is normal. The licence to you needs to be perpetual and irrevocable, or your product can be switched off.
+
+**Automatic renewal on the retainer** with a long notice period.
+
+**Unlimited liability on your side, capped on theirs.** Caps are normal and reasonable. Asymmetric caps are worth pushing back on.
+
+## Objections, answered
+
+**"This all sounds like I should distrust suppliers."** The opposite. Most suppliers are honest and most bad projects come from misunderstanding rather than bad faith. A detailed quote protects the supplier as much as you - it is what they point at when you ask for something that was never in scope.
+
+**"I do not know enough to judge a technical proposal."** You do not need to. Every check on the list above is structural: is this section present, are these things named, is the effort broken down. None of it requires knowing whether the architecture is any good.
+
+**"What if the supplier I like fails the checklist?"** Then send them the checklist. A good supplier will improve the document, and how they respond to being asked is itself information. The ones to worry about are those who treat the questions as an insult.
+
+**"Is a fixed price safer?"** Only against a scope detailed enough to be fixed. A fixed price on a vague brief means either a large hidden buffer or an expensive change-request process. Fixed-price discovery followed by a fixed-price build is the version that works - covered in [what a web application costs](/blogs/web-application-development-cost).
+
+**"Should I always get three quotes?"** Three or four. Past that you are comparing sales polish and consuming a lot of unpaid effort. Better to get three and pay two of them for a short discovery.
+
+## What a good quote looks like
+
+Easier to recognise the problems when you have seen the alternative. A solid proposal for a mid-sized build has this shape.
+
+**A restatement of the problem in their own words.** First page, before any numbers. This is where you find out whether they understood you, and a supplier who reframes something you said is more valuable than one who repeats it.
+
+**Assumptions, listed.** "We have assumed three user roles." "We have assumed you supply finished copy." "We have assumed the Xero API sandbox is available." Eight to fifteen of these is normal.
+
+**Exclusions, listed.** "Not included: data migration from the legacy system, iOS app, SSO integration." Naming what is out is the clearest evidence someone drew a boundary.
+
+**Phases with effort.** Discovery 6 days, design 9, build 34, hardening 7, launch 4. You can see where the money goes and which parts could be deferred.
+
+**A timeline with your dependencies marked.** Content by week 3, third-party credentials by week 2, feedback within 48 hours. Their plan depends on you and says so.
+
+**The change process, in a paragraph.** How a change gets raised, priced and approved, and roughly what a typical one costs.
+
+**Named people.** Who does what, and how much of their time you get.
+
+**What happens at the end.** Handover, ownership, support window, and what a maintenance arrangement would cost if you want one.
+
+<Callout type="info">
+A quote with all eight is typically four to eight pages. Much shorter and something is missing. Much longer and you are reading boilerplate, which is its own signal - check whether the specifics about your project could be swapped for another client's without editing.
+</Callout>
+
+## The questions that separate real quotes from guesses
+
+Send these five to every supplier after you receive their proposal. The answers are more informative than the documents.
+
+**1. "How many user roles did you price?"** The most common source of a gap between two quotes, and it is a one-word answer that either matches your expectation or does not.
+
+**2. "What have you assumed about our review turnaround?"** A supplier who has not thought about this has not planned a real project. The answer also tells you what they will hold you to later.
+
+**3. "Which parts of this are you least confident about?"** An honest answer names an integration or a data migration. "We are confident about all of it" means either they have not looked hard or they are managing you.
+
+**4. "What would make this cost 50% more?"** Good suppliers answer instantly, because they have already thought about it. The answer is your risk register.
+
+**5. "What would you cut if the budget were 30% lower?"** This is the most revealing of the five. A supplier who can immediately name what to remove understands the value hierarchy of your project. One who says "nothing, it is all essential" either has not thought about it or is protecting the number.
+
+## When a low quote is genuinely fine
+
+Worth balancing the article, because it is easy to read all of the above as "expensive means good", which is not true and not what we think.
+
+**The scope really is smaller.** Sometimes a supplier has correctly identified that you need less than you asked for. That is a good supplier, not a cheap one. Check by comparing the deliverable lists rather than the totals.
+
+**They specialise in exactly this.** A team that has built eleven booking systems will quote a booking system faster and cheaper than a generalist, and be more likely to hit it. Ask what they have built that is closest to your project.
+
+**Lower cost base.** Rates vary enormously by location and overhead. A small remote team with no office and no sales department can charge less for the same quality. This is real and not a red flag on its own.
+
+**They want the work for a legitimate reason.** Entering a sector, building a case study, filling a gap between projects. Ask directly - most will tell you, and it is usually true.
+
+**The scope excludes things you genuinely do not need.** If you have an in-house team who will handle deployment and testing, a quote that excludes them is correct rather than incomplete.
+
+The distinguishing question in every case: **can they tell you why they are cheaper?** A supplier with a real reason answers immediately and specifically. A supplier who is cheap because they have under-scoped cannot, because they do not yet know.
+
+## How we quote
+
+We break the work into phases with days against each, list the assumptions we priced against, name what is excluded, and name the people who will do it. Discovery is quoted separately and produces a written specification and data model you own whether or not you continue with us.
+
+If you have a quote from someone else and want a second opinion on what it does and does not cover, [send it over](/contactus). We will tell you what we would ask them, including the cases where their number looks better than ours.
+
+## A note on your own side of the transaction
+
+Some of what looks like a bad quote is a response to a bad brief.
+
+A supplier given two paragraphs cannot produce a phased estimate with named assumptions, because there is nothing to assume against. They can either guess high, guess low, or ask a lot of questions - and if three other suppliers are bidding, asking questions feels like losing ground.
+
+So if every quote you receive is vague, consider that the input may be the cause. The fix is on your side and it takes an afternoon: a two-page brief describing the problem, the roles, the integrations and the constraint that cannot move. We set out the format in [how to write a web development brief](/blogs/how-to-write-a-web-development-brief).
+
+The same brief sent to four suppliers produces four comparable documents. Four different conversations produce four incomparable ones, and no amount of scrutiny afterwards fixes that.
+
+<Callout type="tip">
+If you have already sent a vague brief and received vague quotes, do not try to compare them. Send all four suppliers the same five clarifying questions from the section above and compare the answers instead. It costs you an email and recovers most of the lost ground.
+</Callout>
+
+## Two quotes, same brief, different worlds
+
+One more comparison, because the pattern repeats across every sector we see it in.
+
+A charity asked three suppliers for a donor-management system. Two came back around $40,000. The third came back at $16,000 and was, on the surface, offering the same thing.
+
+The difference was in a single sentence buried on page three of the cheaper proposal: *"Assumes migration of donor records is performed by the client."*
+
+The charity had eleven years of donor history across two spreadsheets and a retired Access database. Migrating it - deduplicating, reconciling gift aid declarations, mapping three inconsistent category systems - was ultimately 14 days of work. At the cheaper supplier's own day rate that was $9,800, which took their real total to $25,800, and they would have discovered it in week six rather than at the negotiating table.
+
+The cheaper supplier was not dishonest. They had stated the assumption. It was simply stated in a way that a reader who did not know migration was hard would skim straight past.
+
+**The lesson is about how you read, not about who you trust.** Assumptions are where the real scope lives, and the ones that matter are rarely on page one.
+
+## A short glossary
+
+**Discovery.** A paid phase producing a written specification, before the build is priced.
+
+**Statement of work (SOW).** The contractual scope document. This, not the proposal, is what you are bound by.
+
+**Change request.** A written, priced addition to an agreed scope.
+
+**Acceptance criteria.** How both sides agree a deliverable is done.
+
+**Blended rate.** One hourly figure covering a mixed team. Ask what mix it assumes.
+
+**Contingency.** A named buffer for known unknowns. Its presence is a sign of experience.
+
+**Not-to-exceed.** A ceiling on hourly work at which work pauses for a conversation.
+
+**Handover.** The deliverables that let another team take over: repository, runbook, environment variables, access.
+
+## Related reading
+
+- [How Much Does It Cost to Build a Web Application?](/blogs/web-application-development-cost) - what a realistic number looks like
+- [Fixed Price vs Time and Materials](/blogs/fixed-price-vs-time-and-materials) - how the pricing structure shapes the quote
+- [Software Development Contract Checklist](/blogs/software-development-contract-checklist) - the clauses a low quote usually omits
+- [The Real Cost of Cutting Corners in Software](/blogs/cost-of-cutting-corners) - what the cheaper bid is actually pricing
+
+## Sources and further reading
+
+- [US Copyright Office, Circular 9](https://www.copyright.gov/circs/circ09.pdf) - why the ownership clause in the contract matters more than the price on the quote
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/) - the security work a quote should account for even if it never says so
+- [DORA](https://dora.dev/) - why the deployment and testing line items are not optional extras
+- [The Twelve-Factor App](https://12factor.net/) - a short standard to hold any proposed architecture against

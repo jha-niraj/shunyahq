@@ -1,4 +1,4 @@
-import { BLOG_POSTS, BLOG_CATEGORIES } from "@/content/blog"
+import { BLOG_CATEGORIES, getPublishedPosts } from "@/content/blog"
 import { USE_CASES, USE_CASE_SLUGS } from "@/content/use-cases"
 import { PRODUCT_TOOLS } from "../tools/tools-meta"
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site"
@@ -9,9 +9,7 @@ import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site"
 export const dynamic = "force-static"
 
 export function GET() {
-    const posts = Object.entries(BLOG_POSTS).sort(
-        (a, b) => new Date(b[1].datePublished).getTime() - new Date(a[1].datePublished).getTime(),
-    )
+    const posts = getPublishedPosts().map((p) => [p.slug, p] as const)
 
     const topicLines = Object.entries(BLOG_CATEGORIES)
         .map(([slug, label]) => `- [${label}](${SITE_URL}/blogs/topics/${slug}): Guides on ${label.toLowerCase()} from the Shunya engineering team.`)
@@ -34,13 +32,13 @@ export function GET() {
 > ${SITE_DESCRIPTION}
 
 Shunya (Shunya Tech) is a software engineering studio. We architect, build, and scale
-production-grade digital products - web apps, mobile apps, AI integrations, and cloud
+production-grade web applications - SaaS platforms, dashboards, internal tools and
 infrastructure - with one team that owns everything from concept to launch. Every project
 we take goes live: not a prototype, not a Figma deck, but a real production system people use.
 
 ## Key pages
 - [Home](${SITE_URL}): Engineering intelligence for the digital age.
-- [Services](${SITE_URL}/services): Web, mobile, AI, cloud, UI/UX, and security engineering.
+- [Web Engineering](${SITE_URL}/services/web-engineering): Custom web applications built on Next.js and React Server Components.
 - [Work](${SITE_URL}/projects): Selected production systems we've shipped.
 - [Pricing](${SITE_URL}/pricing): Transparent rate cards across four currencies.
 - [About](${SITE_URL}/aboutus): The team and how we work.

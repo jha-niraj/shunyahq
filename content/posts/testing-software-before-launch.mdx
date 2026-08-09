@@ -1,0 +1,224 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Testing is where software budgets get cut and where software projects get damaged. It looks like a line item you can trim - the features are built, they seem to work, and every day spent testing is a day not spent shipping. Then the thing goes live and the first week costs more than the testing would have.
+
+This is a guide to what testing actually consists of, which parts your supplier does, which parts are genuinely yours, and how to do your part well enough to catch what matters.
+
+## The two kinds, and why you need both
+
+**Automated testing** is code that checks other code. It runs in seconds, every time anything changes, and it catches the class of problem where fixing one thing quietly breaks another. It is written by developers and it is part of the build cost.
+
+**Manual testing** is people using the software. It catches everything automation cannot: whether the thing makes sense, whether the flow is confusing, whether a label is ambiguous, whether the result is actually correct rather than merely consistent.
+
+Neither substitutes for the other. A codebase with excellent automated tests can still ship a checkout nobody can understand. A thoroughly hand-tested application with no automated tests will break in a place nobody thought to check the next time someone changes anything.
+
+<Callout type="info">
+A useful way to think about the split: automated tests protect you from your own future changes. Manual testing protects you from having built the wrong thing. Skipping the first makes every future change riskier; skipping the second makes this launch riskier.
+</Callout>
+
+## What automated testing actually covers
+
+You are paying for it, so it is worth knowing what the layers are. Martin Fowler's [practical test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) is the standard reference and the shape it describes is what a sensible team builds.
+
+**Unit tests.** Individual functions checked in isolation. Fast, numerous, cheap. They catch logic errors - a tax calculation that rounds wrongly, a date function that fails at month boundaries.
+
+**Integration tests.** Several parts working together, including the database. Slower, fewer, and they catch the problems that appear at the seams.
+
+**End-to-end tests.** A browser driven through a complete user journey - sign up, add to basket, check out. Slowest and most valuable per test, because they verify the thing your customer actually does. Tools like [Playwright](https://playwright.dev/docs/intro) make these considerably more reliable than they used to be.
+
+The pyramid shape matters: many fast tests at the bottom, a handful of slow ones at the top. A test suite that is all end-to-end tests takes forty minutes to run, so developers stop running it, so it stops helping.
+
+**What to ask for:** end-to-end tests covering your three or four critical journeys - the ones that make money or that would embarrass you - plus unit tests on any calculation where being wrong matters. That is a proportionate ask for a business application and it is achievable within a normal budget.
+
+**What not to ask for:** 100% coverage. It is an expensive number that does not correlate with quality, and pursuing it produces tests written to satisfy a metric rather than to catch defects.
+
+## What it costs, and what skipping it costs
+
+<RateTable
+  headers={['Approach', 'Added to build cost', 'Consequence']}
+  rows={[
+    ['No automated tests', '0%', 'Every change risks breaking something unseen'],
+    ['Critical journeys only', '8-12%', 'The money paths are protected'],
+    ['Solid coverage of business logic', '15-20%', 'Changes are routine rather than nervous'],
+    ['Comprehensive', '30-40%', 'Rarely proportionate outside regulated work'],
+  ]}
+/>
+
+The middle two rows are where most businesses should sit. The interesting comparison is not the cost of testing against zero - it is against the cost of the alternative.
+
+A defect found while a developer is writing the feature costs minutes. Found during testing, it costs hours. Found by a customer after launch, it costs a support conversation, an emergency fix, a deployment outside the normal cycle, and a small amount of trust. The ratio between the first and the last is large enough that it is not a close call, and it is the same underlying argument as [the cost of cutting corners](/blogs/cost-of-cutting-corners).
+
+There is a second effect that matters more over time. A codebase with no tests becomes one nobody wants to change, because every change might break something invisible. Teams work around it rather than through it, and that is how [technical debt](/blogs/what-is-technical-debt) accumulates in its most expensive form.
+
+## The environments, and why there are several
+
+You will hear three words and they are worth ten seconds of explanation, because testing in the wrong one is a recurring cause of confusion.
+
+**Development** is where developers work. Unstable by design, changing constantly, not somewhere to test.
+
+**Staging** is a copy of production, as close as practical, where testing happens. This is where your UAT should run. It should have realistic data and the same configuration as the live system - a staging environment with different settings tests something that does not exist.
+
+**Production** is the live system. Testing here is how you email 4,000 customers by accident.
+
+Two things to check. First, that staging is actually similar to production; the most common source of "it worked in testing" is an environment difference nobody documented. Second, that staging is not publicly reachable with real customer data in it, which is a genuine and common exposure - covered under [security](/blogs/web-application-security-checklist).
+
+If your supplier tests on their own machines and deploys straight to live, that is worth raising. It is not always wrong on a very small project, and it is a risk you should be choosing rather than inheriting.
+
+## Your part: user acceptance testing
+
+At some point you will be asked to test. This is not a formality and it is where a significant share of the remaining value is either captured or lost.
+
+### Prepare properly
+
+**Get a list of what is ready to test.** Testing something half-built produces noise for everyone.
+
+**Get a test environment with realistic data.** An empty system is easy to test and tells you nothing. Ask for data resembling production in volume and messiness - a customer with a long name, an order with 40 items, a record with missing optional fields.
+
+**Get test accounts for each role.** Admin, standard user, and whatever else exists. Permission problems only appear when you use the right account.
+
+**Block the time.** Two half-days beats eight scattered half-hours. Testing requires holding context, and interrupted testing finds surface problems only.
+
+### Test the way users behave
+
+**Follow complete journeys, not features.** Do not click every button on a page. Do the actual task: register, find the thing, buy it, receive the confirmation, find it in your account, change it, cancel it. Problems live between screens, not on them.
+
+**Use your worst realistic device.** Not just your laptop. A phone, an older phone if you can borrow one, and whatever browser your customers actually use. Check your analytics rather than guessing.
+
+**Try to break it.** Submit forms empty. Put text in number fields and a comma in a price. Press the back button in the middle of a checkout. Double-click submit. Upload a 50MB file. Paste 3,000 characters into a name field. Real users do all of this within a week.
+
+**Test the unhappy paths.** Wrong password, expired session, declined payment, no results found, an item going out of stock while it is in your basket. These are where most real defects are and where almost no testing happens.
+
+**Check the things that leave the system.** Confirmation emails, invoices, exports, notifications. Everybody tests the screen and nobody tests the PDF, and the PDF is the thing your customer keeps.
+
+**Test with people who were not involved.** Two or three colleagues who did not sit in the design meetings. They will find things you cannot see any more. The [Nielsen Norman Group's research methods guide](https://www.nngroup.com/articles/ux-research-cheat-sheet/) has practical guidance on running this without being a researcher.
+
+<Callout type="warn">
+The most common UAT failure is testing as a reviewer rather than as a user - clicking everything, confirming it all does something, and declaring it fine. Reviewers verify existence. Users follow paths, and paths are where the problems are.
+</Callout>
+
+### Report so it can be fixed
+
+A good defect report has four parts and takes ninety seconds to write.
+
+1. **What you did**, step by step, starting from a known place.
+2. **What you expected.**
+3. **What happened.**
+4. **Where** - browser, device, which account, roughly when.
+
+Add a screenshot. "The form is broken" generates a conversation; the four items above generate a fix.
+
+**Separate defects from changes.** If it does not do what was agreed, it is a defect and the supplier fixes it. If it does what was agreed but you have changed your mind, it is a change and it has a cost. Being clear about which you are raising avoids a large amount of friction, and it is the distinction your contract's [acceptance clause](/blogs/software-development-contract-checklist) should define.
+
+**Prioritise honestly.** Blocking, serious, minor, cosmetic. If everything is blocking, nothing gets prioritised and the supplier chooses for you.
+
+## Data migration deserves its own testing
+
+If you are replacing an existing system, the migration is frequently the highest-risk part of the whole project and it gets a fraction of the testing attention that features do.
+
+**Run it more than once, on a full copy.** A migration tested on 200 sample records will behave differently on 200,000, and the difference is usually discovered at 3am on cutover night.
+
+**Count things.** Records in, records out, and an explanation for every discrepancy. "Roughly the same" is not a result. If 340 records did not migrate, you need to know which ones and why before you go live, not after a customer notices theirs is missing.
+
+**Check the awkward records deliberately.** The oldest one, the largest one, the one with unusual characters in a name, the one with missing fields, the one somebody edited manually in the database in 2019. These are where migrations break.
+
+**Verify totals that must balance.** Financial figures, stock counts, outstanding balances. If the sum of the migrated data does not match the sum of the source, stop.
+
+**Time it.** How long the migration takes determines how long your cutover window needs to be, and finding out it takes nine hours rather than two changes the plan.
+
+**Have a rollback.** If the migration goes wrong halfway through, what happens? The answer should exist in writing before the night in question.
+
+Budget for at least two full rehearsals. Teams that do this have uneventful cutovers; teams that do not have stories. [How to migrate off a legacy system](/blogs/how-to-migrate-off-a-legacy-system) covers the broader strategy.
+
+## What else needs testing before launch
+
+Beyond features, five checks that are routinely skipped and routinely cause the first week's problems.
+
+**Performance with realistic volume.** A list that is instant with 30 records may not be with 30,000. Ask for it to be tested with production-scale data.
+
+**Mobile, genuinely.** Not the desktop site narrowed. Actual use on an actual phone, one-handed, on a normal connection.
+
+**Accessibility basics.** Complete your main journey using only the keyboard. If you cannot, neither can a meaningful group of your users, and this is a legal exposure as well as a usability one - see [web accessibility requirements](/blogs/web-accessibility-legal-requirements).
+
+**Security fundamentals.** At minimum, log in as one user and try to reach another user's data by changing an identifier. This one test finds the most common serious vulnerability in business applications. [The security checklist](/blogs/web-application-security-checklist) has the rest.
+
+**The restore.** Back up, restore it, confirm the data is intact and note how long it took. Almost nobody does this before launch and it is the only thing that proves your backups exist in a useful sense.
+
+## A worked example
+
+A membership organisation was two weeks from launching a renewals portal for 6,000 members. The build had gone well, the automated tests passed, and the internal review had found nothing.
+
+Their supplier insisted on a structured UAT week with eight real members rather than staff. The organisation resisted, on the reasonable grounds that they were behind schedule.
+
+The week found nineteen issues. Four mattered enormously.
+
+**Members with joint memberships could not renew.** The system assumed one member per account. About 11% of their membership was joint, and every one of them would have hit a dead end on day one. Nobody internal had tested this because the staff test accounts were all individual memberships.
+
+**The confirmation email went to the account holder, not the payer.** In roughly 300 cases an employer paid for a member's subscription. The payer would have received nothing and the finance team would have spent the following month reconciling by hand.
+
+**The renewal reminder linked to a page requiring login, with no explanation of which login.** Members had two sets of credentials from a previous system. Predictable confusion, and it would have arrived as several hundred support emails in a single week.
+
+**On an older Android phone the date picker was unusable** - it opened below the fold with no way to scroll to it. Roughly 9% of their members were on comparable devices.
+
+Fixing all four took eleven days and delayed launch by a week. The organisation's own estimate of what those four would have cost in the first fortnight of live use - support load, emergency fixes, manual reconciliation, and a lot of goodwill from an older membership already nervous about the new system - was in the region of $30,000, before counting the reputational cost of a bad launch to a member base that had been told this would make things easier.
+
+The eight members were paid a $50 voucher each. The whole UAT week, including preparation and coordination, cost about $4,000.
+
+## A UAT checklist you can hand to a tester
+
+Give each person a copy of this and a list of the journeys relevant to their role. It converts "have a look and tell me what you think" into something that produces findings.
+
+**For each journey:**
+
+- Complete it once as intended, on a desktop browser.
+- Complete it again on a phone.
+- Complete it a third time doing something wrong at each step - blank field, wrong format, wrong password - and note whether the message tells you how to fix it.
+- Use the browser back button somewhere in the middle and see what happens.
+- Refresh the page halfway through and see whether your progress survives.
+- Check the email, invoice or notification that results, on a phone.
+
+**Across the whole system:**
+
+- Complete your main journey using only the keyboard, no mouse.
+- Zoom the browser to 200% and check nothing becomes unreachable.
+- Log in as one account, then try to open something belonging to another by changing an identifier in the address bar.
+- Look for anything that says "Lorem ipsum", "TODO", or a placeholder name.
+- Check every link in the footer and navigation.
+- Read the error messages as though you did not build this. Do they say what to do next?
+
+Six people working through that list for two hours each will find more than a week of unstructured clicking, and it costs less.
+
+## The launch decision
+
+At some point someone decides it is ready. That decision should be explicit rather than a date arriving.
+
+Agree beforehand what would stop a launch. A reasonable rule: **no blocking or serious defects open; minor and cosmetic ones can ship with a plan.** Every product launches with known small issues. The distinction is whether they are known and chosen, or unknown and about to be discovered by a customer.
+
+Also agree what the rollback is. If something serious appears in the first hours, what happens? A documented answer - revert to the previous version, switch traffic back, restore from a backup - is a five-minute conversation before launch and a very bad hour afterwards without it.
+
+One further option worth knowing about: you do not always have to switch everyone at once. Releasing to a small group first - a percentage of traffic, one region, or a set of friendly customers - means the first real-world problems are found by fifty people rather than five thousand. It costs a little setup and it converts a launch from an event into a process.
+
+## What we do differently
+
+We write end-to-end tests for the three or four journeys that make money, on every project, and we quote for them as part of the build rather than as an option. They are the tests that catch the failures that actually cost something.
+
+We insist on UAT with people from outside the project, and we help arrange it, because internal testing systematically misses what internal people can no longer see.
+
+And we test the unhappy paths deliberately - declined payments, expired sessions, empty states, permission failures - because that is where real defects concentrate and where nobody looks voluntarily.
+
+If you are approaching a launch and are not sure whether you have tested the right things, [we are happy to look at the plan](/contactus).
+
+## Related reading
+
+- [Managing a software project as a client](/blogs/managing-a-software-project-as-a-client) - your role across the whole project
+- [What happens after launch](/blogs/what-happens-after-launch) - the phase this leads into
+- [Web application security checklist](/blogs/web-application-security-checklist) - the checks that belong alongside UAT
+- [The cost of cutting corners](/blogs/cost-of-cutting-corners) - the arithmetic behind why testing pays
+
+## Sources and further reading
+
+- [The practical test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) - what a sensible automated test suite looks like and why
+- [Continuous integration](https://martinfowler.com/articles/continuousIntegration.html) - why tests only help if they run automatically on every change
+- [Playwright documentation](https://playwright.dev/docs/intro) - the current standard for reliable end-to-end browser tests
+- [DORA research](https://dora.dev/) - the evidence linking testing and deployment practice to delivery performance
+- [Nielsen Norman Group UX research cheat sheet](https://www.nngroup.com/articles/ux-research-cheat-sheet/) - practical methods for testing with real users
+- [MDN accessibility documentation](https://developer.mozilla.org/en-US/docs/Web/Accessibility) - what to check beyond the keyboard walkthrough

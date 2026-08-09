@@ -1,0 +1,245 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Someone has proposed a headless CMS and you are being asked to approve it without a clear sense of what changes, what it costs, or why the current arrangement is a problem. The explanations available tend to be written for developers and start with API architecture, which is the least useful place to start if you are the person signing.
+
+Here is the version that starts from the business decision.
+
+## The distinction, without jargon
+
+**A traditional CMS** manages your content *and* renders your website. WordPress in its default configuration does both: you write a page in the admin, and the same system decides what that page looks like and serves it to visitors. Content and presentation live together.
+
+**A headless CMS** manages content only. It stores your pages, posts, products and images, and hands them out through an API. Something else - a separate front-end application - decides how they look and serves them to visitors.
+
+The word "headless" means the content system has no front end of its own. You supply the head.
+
+**Why anyone would want that:** the same content can feed several places. Your website, a mobile app, a partner's site, an in-store display, an email system. In a traditional CMS the content is entangled with one presentation; in a headless one it is a clean source of truth.
+
+<Callout type="info">
+A useful test for whether the distinction matters to you: do you need the same content to appear in more than one place, or do you need presentation freedom your current system fights you on? If neither, headless is solving a problem you do not have.
+</Callout>
+
+## What actually changes for each group
+
+**For your content editors.** Mostly a different admin interface, and frequently a better structured one. The significant loss is live preview and drag-and-drop page building, unless the implementation deliberately restores them. This is the single biggest source of post-launch unhappiness with headless projects and it is entirely predictable.
+
+**For your developers.** Complete freedom over the front end and one more system to integrate, deploy and keep patched.
+
+**For your marketing team.** Publishing is the same or better for structured content. Building a bespoke campaign landing page without a developer is usually harder unless someone has built a flexible block system for them.
+
+**For you.** Two systems instead of one, more capability, higher cost, and a front end that is genuinely yours rather than a theme.
+
+## The honest comparison
+
+<RateTable
+  headers={['', 'Traditional CMS', 'Headless CMS']}
+  rows={[
+    ['Setup cost', 'Lower', 'Higher'],
+    ['Time to first site', 'Days to weeks', 'Weeks'],
+    ['Editor experience out of the box', 'Mature', 'Varies, no preview by default'],
+    ['Front-end freedom', 'Constrained by themes', 'Total'],
+    ['Performance ceiling', 'Good with care', 'Excellent'],
+    ['Reusing content elsewhere', 'Difficult', 'The main reason to do it'],
+    ['Systems to maintain', 'One', 'Two'],
+    ['Who can work on it', 'Large pool', 'Developers'],
+    ['Vendor lock-in', 'Moderate', 'Lower, content is portable'],
+  ]}
+/>
+
+## When headless is genuinely the right call
+
+**The same content feeds more than one destination.** A website and a mobile app. A main site and several regional ones. A public site and an internal tool. This is the original and strongest reason, and if it applies the decision is usually easy.
+
+**Your front end is already an application.** If you are building on a framework like [Next.js](https://nextjs.org/docs) because the site includes logins, dashboards or complex interactions, bolting a traditional CMS on is awkward. Headless is the natural fit.
+
+**Content structure matters more than page layout.** If your content is genuinely structured - products with attributes, events with dates and venues, people with roles - a headless CMS models that properly, and a page-oriented CMS makes you fight it.
+
+**You have outgrown your platform's presentation layer.** Endless theme overrides and template hacks are a sign the tool is being used against its grain.
+
+**Performance is commercially material.** Serving pre-rendered pages from an edge network, with content pulled at build or request time, is the fastest common architecture.
+
+## When it is the wrong call
+
+**A conventional marketing site with a small team.** You are paying setup cost and complexity for capability you will not use. A well-built traditional CMS is cheaper, faster to deliver and easier to staff.
+
+**Your editors need to build pages visually.** This is the most common regret. Marketing teams used to composing landing pages themselves find a bare headless setup deeply frustrating, and rebuilding that flexibility costs real money.
+
+**Nobody will own the development relationship.** Headless requires developers. If your plan is for the marketing team to maintain the site, this is not the architecture.
+
+**Budget is tight.** The setup delta is real. If the choice is a good traditional site now or a headless one in six months, take the site now.
+
+<Callout type="warning">
+The most common failure is choosing headless for architectural elegance without budgeting for the editor experience. The API and the front end get built properly, the admin is left at its defaults, and six months later marketing is asking to go back. Budget for preview and for a block system, or accept the constraint explicitly.
+</Callout>
+
+## The costs, over three years
+
+<RateTable
+  headers={['Line', 'Traditional CMS', 'Headless']}
+  rows={[
+    ['Build (40-page content site)', '$9,000 - $14,000', '$22,000 - $35,000'],
+    ['CMS licence, 3 years', '$0 - $1,500', '$0 - $9,000'],
+    ['Hosting, 3 years', '$900 - $1,800', '$1,800 - $4,000'],
+    ['Maintenance, 3 years', '15 - 20% of build/yr', '15 - 20% of build/yr'],
+    ['Adding a second channel later', 'Substantial rebuild', 'Mostly a new front end'],
+  ]}
+/>
+
+The last row is where headless earns its cost. Everything above it favours the traditional option; the moment a second destination appears, the arithmetic reverses, because in a traditional CMS the content is not available in a form another channel can consume.
+
+## The three architectures people confuse
+
+Worth separating, because these get used interchangeably and mean different things.
+
+**Headless CMS.** Content API, separate front end. What this article is about.
+
+**Static site generation.** Pages built into HTML ahead of time and served as files. Extremely fast, and orthogonal to headless - you can generate statically from a traditional CMS or render dynamically from a headless one. Google's guidance on [rendering on the web](https://web.dev/articles/rendering-on-the-web) explains the spectrum properly.
+
+**Decoupled or hybrid.** A traditional CMS used headlessly - WordPress serving content over its API to a separate front end - while keeping the familiar admin. Frequently the pragmatic middle path, covered in [Next.js vs WordPress](/blogs/nextjs-vs-wordpress-for-business-websites).
+
+That third option deserves attention. It gives your editors the interface they already know, gives developers the front-end freedom, and avoids buying a new CMS licence. Its cost is that you are maintaining WordPress purely as a content store, which some teams find unsatisfying and which is nonetheless entirely functional.
+
+## Choosing a headless CMS
+
+If you have decided, the selection criteria that actually matter after the first month:
+
+**Does it have preview?** Editors need to see their work before publishing. Some products handle this well; with others it is a build-it-yourself problem. Ask to see it working, with a real front end, in the demo.
+
+**How does it model relationships?** Content is rarely flat. An event has a venue, a venue has an address, an article has authors. How the system models references determines how pleasant it is to work in.
+
+**What is the editor experience for a non-technical person?** Have an actual editor try it during evaluation, not a developer. See [questions to ask in a software demo](/blogs/questions-to-ask-in-a-software-demo).
+
+**How is media handled?** Image transformation, focal points, alt text as a required field. Weak media handling is a daily irritation.
+
+**What does it cost as you grow?** Pricing is commonly per user, per record, or per API call. All three can surprise you. Model it at three times your current size.
+
+**Can you get your content out?** A full structured export, self-serve. If content portability is the main advantage of the architecture, verify it exists.
+
+**Is it self-hosted or a service?** Self-hosted means no licence and more maintenance. A hosted service means a subscription and less operational burden. Neither is wrong; they are different cost shapes.
+
+## Modelling content properly, which is the actual work
+
+The technical setup of a headless CMS takes days. Deciding what your content *is* takes longer and matters more, and it is the part that gets rushed.
+
+**Model concepts, not pages.** The instinct is to create a content type called "About page". That is a page, not a concept, and it does not reuse. The better model is that you have people, services, case studies and offices, and the about page is an arrangement of those.
+
+The test: if the same information appears on two pages, is it stored twice? If yes, the model is page-shaped and will drift.
+
+**Decide what is structured and what is prose.** A case study has a client, a sector, a date, an outcome figure, and a body. The first four are fields; only the last is free text. Teams that make everything one rich-text blob lose the ability to filter, sort or reuse anything, which was the point of the exercise.
+
+**Model relationships explicitly.** An author is not a name typed into a post; it is a reference to a person record. Then an author page listing their articles is a query rather than a manual list that someone forgets to update.
+
+**Plan for the fields nobody asks for.** SEO title and description, social share image, publication and modification dates, and a canonical override. These are always needed and are always retrofitted awkwardly if omitted.
+
+**Decide the block vocabulary before building it.** If editors need to compose pages, give them a defined set of blocks - hero, text, image with caption, quote, two-column, call to action, table. A closed set they can arrange is flexible enough for almost all real needs and keeps the design coherent. An open set turns into a page builder and you have reinvented what you left.
+
+<Callout type="tip">
+Spend a day on the content model with the people who will actually maintain it. It is the cheapest day in the project and the one that determines whether the system is pleasant in year two. Getting it wrong is the headless equivalent of a bad database schema.
+</Callout>
+
+## Migration from a traditional CMS
+
+The part that consumes the schedule.
+
+**Exporting is easy, mapping is not.** Getting content out of most CMSs is straightforward. Deciding how eleven years of pages - written under six different structural conventions - map into your new model is the work.
+
+**Page-builder content is the hard case.** If your existing pages were composed with a visual builder, the layout is stored as proprietary markup rather than as structured content. There is often no clean automated path, and a manual re-entry pass for the important pages plus archiving the rest is frequently the honest answer.
+
+**Media needs its own plan.** Images move, and alt text often does not exist. A migration is the natural moment to require it going forward.
+
+**URLs and redirects are launch-blocking.** Every existing page needs the same URL or a permanent redirect. This is the single most common way a re-platform loses search traffic, and Google's guidance on [consolidating duplicate URLs](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls) is the reference. The full checklist is in [website redesign vs rebuild](/blogs/website-redesign-vs-rebuild).
+
+**Do it in slices where you can.** Move the blog first, prove the pipeline, then the rest. The [strangler pattern](https://martinfowler.com/bliki/StranglerFigApplication.html) applies to content migrations as much as to applications.
+
+## What editors actually need, and how to give it to them
+
+Since editor unhappiness is the main way these projects disappoint, it is worth being specific about the remedies.
+
+**Preview.** Non-negotiable. Editors must be able to see a draft rendered by the real front end before publishing. Most headless products support it; it requires deliberate wiring on the front end and it is frequently deferred. Do not defer it.
+
+**A block system with a closed vocabulary.** Eight to twelve arrangeable blocks covers almost every real page. Editors get composition freedom; you keep design coherence; nobody rebuilds a page builder.
+
+**Required fields that matter.** Alt text on images, SEO description on pages. If the system enforces it, the quality problem stops recurring.
+
+**Sensible defaults.** A new page should arrive with the right template, the right parent and a draft state, not as an empty form.
+
+**Clear publishing states.** Draft, scheduled, published, archived. Editors need to know what is live without checking the website.
+
+**A short written guide with screenshots.** Twenty minutes to produce, and it removes most of the first month's support questions.
+
+Budget two to four days for the editor layer. It is the difference between a system your team likes and one they tolerate.
+
+<Callout type="info">
+Have a real editor - not a developer, not a manager - use the admin for an hour during the build, on real content, and act on what they say. This single hour prevents most of the regret described in this article.
+</Callout>
+
+## A worked example
+
+A specialist retailer with a website, a customer mobile app in planning, and product data currently maintained in the website's CMS and re-entered into a marketplace listing tool.
+
+**The problem:** product content lived in three places and diverged constantly. The upcoming app would have made it four.
+
+<RateTable
+  headers={['Option', 'Build cost', 'What happens when the app arrives']}
+  rows={[
+    ['Keep the traditional CMS', '$0 now', 'App needs its own content source. Four places.'],
+    ['Headless CMS, rebuild the site front end', '$31,000', 'App consumes the same API. One source.'],
+    ['Keep CMS, add a content API layer', '$14,000', 'Works, but the CMS still owns the model'],
+  ]}
+/>
+
+They chose the middle option, and the deciding argument was not the website. It was that the app would otherwise have needed a second product catalogue, and the marketplace re-entry would have continued indefinitely.
+
+**What they got wrong:** they did not budget for preview in the first phase. Editors published blind for two months and were unhappy about it. Adding preview afterwards cost four days that would have been two if planned. This is the standard headless mistake and knowing about it in advance is most of the fix.
+
+## A decision flowchart in words
+
+Answer in order and stop at the first yes.
+
+**1. Does the same content need to appear in more than one destination - a website plus an app, several regional sites, a partner feed?** If yes, headless. This is the reason the architecture exists and nothing else competes.
+
+**2. Is your front end already an application with logins and complex interaction?** If yes, headless or a hybrid. A traditional CMS bolted onto an application is awkward for everyone.
+
+**3. Is your content genuinely structured - products, events, people with attributes you filter and sort by?** If yes, lean headless. Page-oriented systems model structured content badly.
+
+**4. Are you fighting your current platform's presentation layer constantly?** If yes, consider the hybrid first - it keeps your editors' interface and frees the front end for a fraction of a full move.
+
+**5. Is any of the above likely within two years?** If yes, the hybrid is a cheap way to be ready without paying for capability now.
+
+**6. None of the above?** Stay traditional, build it well, and spend the difference on content or acquisition. This is the correct answer more often than the industry conversation suggests.
+
+## Objections, answered
+
+**"Is headless just a trend?"** The underlying idea - separating content from presentation - is old and sound. What is fashionable is applying it to sites that do not need it. Judge by whether you have multiple destinations or genuine presentation constraints, not by what is current.
+
+**"Our marketing team will hate it."** They might, and that is a solvable problem with budget rather than an inherent property. Preview, a flexible block system, and proper training address most of it. Ignoring it is what produces the unhappiness.
+
+**"Two systems means twice the maintenance."** Not twice, but more. A hosted headless service takes very little operational effort; a self-hosted one takes real effort. Factor it in using the same 15 - 20% rule from [what maintenance costs](/blogs/web-application-maintenance-cost).
+
+**"Can we move back if it does not work?"** More easily than most architecture decisions, because your content is in a structured, exportable form. That portability is a genuine advantage and worth verifying before you commit.
+
+**"What about SEO?"** Neutral if implemented properly, and the implementation detail that matters is rendering. Content rendered on the server or pre-generated is straightforward for search engines; content rendered only in the browser needs care. Google's [JavaScript SEO basics](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics) covers what to watch for, and it is a solved problem rather than a risk - provided someone was thinking about it.
+
+**"Do we need this for a five-page site?"** No. Emphatically. The overhead is not justified and a simple site should stay simple.
+
+## How we approach it
+
+We ask two questions before recommending headless: does the same content need to reach more than one destination, and is the front end genuinely constrained by the current platform? If both are no, we say so, and we have talked several clients out of this architecture.
+
+Where it is right, we treat editor experience as a first-class deliverable rather than an afterthought - preview working before launch, a block system for the pages marketing needs to compose themselves, and required alt text on media so accessibility does not degrade.
+
+If you are being sold a headless project and want a second opinion on whether you need it, [tell us what the site does](/contactus).
+
+## Related reading
+
+- [Next.js vs WordPress for Business Websites](/blogs/nextjs-vs-wordpress-for-business-websites) - the platform decision this sits inside
+- [Choosing an E-commerce Platform](/blogs/choosing-an-ecommerce-platform) - the same architectural trade, for commerce
+- [Building a Multi-Language Website](/blogs/building-a-multi-language-website) - the content architecture that makes several languages manageable
+- [Design Systems: The Business Case](/blogs/design-systems-for-business) - the front-end investment a headless build assumes
+
+## Sources and further reading
+
+- [Google on rendering on the web](https://web.dev/articles/rendering-on-the-web) - the spectrum from static generation to client-side rendering, and the trade-offs
+- [JavaScript SEO basics](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics) - what search engines need from a decoupled front end
+- [Next.js documentation](https://nextjs.org/docs) - the most common front end in headless architectures
+- [W3Techs CMS usage](https://w3techs.com/technologies/overview/content_management) - useful perspective on how much of the web still runs traditionally
+- [WordPress](https://wordpress.org/about/) - the platform most often used headlessly in the hybrid pattern

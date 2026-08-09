@@ -41,6 +41,36 @@ A few things that consistently help:
 - **Overlap chunks slightly** so an idea that straddles a boundary is not cut in half.
 - **Store the original location** so you can cite it and let users verify.
 
+## Chunking, in more detail than most articles give it
+
+Since chunking is where the leverage is, it is worth being specific about what "sensible" means, because the default in most tutorials - split every 1,000 characters - is close to the worst available option.
+
+**Split on structure the document already has.** Headings, sections, list boundaries, table rows. A document written by a human has semantic units in it; use them rather than imposing arbitrary ones. A policy document split at its clause boundaries retrieves far better than the same document split every 800 characters, because a clause is the unit a question is actually about.
+
+**Keep the heading with the body.** A chunk reading "must be submitted within 30 days" is useless without the heading that says what must be submitted. Prepending the section path to each chunk - document title, section, subsection - costs a few tokens and dramatically improves both retrieval and the model's ability to use what it retrieves.
+
+**Match chunk size to question size.** If your users ask narrow factual questions, smaller chunks retrieve more precisely. If they ask questions requiring a paragraph of reasoning, chunks that small will fragment the reasoning across several retrievals and the model will see pieces. There is no universal number, which is why the evaluation set below matters.
+
+**Handle tables and lists deliberately.** A table split across two chunks is two sets of numbers with no headers. Either keep tables whole or convert them to a text representation where each row carries its column names.
+
+**Do something about documents that are mostly images.** Scanned PDFs with no text layer contribute nothing, and they are frequently a meaningful share of a real corpus. Either run them through OCR properly or exclude them and know that you have.
+
+**Deduplicate, and mark what is superseded.** Real document sets contain the same policy in four versions, three of them superseded. Retrieving the 2019 version of a rule that changed in 2024 is worse than retrieving nothing, and no amount of prompting fixes it. This is a data problem and it is solved before the pipeline, not inside it.
+
+## Retrieval is more than vector similarity
+
+The default RAG design - embed the query, find the nearest chunks by cosine similarity, done - leaves a lot of quality on the table. Three additions do most of the work.
+
+**Hybrid search.** Vector similarity is good at meaning and bad at exact terms. A user searching for an invoice number, a product code, a person's surname or a specific statute reference wants an exact match, and embeddings will happily return semantically similar things that are the wrong record. Running a keyword search alongside the vector search and merging the results fixes an entire class of failure that pure vector systems never escape.
+
+**Metadata filtering.** If the question is about 2025 policy, do not retrieve from 2019 documents. If the user belongs to one organisation, do not retrieve another organisation's data - which is a correctness issue and also a [security](/blogs/web-application-security-checklist) one, and the most serious failure mode a multi-tenant RAG system has.
+
+**Re-ranking.** Retrieve more candidates than you need - say twenty - then use a model to score which are actually relevant to the question and pass the best five to the generation step. This is one of the highest-return additions available and it is frequently skipped because the first version worked well enough on the demo corpus.
+
+<Callout type="tip">
+The single most useful diagnostic to build early: a debug view showing exactly which chunks were retrieved for a query, in rank order, with their scores. It converts "the answer was wrong" from a mystery into a five-second read.
+</Callout>
+
 ## Grounding and citations are non-negotiable
 
 Every answer should be grounded in retrieved context and should cite the passages it used. This is not just a trust feature for users - it is a debugging tool for you. When you can see which sources an answer came from, a wrong answer becomes a traceable retrieval bug instead of a mystery.
@@ -57,6 +87,133 @@ Without this, every "improvement" is a vibe. With it, you can change one variabl
 The LLM is the last 10% of a RAG system. The other 90% is data preparation, chunking, retrieval, metadata, and evaluation. Teams that spend 90% of their effort on prompt engineering are optimising the wrong 10%.
 </Callout>
 
+## What it costs to build and run
+
+RAG is frequently priced as a prompt-and-a-vector-database, which is why it is frequently under-budgeted.
+
+<RateTable
+  headers={['Component', 'Typical effort', 'Notes']}
+  rows={[
+    ['Data preparation and cleanup', '30-40% of the project', 'Almost always the largest line'],
+    ['Chunking and ingestion pipeline', '15-20%', 'Including re-ingestion when documents change'],
+    ['Retrieval, hybrid search, re-ranking', '15-20%', 'Where the quality actually comes from'],
+    ['Generation and prompting', '5-10%', 'The part everyone budgets for'],
+    ['Evaluation harness', '10-15%', 'The part everyone skips'],
+    ['Interface and citations', '10-15%', 'Users need to verify'],
+  ]}
+/>
+
+A production RAG system over a real corpus typically runs **$25,000 to $80,000** to build and $400 to $6,000 a month to operate, depending on volume and how much you re-embed. The running cost has two components people miss: re-ingestion whenever source documents change, and the re-ranking calls, which happen on every query.
+
+The evaluation harness is the line most often cut and the one that determines whether the system improves over time. Without it you cannot tell whether a change helped, so nobody changes anything, so the system stays at whatever quality it launched with.
+
+## Where it goes wrong in production specifically
+
+Six failure modes that only appear once real users arrive.
+
+**Questions the corpus cannot answer.** Users ask about things that are not in the documents. The system must say so. A RAG system that answers every question is a RAG system that invents, and the invention is indistinguishable from the correct answers in tone.
+
+**Multi-hop questions.** "How does the 2024 change affect the process described in the onboarding guide?" needs two documents combined. Single-shot retrieval usually fetches one and answers partially. This is a known hard case and the honest response is either to detect and decline it, or to build a retrieval step that decomposes the question.
+
+**Stale content.** A document updated last week, an index rebuilt last month. Users trust the answer because it is cited, and the citation points at a version that is no longer current. Re-ingestion has to be automatic and its lag has to be known.
+
+**Permission leakage.** In any system with per-user access rules, retrieval must be filtered by what that user is allowed to see, at the retrieval step rather than afterwards. Filtering after generation means the model has already read the restricted document and may have paraphrased it into the answer.
+
+**Prompt injection through documents.** If your corpus contains user-uploaded content, that content can contain instructions aimed at the model. This is a real attack class and the [OWASP Top 10 for LLM applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/) is the reference for it.
+
+**Cost drift.** Retrieval, re-ranking and generation on every query, at usage volumes nobody modelled. A popular internal tool can quietly become a five-figure annual line.
+
+## When RAG is not the right answer
+
+Three cases where something simpler is better, all of which we have recommended over building a pipeline.
+
+**Your corpus is small and stable.** If the whole knowledge base fits comfortably in a modern model's context window, you may not need retrieval at all. Pass the documents and skip the machinery.
+
+**The question is really a search problem.** If users want to find the document rather than get an answer, build good search. It is cheaper, faster, more predictable, and users can verify the result themselves.
+
+**The answers must be exactly right, every time.** For a fixed set of questions with defined answers - policy lookups, eligibility rules, pricing - a decision table or a structured lookup is correct by construction. Using a language model where a lookup would do introduces a failure mode you did not previously have.
+
+## Building the evaluation set, concretely
+
+This is the step that turns a RAG project from an art into engineering, and it is genuinely not much work.
+
+**Collect 40 to 60 real questions.** Not invented ones - real questions from users, support tickets, or the people who will use the system. Invented questions test the corpus you imagined rather than the one you have.
+
+**For each, record two things:** the correct answer, and which source passage should have been retrieved to produce it. The second is what lets you separate a retrieval failure from a generation failure, and they need entirely different fixes.
+
+**Measure two numbers separately.** Retrieval recall - was the right passage in the top five? - and answer correctness. A system with 60% retrieval recall has a hard ceiling at 60% correctness no matter what you do to the prompt, and knowing that stops you optimising the wrong stage for a month.
+
+**Include questions the corpus cannot answer.** Perhaps a fifth of the set. The correct behaviour is a refusal, and a system that never refuses will score badly here in a way that is genuinely diagnostic.
+
+**Re-run it on every change.** Chunk size, embedding model, re-ranker, prompt, corpus update. This is the only way to know whether a change was an improvement, and without it every release is a guess that feels like progress.
+
+Two days of work, and it is the difference between a system that gets better each month and one that stays wherever it landed.
+
+## A worked example
+
+A professional body needed staff to answer member questions against roughly 4,000 documents - regulations, guidance notes, past determinations, meeting minutes going back eleven years. The first version, built by an internal team, scored 52% correct on a set of real questions and was distrusted enough that staff had stopped using it.
+
+The diagnosis took three days and found the problem was entirely in the first half of the pipeline:
+
+- **Chunking at 1,000 characters** split regulations mid-clause. A rule and its exception routinely landed in different chunks, so the system would return the rule and omit the exception - the most dangerous possible failure for that content.
+- **No metadata.** Superseded documents from 2015 ranked equally with current ones. Around 30% of the corpus was historical and nothing distinguished it.
+- **Pure vector search.** Members ask about specific regulation numbers constantly, and exact identifiers were the weakest thing the retrieval could handle.
+- **No evaluation set**, so nobody could tell which of these mattered most.
+
+What changed, over six weeks:
+
+- Re-chunked on clause and section boundaries, with the document title and section path prepended to every chunk.
+- Metadata added for document type, date and superseded status, with superseded content excluded by default and available on request.
+- Hybrid search added, so a regulation number matches exactly.
+- Re-ranking over the top twenty candidates.
+- A 55-question evaluation set built from real member enquiries, including eleven questions with no answer in the corpus.
+
+Result: **52% to 89% correct**, retrieval recall at 94%, and - the number staff cared about most - the system correctly said "this is not covered in the documents I have" on ten of the eleven unanswerable questions, having previously invented an answer for all eleven.
+
+The embedding model was never changed. Neither was the language model. Every point of that improvement came from data preparation, retrieval and measurement.
+
 ## The takeaway
 
 Treat the language model as the easy part. The engineering - clean data, thoughtful chunking, measurable retrieval, honest grounding - is what turns an impressive demo into a system people can actually trust. That is the work, and it is the work we do.
+
+The corollary is a useful filter when someone shows you a demo: ask what the corpus was. A pipeline that performs beautifully over twelve clean PDFs tells you nothing about how it will behave over four thousand messy ones, and the gap between those two situations is the entire project.
+
+## Questions to ask if someone is proposing one
+
+Five questions that establish whether a proposal is engineering or a demo with a budget attached.
+
+**"What does the data preparation look like?"** If the answer is short, the estimate is wrong. This is 30-40% of the work on every real corpus.
+
+**"How will we know if it is right?"** An evaluation set, with real questions, measured separately for retrieval and generation. Any other answer means quality will be assessed by whoever last tried it.
+
+**"What happens when the answer is not in the documents?"** A refusal path, built and tested. "The model is good at that" is not an implementation.
+
+**"How does a user verify an answer?"** Citations linking to the source passage. Without them, every answer requires trust that the system has not earned.
+
+**"What happens when documents change?"** Automatic re-ingestion with a known lag. Manual re-indexing means the index is current for about three weeks after launch.
+
+## What we do differently
+
+We spend the first week on the corpus rather than the pipeline - inventorying it, finding the superseded material, identifying what is scanned images rather than text. That week reliably changes the shape of the project, and skipping it is why so many RAG systems plateau at a disappointing number.
+
+We build the evaluation set before we tune anything, so that every subsequent change is measured rather than argued about.
+
+And we build the refusal path first. A system that reliably says "I do not have that" is trusted on the answers it does give, and a system that always answers is trusted on none of them.
+
+If you have a RAG system stuck at a number you are not happy with, [the cause is almost certainly in retrieval](/contactus) and it is findable in a few days.
+
+## Related reading
+
+- [Adding AI features to your product](/blogs/adding-ai-features-to-your-product) - deciding whether this is the right feature at all
+- [Case study: CodrzAI](/blogs/codrzai-case-study) - retrieval and grounding applied across six agents
+- [Designing AI agents that do not hallucinate](/blogs/designing-ai-agents-that-dont-hallucinate) - the same grounding discipline applied to systems that act
+- [Choosing a database](/blogs/choosing-a-database) - why pgvector is usually enough
+- [Data privacy for web applications](/blogs/data-privacy-for-web-applications) - the obligations that follow documents leaving your systems
+
+## Sources and further reading
+
+- [OWASP Top 10 for LLM applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/) - prompt injection through retrieved documents, and the rest of the attack surface
+- [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework) - structuring the risk conversation for a grounded system
+- [Prompt engineering guidance](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview) - the generation stage, which is the easy part
+- [PostgreSQL documentation](https://www.postgresql.org/docs/current/tutorial-arch.html) - pgvector runs here, and most teams need nothing more
+- [Redis documentation](https://redis.io/docs/latest/) - caching retrieval results, which is where the running cost goes

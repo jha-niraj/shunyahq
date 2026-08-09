@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const useCase = USE_CASES[audience]
     const url = `${SITE_URL}/solutions/${audience}`
     const title = `${useCase.label} - ${SITE_NAME}`
-    const description = useCase.heroSubtitle
+    const description = useCase.seoDescription
 
     return {
         title,

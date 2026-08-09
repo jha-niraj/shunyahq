@@ -1,0 +1,235 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Security gets discussed in two unhelpful registers: a vague sense that it is important, and a technical vocabulary that makes it impossible for the person paying to tell whether it has been done. This is an attempt at the middle - a checklist you can actually take to your team, with enough explanation that you can tell a real answer from a reassuring one.
+
+None of what follows is exotic. The breaches that affect businesses of your size are overwhelmingly not sophisticated attacks. They are a dependency nobody updated, a password nobody rotated, an admin page nobody protected, and a backup nobody tested.
+
+## The framing that makes this manageable
+
+You are not trying to be unbreachable. You are trying to be a harder target than the automated scanning that probes every internet-facing application continuously, and to limit the damage when something does go wrong.
+
+That reframes the work. Most of the value is in a modest number of controls that block the common attacks, plus the ability to detect and recover. Perfection is not on the menu and pursuing it wastes money that should go on the basics.
+
+The [OWASP Top Ten](https://owasp.org/www-project-top-ten/) is the industry's consensus list of what actually goes wrong, updated from real incident data. If your team is not familiar with it, that is itself a finding.
+
+<Callout type="info">
+A useful question to open with: "What would an attacker get if they had our database?" If the answer includes plaintext passwords, unencrypted personal data, or API keys, those are your first three items regardless of anything else on this list.
+</Callout>
+
+## The checklist
+
+### Authentication
+
+**Passwords are hashed with a modern algorithm.** bcrypt, scrypt or Argon2. Never encrypted, never MD5 or SHA1. If your team can tell you a user's password, that is a critical defect.
+
+**Password policy follows current guidance, not 2010 guidance.** [NIST 800-63B](https://pages.nist.gov/800-63-3/sp800-63b.html) recommends length over complexity, no forced periodic rotation, and screening against known-breached password lists. Mandatory quarterly changes with a special character make security worse, not better, because people write them down and iterate them by one digit.
+
+**Rate limiting on login.** Without it, an attacker can try passwords indefinitely. With it, they cannot. This is a few hours of work and it blocks an entire category of attack.
+
+**Two-factor available, and required for administrators.** If one of your admin accounts is compromised, everything else on this list stops mattering.
+
+**Sessions expire, and log-out actually invalidates.** A surprising number of applications issue a token that remains valid after the user logs out.
+
+The [OWASP authentication cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) is the reference for all of the above and is written clearly enough to hand to a non-specialist developer.
+
+### Authorisation
+
+**Every request checks permission on the server.** The most common serious vulnerability in business applications is not a clever exploit; it is an endpoint that returns record 1,247 to anyone who asks for record 1,247. Hiding a button in the interface is not access control.
+
+**Users cannot access other tenants' data by changing an identifier.** In a multi-tenant product this is the vulnerability that ends companies. It should be tested explicitly, with a real second account.
+
+**Administrative functions are separately protected.** Ideally on a distinct path, behind two-factor, and ideally not reachable from the public internet at all.
+
+### Input and output
+
+**Database queries use parameterisation.** This prevents SQL injection and it is a solved problem - every modern framework does it by default, and the vulnerability appears only when someone constructs a query by concatenating strings. The [OWASP SQL injection cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html) covers the exceptions.
+
+**User content is escaped when displayed.** Otherwise someone stores a script in a profile field and it runs in the browser of everyone who views it. Modern frameworks handle this by default; the danger is the one place a developer bypassed it to render HTML. See the [XSS prevention cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html).
+
+**File uploads are constrained.** Type checked properly rather than by extension, size limited, stored outside the web root, and served from a separate domain if they can be viewed.
+
+**A Content Security Policy is set.** This tells the browser which scripts are allowed to run, which turns many injection attacks from a breach into a blocked request. [MDN's CSP documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy) is the practical guide; it takes a day or two to introduce on an existing site and is worth it.
+
+### Dependencies
+
+**You know what you depend on.** A modern application has hundreds of third-party packages. You cannot secure what you have not listed.
+
+**Vulnerable packages are flagged automatically.** [npm audit](https://docs.npmjs.com/cli/v10/commands/npm-audit) and equivalent for other ecosystems, plus [Dependabot](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates) or similar raising pull requests when something needs patching.
+
+**Updates happen on a schedule, not on an incident.** A monthly patching window is cheap. An emergency upgrade across four major versions during a live exploit is not.
+
+**Your runtime is supported.** Node, Python, PHP and the rest have published support windows - [endoflife.date](https://endoflife.date/nodejs) tracks them. Running past end of life means known vulnerabilities with no fix available.
+
+### Transport and configuration
+
+**HTTPS everywhere, with HTTP redirecting to it.** Free via [Let's Encrypt](https://letsencrypt.org/), so there is no remaining argument.
+
+**Security headers set.** HSTS, X-Content-Type-Options, Referrer-Policy, frame protections. A morning's work, checkable in seconds with any online header scanner.
+
+**Secrets are not in the repository.** API keys, database passwords and tokens belong in a secrets manager or environment configuration. Search your git history, not just your current code - a key committed in 2023 and removed in 2024 is still in the history and still valid unless it was rotated.
+
+**Error messages do not leak internals.** Stack traces and database errors shown to users are a map of your system.
+
+**Non-production environments are not public.** Staging with real data and no authentication is a recurring source of exposure, and it is usually discovered by a search engine before it is discovered by you.
+
+### Data
+
+**Personal data is encrypted at rest.** Standard on managed databases, frequently just needs enabling.
+
+**Backups exist, are encrypted, and have been restored.** The restore test is the one that gets skipped and the only one that proves the rest.
+
+**Retention limits are enforced.** Data you have deleted cannot be stolen. This overlaps directly with [privacy obligations](/blogs/data-privacy-for-web-applications).
+
+**Production access is limited and logged.** Who can read the live database, and how would you know if they had?
+
+### Detection and response
+
+**Errors are collected somewhere someone looks.** An application throwing 400 exceptions an hour is telling you something.
+
+**Failed login attempts and permission denials are logged and alerted on at volume.** This is how you notice an attack in progress rather than afterwards.
+
+**You have a written plan for a breach.** Who is called, who decides, who talks to customers, and what the notification obligations are. Under the GDPR the clock is 72 hours; deciding the process during the incident wastes most of it.
+
+<Callout type="warn">
+The single most common serious finding in the applications we audit is not on the exotic end of this list. It is an API endpoint that returns data without checking who is asking. Test it yourself: log in as one customer, find an identifier in the URL or network requests, and try it from a different account.
+</Callout>
+
+## What this costs
+
+<RateTable
+  headers={['Activity', 'Cost', 'Cadence']}
+  rows={[
+    ['Automated dependency scanning', 'Free to $200/mo', 'Continuous'],
+    ['Security headers and CSP', '$500 - $2,500', 'Once, then maintained'],
+    ['Authentication hardening', '$2,000 - $8,000', 'Once'],
+    ['Authorisation audit and fixes', '$3,000 - $15,000', 'Once, then per feature'],
+    ['External penetration test', '$6,000 - $25,000', 'Annually, or before enterprise deals'],
+    ['Monitoring and alerting setup', '$2,000 - $6,000', 'Once, then maintained'],
+    ['Monthly patching', '$400 - $2,000/mo', 'Monthly'],
+  ]}
+/>
+
+For most businesses the sensible sequence is: automated scanning and patching first because it is nearly free and blocks the most common route in, then authorisation testing because it is where the severe findings are, then headers and hardening, then a penetration test once the obvious things are fixed. Paying for a penetration test before doing the basics buys you an expensive report listing the basics.
+
+## The controls that are not code
+
+A meaningful share of incidents have nothing to do with the application. They happen around it, and the fixes are administrative rather than technical.
+
+**Offboarding.** When someone leaves, their access to every system should end that day - including the hosting console, the repository, the payment provider, the email platform and the domain registrar. Most small companies discover an ex-employee still has access during an unrelated audit. A written offboarding checklist takes an hour to produce and closes the most common quiet exposure there is.
+
+**Domain and DNS control.** Your domain registration is the foundation everything else sits on. Losing control of it means losing your email, your certificates and your site. It should have two-factor enabled, a registrar lock, and more than one person able to reach it. Domains lapsing because the renewal went to someone who left is a real and recurring category of outage.
+
+**Phishing and payment fraud.** The attack that actually costs mid-sized businesses money is usually an email asking finance to change a supplier's bank details. No amount of application security touches it. A rule that bank detail changes require a phone call to a known number is worth more than most technical controls.
+
+**Third-party scripts.** Anything added to your pages by marketing runs with full access to those pages. Analytics, chat widgets and pixels are all code you did not review, executing in your customers' browsers. A review step before anything is added is free and prevents the class of incident where a compromised widget skims form fields.
+
+**Vendor access.** Agencies, contractors and support staff who have been granted production access at some point and never had it removed. Review quarterly. Time-limit it where you can.
+
+**Device basics for whoever holds the keys.** Disk encryption, screen lock, and a password manager for the handful of people with administrative access. The most privileged account in your business is frequently protected by whatever is on one laptop.
+
+None of these appear in a penetration test report. Several of them are more likely to be the cause of your first incident than anything that does.
+
+## A worked example
+
+A B2B software company preparing for an enterprise deal had to complete a security questionnaire and commission a penetration test. They asked us to look first.
+
+The pre-assessment found eleven issues. Three mattered.
+
+**Critical: horizontal access control failure.** The API returned any document by its identifier without checking whether the requesting user's organisation owned it. Identifiers were sequential. Any customer could have read every other customer's documents by counting. Nobody had, as far as the logs showed - but the logs only went back 30 days, which was its own finding.
+
+**High: an admin interface reachable from the internet** with password-only authentication and no rate limiting, on a predictable path.
+
+**High: 34 dependencies with known vulnerabilities**, four of them rated critical, the oldest unpatched for nineteen months. There was no scanning configured, so nobody had known.
+
+The remediation took three weeks:
+
+- Authorisation rewritten so every data access ran through a single function that checked organisation ownership, with tests asserting that a second account could not read the first's records. This was the largest piece of work and the one that made the rest defensible.
+- Admin interface moved behind two-factor and IP restriction, with alerting on failed attempts.
+- Dependency scanning enabled, all critical and high vulnerabilities patched, a monthly window scheduled.
+- Log retention extended to a year, security headers and a CSP added, secrets moved out of the repository and rotated - two had been committed at some point in the project's history.
+
+Cost: $27,000. The penetration test that followed returned two low-severity findings. The enterprise deal, worth considerably more than the remediation, closed.
+
+The instructive part is the timing. Every one of those three findings would have cost a fraction to prevent during the original build. The authorisation issue in particular was a design decision made in week two of a project three years earlier - a single function that took an identifier and did not take a user.
+
+## Getting started when nothing has been done
+
+If this list is intimidating because none of it exists yet, the order below gets you most of the risk reduction in the first fortnight.
+
+**Day one.** Turn on dependency scanning. Check for a stray noindex-equivalent of security - a staging environment that is publicly reachable. Confirm HTTPS is enforced everywhere.
+
+**Week one.** Patch every critical and high dependency vulnerability. Enable two-factor on every administrative account, including hosting, domain and payment providers. Search the repository history for secrets and rotate anything found.
+
+**Week two.** Test authorisation by hand with two accounts. Set security headers. Restore a backup and time it. Write down who is called if something happens at 3am.
+
+**Month two.** Add a Content Security Policy. Set up alerting on error rate and failed logins. Schedule a monthly patching window and put it in a calendar with an owner's name on it.
+
+That sequence costs a few thousand pounds of engineering time and removes the great majority of realistic risk. Everything beyond it is refinement.
+
+## Questions to ask your team
+
+You do not need to evaluate the answers technically. You need to notice whether an answer exists.
+
+1. When did we last apply security updates to our dependencies, and how do we know when new ones are needed?
+2. Can a logged-in customer see another customer's data by changing something in a URL or a request? How was that tested?
+3. Where do our secrets live, and has anything ever been committed to the repository by accident?
+4. When did we last restore a backup, and how long did it take?
+5. Who gets alerted if the error rate spikes at 3am?
+6. What is our runtime version, and is it still supported?
+7. If we were breached tomorrow, what is the first hour?
+
+Vague answers to these are the finding. A team that says "I'd have to check" and then checks is fine. A team that says "that shouldn't be possible" without checking is describing a belief.
+
+## Penetration tests, and how to buy one usefully
+
+At some point a customer will require one, and the market for them ranges from genuinely valuable to an automated scan in a PDF with a logo on it. Four things separate the two.
+
+**Scope defined by you, in writing.** Which application, which environments, which user roles, whether the tester gets credentials. A test conducted without a logged-in account finds almost nothing worth knowing, because everything interesting in a business application is behind authentication. Insist on authenticated testing with at least two accounts in different organisations.
+
+**Manual testing, stated explicitly.** Ask what proportion is manual. Automated scanning is a component and it finds the things your own scanner should already have found. The value is a human reasoning about your authorisation model.
+
+**A retest included.** You fix the findings, they verify. Without this you have a list, not an assurance, and the certificate your customer wants usually depends on the retest.
+
+**Findings you can act on.** A good report says what, where, how to reproduce, and what to do. A poor one says "the application may be vulnerable to injection" with a severity badge.
+
+Expect $6,000 to $25,000 for a web application of moderate size, and expect to spend a similar order of magnitude fixing what it finds if this is your first one. Book it after the basics on this page are done, not before.
+
+## Where the risk actually concentrates
+
+Three areas account for most real incidents in businesses of this size.
+
+**Unpatched dependencies.** Automated scanners find vulnerable versions across the entire internet within hours of disclosure. This is not targeted; you are found because you exist. Patching is the highest-value hour of security work available.
+
+**Credentials.** Reused passwords, keys in repositories, accounts belonging to people who left. Access review - who has access to what, and should they still - is unglamorous and prevents a lot.
+
+**Authorisation logic.** The bugs unique to your application, which no scanner finds because they require understanding what your data means. This is what a penetration test is genuinely for.
+
+Notice that sophisticated exploitation of novel vulnerabilities is not on the list. It happens, and it is not what happens to you.
+
+## What we do differently
+
+We treat authorisation as an architectural concern rather than a per-endpoint one. A single enforcement point that every data access passes through, with tests that assert cross-tenant isolation, is the difference between one place to get it right and two hundred places to get it wrong.
+
+We turn on dependency scanning on day one of every project and schedule the patching window before launch, because the alternative is a nineteen-month gap that nobody chose.
+
+And we write the incident plan while nothing is on fire, which is the only time anyone thinks clearly about it.
+
+If you have a security questionnaire in front of you or a penetration test booked, [a pre-assessment first](/contactus) is usually cheaper than the report that tells you the same thing.
+
+## Related reading
+
+- [Data privacy for web applications](/blogs/data-privacy-for-web-applications) - the obligations that sit alongside these controls
+- [Web application maintenance cost](/blogs/web-application-maintenance-cost) - where patching fits in the running budget
+- [The cost of cutting corners](/blogs/cost-of-cutting-corners) - what deferred security work actually costs later
+- [Questions to ask in a software demo](/blogs/questions-to-ask-in-a-software-demo) - the security questions worth asking a vendor
+
+## Sources and further reading
+
+- [OWASP Top Ten](https://owasp.org/www-project-top-ten/) - the consensus list of what actually goes wrong, from real incident data
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/) - practical, specific guidance per topic
+- [SQL injection prevention](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html) and [XSS prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html) - the two oldest categories, still current
+- [NIST SP 800-63B](https://pages.nist.gov/800-63-3/sp800-63b.html) - modern authentication guidance, including why forced password rotation is counterproductive
+- [MDN Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy) - how to introduce a CSP without breaking your site
+- [National Vulnerability Database](https://nvd.nist.gov/) - the authoritative record behind dependency scanner findings
+- [Dependabot security updates](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates) - the cheapest control on this page
+- [Let's Encrypt](https://letsencrypt.org/) - free certificates, no excuse for unencrypted transport

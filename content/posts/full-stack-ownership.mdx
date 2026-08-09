@@ -1,4 +1,4 @@
-import { Callout } from '@/mdx-components'
+import { Callout, RateTable } from '@/mdx-components'
 
 There is a particular kind of meeting that happens on troubled software projects. The frontend team says the API is returning the wrong shape. The backend team says the frontend is calling it wrong. Infra says it works in staging. Design says nobody followed the spec. Everyone is partly right, the bug is still there, and no one owns it.
 
@@ -8,12 +8,12 @@ That meeting is not a people problem. It is a structure problem. It is what happ
 
 A handoff is a moment where work crosses a team boundary, and at every boundary, two things leak: context and accountability.
 
-Context leaks because the person picking up the work was not in the room when the decisions were made. They get a ticket, not the reasoning behind it. They rebuild a mental model from artifacts, and the rebuild is always lossy.
+Context leaks because the person picking up the work was not in the room when the decisions were made. They get a ticket, not the reasoning behind it. They rebuild a mental model from artefacts, and the rebuild is always lossy. The ticket says "add a status field to the order record". It does not say that the status only matters for one customer segment, that a fourth value was considered and rejected, or that finance has a report depending on the current shape. All of that was in the conversation. None of it survives the transfer.
 
 Accountability leaks because once work crosses a boundary, "done" becomes negotiable. The handing-off team's job is finished when they pass it on. Whether it actually works end to end is now somebody else's responsibility - and that somebody is a different team with a different definition of done.
 
 <Callout type="info">
-The cost of a handoff is not the time spent transferring the work. It is the time spent later re-discovering the context that was lost during the transfer - usually while a bug is in production.
+The cost of a handoff is not the time spent transferring the work. It is the time spent later re-discovering the context that was lost during the transfer - usually while a bug is in production and someone senior is asking why.
 </Callout>
 
 ## What full-stack ownership actually means
@@ -22,22 +22,170 @@ At Shunya, one team owns a product end to end: frontend, backend, infrastructure
 
 This does not mean every engineer is a generalist who does everything equally. People still have depth - someone is stronger on data modelling, someone else on UI. Ownership is about who is accountable, not about flattening everyone into the same skill set. The team is collectively responsible for whether the thing works in production, so nothing falls into the gap between specialists, because there is no gap.
 
+The distinction matters because "full-stack" is frequently heard as a claim about individuals - a mythical engineer equally strong at CSS animation and database index design. That person is rare and you should not build a delivery model around finding them. What you can build a model around is a small team where the whole stack sits inside one accountable boundary, and where a specialist can ask the person three feet away rather than filing a ticket.
+
 ## Why ownership ships faster
 
 Three reasons, and none of them is heroics.
 
-- **The feedback loop is short.** The person who built a feature also deploys it and watches it run. They feel the bugs personally and quickly, instead of filing a ticket into another team's backlog.
-- **There is no translation tax.** Decisions that would cross a team boundary instead happen inside one team's head, or in one conversation. No spec has to survive a relay race.
-- **Accountability is unambiguous.** When something breaks, there is exactly one team that owns it. That clarity is not about blame - it is about knowing, instantly, who can fix it.
+**The feedback loop is short.** The person who built a feature also deploys it and watches it run. They feel the bugs personally and quickly, instead of filing a ticket into another team's backlog. A defect discovered by its author within the hour costs a fraction of the same defect discovered by a different team in three weeks, because the author still has the whole thing loaded in their head.
+
+**There is no translation tax.** Decisions that would cross a team boundary instead happen inside one team's head, or in one conversation. No spec has to survive a relay race. Every artefact written purely so another team can understand the work is pure overhead - necessary overhead when the boundary exists, and simply absent when it does not.
+
+**Accountability is unambiguous.** When something breaks, there is exactly one team that owns it. That clarity is not about blame - it is about knowing, instantly, who can fix it. The single most expensive hour in an incident is the one spent establishing whose problem it is.
 
 <Callout type="tip">
 The fastest way to speed up a project is rarely to add people. It is often to remove a handoff - to put the people who were passing work between each other on the same team, owning the same outcome.
 </Callout>
 
-## Ownership is a structure choice, not a hours choice
+## The handoffs that cost the most
+
+Not all boundaries are equal. In our experience four specific handoffs account for most of the loss on a typical business software project.
+
+**Design to engineering.** A design handed over as a finished artefact, with no designer available while it is built, produces a hundred small decisions made by whoever is implementing. Spacing between two elements the design did not specify. What the empty state looks like. What happens at 320 pixels wide. Each decision is reasonable in isolation and collectively they are why the built thing does not look like the design. The fix is not a more detailed design file - it is a designer in the same team, reachable in a minute.
+
+**Frontend to backend.** The API contract is where this one lives. Two teams agree a shape, one builds against a mock, the other builds the real thing, and the differences surface at integration. On a project with dozens of endpoints this is not one bug, it is a permanent low-grade tax.
+
+**Engineering to operations.** Software written by people who never run it develops a characteristic set of problems: no useful logging, configuration hard-coded, no health check, failure modes nobody considered because nobody would be woken by them. The industry's answer to this - that the people who build a service should be involved in running it - is now mainstream, and the [Google SRE book](https://sre.google/sre-book/table-of-contents/) is the most complete articulation of why.
+
+**Agency to client.** The largest handoff of all, and the one most often treated as an email with a zip file attached. Everything the building team knew that was not written down is lost at this boundary, permanently.
+
+## Conway's law, and why it is not just an aphorism
+
+The observation that organisations produce systems that mirror their own communication structure is over fifty years old and it keeps being true. A company with a frontend team, a backend team and a database team produces a system split along exactly those lines, whether or not that split makes sense for the product.
+
+This is worth taking seriously as a design tool rather than as a joke. If you want a system organised around business capabilities - orders, customers, billing - then organise teams around those capabilities and let the architecture follow. If you organise teams around technical layers, you will get a system split by technical layer, with every business change requiring three teams to coordinate.
+
+For a product of the size most businesses commission, the practical implication is simpler still: **one team, one product, whole stack.** The coordination cost of any other arrangement exceeds the specialisation benefit until you are considerably larger than you think.
+
+## When handoffs are the right answer
+
+Ownership is not a universal claim and it is worth being honest about the boundaries where a handoff genuinely earns its cost.
+
+**Genuine specialism used rarely.** Security review, penetration testing, accessibility audit, legal review. These need expertise your delivery team should not be pretending to have, they are used periodically rather than continuously, and the handoff is a deliberate consultation rather than a transfer of responsibility.
+
+**Scale beyond one team.** A team above roughly eight or nine people stops functioning as one unit regardless of what the org chart says. At that point you split, and the question becomes where to draw the line - along business capabilities, with each new team owning its whole stack, rather than along technical layers.
+
+**Shared platform concerns.** Above a certain size, a platform team providing deployment infrastructure, observability and a component library to product teams is genuine leverage rather than a handoff, because it provides capability rather than doing the work.
+
+**A deliberate, resourced transition.** When a product moves from a build team to a run team, that is a handoff, and the right response is to treat it as a piece of work with time and budget rather than an email.
+
+<Callout type="warn">
+The failure mode to watch for is a handoff that exists because of history rather than reasoning. "The API team owns that endpoint" is sometimes a sensible boundary and is frequently an artefact of a reorganisation three years ago that nobody has revisited.
+</Callout>
+
+## What it costs, honestly
+
+Ownership is not free and it is not always the cheaper option on paper.
+
+<RateTable
+  headers={['', 'Specialist handoff model', 'Full-stack ownership']}
+  rows={[
+    ['Day rate for the team', 'Lower per person', 'Higher per person'],
+    ['Coordination overhead', 'High and permanent', 'Low'],
+    ['Time to first working software', 'Slower', 'Faster'],
+    ['Defects found at integration', 'Many', 'Few'],
+    ['Bus factor', 'Better on paper', 'Needs deliberate attention'],
+    ['Scales to very large systems', 'Yes, with structure', 'Needs splitting'],
+  ]}
+/>
+
+Two rows deserve honesty.
+
+**Day rate.** Engineers who can work confidently across the stack cost more than specialists at the same level of experience. The argument for the model is not that the people are cheaper - it is that fewer hours are spent on work that is not building anything. On the projects where we have been able to compare, the coordination saving comfortably exceeds the rate difference, but it is a real trade rather than a free lunch.
+
+**Bus factor.** A small team owning everything concentrates knowledge. That is a genuine risk and it needs deliberate countermeasures: pairing on anything unfamiliar, written architecture decisions, no single person as the only one who can deploy. A team that owns everything and documents nothing has traded one fragility for another.
+
+## Making it work in practice
+
+Five things separate ownership as a working model from ownership as a slogan.
+
+**A bounded scope.** One team owning "the product" works when the product has edges. Owning everything with no boundary is not ownership, it is being permanently on call for an undefined surface, and it burns people out within a year.
+
+**Access to production.** A team cannot own what it cannot observe. Logs, metrics, error tracking and the ability to deploy. Ownership without the ability to act is just accountability, which is the worst of both.
+
+**Written decisions.** Not documentation for its own sake - a short record of why each significant choice was made. This is what makes the model survive someone leaving, and it is the countermeasure to the bus-factor problem above.
+
+**A deployment pipeline anyone can run.** If deploying is a ritual only one person performs, the team does not own deployment, that person does. [Continuous integration](https://martinfowler.com/articles/continuousIntegration.html) is the practice that makes this ordinary rather than an event.
+
+**Permission to say no.** A team accountable for the outcome has to be able to push back on a request that would break it. Accountability without authority produces resentment, then attrition, and the people who leave are the ones who understood the system best.
+
+## What this means when you are buying, not building
+
+Most readers of this are not organising an internal team - they are choosing a supplier. The model translates into four things worth checking before you sign.
+
+**Ask who will actually be accountable for the thing working.** Not who will build the frontend and who will build the backend. Who is on the hook for a customer being able to complete a purchase. If the answer names more than one company, you are buying a coordination problem alongside the software.
+
+**Ask whether the same team deploys.** A supplier who builds and then hands to your internal operations team, or to a separate hosting partner, has a boundary in the middle of the thing you care most about. Sometimes that is unavoidable. It should be a decision rather than a discovery.
+
+**Ask what happens to the design.** A studio that subcontracts design and receives a finished file has the design-to-engineering handoff described above, and you will see it in the built result.
+
+**Ask how a defect travels.** Walk through it explicitly: a customer reports a bug on Tuesday morning, describe the path from that email to a fix in production. A short path with one owner is what you want to hear. A path involving three parties and a triage meeting is the eleven-day version.
+
+None of these require technical knowledge to evaluate. They require insisting on a specific answer rather than a reassuring one.
+
+## A worked example
+
+A financial services company had a customer portal built by three suppliers over four years: one for design, one for the frontend, one for the backend and infrastructure. Each was individually competent.
+
+The symptoms were the ones this article opened with. A defect reported by a customer took, on average, eleven days from report to fix - and measurement showed that only about a day and a half of that was engineering. The rest was establishing which supplier owned it, and waiting for that supplier's next available slot.
+
+Three specific examples from their incident log:
+
+- A date displayed in the wrong timezone. The frontend supplier said the API returned UTC without an offset. The backend supplier said the frontend should render in the user's locale. Both were defensible. It took nine days and three calls to agree, and the eventual fix took forty minutes.
+- A file upload failing above 8MB. The infrastructure supplier had a proxy limit, the backend had a different limit, and the frontend showed a generic error for both. Nobody owned "file upload works", so each supplier fixed their own layer in sequence over five weeks.
+- A performance problem on the dashboard. The frontend supplier optimised the rendering. The backend supplier added a cache. Neither looked at the actual cause, which was a missing database index, because the database sat in a fourth supplier's scope.
+
+They consolidated to one team of five owning the whole portal. The measurements at nine months:
+
+- Median time from defect report to production fix: **11 days to 1.4 days.**
+- Deployments per month: **2 to 23.** The frequency change is downstream of the ownership change, not separate from it - a team that can deploy without coordinating with two other companies deploys more often.
+- Their own count of "meetings whose purpose was deciding who owns something": from an estimated six a month to zero.
+
+Total cost of the consolidated team was about 8% higher per month than the three suppliers combined. Their finance director's assessment was that the 8% bought them roughly triple the delivery throughput, which is a trade nobody needed a spreadsheet to evaluate.
+
+## Ownership is a structure choice, not an hours choice
 
 It is worth saying clearly: full-stack ownership works because of how the team is organised, not because the team works longer. Long hours are a symptom of broken structure, not a substitute for good structure.
 
-When one team owns the whole stack with a clear, bounded scope, the work gets calmer, not more frantic. Fewer surprises cross the boundary because there is no boundary. Fewer fires start in the gaps because there are no gaps.
+When one team owns the whole stack with a clear, bounded scope, the work gets calmer, not more frantic. Fewer surprises cross the boundary because there is no boundary. Fewer fires start in the gaps because there are no gaps. The [DORA research programme](https://dora.dev/) has spent years measuring what actually predicts software delivery performance, and the pattern that recurs is autonomy: teams able to make and ship changes without waiting on approval from outside themselves.
 
 That is the real argument for ownership. Not that it makes people work harder - that it removes the parts of the work that were never building anything in the first place.
+
+## How to tell whether you have it
+
+Four questions, answerable in a minute.
+
+**When something breaks in production, how long before someone is fixing it rather than establishing whose it is?** If the answer is more than a few minutes, you have a boundary problem.
+
+**Can the team that built a feature deploy it themselves, today?** If not, they do not own it.
+
+**When a change spans the interface and the database, how many people have to agree?** Two or three is a team. Eight across three organisations is a coordination structure.
+
+**Who gets the alert at 3am?** If it is nobody, or if it is someone who cannot fix what they are being alerted about, the ownership is nominal.
+
+## What we do differently
+
+We staff one team per product, covering design, frontend, backend, infrastructure and deployment, with a scope that has edges. This is the whole delivery model rather than a preference, and it is the reason our estimates hold up better than they otherwise would.
+
+We write down the decisions rather than only the code, because the bus-factor risk is real and documentation is the cheap countermeasure.
+
+And we hand over deliberately when a project ends - infrastructure in your accounts, a recorded walkthrough, running documentation and a supported period - because the agency-to-client handoff is the biggest one in the whole arrangement and treating it as an email is how everything the team knew gets lost.
+
+If your defect turnaround is measured in weeks and most of it is not engineering, [that is a structure problem](/contactus) and it is fixable.
+
+## Related reading
+
+- [Why software projects fail](/blogs/why-software-projects-fail) - the failure patterns this model is designed to avoid
+- [Agency vs freelancer vs in-house](/blogs/agency-vs-freelancer-vs-in-house) - how the delivery model shapes the choice
+- [What happens after launch](/blogs/what-happens-after-launch) - ownership after the build ends
+- [CI/CD that actually ships](/blogs/ci-cd-that-actually-ships) - the pipeline that makes team-level deployment ordinary
+- [Case study: building SyncOrbit](/blogs/building-syncorbit-case-study) - one team owning an aggregation product end to end
+
+## Sources and further reading
+
+- [DORA research](https://dora.dev/) - the long-running evidence on what predicts delivery performance, including team autonomy
+- [Google SRE book](https://sre.google/sre-book/table-of-contents/) - why the people who build a service should be involved in running it
+- [Continuous integration](https://martinfowler.com/articles/continuousIntegration.html) - the practice that makes team-level deployment routine
+- [The Twelve-Factor App](https://12factor.net/) - the operational properties that make software ownable by the team that wrote it
+- [Stack Overflow developer survey](https://survey.stackoverflow.co/2025/) - useful context on how teams are actually organised

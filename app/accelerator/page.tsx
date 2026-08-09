@@ -273,11 +273,13 @@ function StoryCard({ story }: { story: (typeof SUCCESS_STORIES)[number] }) {
             <h3 className="mt-4 text-[19px] font-semibold text-so-ink tracking-[-0.01em]">{story.name}</h3>
             <p className="text-[13px] text-so-ink-3 mb-4">{story.founder}</p>
             <p className="text-[14px] leading-[1.7] text-so-ink-2 mb-6 flex-1">{story.story}</p>
+            {/* These three ids have no record in STARTUP_SUBMISSIONS, so a per-story link was a
+                soft 404. They are testimonials, not profiles - send readers to the directory. */}
             <Link
-                href={`/startups/${story.id}`}
+                href="/accelerator/startups"
                 className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-so-ink-3 hover:text-so-ink transition-colors"
             >
-                Read full story <ArrowRight size={14} />
+                See the portfolio <ArrowRight size={14} />
             </Link>
         </div>
     )
@@ -322,7 +324,7 @@ export default function AcceleratorPage() {
                             </div>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-                            <Link href="/submit" className="so-btn so-btn-primary">
+                            <Link href="/contactus" className="so-btn so-btn-primary">
                                 Apply now <ArrowRight size={13} />
                             </Link>
                             <Link href="#program-details" className="so-btn so-btn-ghost">
@@ -511,7 +513,7 @@ export default function AcceleratorPage() {
                         ))}
                     </div>
                     <div className="mt-8">
-                        <Link href="/team" className="so-btn so-btn-ghost">
+                        <Link href="/aboutus" className="so-btn so-btn-ghost">
                             View full team <ArrowRight size={13} />
                         </Link>
                     </div>
@@ -554,7 +556,7 @@ export default function AcceleratorPage() {
                     </Tabs>
 
                     <div className="mt-10">
-                        <Link href="/discover" className="so-btn so-btn-ghost">
+                        <Link href="/accelerator/startups" className="so-btn so-btn-ghost">
                             Discover more startups <ArrowRight size={13} />
                         </Link>
                     </div>
@@ -613,9 +615,14 @@ export default function AcceleratorPage() {
                             )
                         })}
                     </div>
-                    <div className="mt-10">
-                        <Link href="/submit" className="so-btn so-btn-primary">
+                    <div className="mt-10 flex flex-wrap items-center gap-3">
+                        <Link href="/contactus" className="so-btn so-btn-primary">
                             Apply now <ArrowRight size={13} />
+                        </Link>
+                        {/* /accelerator/pricing was in the sitemap with zero internal links
+                            pointing at it - an orphan page crawlers reach only via the sitemap. */}
+                        <Link href="/accelerator/pricing" className="so-btn so-btn-ghost">
+                            See accelerator pricing
                         </Link>
                     </div>
                 </div>
@@ -661,7 +668,7 @@ export default function AcceleratorPage() {
                             </label>
                         </div>
 
-                        <Link href="/submit" className="so-btn so-btn-primary">
+                        <Link href="/contactus" className="so-btn so-btn-primary">
                             Submit your application <ArrowRight size={13} />
                         </Link>
                     </div>
@@ -681,7 +688,7 @@ export default function AcceleratorPage() {
                             Get the practical support you need without breaking the bank or giving away your company.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center gap-3 mb-10">
-                            <Link href="/submit" className="so-btn so-btn-primary">
+                            <Link href="/contactus" className="so-btn so-btn-primary">
                                 Apply now <ArrowRight size={13} />
                             </Link>
                             <Link href="/contactus" className="so-btn so-btn-ghost">

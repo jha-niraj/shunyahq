@@ -1,0 +1,229 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Choosing a development agency is a decision you make with the least information you will ever have about the thing you are buying. You cannot inspect the product, because it does not exist. You cannot easily judge the quality of the work, because the whole reason you are hiring is that this is not your specialism. And everyone you talk to says the same words: senior team, agile process, partner not vendor, quality code.
+
+So people fall back on the two signals they can actually compare - price and portfolio - and both are weak. Price tells you what someone hopes to earn, not what they will deliver. A portfolio tells you what shipped, not who built it, how long it took, or whether it still works.
+
+This is a guide to the signals that do predict how a project goes. We are an agency, so we have an obvious interest here. We have tried to write the version we would want if we were on your side of the table, including the questions that are uncomfortable for us to answer.
+
+## Start by knowing which problem you have
+
+The right partner depends on which of these you are actually solving, and they are not the same buy.
+
+**"I have an idea and need a first version."** You need speed, product judgement, and someone who will tell you what to cut. A big agency will over-engineer this and a cheap freelancer will under-build it.
+
+**"I have a business and need a system to run part of it."** You need someone who will spend real time understanding your operations before writing code. Domain understanding matters more than framework choice.
+
+**"I have a product and need more engineering capacity."** You need people who slot into your process, not a vendor who wants to own a walled-off deliverable.
+
+**"I have a system that is failing and need it fixed."** You need diagnostic ability and the honesty to tell you when a rewrite is genuinely cheaper than a rescue. This is the engagement most likely to go wrong, because incentives point toward the bigger project.
+
+Say which one you are in your first email. A good agency will tell you if it is not the kind of work they are good at, and that answer is worth more than a polished pitch.
+
+## The questions that separate them
+
+Anyone can answer "do you do React". These are the ones where the answers actually differ.
+
+### "Who will write my code, and can I meet them?"
+
+The single highest-value question. Many agencies sell with senior people and deliver with junior ones. It is not automatically bad - juniors supervised well produce good work - but you should know the shape of the team before you sign, not after.
+
+Ask for names and roles, ask how many other projects each person is on simultaneously, and ask to speak to the person who will actually be doing the work. Reluctance here is the reddest flag in the whole process.
+
+### "What happens when we disagree about scope?"
+
+Scope disagreement is not a risk, it is a certainty. What matters is whether there is a process for it.
+
+You want to hear something concrete: change requests are written down, priced, and approved before work starts. What you do not want is "we're flexible, we'll figure it out" - that means either you will be quietly billed for it or it will quietly not get built.
+
+### "Show me something that went badly and what you did about it."
+
+Every agency with real history has a project that overran, a client relationship that broke, or a technical decision that turned out wrong. An agency that claims otherwise has either not done much work or is not being straight with you.
+
+The good answer is specific and takes responsibility. The bad answer blames the client.
+
+### "What do you need from us, and what happens if you do not get it?"
+
+Most delays are not caused by the agency. They are caused by content that never arrives, feedback that takes three weeks, or a decision-maker who is unavailable.
+
+A team that has run real projects will answer immediately and precisely: a named decision-maker, feedback within a defined window, third-party access by a certain date. If they have not thought about their dependency on you, they have not run many projects to completion.
+
+### "Who owns the code, and what happens if we stop working together?"
+
+The answer should be that you own everything built for you on full payment, in your own repository, with deployment documented well enough that another team can pick it up.
+
+Do not assume this is automatic. Under US law, work by an independent contractor is **not** work made for hire by default - the US Copyright Office's [Circular 9](https://www.copyright.gov/circs/circ09.pdf) sets out the narrow categories and the written-agreement requirement. Without an explicit assignment clause, the agency may retain copyright in code you paid for. Ask to see that clause.
+
+<Callout type="warning">
+Watch for hosting lock-in. Some agencies deploy to infrastructure they control and never hand over the keys, which turns a maintenance retainer into a hostage situation. Ask explicitly: is the production environment in an account we own?
+</Callout>
+
+### "What does support look like after launch?"
+
+"We'll be here" is not an answer. You want a defined period, a defined scope for what counts as a defect versus new work, and a response target. Ambiguity here reliably becomes a dispute in month two.
+
+## Reading a proposal
+
+Put two proposals side by side and ignore the totals. Compare these:
+
+<RateTable
+  headers={['What to look for', 'Good sign', 'Warning sign']}
+  rows={[
+    ['Scope detail', 'Specific deliverables and named exclusions', 'Vague phases with no boundaries'],
+    ['Assumptions', 'Listed explicitly, with what changes if wrong', 'None stated'],
+    ['Timeline', 'Milestones with your dependencies marked', 'A single end date'],
+    ['Testing', 'A line item with a real share of budget', 'Not mentioned'],
+    ['Deployment', 'Environments, CI/CD, monitoring included', 'Assumed to be free'],
+    ['Change process', 'Written, priced, approved in advance', 'Left informal'],
+    ['Team', 'Named people with roles', '"Our expert team"'],
+  ]}
+/>
+
+A proposal that names its exclusions is more trustworthy than one that seems to include everything. Exclusions mean someone thought about the boundaries.
+
+## Reference calls, done properly
+
+Any agency can supply three happy clients. Get value out of the call anyway by asking questions that are hard to stage:
+
+- What went wrong, and how did they handle it?
+- Did the final cost match the original estimate? If not, why?
+- How long did it take to get a response when something broke?
+- What did you have to do that you did not expect?
+- Would you hire them again for a *different* kind of project?
+
+That last one is the tell. "Yes, for anything" is a strong signal. "Yes, but I would go elsewhere for X" is an honest and genuinely useful answer.
+
+Then ask for a reference from a project that **finished more than a year ago**. Recent references speak to the honeymoon. Old ones speak to whether the code survived.
+
+## Signals that are weaker than they look
+
+**Portfolio size.** Fifty logos tells you about sales, not delivery. Three case studies explaining the actual problem and architecture tell you far more.
+
+**Awards.** Almost always paid for, judged on visual design, and unrelated to whether the thing works under load.
+
+**Team size.** A 200-person agency does not put 200 people on your project. It puts four, and the other 196 are overhead in your rate.
+
+**Technology enthusiasm.** An agency excited about the newest framework may be optimising for their engineers' interest rather than your maintenance cost. Boring, well-understood technology is usually the right answer for a business system.
+
+## Signals that are stronger than they look
+
+**They tell you not to build something.** An agency that pushes back on scope is optimising for your outcome over their invoice. It is the most reliable positive signal there is.
+
+**They publish their pricing.** Not because published pricing is always cheaper, but because it means they are not deciding your price based on how much they think you have.
+
+**They ask about your business before your requirements.** Requirements are what you think you need. The business problem is what you actually need.
+
+**They have written about how they work.** Not marketing copy - actual process. It means the process exists. Concrete tells: do they name the delivery practices they follow (the [DORA](https://dora.dev/) research programme is the standard reference for what high-performing teams actually do), and can they explain their approach to the [OWASP Top 10](https://owasp.org/www-project-top-ten/) without reaching for a brochure?
+
+**They handed a client over gracefully.** Ask if they have ever helped a client move to an in-house team. The answer reveals whether they think in relationships or in lock-in.
+
+## A workable process
+
+1. **Write a one-page brief** - the problem, the users, the constraint that cannot move, and what success looks like in six months.
+2. **Talk to three or four teams**, not ten. Past four you are comparing sales skill.
+3. **Pay two of them for a short discovery.** A few thousand for a written scope from each is the cheapest risk reduction available, and you get to see how they actually work rather than how they sell.
+4. **Compare the scopes, not the prices.** The differences tell you who understood the problem.
+5. **Start with a small first milestone** with a real deliverable. Nothing predicts a project like having run a small piece of it.
+
+<Callout type="tip">
+If you take one thing from this: pay for discovery from two candidates before committing to a build. It costs a fraction of the project, and it converts an unknowable decision into an informed one.
+</Callout>
+
+## The first call, and what to listen for
+
+You learn more in thirty minutes of conversation than from any amount of website. Here is what a good one sounds like.
+
+**They ask about the business before the software.** The first five minutes should be about what you sell, who buys it and what is going wrong. A supplier who opens with "so, are you thinking React or Vue?" is selling capacity, not judgement.
+
+**They interrupt you to clarify.** Not rudely, but a good technical lead will stop you at the point where your description becomes ambiguous, because that ambiguity is where their estimate breaks. Silence throughout is not politeness; it usually means nobody is modelling the problem in real time.
+
+**They tell you something you did not want to hear.** "That integration is going to be the hard part and we cannot price it until we have seen the API." "You probably do not need a mobile app for this." "Two of those four roles could be one role." Every one of those costs them money in the short term, which is exactly why it is a signal.
+
+**They are specific about what they need from you.** A named decision-maker, a review turnaround, third-party credentials by a certain date. If they have not thought about their dependency on you, they have not finished many projects.
+
+**They put a number on it, with conditions.** Not a precise quote - that comes later - but a band, and an explanation of what would push it to either end. A supplier who will not indicate a range at all is either inexperienced or planning to price against your budget.
+
+<Callout type="warning">
+The reverse tell: if they agree with everything you say, you are talking to sales, not to whoever will build it. Ask directly to speak to the technical lead before you go further.
+</Callout>
+
+## Red flags, ranked by how often they predict trouble
+
+Not all warning signs are equal. In rough order of how reliably each one predicts a bad engagement:
+
+1. **They will not tell you who writes the code.** Ranked first because it is both the strongest signal and the easiest to check. Everything else can be explained away; this cannot.
+2. **The proposal has no exclusions.** A scope with no boundaries is a scope that will be argued about.
+3. **Pressure to sign quickly.** Discounts that expire, capacity that is "about to go". Real capacity constraints exist and get explained calmly, with dates.
+4. **Production would run in their infrastructure.** The most common form of accidental lock-in, and it is trivial to avoid at the start.
+5. **They cannot name a project that went badly.** Either inexperience or a lack of candour, and you find out which one the hard way.
+6. **Everything is quoted as a single line.** "Development: $45,000" tells you nothing and cannot be compared with anything.
+7. **They are dismissive of testing or deployment.** "We do not really need CI for a project this size" means you will be paying for the consequences instead.
+8. **The team is enormous relative to the work.** Six named people on a ten-week build usually means fractional attention from all six.
+
+Note what is not on that list: being small, being remote, being new, or being cheaper than the others. Those are neutral facts that a nervous buyer reads as risk.
+
+## The paid trial: the single best de-risking move
+
+If you take one procedural recommendation from this article, take this one.
+
+Before committing to a full build, **pay two shortlisted suppliers for a small, real piece of work**. Not a pitch, not a mock-up. A genuine two-week discovery, or a contained first feature.
+
+It costs a few thousand each. In return you learn things no reference call can tell you:
+
+- How they communicate when they are actually working rather than selling.
+- Whether their estimate for a two-week piece was accurate, which is the best available predictor of whether their twelve-week estimate is.
+- What their written output looks like.
+- Whether the person who impressed you on the call is the person doing the work.
+- How they behave when they hit something unexpected, which they will.
+
+And you own the output either way. A written specification and data model from a supplier you then decline is still an asset you can hand to whoever you choose.
+
+<Callout type="tip">
+Run both trials against the same brief, in the same fortnight, and compare the written outputs side by side. The difference between two discovery documents is far more informative than the difference between two proposals, because one is work and the other is marketing.
+</Callout>
+
+## What to do when both options look fine
+
+Sometimes you do the process properly and end up with two credible suppliers and no obvious winner. Tie-breakers, in order:
+
+**Who understood the problem better?** Re-read both restatements of your brief. One of them will have reframed something in a way that made you think.
+
+**Who will you be talking to weekly for three months?** This matters more than people admit. Competence being equal, pick the working relationship.
+
+**Whose estimate has a buffer and says so?** A supplier who has priced a contingency and explained it has thought about risk. One whose number is suspiciously tidy has probably not.
+
+**Who was easier to get a straight answer from?** Extrapolate that across a project where something has gone wrong.
+
+## Objections, answered honestly
+
+**"Agencies are too expensive, I will find a freelancer."** Often the right call, and we say so in [agency vs freelancer vs in-house](/blogs/agency-vs-freelancer-vs-in-house). The thing to weigh is not the rate but who will manage the work. If that is you and you have never scoped software, the cheaper rate can still cost more.
+
+**"I want a fixed price so there are no surprises."** Reasonable, and available - but only against a scope detailed enough to be fixed. A fixed price on a vague brief means the supplier has priced a large buffer, or that every clarification becomes a change request. Fixed-price discovery followed by a fixed-price build is the version of this that works.
+
+**"How do I know they will not disappear?"** You do not, entirely. Reduce it: pay in milestones tied to delivered work, keep the repository and cloud accounts in your name from day one, and insist on deploying to production early rather than at the end. If everything lives with the supplier until launch, their disappearance is fatal. If it does not, it is an inconvenience.
+
+**"Should I ask for a reference from a client who left?"** Yes, and a good supplier will give you one. Relationships end for ordinary reasons - the client hired in-house, the product was sold, the budget went elsewhere. How a supplier talks about a client who left is one of the more revealing things you can ask.
+
+**"They want to charge for discovery before quoting the build."** That is the correct order. A firm build price requires knowing what is being built. Free quotes on unclear scopes are guesses that get corrected later, at your expense.
+
+## How we work
+
+We are a small senior team and the people who scope your project are the people who build it. We publish our [pricing](/pricing) rather than quoting to budget, we scope in a paid discovery phase that produces a written specification you own whether or not you continue with us, and every engagement hands over code in your repository and infrastructure in your accounts.
+
+We also say no to work we are not the right fit for, which is not generosity - it is that the wrong project makes both sides miserable.
+
+## Related reading
+
+- [Questions to Ask in a Software Demo](/blogs/questions-to-ask-in-a-software-demo) - what to ask once you are in the room
+- [Red Flags in a Software Quote](/blogs/red-flags-in-a-software-quote) - reading what comes back
+- [Software Development Contract Checklist](/blogs/software-development-contract-checklist) - the agreement that concludes the process
+- [Agency vs Freelancer vs In-House: How to Decide](/blogs/agency-vs-freelancer-vs-in-house) - deciding the model before the supplier
+
+## Sources and further reading
+
+- [US Copyright Office, Circular 9: Works Made for Hire](https://www.copyright.gov/circs/circ09.pdf) - why contractor code is not automatically yours
+- [DORA](https://dora.dev/) - the research on what actually distinguishes high-performing delivery teams
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/) - the security baseline to ask any agency about
+- [Open Source Initiative licence list](https://opensource.org/licenses) - what the third-party components in your build are governed by
+
+If you want to see how we think before talking to us, the [case studies](/projects) go into the actual architecture. If you are ready to talk, [tell us what you are building](/contactus).

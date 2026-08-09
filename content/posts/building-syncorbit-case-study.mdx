@@ -43,11 +43,49 @@ The decision we spent the most time on was freshness. A command center that show
 The trap in any aggregation product is trusting your cache too much. If a webhook is missed and you never reconcile, the dashboard quietly drifts from reality and nobody notices until a decision is made on bad data. We treat the aggregated state as a cache that must be continuously re-proven against the source, never as the source of truth itself.
 </Callout>
 
+## The freshness problem, in detail
+
+Since this is the decision the whole product turned on, it is worth setting out what "keeping the dashboard true" actually required. Four mechanisms, each covering a failure the others miss.
+
+**Webhooks for immediacy.** A connected tool tells us the moment something changes. Fast, efficient, and unreliable on its own for three reasons: webhooks get dropped, they get delivered twice, and they arrive while your system is deploying. Every one of them has to be safe to process more than once - the property called idempotency, described in [API integration for businesses](/blogs/api-integration-for-businesses) - and there has to be somewhere for messages that arrive during a restart to wait.
+
+**Scheduled reconciliation for correctness.** A periodic sweep comparing our aggregated state against the source. This is what catches the dropped webhook, the change made by an admin in a way that does not fire one, and the record deleted upstream. It runs on a cadence tuned per integration - frequently for things people watch, hourly for things they do not.
+
+**A freshness timestamp on everything, shown to the user.** Every panel knows when its data was last confirmed, and says so. This is the cheapest trust mechanism available. A number labelled "as of 4 minutes ago" is honest; the same number with no label is a claim the system cannot support.
+
+**Explicit degradation when a source is unreachable.** If a connected tool is down, the panel says so rather than silently showing the last value as though it were current. Stale data presented as fresh is the failure mode that destroys confidence in an aggregation product permanently, and it takes one occurrence.
+
+The general principle underneath all four: **aggregated state is a cache that must be continuously re-proven, and its age is part of the data.** A product that treats it as a source of truth will drift, and the drift is invisible until somebody makes a decision on it.
+
 ## The hard part was the model, not the screens
 
 People assumed the challenge was the UI - the charts, the dashboard, the polish. It was not. The genuinely hard problem was the data model underneath: representing projects, people, capacity, time, and money in a way that was flexible enough for how different agencies actually operate, without becoming so generic it meant nothing.
 
 Model it too rigidly and it only fits one agency's workflow. Model it too loosely and the dashboard cannot say anything specific because everything is a free-form blob. We iterated on this model more than any other part of the product, because every meaningful view downstream depended on getting it right.
+
+## What the model iterations actually taught us
+
+Three specific tensions, since "we iterated on the model" is the kind of sentence that hides all the useful detail.
+
+**Is a project a container or a period?** Agencies use the word for both an ongoing client relationship and a discrete piece of work with a start and an end. The first version chose one, and half the pilot users found it wrong. The resolution was two concepts - an engagement, which is ongoing, and a piece of work inside it, which has dates - and almost every reporting view got clearer the moment they were separated.
+
+**Capacity belongs to people, allocation belongs to work.** Modelling "who is on what" as a property of the project meant a person's total load was a query across every project, which was slow and, worse, frequently wrong when something was archived. Inverting it - a person has capacity, allocations consume it - made overcommitment a single lookup and turned the most-requested feature into a trivial one.
+
+**Money has at least three states and they are not the same.** Quoted, committed and invoiced. The first model collapsed them, which made every financial view either optimistic or useless depending on which one it happened to mean. This is the kind of distinction that is obvious once written down and invisible while it is implicit, and it cost a fortnight of rework.
+
+The pattern across all three: each was a place where a single word in everyday agency conversation was doing the work of two concepts. Finding those words is most of what data modelling is, and it is why time spent on the model early returns more than time spent anywhere else - every downstream view inherits either the clarity or the confusion.
+
+## Building for yourself, which is not automatically an advantage
+
+The received wisdom is that building a tool for your own use guarantees you will get it right. Our experience was more mixed, and the honest version is worth recording.
+
+**What genuinely helped.** We used it every day, so problems surfaced within hours rather than in a quarterly review. There was no requirements-gathering gap, because the requirements were sitting in our own frustration. And nobody could hide behind a specification - a screen that did not help was obvious to the person who needed help.
+
+**What it made harder.** We built for exactly one agency's workflow, which was ours, and the first pilot with an outside team exposed how many assumptions were local rather than general - the project-versus-engagement problem above being the clearest. Building for yourself gives you a user with perfect access and a sample size of one.
+
+**The correction.** Three pilot agencies, deliberately chosen to work differently from us, before anything was called version one. Every one of them changed something structural, and none of those changes would have surfaced from our own use no matter how long we used it.
+
+The transferable lesson is not "do not build for yourself". It is that being your own user removes the discovery problem and creates a generalisation problem, and the second is easier to miss because everything feels validated.
 
 ## What we deliberately left out of v1
 
@@ -59,6 +97,24 @@ True to how we ship, the first version was ruthlessly scoped. We left out, on pu
 
 None of this was technical debt. It was deferred scope, and deferring it is what let us get a useful product live and learn from real daily use instead of guessing for another six months.
 
+## What the integrations actually cost
+
+The product connects to tools agencies already use, and the estimate for that work was wrong in an instructive way.
+
+The plan was four integrations in the first release. What we found:
+
+**The first one took three weeks.** Not because the API was difficult, but because it forced every architectural decision at once - how connections are stored, how credentials are held and rotated, how a webhook endpoint is secured, what happens when a token expires, where failed messages go, how a user reconnects a broken integration.
+
+**The second took four days.** Everything above already existed. This is the framework pattern again, and it is the same lesson as the agent framework on our other product: build the thing that builds them.
+
+**The third and fourth took two days each**, and neither was the hard part.
+
+**Two of the four then consumed more maintenance than all the build work combined.** One provider changed its authentication method with six weeks' notice. Another had an undocumented rate limit that only appeared above a certain account size, which meant it worked for every pilot agency until it did not.
+
+The transferable numbers: the first integration into a product is three to five times the cost of the second, and ongoing maintenance runs 10-20% of the build cost per integration per year, permanently. Any estimate that prices integration two the same as integration one is describing a different project.
+
+We resisted the long tail deliberately, and that was right. Every additional integration is a permanent maintenance obligation, and the correct answer for the tail is to expose an API and let people connect what they need rather than to keep absorbing the cost.
+
 ## What we learned
 
 A few lessons generalised well beyond this one product:
@@ -66,7 +122,67 @@ A few lessons generalised well beyond this one product:
 1. **Aggregation products live and die on freshness.** The feature is not the dashboard; it is the trustworthiness of the dashboard. We under-estimated how much engineering that trust required.
 2. **The data model is the product.** Screens are downstream of the model. Time spent getting the model right paid off in every view we built afterward.
 3. **A command center has to earn the "open it first" habit.** If it is not faster than the five tabs it replaces, people keep the five tabs. Speed and truth were the whole value proposition, so they got the most attention.
+4. **The first integration prices the framework, not the integration.** Estimating the second one at the same cost as the first is how integration budgets go wrong, in both directions.
+5. **Removing recurring manual work beats adding capability.** The status-report portal was scoped as secondary and became the reason teams kept using the product.
+
+## Performance, because a command centre that is slow does not get opened
+
+The value proposition was "faster than the five tabs it replaces", which made page load a product requirement rather than an engineering nicety. Three things mattered.
+
+**Server-rendered dashboards.** The main views arrive as finished HTML with their data already resolved, rather than as a shell that fetches. On a dashboard with six panels, client-side fetching means six round trips after the page appears, and the difference is the gap between instant and merely quick. The trade is discussed generally in [single-page app vs server-rendered](/blogs/single-page-app-vs-server-rendered).
+
+**Aggregates computed on write, not on read.** The counts and totals on the overview are maintained as data changes rather than recalculated per page load. This is the single largest performance decision in the product and it is only possible because the reconciliation sweep exists to correct any drift - the two decisions support each other.
+
+**A hard budget on the initial payload.** Enforced in the build, so a new charting dependency cannot quietly add 300KB to a page everyone opens twenty times a day. The budget has failed a build four times, and on each occasion the fix took under an hour because it was caught the day it happened rather than a year later.
+
+The measured result that mattered internally: median time from clicking the bookmark to a usable overview, on a mid-range laptop, under 900 milliseconds. That number is the product. Everything else is what it displays.
+
+## The client-facing view, which turned out to be the feature
+
+One thing scoped as secondary became the most-used part of the product, and the reason is worth recording because it generalises.
+
+The original brief treated a client-facing portal as a nice-to-have - a read-only view an agency could share with a customer. What actually happened was that it replaced the weekly status report.
+
+Agencies spend real hours assembling status updates: pulling progress from a board, writing a summary, formatting it, sending it. It is work that produces nothing except a description of other work, and it is nobody's favourite part of the week. A live view the client can open at any time removes the artefact entirely.
+
+Three things had to be true for it to work, and only the first was obvious.
+
+**It had to be honest.** A portal showing only good news gets ignored within a month, because clients are not naive and a dashboard that never reports a problem is a dashboard reporting nothing. Showing blockers and slipped dates was the uncomfortable design decision, and it is the one that made clients trust it.
+
+**It had to require no account.** A shared link that opens. Every authentication step between a client and their status update is a step at which they go back to emailing for an update instead, and the whole value was removing that email.
+
+**It had to be scoped precisely.** One client's view must never contain another's data, which is the multi-tenant isolation problem described in [the security checklist](/blogs/web-application-security-checklist) - and a token-accessed public link raises the stakes, because the usual protection of being logged in is absent by design.
+
+The lesson we took: **the feature that removes recurring manual work usually beats the feature that adds capability.** Nobody asked for a portal. Everybody wanted their Friday afternoon back.
 
 ## Where it stands
 
 SyncOrbit started as a tool to fix our own operations and became a product because the problem turned out to be everyone's problem. Building it forced us to take our own advice about scope, freshness, and data modelling more seriously than we ever had on a client project - because this time we were the client, and we used it every single day. That is the best test of software there is, and it is the reason we trust what we shipped.
+
+It remains in beta, deliberately. Onboarding teams in batches rather than opening the doors means every structural assumption still gets tested against a workflow we did not anticipate, and we would rather find the next project-versus-engagement problem with eight agencies watching than eight hundred.
+
+## What we got wrong
+
+Three decisions we would make differently on the next aggregation product.
+
+**Pilot with outside agencies earlier.** We ran for four months on our own workflow before the first external pilot, and that pilot immediately produced the project-versus-engagement split. Four months is a long time to build on a sample size of one.
+
+**Instrument the freshness promise from day one.** We added the "as of" timestamps after a client noticed a stale panel. It should have been in the first version, because the whole product is a claim about being current and a claim with no evidence attached is just a claim.
+
+**Cost the second integration honestly in the plan.** We priced four integrations as four units of work. The first was three weeks and the rest were days, which meant the plan was wrong in both directions at once and made the schedule look unpredictable when it was actually just mis-modelled.
+
+## Related reading
+
+- [Full-stack ownership](/blogs/full-stack-ownership) - the delivery model this product was built to support
+- [API integration for businesses](/blogs/api-integration-for-businesses) - the webhook and reconciliation patterns behind the freshness work
+- [Choosing a database](/blogs/choosing-a-database) - why the relational answer was right for this data
+- [How to scope an MVP](/blogs/how-to-scope-an-mvp) - the discipline behind the deliberate omissions
+
+## Sources and further reading
+
+- [Webhooks.fyi](https://webhooks.fyi/) - practical guidance on consuming webhooks reliably, including duplicate delivery
+- [PostgreSQL architecture overview](https://www.postgresql.org/docs/current/tutorial-arch.html) - the store underneath the aggregation layer
+- [Next.js documentation](https://nextjs.org/docs) - server-rendered dashboards and the rendering strategy per route
+- [Google SRE book](https://sre.google/sre-book/table-of-contents/) - the monitoring and reconciliation thinking behind keeping aggregated state true
+- [The Twelve-Factor App](https://12factor.net/) - background jobs, configuration and the operational properties that made this deployable
+- [DORA research](https://dora.dev/) - the delivery metrics the product was built to make visible

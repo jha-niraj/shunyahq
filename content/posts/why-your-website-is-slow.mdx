@@ -1,0 +1,241 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Your site feels slow. Someone has told you it is slow, or you noticed it yourself on your phone, or a report arrived with red numbers on it. The next thing that usually happens is a proposal to rebuild it, and that is frequently the most expensive possible response to a problem that has a cheaper cause.
+
+This is a diagnostic guide. It walks through the causes in order of how often they turn out to be the actual problem, tells you how to check each one without being a developer, and gives you a realistic cost for fixing it.
+
+## First, measure the right thing
+
+Before any diagnosis, get numbers. Impressions are unreliable because you visit your own site constantly and your browser has cached most of it.
+
+**Run it through [PageSpeed Insights](https://pagespeed.web.dev/).** Free, takes thirty seconds, and gives you two distinct things: field data from real Chrome users, and lab data from a simulated test. When they disagree, the field data is the truth about your visitors and the lab data is the diagnosis of why.
+
+**Test the mobile score, not the desktop one.** Most traffic is mobile and mobile is where the problems are. A site can score 96 on desktop and 34 on mobile, and the 34 is the one your customers experience.
+
+**Test a page that matters.** The homepage is often the most optimised page on a site, because it is the one everyone looks at. Test a product page, a blog post, and a landing page you run ads to - those are where the money is and where nobody has checked.
+
+The three metrics you will see are [Core Web Vitals](/blogs/core-web-vitals-for-business-owners): LCP for when the main content appears, INP for how quickly the page responds to a tap, and CLS for how much things move around while loading. Targets are 2.5 seconds, 200 milliseconds and 0.1.
+
+<Callout type="info">
+Write the numbers down before anyone touches anything. Without a baseline you cannot tell whether a fix worked, and "it feels faster" is not evidence anyone should be paid on.
+</Callout>
+
+## The causes, in order of likelihood
+
+### 1. Images
+
+The most common cause by a wide margin, and the cheapest to fix.
+
+**What goes wrong:** a photograph exported at 4,000 pixels wide and displayed at 600. A hero image weighing 3MB. Twenty product thumbnails all loading immediately even though eighteen are below the fold. PNG used where a modern format would be a fifth of the size.
+
+**How to check:** open your site, right-click, inspect, look at the network tab and sort by size. Anything over 300KB is a candidate. Or simply look at the PageSpeed report, which lists oversized images explicitly.
+
+**The fix:** correctly sized images, modern formats, lazy loading for anything below the fold, and explicit width and height attributes so the layout does not jump. On most sites this is one to three days of work and it moves the LCP number more than anything else available.
+
+**Typical cost:** $800 - $3,000.
+
+### 2. Third-party scripts
+
+The second most common, and the one nobody owns.
+
+**What goes wrong:** over three years, a tag manager, two analytics tools, a chat widget, a heatmap recorder, a review widget, an A/B testing tool and four advertising pixels have been added. Each one was justified individually. Together they are 900KB of JavaScript executing on the main thread before your page can respond.
+
+**How to check:** ask your team for a list of everything loaded on the page that you did not write. If nobody can produce one, that is the finding. The PageSpeed report has a "reduce the impact of third-party code" section that quantifies it.
+
+**The fix:** remove what is not used - there is always something - load the rest after the page is interactive, and put a review step in place so this does not silently rebuild. Note that this overlaps with [privacy obligations](/blogs/data-privacy-for-web-applications): scripts loading before consent are a compliance problem as well as a speed one.
+
+**Typical cost:** $1,000 - $4,000, and occasionally negative, because removing a paid tool nobody uses saves a subscription.
+
+### 3. Too much JavaScript of your own
+
+**What goes wrong:** a library imported for one feature and shipped on every page. A date-formatting package weighing more than the rest of the site. An entire charting library loaded on the homepage because a chart appears on one dashboard. No code splitting, so every visitor downloads the code for every page.
+
+**How to check:** ask for the size of the JavaScript bundle, compressed, for your most-visited page. Under 200KB is healthy for a content site. Over 500KB is a problem. Over 1MB is why your mobile score is what it is.
+
+**The fix:** code splitting so each page ships only what it needs, replacing oversized libraries, and setting a budget that fails the build if it is exceeded. More involved than images and usually worth it.
+
+**Typical cost:** $3,000 - $12,000.
+
+### 4. Fonts
+
+**What goes wrong:** four font weights loaded when two are used. Fonts loaded from a third-party domain, adding a DNS lookup and a connection before any text can render. No fallback, so text is invisible for a beat while the font arrives.
+
+**How to check:** does text appear and then change appearance a moment later? Does it appear blank first? Both are font loading issues.
+
+**The fix:** self-host the fonts, subset them to the characters you use, load only the weights you need, and set the display behaviour so text shows in a fallback immediately.
+
+**Typical cost:** $400 - $1,500. Half a day, usually, and visibly better.
+
+### 5. Server response time
+
+**What goes wrong:** the server takes 1.5 seconds to begin responding. Nothing else on the page can start until it does, so every other optimisation is capped by it.
+
+Common causes: an under-resourced hosting plan, a database query with no index, a page that makes forty separate database calls, no caching so identical work is repeated for every visitor, or a server in a different continent from your users.
+
+**How to check:** PageSpeed reports time to first byte. Under 600 milliseconds is fine, over 1 second needs looking at.
+
+**The fix:** depends on the cause. Caching is frequently the largest and cheapest win - a page that does not change per visitor should not be regenerated per visitor. Database indexing is covered in [choosing a database](/blogs/choosing-a-database) and is usually days rather than weeks. A CDN puts your content geographically closer to visitors and is close to free.
+
+**Typical cost:** $1,500 - $10,000, with wide variance.
+
+### 6. The rendering approach
+
+**What goes wrong:** the page is built in the visitor's browser rather than sent as finished HTML, so nothing appears until the JavaScript has downloaded, parsed and run.
+
+This is a real cause and it is fifth or sixth on the list, not first, which matters because it is the most expensive to change. [Single-page app vs server-rendered](/blogs/single-page-app-vs-server-rendered) covers the decision.
+
+**How to check:** view source on your page. If you can see your actual content in the HTML, you are server-rendered. If you see an empty div and a script tag, you are not.
+
+**Typical cost:** $8,000 - $40,000 depending on how much moves.
+
+<RateTable
+  headers={['Cause', 'How often it is the problem', 'Cost to fix', 'Effort']}
+  rows={[
+    ['Images', 'Very often', '$800 - $3,000', '1-3 days'],
+    ['Third-party scripts', 'Very often', '$1,000 - $4,000', '1-4 days'],
+    ['Own JavaScript', 'Often', '$3,000 - $12,000', '1-3 weeks'],
+    ['Fonts', 'Often', '$400 - $1,500', 'Half a day'],
+    ['Server response', 'Sometimes', '$1,500 - $10,000', '2 days - 3 weeks'],
+    ['Rendering approach', 'Sometimes', '$8,000 - $40,000', '3-10 weeks'],
+    ['Layout shift', 'Very often', '$500 - $2,500', '1-2 days'],
+  ]}
+/>
+
+### 7. Too many separate requests
+
+**What goes wrong:** the page needs 140 separate files - scripts, stylesheets, icons, fonts, images - each requiring its own request. Modern protocols handle this far better than they used to, so it is less damaging than it once was, but at three figures it still costs measurable time, particularly on a mobile connection with high latency.
+
+**How to check:** the network tab shows a request count. Under 50 is comfortable; over 100 is worth looking at.
+
+**The fix:** bundle what can be bundled, use an icon system rather than individual files, and remove the accumulated stylesheets from features that no longer exist.
+
+**Typical cost:** $800 - $3,000, and usually done alongside the JavaScript work.
+
+### 8. Redirect chains
+
+**What goes wrong:** a visitor requests a URL, gets redirected to a second, which redirects to a third. Each hop is a full round trip before anything begins. Sites that have moved domain, added HTTPS, and changed URL structure over the years accumulate these.
+
+**How to check:** anyone can test this in a terminal, but the simpler version is to look at whether the URL in your address bar is the one you typed. If your marketing links go through two hops before landing, that is a second of latency you are paying for on every ad click.
+
+**The fix:** collapse chains so every redirect goes straight to the final destination, and update the links you control so they point at the final URL directly.
+
+**Typical cost:** a few hundred pounds, and it is frequently overlooked entirely.
+
+## The one that is not about speed at all
+
+Cumulative Layout Shift is on the list above and deserves its own note, because it is the cheapest thing on this page to fix and the most noticeable to users.
+
+Layout shift is when content moves while you are reading it. An image loads and pushes the text down. A banner appears at the top. An advert slot expands. You go to tap a link and something else arrives under your finger.
+
+It is almost always caused by content that arrives without its dimensions declared in advance. The fix is to reserve the space: width and height on every image, a fixed height on any slot that will be filled later, and no injecting content above existing content after load.
+
+Half a day to a day of work on most sites, and users notice immediately even though the page has not got any faster. Google's [CLS documentation](https://web.dev/articles/cls) explains the measurement.
+
+## A worked example
+
+A specialist retailer had a mobile PageSpeed score of 19 and a bounce rate on mobile of 68%. They had been quoted $45,000 for a rebuild.
+
+Measurement first:
+
+- **LCP 7.2 seconds** on mobile field data. Target is 2.5.
+- **Time to first byte 340ms.** Their server was fine.
+- **Page weight 6.4MB**, of which 4.1MB was images.
+- **1.2MB of JavaScript**, of which 780KB was third-party.
+- **CLS 0.41.** Four times the failing threshold.
+
+Nothing here pointed at a rebuild. The site's architecture was not the problem; the payload was.
+
+What was done, over three weeks:
+
+- **Images resized and converted.** The category page hero was a 2.8MB PNG being displayed at 800 pixels wide. Product thumbnails were full-resolution originals. After: 4.1MB of images became 340KB. Three days.
+- **Third-party audit.** Nine scripts, of which four were for tools nobody had used in over a year, including a $340-a-month subscription. Removed. The remaining five moved to load after interactivity. Two days.
+- **Dimensions added to every image and a reserved slot for the promotional banner.** CLS went from 0.41 to 0.02. One day.
+- **Fonts self-hosted and reduced from five weights to two.** Half a day.
+- **Code splitting** so the checkout JavaScript stopped loading on every page. Four days.
+
+Results: mobile PageSpeed 19 to 81. LCP 7.2s to 1.9s. CLS 0.41 to 0.02. Mobile bounce rate 68% to 41%. Mobile conversion rate up 34%.
+
+Cost: $9,400, against the $45,000 rebuild. The rebuild would probably also have worked - it is hard to build a new site as slow as that one - but it would have cost five times as much, taken four months, and carried the risk of losing everything that already worked.
+
+## When the problem is not the page at all
+
+Three cases where the site is fine and something around it is not.
+
+**It is only slow for you.** A corporate network, a VPN, a security appliance inspecting traffic, or an overloaded laptop with forty tabs. Test from a phone on mobile data before escalating anything.
+
+**It is only slow in one country.** Almost always a geography problem: your server is in one region and your visitors are in another. A CDN is the fix and it is close to free.
+
+**It is only slow at certain times.** Capacity. Either your hosting plan cannot handle peak traffic, or a scheduled job - a report, a sync, a backup - is competing with visitor traffic. The second is more common than people expect and is fixed by moving the job or giving reporting its own database replica.
+
+Each of these looks identical to a slow site from the outside, and none of them is fixed by optimising images. Establishing which one you have takes an hour.
+
+## The order to do this in
+
+If you are working through it yourself, this sequence gets the most improvement for the least money.
+
+1. **Measure.** Field and lab, mobile, on three real pages.
+2. **Images.** Almost always the biggest single win.
+3. **Layout shift.** Cheapest fix, most visible improvement.
+4. **Third-party scripts.** Audit, remove, defer.
+5. **Fonts.** Half a day.
+6. **Measure again.** Most sites are now passing or close to it. Stop here if so.
+7. **JavaScript bundle.** If still failing INP or LCP.
+8. **Server response and caching.** If time to first byte is above 800ms.
+9. **Rendering approach.** Only if the above did not get you there.
+
+Most sites never reach step seven. That is the point of the ordering: each step is cheaper than the one after it and more likely to be the actual cause, so working downwards means you stop as soon as the problem is solved rather than paying for the expensive answer to a cheap question.
+
+<Callout type="warn">
+Be sceptical of any proposal that starts at step nine. A rebuild will make the site faster and so will $3,000 of the steps above. If nobody has measured before proposing, they are selling a shape rather than diagnosing a problem.
+</Callout>
+
+## What speed is actually worth
+
+The business case gets made with borrowed statistics and it does not need to be. You can measure it on your own site.
+
+**Segment your analytics by connection or device.** Compare conversion rate for visitors on fast connections against slow ones. On most commerce sites the gap is large, and it is your own data rather than a case study about somebody else.
+
+**Look at bounce rate by page load time** if your analytics supports it. The relationship is usually visible without any statistical sophistication.
+
+**Run the numbers on your paid traffic.** If you spend on ads and a third of the clicks leave before the page appears, you are paying for impressions you never received. This is frequently the single most persuasive figure available, because it is a direct cash cost rather than a modelled one.
+
+Two honest caveats. Speed improvements do not create demand - a fast site selling something nobody wants sells nothing quickly. And past a certain point the returns flatten; going from 7 seconds to 2 is transformative, going from 1.4 to 1.1 is not. The money is in getting out of the poor band, not in perfection.
+
+## Keeping it fast
+
+Performance regresses. It always does, because every new feature adds weight and nobody notices the day it crossed the line. Three habits prevent it.
+
+**A performance budget enforced in the build.** A maximum page weight and JavaScript size, checked automatically, failing the build when exceeded. This converts a slow decline into a specific conversation on the day it happens.
+
+**Monitoring of field data.** Real user measurements over time, so you see the trend rather than a snapshot. The [Chrome UX Report](https://developer.chrome.com/docs/crux) provides this at no cost for sites with enough traffic.
+
+**A review step for third-party scripts.** The single most effective control, because scripts are how the weight comes back.
+
+[Lighthouse](https://developer.chrome.com/docs/lighthouse/overview) run in your deployment pipeline covers most of this automatically.
+
+## What we do differently
+
+We measure before we propose. Every performance engagement starts with numbers on three real pages, mobile field data included, and the proposal names which of the causes above we found and what each is contributing. It takes half a day and it regularly turns a rebuild conversation into a two-week fix.
+
+We fix in the order above rather than the order that is most interesting to work on, because images and layout shift are boring and they are where the improvement is.
+
+And we set a budget in the build pipeline before we finish, because a site that is fast for four months and slow again by the next year has not been fixed, only cleaned.
+
+If you have a slow site and a rebuild quote, [get the measurement first](/contactus). It is the cheapest thing on this page.
+
+## Related reading
+
+- [Core Web Vitals for business owners](/blogs/core-web-vitals-for-business-owners) - what the three metrics mean and what passing is worth
+- [Single-page app vs server-rendered](/blogs/single-page-app-vs-server-rendered) - the rendering decision, if you get that far
+- [Website redesign vs rebuild](/blogs/website-redesign-vs-rebuild) - deciding when a rebuild genuinely is the answer
+- [Choosing a database](/blogs/choosing-a-database) - if the slowness is on the server side
+
+## Sources and further reading
+
+- [PageSpeed Insights](https://pagespeed.web.dev/) - free, and the first thing to run
+- [Lighthouse overview](https://developer.chrome.com/docs/lighthouse/overview) - the tool behind the lab data, and how to run it in a pipeline
+- [Optimize Largest Contentful Paint](https://web.dev/articles/optimize-lcp) - the specific techniques, in order of impact
+- [Optimize Interaction to Next Paint](https://web.dev/articles/optimize-inp) - for responsiveness problems caused by JavaScript
+- [Cumulative Layout Shift](https://web.dev/articles/cls) - what causes the page to jump and how to stop it
+- [Chrome UX Report](https://developer.chrome.com/docs/crux) - field data for your site and your competitors
+- [Fast load times](https://web.dev/articles/fast/) - Google's collected guidance on web performance

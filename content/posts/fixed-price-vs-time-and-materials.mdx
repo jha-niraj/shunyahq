@@ -1,0 +1,267 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Both models work. Both models fail. Which one is right has almost nothing to do with your preference for certainty and almost everything to do with how well-defined the work is on the day you sign.
+
+The mistake people make is treating this as a negotiation about who wins. It is not. It is a decision about who carries the estimation risk, and risk that is carried gets paid for one way or another. A fixed price is not free certainty; it is certainty you bought, and the price includes it.
+
+Here is how each actually behaves, when each is right, and the hybrid that suits most projects better than either.
+
+## What each model actually is
+
+**Fixed price.** You agree a scope and a number. The supplier delivers that scope for that number regardless of how long it takes. Anything outside the scope is a change request, priced separately.
+
+**Time and materials.** You pay for the hours worked at an agreed rate, usually with a cadence of reporting and an estimated range. Scope can flex.
+
+The single sentence that captures the difference: **under fixed price the supplier carries the risk of being wrong about effort; under time and materials you do.**
+
+Everything else follows from that.
+
+## How each behaves in practice
+
+<RateTable
+  headers={['', 'Fixed price', 'Time and materials']}
+  rows={[
+    ['Budget certainty', 'High', 'Low to moderate'],
+    ['Who carries estimation risk', 'Supplier', 'You'],
+    ['Typical cost if all goes well', '10 - 25% higher', 'Lower'],
+    ['Typical cost if scope shifts', 'Higher again (change requests)', 'Same rate, more hours'],
+    ['Flexibility mid-project', 'Low, by design', 'High'],
+    ['Admin overhead', 'Front-loaded (detailed scoping)', 'Ongoing (reporting, reviews)'],
+    ['Incentive on the supplier', 'Finish efficiently', 'Do good work, stay engaged'],
+    ['Failure mode', 'Fights about scope', 'Drift and budget creep'],
+    ['Trust required', 'Lower', 'Higher'],
+  ]}
+/>
+
+Two rows deserve attention.
+
+**The 10 - 25% premium is real and rational.** A supplier pricing a fixed bid has to cover the case where the work takes longer than expected. If they are right nine times in ten, the tenth project has to be paid for by the other nine. That buffer is the price of your certainty and it is not a markup you can negotiate away without also removing the certainty.
+
+**The incentives differ, and both are imperfect.** Fixed price rewards efficiency, which is good, and rewards doing the minimum that satisfies the scope, which is not. Time and materials rewards care, which is good, and does not reward finishing, which is not. Neither model is morally superior; they just fail differently.
+
+## When fixed price is right
+
+**The scope is genuinely known and written down.** Not "we want a booking system" but a specification with roles, screens, states and integrations. If a document exists that two suppliers would read the same way, you can fix a price against it.
+
+**You have a hard budget you cannot exceed.** Board-approved, grant-funded, or simply the money that exists. Certainty is worth paying for.
+
+**The work is a known pattern.** A marketing site with a CMS, a defined integration, a well-understood migration. Suppliers have done it before and their estimates are calibrated.
+
+**You will not want to change your mind.** Fixed price creates pressure on both sides to resist change. On a well-understood project that is healthy discipline. On an exploratory one it is a straitjacket.
+
+<Callout type="info">
+Good test: could you write the acceptance criteria today, in a way you would still agree with in three months? If yes, fix the price. If the honest answer is "we will know it when we see it", do not.
+</Callout>
+
+## When time and materials is right
+
+**You expect to learn as you go.** A new product, an unfamiliar domain, a first version where user feedback will change the plan. Fixing a price here means fixing the wrong thing.
+
+**The work is open-ended by nature.** Ongoing capacity, maintenance, a long-running product relationship.
+
+**Integrations are unknown.** If a key dependency is a legacy system nobody can access yet, no honest supplier can fix a price on it. They can fix a price on everything else and run that one part on time and materials, which is usually the right answer.
+
+**You have the capability to manage it.** T&M without weekly visibility and someone tracking burn is how budgets triple. It requires more of you, not less.
+
+## The hybrid that suits most projects
+
+The single most useful recommendation in this article: **do not choose one for the whole engagement.**
+
+**Phase 1: fixed-price discovery.** A small, defined piece of work - typically 5 - 10% of the expected build - producing a written specification, a data model, and a plan. You can fix this price because the deliverable is a document, not software.
+
+**Phase 2: fixed-price build, scoped from what discovery found.** Now the supplier is pricing against something real rather than against optimism, so the buffer shrinks and the number is more accurate.
+
+**Phase 3: time and materials for the unknown parts.** The legacy integration, the data migration whose quality nobody can assess yet. Ring-fence these and run them hourly with a not-to-exceed cap.
+
+**Phase 4: retainer for maintenance.** Recurring, defined scope, monthly fee. See [what maintenance costs](/blogs/web-application-maintenance-cost).
+
+You buy certainty about the knowable and stay flexible about the rest, and you find out what you are dealing with before committing the bulk of the budget.
+
+## A worked example
+
+The same project, quoted both ways. An internal operations tool, roughly 45 days of work.
+
+<RateTable
+  headers={['Scenario', 'Fixed price', 'Time and materials']}
+  rows={[
+    ['Everything goes to plan (45 days)', '$52,000', '$45,000'],
+    ['Runs 20% over (54 days)', '$52,000', '$54,000'],
+    ['Runs 40% over (63 days)', '$52,000', '$63,000'],
+    ['You change your mind twice mid-build', '$52,000 + $11,000 changes', '$52,000'],
+    ['Comes in under (38 days)', '$52,000', '$38,000'],
+  ]}
+/>
+
+Read the bottom row. Under fixed price you do not get the saving; the supplier does, and that is the deal you agreed. Read the fourth row: under fixed price, two changes of mind cost you $11,000 and some friction; under T&M they cost you the hours and nothing else.
+
+**Which is better depends entirely on which row you think you are in.** If you are confident in the scope, fixed price costs you $7,000 for insurance you probably will not claim. If you know you will change your mind, T&M is both cheaper and less unpleasant.
+
+The honest position for most first-time buyers: you are more likely to change your mind than you currently believe. That argues for the hybrid, where discovery reduces how much changing there is left to do.
+
+## Making fixed price work
+
+If you go fixed, these protect you.
+
+**Insist the scope names its exclusions.** A scope with boundaries is the entire mechanism by which fixed price functions.
+
+**Agree the change process before you need it.** Written, priced, approved in advance. Ask what a typical change costs, so the number is not a surprise the first time.
+
+**Tie payments to milestones with reviewable output.** Not calendar dates. Something you can look at.
+
+**Include acceptance criteria.** How will both sides know a deliverable is done? Write it down while everyone is friendly.
+
+**Keep a change budget.** Set aside 10 - 15% on top for the changes you will want. Then they are a decision rather than a crisis.
+
+## Making time and materials work
+
+**Agree a not-to-exceed figure.** Work stops and a conversation happens at that number. This is the single most important T&M control and it costs the supplier nothing to agree.
+
+**Get weekly burn reporting.** Hours spent, against what, and remaining estimate. Not a monthly invoice.
+
+**Deploy every fortnight.** Working software is the only trustworthy progress report - a point the [DORA](https://dora.dev/) research keeps landing on.
+
+**Define done for each sprint.** Otherwise "in progress" becomes a permanent state.
+
+**Reserve the right to stop.** Short notice periods on both sides. The ability to leave is what keeps a T&M relationship healthy.
+
+<Callout type="warning">
+The T&M failure mode is not overcharging. It is drift: a project with no defined end, where everyone is busy and nothing ships. A not-to-exceed cap and a fortnightly deploy cadence prevent almost all of it.
+</Callout>
+
+## The hybrid nobody names
+
+Most engagements that work are neither model in its pure form. A fixed price for a discovery phase producing a written specification, then time and materials for the build against that specification, gives you a bounded commitment while the uncertainty is highest and honest billing once it is not. It is worth asking for by name, because suppliers rarely propose it unprompted and almost all of them will agree to it.
+
+## Objections, answered
+
+**"Fixed price is obviously safer for me."** Safer against overspend, riskier against getting the wrong thing. If the scope is imperfect - and first scopes usually are - a fixed price locks you into building the imperfect version, and every correction becomes a negotiation. Safety against the wrong risk is not safety.
+
+**"Suppliers who refuse fixed price are hiding something."** Usually the opposite. A supplier who fixes a price on a two-paragraph brief either has a large hidden buffer or intends to make the money back on changes. Refusing to fix a price on an unclear scope is a sign of experience.
+
+**"Can I get fixed price on an unclear scope if I push?"** You can. You will get a number that assumes the worst case, and you will pay for a buffer you may not need. Or you will get an optimistic number and a change-request relationship. Neither is what you wanted.
+
+**"T&M feels like a blank cheque."** It is not, if you cap it. A not-to-exceed figure with weekly reporting gives you most of the certainty of fixed price and none of the change-request friction. Ask for it.
+
+**"What about milestone-based fixed price?"** That is the hybrid, and it is usually the best answer. Fix each phase as its scope becomes clear, rather than fixing the whole project on day one.
+
+**"Which do you prefer as a supplier?"** Honestly: fixed-price discovery then fixed-price build. It is the arrangement where our incentives and yours point the same way, because we are pricing against something real and you know the number before the expensive part starts.
+
+## How to decide in five minutes
+
+1. **Could you write acceptance criteria today?** Yes - fixed price is available. No - do discovery first.
+2. **Is there an unknown integration or data migration?** Yes - ring-fence it on T&M with a cap.
+3. **Is your budget hard, or a guide?** Hard - fixed price after discovery. A guide - T&M with a cap works well.
+4. **Can you review work weekly?** No - fixed price, because T&M needs your attention. Yes - either.
+5. **Will you want to change direction based on user feedback?** Yes - T&M or short fixed phases.
+
+The most common right answer, for most buyers, most of the time: **fixed-price discovery, fixed-price build, T&M for the genuinely unknown parts, retainer afterwards.**
+
+## What happens when a fixed-price project goes wrong
+
+Worth understanding before you sign, because how a supplier behaves under this pressure is the real test of the arrangement.
+
+**The supplier under-estimated by 20%.** Most absorb it. It is within the buffer, the relationship is worth more than the margin, and arguing costs them more than finishing. You will probably never know.
+
+**The supplier under-estimated by 60%.** Now there is a problem. Options, in rough order of how they usually play out: they absorb it and lose money; they slow down and stretch the delivery while working other projects; they become aggressive about scope, treating every clarification as a change request; or they ask to renegotiate.
+
+The last one is the healthiest and the least common, because it requires admitting the estimate was wrong.
+
+**What protects you:** milestone payments tied to reviewable output, so you can see the slowdown early. A named decision-maker on their side you can escalate to. And a scope document specific enough that "is this in scope?" has an answer rather than an argument.
+
+**What does not protect you:** a bigger penalty clause. Penalties make a struggling supplier more defensive, not more productive, and you cannot litigate your way to a working system.
+
+## What happens when time and materials goes wrong
+
+The failure is different and quieter.
+
+Nobody is being dishonest. The team is busy, the hours are real, the work is genuine. But there is no defined end, so features keep being refined, and after five months you have spent the budget of a finished product on something that is 80% done in six places.
+
+**What protects you:** a not-to-exceed cap, weekly burn reporting against a remaining-work estimate, and a fortnightly deploy. If working software appears every two weeks, drift is visible immediately. If it does not, you are relying on a status report, which is the thing that always says "on track" until month nine.
+
+<Callout type="tip">
+Ask for the burn report to include a re-forecast, not just hours spent. "We have used 60% of the budget and estimate 55% of the work remains" is the sentence you need to hear early, and it only appears if you ask for the second half.
+</Callout>
+
+## How we structure it
+
+Discovery is fixed price and produces a written specification and data model that belong to you whether or not you continue. The build is then fixed against that document, with the assumptions we priced listed explicitly and a written change process. Where a dependency is genuinely unknown, we ring-fence it on time and materials with a cap rather than pretending we can price it.
+
+If you want to talk through which shape fits your project, [tell us about it](/contactus). The related reading here is [what a web application costs](/blogs/web-application-development-cost) for the numbers, and [red flags in a software quote](/blogs/red-flags-in-a-software-quote) for reading what you get back.
+
+## A short glossary of terms you will see
+
+**Not-to-exceed (NTE).** A cap on a time-and-materials engagement. Work stops and a conversation happens at that figure. Ask for it; it costs the supplier nothing and removes the main T&M risk.
+
+**Change request.** A written, priced addition to a fixed scope. The process should exist before you need it.
+
+**Milestone.** A payment point tied to a reviewable deliverable, not to a date on a calendar.
+
+**Acceptance criteria.** How both sides will agree a deliverable is finished. Write these while everyone is still friendly.
+
+**Discovery.** A short, paid phase producing a specification and plan. The deliverable is a document, which is why it can be fixed-price even when the build cannot.
+
+**Retainer.** A recurring fee for a defined ongoing scope, usually maintenance. Distinct from both models above and should have its own written scope.
+
+**Blended rate.** One hourly figure covering a mixed team rather than separate rates per person. Simpler to reason about; check what mix it assumes.
+
+**Capitalised versus expensed.** Worth asking your finance team. Build work can sometimes be treated differently from maintenance in your accounts, and it occasionally changes which structure suits you.
+
+## What each model does to the relationship
+
+Rarely discussed and it matters more than the arithmetic.
+
+**Fixed price makes the scope document the relationship.** Every conversation about whether something is included routes back to a document written before either side understood the project properly. That is fine when the document is good and corrosive when it is not. Suppliers become careful about what they agree to verbally, because verbal agreements cost them money.
+
+**Time and materials makes trust the relationship.** There is no document to appeal to, so the arrangement rests on you believing the hours are real and them believing you will not cancel abruptly. When that trust is present it is the more pleasant and more productive of the two. When it is absent it deteriorates quickly, because every invoice is an opportunity for suspicion.
+
+The practical implication: if you are working with a supplier for the first time and have no basis for trust yet, fixed price is the safer social structure even where T&M might be technically better. Once a relationship has a track record, T&M usually produces better software, because nobody is arguing about whether an improvement was in scope.
+
+This is another argument for the hybrid. Fixed-price discovery is a small, low-risk transaction that lets both sides find out what the other is like to work with before the money gets serious.
+
+## A decision table
+
+<RateTable
+  headers={['Your situation', 'Use']}
+  rows={[
+    ['Detailed spec exists, first time with this supplier', 'Fixed price'],
+    ['Vague idea, need help shaping it', 'Fixed-price discovery first'],
+    ['Known scope but one unknown integration', 'Fixed price + ring-fenced T&M'],
+    ['Ongoing product work, established relationship', 'T&M with a cap'],
+    ['Hard external deadline, flexible scope', 'T&M with a cap, scope re-cut weekly'],
+    ['Hard budget, flexible date', 'Fixed price'],
+    ['Maintenance and patching', 'Retainer'],
+    ['Cannot review work weekly', 'Fixed price'],
+  ]}
+/>
+
+## What to put in the contract, either way
+
+Regardless of model, these clauses do most of the protective work.
+
+**A change process with a named approver and an indicative price.** Under fixed price it prevents disputes; under time and materials it prevents drift.
+
+**Milestones tied to reviewable output.** Something you can look at, not a date.
+
+**Acceptance criteria per deliverable.** Written while both sides are still friendly.
+
+**A stated contingency.** Its presence signals experience; its absence signals either optimism or a hidden buffer.
+
+**Ownership on payment,** with the partial-payment position spelled out. See [who owns the code](/blogs/who-owns-the-code-web-development).
+
+**A notice period both sides can use.** The ability to leave is what keeps either model honest.
+
+**What happens to the retainer afterwards,** including its own notice period, so maintenance does not renew silently.
+
+## Related reading
+
+- [Software Development Contract Checklist](/blogs/software-development-contract-checklist) - the clauses that make either model work
+- [Red Flags in a Software Quote](/blogs/red-flags-in-a-software-quote) - reading the number before you choose the structure
+- [How to Write a Web Development Brief](/blogs/how-to-write-a-web-development-brief) - the document a fixed price has to be fixed against
+- [Managing a Software Project as a Client](/blogs/managing-a-software-project-as-a-client) - your side of the arrangement, whichever you pick
+
+## Sources and further reading
+
+- [DORA](https://dora.dev/) - why frequent, small delivery is a better progress signal than any reporting format
+- [The Twelve-Factor App](https://12factor.net/) - the deliverable standard worth writing into acceptance criteria
+- [US Copyright Office, Circular 9](https://www.copyright.gov/circs/circ09.pdf) - ownership terms matter under either pricing model
+- [Stack Overflow Developer Survey](https://survey.stackoverflow.co/2025/) - useful context on rates and the technologies suppliers are actually working in

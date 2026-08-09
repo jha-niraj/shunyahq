@@ -1,0 +1,264 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+There is a version of this decision that gets made badly in both directions. A company buys a $50-a-month tool for a process that is genuinely their competitive advantage, then spends three years fighting its assumptions. Or a company spends $80,000 building software that does roughly what an off-the-shelf product would have done on day one for a fraction of the price.
+
+Both mistakes come from asking the wrong question. The question is not "which is better" - it is "is this process something we do differently on purpose, or something everyone does the same way?"
+
+That reframing resolves most cases in about ten minutes. This guide is the longer version, including the middle path that suits more companies than either extreme.
+
+## The one question that decides it
+
+**Is this process a source of advantage, or is it overhead?**
+
+If your scheduling logic, your pricing model, or the way you route work is *why customers choose you*, that is advantage. Software that constrains it costs you the thing you are good at, and the constraint compounds every year.
+
+If it is payroll, or storing documents, or sending invoices, that is overhead. Doing it differently from everyone else is not a strategy, it is a tax. Buy it.
+
+Most businesses have both, which is why the answer is usually not "all custom" or "all bought", but "buy the overhead, build the advantage, and connect them".
+
+<Callout type="info">
+A quick test: if a competitor copied this process exactly, would they gain anything? If yes, it is advantage. If they would shrug, it is overhead.
+</Callout>
+
+## Where off-the-shelf genuinely wins
+
+It is worth being clear-eyed about how good modern SaaS is, because "build it ourselves" is often nostalgia.
+
+**It is available today.** Not in twelve weeks. For a process that is bleeding money right now, twelve weeks of custom development is twelve more weeks of bleeding.
+
+**Someone else maintains it.** Security patches, browser changes, compliance updates, uptime. That is a real ongoing cost you are not paying.
+
+**It has survived thousands of other companies.** Every edge case you are about to discover, they discovered five years ago and fixed. Your custom build will rediscover them one production incident at a time.
+
+**The total cost is genuinely lower for commodity work.** $200 a month is $12,000 over five years. You cannot build and maintain anything meaningful for that.
+
+**You can leave.** A bad SaaS decision costs you a migration. A bad custom build costs you the build.
+
+<Callout type="warning">
+The most common bad reason to build custom is "the tool does 80% of what we need". Eighty percent is usually a very good deal. Ask whether the missing 20% is genuinely load-bearing, or just different from how you happen to do it today.
+</Callout>
+
+## Where off-the-shelf quietly fails
+
+The failure mode is rarely dramatic. It is slow, and it looks like this.
+
+**You start working around it.** A spreadsheet next to the tool. A WhatsApp group for the case it does not handle. A person whose job is partly to re-enter data between systems. Each workaround is small; together they are the actual system, and nobody can see it.
+
+**Per-seat pricing outgrows the value.** A tool at $30 per user is cheap at ten people and $54,000 a year at 150. Costs scale with headcount; the value often does not.
+
+**Your data is in someone else's shape.** You want a report that crosses two tools and there is no way to get it, because neither vendor cares about your question.
+
+**The vendor's roadmap is not yours.** They will build for their largest market segment. If that is not you, you wait forever for the thing you need and get features you did not want.
+
+**Integration is the hidden cost.** Five tools that each do their job well, connected by brittle automations, can be harder to run than one system that fits.
+
+## The honest cost comparison
+
+Numbers people usually skip, over a five-year horizon for a mid-sized operational system:
+
+<RateTable
+  headers={['', 'Off-the-shelf', 'Custom build']}
+  rows={[
+    ['Upfront', '$0 - $5,000 setup', '$30,000 - $120,000'],
+    ['Ongoing (year 1)', '$3,000 - $40,000 / yr', '15 - 20% of build cost'],
+    ['Time to value', 'Days to weeks', '2 - 6 months'],
+    ['Cost at 3x headcount', 'Scales with seats', 'Roughly flat'],
+    ['Cost of a process change', 'Vendor roadmap or workaround', 'Days of work'],
+    ['Exit cost', 'A migration', 'You own it'],
+  ]}
+/>
+
+The pattern is consistent: off-the-shelf is cheaper for longer than people expect, and then crosses over. The crossover is driven by headcount growth and by how far your process drifts from the vendor's assumptions. If neither is changing, buying stays right indefinitely.
+
+## The middle path most companies should take
+
+Very few businesses need everything custom. The arrangement that works most often:
+
+**Buy the commodity layer.** Accounting, payroll, email, CRM, document storage, HR. Use the best available product and do not customise it heavily.
+
+**Build the thin layer where you are different.** Usually one system: the thing that runs your actual operation. This is where custom pays for itself, because it is where a 20% gap hurts.
+
+**Connect them properly.** The custom layer reads from and writes to the bought tools through their APIs, so your team works in one place and the data stays consistent.
+
+This is smaller and cheaper than "build everything", and it removes the workaround tax that pure off-the-shelf accumulates. It is what most of the systems we build actually are.
+
+## A decision checklist
+
+Score each honestly. Mostly left, buy. Mostly right, build.
+
+<RateTable
+  headers={['Question', 'Points to buying', 'Points to building']}
+  rows={[
+    ['Is this process our advantage?', 'No, it is overhead', 'Yes, customers notice'],
+    ['Does a mature product exist?', 'Several, well reviewed', 'Only poor fits'],
+    ['How well does the best one fit?', '80% or more', 'Under 60%'],
+    ['How often does the process change?', 'Rarely', 'Constantly'],
+    ['How many people will use it?', 'Few, or shrinking', 'Many, and growing'],
+    ['How urgent is it?', 'Needed now', 'Months of runway'],
+    ['Do we need data across systems?', 'No, siloed is fine', 'Yes, joined reporting'],
+    ['Can we maintain software?', 'No appetite', 'Yes, or a partner'],
+  ]}
+/>
+
+## Three ways this goes wrong
+
+**Building to avoid a subscription.** A $400-a-month tool is $24,000 over five years. If the build costs $60,000 and 18% a year to maintain, you have not saved money, you have spent more and taken on risk. Build for fit and control, not to dodge a bill.
+
+**Rebuilding a commodity product because of one missing feature.** You will spend a year reaching parity on the 95% you already had, and then discover the missing feature was missing for a reason.
+
+**Customising a bought product until it is a custom product with none of the benefits.** Heavy configuration, custom fields everywhere, scripts glued on the side. You now have the maintenance burden of custom software plus vendor lock-in plus an upgrade path that breaks every time. If you are this far in, building is probably cleaner.
+
+## If you decide to build
+
+Reduce the risk in the obvious places:
+
+- **Start with the smallest useful slice.** One workflow, in production, used by real people. It will teach you more than another month of planning.
+- **Keep buying the commodity parts.** Do not build your own authentication, email delivery or payment handling. Authentication in particular is a solved problem with a long list of ways to get it subtly wrong - the [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) is a good measure of how much you would be taking on. Payments carry [PCI DSS](https://www.pcisecuritystandards.org/) obligations you almost certainly do not want to own, which is why [Stripe](https://docs.stripe.com/payments) and its peers exist.
+- **Own the code and the infrastructure.** In your repository, in your cloud account.
+- **Choose boring technology.** The interesting choice is the one you cannot hire for in three years. The [Stack Overflow Developer Survey](https://survey.stackoverflow.co/2025/) is a decent proxy for what you will be able to hire for; the [Twelve-Factor App](https://12factor.net/) is still the clearest short statement of what makes a service operable by someone who did not write it.
+- **Budget for maintenance from day one.** 15 - 20% of build cost annually is the honest figure.
+
+## Three worked scenarios, with five-year numbers
+
+The abstract version of this decision is easy. Here is what it looks like with figures attached.
+
+### Scenario A: a 40-person agency choosing a project tool
+
+**Situation:** they use a spreadsheet plus three disconnected tools. Someone suggests building an internal system.
+
+<RateTable
+  headers={['', 'Off-the-shelf', 'Custom build']}
+  rows={[
+    ['Year 0', '$0 setup', '$45,000'],
+    ['Per year', '$14,400 (40 seats x $30/mo)', '$7,500 maintenance'],
+    ['5-year total', '$72,000', '$82,500'],
+    ['Time to value', '1 week', '4 months'],
+  ]}
+/>
+
+**Verdict: buy.** The numbers are close enough that the decision is made on the other axes, and every one of those favours buying. Project management is not this agency's competitive advantage, mature products exist, and four months of building is four months not spent on clients. The custom build only becomes right if they grow past roughly 90 seats, or if their delivery process is genuinely unusual.
+
+### Scenario B: a wholesale distributor with unusual pricing rules
+
+**Situation:** 200 trade customers, each on negotiated pricing with volume breaks, seasonal terms and product-family exceptions. No off-the-shelf ordering system models this without heavy customisation.
+
+<RateTable
+  headers={['', 'Off-the-shelf + customisation', 'Custom build']}
+  rows={[
+    ['Year 0', '$8,000 licence + $30,000 customisation', '$70,000'],
+    ['Per year', '$12,000 licence + $9,000 upgrade repair', '$12,000 maintenance'],
+    ['5-year total', '$143,000', '$130,000'],
+    ['Risk', 'Each vendor upgrade breaks the customisation', 'Upgrades are on your schedule'],
+  ]}
+/>
+
+**Verdict: build.** Not primarily because it is cheaper, though it is. Because the pricing engine *is* the business - it is why customers stay - and the customised route means every vendor release is a threat to it. That "upgrade repair" line is the tell: it is real money spent recovering ground you already held.
+
+### Scenario C: a clinic wanting a patient portal
+
+**Situation:** they want online booking, records access and messaging. Their practice-management vendor sells a portal module.
+
+<RateTable
+  headers={['', 'Vendor module', 'Custom build']}
+  rows={[
+    ['Year 0', '$4,000 setup', '$55,000'],
+    ['Per year', '$9,600', '$9,000'],
+    ['5-year total', '$52,000', '$100,000'],
+    ['Compliance burden', 'Vendor carries most of it', 'You carry all of it'],
+  ]}
+/>
+
+**Verdict: buy, decisively.** The five-year cost is half, and the compliance point outweighs even that. Handling patient data yourself means owning the security posture, the audit trail and the breach obligations - see the [FTC's guidance](https://www.ftc.gov/business-guidance/privacy-security) for the baseline and [GDPR](https://gdpr-info.eu/) if any patients are in the EU. Building a patient portal to save $10,000 a year while taking on that responsibility is a bad trade.
+
+<Callout type="info">
+Notice that the cheapest option won in two of three, and the one where building won was not decided by cost at all. That is the usual shape. If your build-vs-buy analysis comes down to a small difference in spreadsheet totals, you are probably measuring the wrong thing.
+</Callout>
+
+## The configuration trap, in detail
+
+The worst outcome in this whole decision is not building when you should have bought, or buying when you should have built. It is buying and then customising until you have the costs of both and the benefits of neither.
+
+It happens gradually and every individual step is reasonable:
+
+1. The tool does 85% of what you need. You buy it. Correct decision.
+2. Three custom fields are added to cover a gap. Fine.
+3. A workflow automation is bolted on to handle a case the tool does not model. Still fine.
+4. A script syncs two objects the tool keeps separate. Now someone owns a script.
+5. A consultant is engaged to build a custom module. This is where it turns.
+6. The vendor ships a major release. The module breaks. The consultant is re-engaged.
+7. You are now two versions behind, because upgrading costs money and risks the module.
+8. Being two versions behind means you lose support and stop receiving security patches.
+
+By step eight you have a system you cannot upgrade, cannot easily leave, and cannot fully control. The annual cost is the licence *plus* the consultant *plus* the risk.
+
+**How to catch it early:** track how much you spend annually on making the tool fit, separately from the licence. When that number approaches 40% of what a purpose-built system would cost to maintain, you are no longer buying software, you are funding a bespoke build with extra steps and worse foundations.
+
+## How to run the decision in two weeks
+
+You do not need a quarter-long evaluation. This is enough.
+
+**Days 1-2: write down the process as it exists.** Not the idealised version - the actual one, including the spreadsheet, the WhatsApp group and the person who re-types things. Count the workarounds. Each one is either a requirement or a habit, and you need to know which.
+
+**Days 3-4: mark each step as advantage or overhead.** Apply the test from the top of this article: would a competitor gain anything by copying it? Be honest, because everyone believes their operations are special and most are not.
+
+**Days 5-7: shortlist three products and actually trial them.** Not demos. Trials, with your real data, run by the people who will use it. A demo shows the happy path; a trial shows whether your edge case exists.
+
+**Days 8-9: score the fit.** For each product, what percentage of the process does it handle without a workaround? Above 80%, buy. Below 60%, that is a build candidate. In between, look at whether the gap is in the advantage part or the overhead part.
+
+**Days 10-12: if it is a build candidate, get one scoped estimate** for the *thin* version - the advantage layer only, connected to whatever you are buying for the rest.
+
+**Days 13-14: compare five-year totals and decide.** Include maintenance at 15 - 20% of build cost, licence growth at your expected headcount, and an honest number for the workaround tax on the off-the-shelf option.
+
+## Objections we hear
+
+**"We tried an off-the-shelf tool and hated it, so we want custom."** Worth separating two things: was the tool wrong, or was the rollout wrong? Failed implementations are more often about training, data migration and change management than about the software. Building custom does not remove any of those, and a custom tool nobody adopts is far more expensive than a bought one nobody adopts.
+
+**"Our industry is too specialised for off-the-shelf."** Sometimes true. But vertical SaaS has become very good, and "nobody makes software for us" is often "we have not looked in three years". Check first; the market moves.
+
+**"We want to own it rather than rent it."** Understandable, and worth being precise about what ownership buys. It buys control over the roadmap and freedom from per-seat pricing. It does not buy freedom from maintenance, and it does not buy freedom from dependency - your custom build still rests on a framework, a database and a host that all keep moving. See [what maintenance actually costs](/blogs/web-application-maintenance-cost).
+
+**"If we build it, could we sell it to others in our industry?"** Almost never worth planning for. Building for one customer and building a product are different disciplines, and the second needs sales, support, onboarding, documentation and multi-tenancy that your internal tool does not have. Build for yourself. If a market appears later, that is a new project.
+
+**"Custom will take too long, we need something now."** Then buy something now. Genuinely. Buy the best available fit, run on it, and revisit in a year with a much clearer idea of where it does not fit. That evidence makes any eventual build cheaper and better targeted.
+
+## Signs you have outgrown the tool you bought
+
+Buying was probably right at the time. These are the signals that the calculation has changed. Any two of them together is worth a fresh look.
+
+**A person's job is partly data entry between systems.** The clearest one. If someone spends an hour a day moving information from one place to another, you are paying a salary to compensate for a software gap.
+
+**The spreadsheet beside the tool has become load-bearing.** Not a scratch pad - an actual part of the process, which new staff have to be taught, and which nobody backs up.
+
+**You have stopped asking whether the tool can do something.** The team has internalised the limits and routes around them silently. This is the most dangerous stage, because the cost has become invisible.
+
+**Reporting requires exporting and joining by hand.** Every month, someone pulls two CSVs and a pivot table to answer a question the business asks routinely.
+
+**Per-seat cost has outgrown the value.** You are paying for 90 seats and the tool is genuinely essential to 20 of them.
+
+**You are two or more major versions behind** because upgrading would break your customisations.
+
+**Onboarding a new person takes a week of tribal knowledge** rather than a day of using the software.
+
+<Callout type="warning">
+The trap here is jumping straight from "we have outgrown this" to "we need to build everything ourselves". Usually one or two of the signals above point at one specific part of the process. Build that part. Keep buying the rest.
+</Callout>
+
+## Where we sit
+
+We build the custom layer, and we tell people when they do not need one. A discovery conversation that ends with "buy this product instead, here is how to connect it to what you already have" is a good outcome, and it happens.
+
+## Related reading
+
+- [How Much Does It Cost to Build a Web Application?](/blogs/web-application-development-cost) - what the custom route actually costs
+- [Choosing an E-commerce Platform](/blogs/choosing-an-ecommerce-platform) - the same buy-versus-build question, for retail
+- [Signs You Have Outgrown Your Current System](/blogs/signs-you-have-outgrown-your-current-system) - how to tell when off-the-shelf has stopped fitting
+- [How to Scope an MVP](/blogs/how-to-scope-an-mvp) - scoping the custom option so it does not sprawl
+
+## Sources and further reading
+
+- [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) - what you take on by building your own auth
+- [PCI Security Standards Council](https://www.pcisecuritystandards.org/) - the compliance burden a payment processor absorbs for you
+- [The Twelve-Factor App](https://12factor.net/) - a short, durable checklist for software someone else can operate
+- [W3Techs CMS usage statistics](https://w3techs.com/technologies/overview/content_management) - how much of the web runs on off-the-shelf platforms
+
+If you want to talk it through, [tell us about the process](/contactus) and we will give you a straight read on whether it is a build. If you want the cost side in more detail, we wrote about [what a web application actually costs](/blogs/web-application-development-cost).

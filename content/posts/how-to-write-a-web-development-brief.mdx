@@ -1,0 +1,315 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Most briefs sent to development agencies are either three sentences or forty pages, and both produce the same outcome: quotes that cannot be compared, because each supplier has silently filled the gaps with different assumptions.
+
+Three sentences leaves everything to guesswork, so you get three wildly different numbers and no way to tell which one understood you. Forty pages of feature list has the opposite problem - it specifies solutions before anyone has agreed on the problem, so you get quotes for building exactly the thing you described, whether or not it was the right thing.
+
+The useful brief is about two pages. It describes the problem precisely and the solution loosely, and it makes the constraints explicit. Here is what goes in it, and a template you can copy.
+
+<Callout type="tip">
+The point of a brief is not to specify the software. It is to give every supplier the same information so their answers become comparable, and to surface the questions you have not thought about yet.
+</Callout>
+
+## The nine things a brief needs
+
+### 1. What the business does, in three sentences
+
+Not your mission statement. What you sell, to whom, and how the money arrives. A supplier who does not understand the business will build something that works and does not help.
+
+### 2. The problem, stated as a problem
+
+The single most valuable paragraph in the document, and the one most often replaced by a feature list.
+
+Write: *"Our operations team re-enters order data from three systems into a spreadsheet every morning. It takes about two hours, it is wrong roughly once a week, and when it is wrong we ship to the wrong address."*
+
+Do not write: *"We need a dashboard with real-time sync."* That is a solution. It might be the right one. But if you specify it, you will never find out whether something simpler would have worked, and you have removed the supplier's ability to tell you.
+
+### 3. Who uses it, and what each of them does
+
+List the roles. For each: what they need to accomplish, roughly how many of them there are, and how technical they are.
+
+This drives cost more than almost anything else, so getting it explicit early makes every quote more accurate. Two roles instead of four is often a third off the budget - a point we go into in [what a web application costs](/blogs/web-application-development-cost).
+
+### 4. The core journey, start to finish
+
+One paragraph tracing the main path through the system. "A customer arrives from a search result, browses by category, adds to a basket, checks out as a guest, and receives a confirmation email. Our warehouse team sees the order in a queue and marks it dispatched."
+
+If you cannot write this paragraph, that is genuinely useful information: it means you need a discovery phase, and you should budget for one rather than expecting a fixed quote.
+
+### 5. What it must connect to
+
+List every system, and mark each one honestly:
+
+<RateTable
+  headers={['System', 'What for', 'Integration confidence']}
+  rows={[
+    ['e.g. Xero', 'Push invoices', 'Modern documented API'],
+    ['e.g. legacy warehouse DB', 'Read stock levels', 'Old, some documentation'],
+    ['e.g. bank portal', 'Reconcile payments', 'Unknown - need to find out'],
+  ]}
+/>
+
+That third category is where estimates go wrong. Naming it up front lets suppliers price a contingency openly instead of discovering it in week six.
+
+### 6. Constraints, ranked
+
+Deadline, budget, scope. **Say which one cannot move.** All three never hold.
+
+Also include the non-negotiables: data residency requirements, accessibility obligations, an existing stack you must fit into, regulatory constraints. If you handle card payments, say so - the [PCI DSS](https://www.pcisecuritystandards.org/) implications change the architecture. If you process personal data of people in the EU, say so - [GDPR](https://gdpr-info.eu/) obligations are design constraints, not paperwork you add later.
+
+### 7. Your budget
+
+Give a range. The objection is always "they will just quote to the top of it", and a bad supplier will. But withholding it wastes everyone's time on proposals for the wrong size of project, and it removes the supplier's ability to tell you the honest thing: that your budget does not match your scope, and which parts to cut.
+
+If you genuinely do not know, say what the problem is worth to you instead. "Two hours a day of manual work" is a number a supplier can reason about.
+
+### 8. What success looks like in six months
+
+Not "the site is live". Something you could actually measure: the two hours a day is gone, the error rate drops, support tickets fall, checkout conversion improves.
+
+This is what lets a supplier propose something better than what you asked for, which is the main upside of writing a brief around a problem.
+
+### 9. What you can provide, and when
+
+Content, brand assets, product data, access to existing systems, a named decision-maker, and your review turnaround. This is your side of the critical path, and it is the biggest single cause of slipped dates - see [how long a build actually takes](/blogs/how-long-does-it-take-to-build-a-web-app).
+
+## What to leave out
+
+**Detailed screen designs**, unless they already exist and are final. Specifying the interface before the data model is settled usually means one of them gets rebuilt.
+
+**Technology choices**, unless you have a real constraint. "Must be WordPress" or "must be React" narrows your options and may prevent a supplier suggesting a better fit. If the reason is real - your team maintains it afterwards, you have an existing system - state the *reason*, not just the requirement.
+
+**Exhaustive feature lists.** A hundred bullets reads as a hundred commitments, gets priced as a hundred commitments, and buries the five that matter. List the five, then say "plus the usual supporting screens".
+
+**Deadlines with no reason.** "We need it by March" invites a padded quote. "We need it by March because our current licence expires and we lose access" is information a supplier can plan around, and might solve differently.
+
+## A brief that fits on two pages
+
+Copy this.
+
+```
+1. ABOUT US
+   What we do, who we sell to, how we make money. Three sentences.
+
+2. THE PROBLEM
+   What is broken today, who it affects, what it costs us.
+   Stated as a problem, not a solution.
+
+3. USERS AND ROLES
+   Role | What they need to do | Roughly how many
+
+4. THE CORE JOURNEY
+   One paragraph. Start to finish. The main path.
+
+5. MUST CONNECT TO
+   System | Purpose | Modern API / Old but documented / Unknown
+
+6. CONSTRAINTS
+   Deadline:            (and why)
+   Budget range:
+   Which of deadline / budget / scope cannot move:
+   Non-negotiables:     (compliance, residency, existing stack)
+
+7. SUCCESS IN SIX MONTHS
+   The measurable thing that will be different.
+
+8. WHAT WE PROVIDE
+   Content, assets, access, named decision-maker, review turnaround.
+
+9. HOW TO RESPOND
+   What you want back, and by when.
+```
+
+## Ask for responses in a comparable shape
+
+The brief only produces comparable quotes if you also specify the response. Ask every supplier for:
+
+- **Their understanding of the problem, in their own words.** The single most revealing section. A supplier who restates your brief has read it; one who reframes it has thought about it.
+- **A proposed approach**, including what they would *not* build in version one.
+- **Explicit assumptions and exclusions.** A proposal that names its exclusions is more trustworthy than one that appears to include everything.
+- **A phased price**, discovery separated from build.
+- **A timeline with your dependencies marked.**
+- **Who would actually do the work.**
+
+<Callout type="info">
+Ask each supplier for their three biggest risks on this project. The answers differ far more than the prices do, and the supplier who names a risk you had not considered has just done you a favour before you paid them anything.
+</Callout>
+
+## How many suppliers to send it to
+
+Three or four. Past that you are comparing sales polish rather than substance, and you are consuming a lot of unpaid effort from people whose main asset is their time.
+
+Then consider paying two of them for a short discovery. A few thousand each for a written scope converts an unknowable decision into an informed one, you get to see how they actually work rather than how they pitch, and the output belongs to you either way. It is the cheapest risk reduction available in this whole process.
+
+## A worked example
+
+**Weak brief:** *"We need a modern, scalable web platform with a dashboard, user management, reporting and API integrations. Please quote."*
+
+Every supplier reads that differently. The quotes will span an order of magnitude and none of them will be wrong.
+
+**Strong brief:** *"We run a wholesale bakery supplying 40 cafés. Orders arrive by phone, WhatsApp and email. Every morning someone spends two hours transcribing them into a spreadsheet, then re-types them into Xero. Mistakes happen about weekly and cost us a delivery. We want cafés to place orders themselves and those orders to land in one place and flow into Xero. About 40 café users, 4 internal staff. Xero has a modern API; our delivery routing is a spreadsheet we would keep for now. Budget $25,000 - $40,000, needed before the September trade season, and scope is the flexible one. Success is zero morning transcription and under one order error a month."*
+
+The second is shorter than most bad briefs. It contains a problem, roles, counts, integrations with confidence levels, a ranked constraint, and a measurable outcome. Every supplier reading it is answering the same question, and the good ones will immediately ask about deposits, order cut-off times and standing orders - which are exactly the questions you want surfaced before anyone quotes.
+
+## A complete worked brief
+
+The bakery example from earlier, written out in full. This is about 550 words and it is enough to get four comparable proposals.
+
+```
+BRIEF: TRADE ORDERING SYSTEM
+Northfield Bakery, prepared 12 August 2026
+
+1. ABOUT US
+We are a wholesale bakery in Leeds supplying 40 independent cafes
+and delis across West Yorkshire. We bake overnight and deliver
+between 6am and 10am, six days a week. Revenue is about
+GBP 1.4m a year, all B2B, all on 30-day accounts.
+
+2. THE PROBLEM
+Orders arrive by phone, WhatsApp and email, in no fixed format,
+up to a 6pm cut-off. Every evening our production manager spends
+around two hours transcribing them into a spreadsheet, which is
+then used to plan the bake and print delivery sheets. He then
+re-types the same orders into Xero the following week for
+invoicing.
+
+Roughly once a week something is transcribed wrong. That means a
+wrong delivery, an apology, and usually a credit note. We estimate
+the direct cost at GBP 400 a month, plus about 10 hours a week of
+a senior person's time.
+
+It also caps us. We cannot take on more customers without hiring
+someone to do the transcription.
+
+3. USERS AND ROLES
+  Cafe owner        Place and amend a standing or one-off order,
+                    see their order history and invoices.  ~40 users
+  Production mgr    See consolidated orders by product for tonight's
+                    bake, adjust, lock the cut-off.        1 user
+  Drivers           See a delivery run with quantities.    3 users
+  Office            Push invoices to Xero, manage accounts. 1 user
+
+4. THE CORE JOURNEY
+A cafe owner opens the site on their phone at 4pm, sees their
+standing order pre-filled, changes two quantities, adds a tray of
+sausage rolls, and submits. At 6pm the cut-off locks. The
+production manager sees a single consolidated list by product,
+prints it, and the bake starts. At 5am drivers see their run.
+On Monday the office pushes last week's orders to Xero as invoices.
+
+5. MUST CONNECT TO
+  Xero            Push invoices weekly     Modern documented API
+  Our delivery
+  routing sheet   Read-only for now        Spreadsheet, keep as is
+  SMS provider    Cut-off reminders        Not chosen yet
+
+6. CONSTRAINTS
+  Deadline:   Before the September trade season starts (1 Sept),
+              because that is when volume doubles and the manual
+              process breaks.
+  Budget:     GBP 20,000 - 32,000.
+  Cannot move: The deadline. Scope is flexible.
+  Non-negotiables:
+    - Must work on a phone. Most cafe owners will order on mobile.
+    - Must handle standing orders, not just one-off baskets.
+    - Cut-off time must be enforced automatically.
+    - We are not taking card payments. Accounts are invoiced.
+
+7. SUCCESS IN SIX MONTHS
+  - Zero evening transcription (currently ~10 hrs/week).
+  - Fewer than one order error a month (currently ~4).
+  - At least 30 of our 40 cafes ordering through the system.
+  - We can add 15 new customers without hiring.
+
+8. WHAT WE PROVIDE
+  Decision-maker:   Sarah Nolan, Ops Director. Available daily.
+  Deputy:           Tom Reid, Production Manager.
+  Review turnaround: 48 hours.
+  Product data:     Full catalogue with prices, ready now.
+  Brand assets:     Logo and colours, ready now.
+  Xero access:      Can provide sandbox credentials within a week.
+
+9. HOW TO RESPOND
+  By 26 August, please send:
+   - Your understanding of the problem in your own words
+   - Proposed approach, and what you would NOT build for v1
+   - Assumptions and exclusions
+   - Price, split discovery / build
+   - Timeline with our dependencies marked
+   - Who would do the work
+   - The three biggest risks you see
+```
+
+Notice what is absent: no screen designs, no technology requirements, no feature list. And notice what a supplier can immediately infer - that standing orders are the core object, that the cut-off is a hard business rule, and that the September date is real rather than aspirational.
+
+## How long to give people
+
+Two weeks for a substantial project, one for something small. A shorter window selects for suppliers with idle capacity rather than for the best fit, because a considered proposal takes two to four days of unpaid work and the good ones are usually busy.
+
+Collect questions in writing and answer them to everyone at once. Questions answered privately to one supplier produce quotes that are not comparable, which defeats the purpose of writing a brief in the first place.
+
+## Scoring the responses
+
+Once the proposals arrive, score them rather than reacting to them. A simple matrix stops the most confident writer from winning by default.
+
+<RateTable
+  headers={['Criterion', 'Weight', 'What a 5 looks like']}
+  rows={[
+    ['Understanding of the problem', '30%', 'Reframed something we had not seen'],
+    ['Approach and what they would cut', '20%', 'Named a specific v1 and justified it'],
+    ['Assumptions and exclusions', '15%', 'Explicit, and a few made us think'],
+    ['Risks identified', '15%', 'Named a risk we had not considered'],
+    ['Team and who does the work', '10%', 'Named people, we spoke to them'],
+    ['Price and structure', '10%', 'Phased, itemised, comparable'],
+  ]}
+/>
+
+Price is 10% deliberately. Not because it does not matter, but because you have already constrained it with a budget range - so what you are choosing between is understanding and risk, not cost. If one proposal is far outside the range, that is information about their reading of the scope, not a reason to score it low on price.
+
+<Callout type="tip">
+Score independently before you discuss. If two people on your side score separately and then compare, you find out which differences are real and which are about who presented best.
+</Callout>
+
+## The five most common brief mistakes
+
+**1. Describing the solution instead of the problem.** Covered above, and it is the big one. You lose the supplier's ability to propose something better and cheaper.
+
+**2. Leaving the budget out.** Produces proposals for the wrong size of project and wastes everyone's fortnight.
+
+**3. Listing every feature you can imagine.** A hundred bullets gets priced as a hundred commitments and buries the five that matter.
+
+**4. Not naming a decision-maker.** The brief looks complete and the project stalls in week three because nobody can approve anything.
+
+**5. Not saying what you will provide.** Content, data, access and review turnaround are your side of the critical path. A brief that omits them is quietly transferring blame for delays you will cause.
+
+## Objections, answered
+
+**"If I give a budget they will just quote to the top of it."** A bad supplier will. A good one will tell you your scope does not fit the number and which parts to cut, which is the single most useful thing they can do at this stage. If you are worried, give a range and say explicitly that you want to know if the scope does not fit.
+
+**"I do not know enough to write this."** Sections 1, 2 and 7 are enough to start, and you know all three already: what you do, what is broken, and what better looks like. Send that. Suppliers who need the rest before engaging are not the ones you want.
+
+**"Should I use a formal RFP template?"** Only if procurement requires it. Formal RFPs optimise for defensible process, not for a good match, and their length filters out small senior teams who cannot justify two days of unpaid response work. Two focused pages usually gets better answers.
+
+**"Should everyone get the same brief?"** Yes, or the responses are not comparable. Answer follow-up questions individually, but if a question reveals a genuine gap in the brief, send the clarification to everyone.
+
+**"What if a supplier proposes something completely different?"** That is a good outcome, not a problem. It means the brief did its job by describing a problem rather than dictating a solution. Score it on whether it solves the problem better, not on whether it matches what you imagined.
+
+## Send it to us
+
+If you have a brief, [send it over](/contactus) and we will come back within a business day with our understanding of the problem, the questions we would need answered, and a scoped estimate with its assumptions written down.
+
+If you do not have one yet, send the problem in a paragraph. That is genuinely enough to start, and working out the rest is what discovery is for. If you are still deciding who to send it to, [how to choose an agency](/blogs/how-to-choose-a-web-development-agency) covers what to look for in the replies.
+
+## Related reading
+
+- [How to Scope an MVP](/blogs/how-to-scope-an-mvp) - deciding what goes in the brief
+- [Red Flags in a Software Quote](/blogs/red-flags-in-a-software-quote) - reading the responses
+- [How to Choose a Web Development Agency](/blogs/how-to-choose-a-web-development-agency) - who to send it to
+- [Software Development Contract Checklist](/blogs/software-development-contract-checklist) - what the brief becomes once you sign
+
+## Sources and further reading
+
+- [GDPR](https://gdpr-info.eu/) - when personal data of EU residents is involved, these are design constraints rather than paperwork
+- [PCI Security Standards Council](https://www.pcisecuritystandards.org/) - what changes architecturally the moment card payments are in scope
+- [MDN accessibility documentation](https://developer.mozilla.org/en-US/docs/Web/Accessibility) - the obligations worth naming in a brief rather than discovering at launch
+- [Google's SEO starter guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide) - useful if organic search is one of your success measures

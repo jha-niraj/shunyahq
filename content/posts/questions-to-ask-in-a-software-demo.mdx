@@ -1,0 +1,280 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+A software demo is a performance. That is not a criticism - it is what a demo is for. The person running it has done it two hundred times, knows exactly which path through the product is smooth, and has a dataset prepared where every record is tidy and every name is short.
+
+Your job is not to enjoy the performance. It is to find out what happens off the script, because that is where you will spend the next three years.
+
+The good news is that a handful of specific questions reliably break the script, and none of them require technical knowledge. Here they are, along with what the answers mean.
+
+## Before the demo: set the terms
+
+Two requests, sent in advance, change the demo more than anything you can ask during it.
+
+**"Please use our data."** Send a spreadsheet of fifty real records - customers, products, orders, whatever the system holds. Real data has long names, missing fields, duplicates, strange characters and dates in the wrong format. The demo dataset has none of those. This one request surfaces more than any question.
+
+**"Please walk through this specific scenario."** Send your actual core journey in a paragraph, the way you would write it in a [project brief](/blogs/how-to-write-a-web-development-brief). Ask them to demonstrate that, rather than their standard tour.
+
+<Callout type="tip">
+If a vendor declines both requests, that is your answer. Every capable product can handle a small import and a defined scenario. Refusal usually means the honest demo is less impressive than the rehearsed one.
+</Callout>
+
+## The questions that break the script
+
+### "Can you show me that going wrong?"
+
+The single best question in this article. Ask them to submit the form with a required field empty, cancel halfway through, enter a duplicate, or upload the wrong file type.
+
+Error handling is where software quality actually lives, and it is never in the demo. A product with clear, recoverable error states was built by people who thought about real users. One that shows a raw error, or silently swallows the problem, was built to demo.
+
+### "Show me the ugliest screen in the product"
+
+Every system has one: the settings page nobody redesigned, the bulk-edit view, the reporting module inherited from a previous version. Where the polish runs out tells you what the product actually is under the marketing.
+
+A confident vendor will laugh and show you. A defensive answer is itself informative.
+
+### "What can this not do?"
+
+The real answer takes the form of a specific limitation, honestly framed: "it does not handle multi-currency", "there is no approval workflow", "reporting is fixed, not custom".
+
+"Nothing, really" means either the person does not know the product or is unwilling to tell you. Either way you will find the limits later, at your expense.
+
+### "How does a new person learn this?"
+
+Ask them to show you onboarding as if you were a new employee on day one. If the answer involves a training session, a PDF, and a two-week bedding-in period, factor that into every future hire.
+
+### "What happens when we want our data out?"
+
+Not if. When. Ask for a live export, in the demo, of everything.
+
+The answers form a ladder: self-serve export of everything in an open format is excellent; export of most things is normal; "raise a support ticket and we will send a file" is a warning; "that is not something we offer" is disqualifying. If you cannot leave, you are not a customer, you are a hostage.
+
+### "Who else has our shape of problem, and can I talk to them?"
+
+Not a general reference. One with your volume, your team size, your industry quirk. If they cannot produce one, you may be the first, which is not automatically bad but changes the risk.
+
+### "What did you ship in the last three months, and what is next?"
+
+Tests whether the product is actively developed or in maintenance mode. A vendor who can list three recent releases and name two things coming is investing. Vagueness here is a real signal, especially for a product you intend to depend on for years.
+
+### "What does support actually look like at 4pm on a Friday?"
+
+Ask for the response-time target, the hours, the channel, and whether the first response is a human or a queue. Then ask the reference customer whether it matches.
+
+## Questions specific to a custom build
+
+If you are evaluating an agency rather than a product, the demo is usually of their previous work. Different questions apply.
+
+### "Which parts of this did your team actually build?"
+
+Portfolio pieces are frequently collaborative. Ask specifically what they were responsible for on the project they are showing.
+
+### "How long did this take, and did it match the estimate?"
+
+The single best predictor of whether their estimate for *your* project will hold.
+
+### "Is this still live, and are you still maintaining it?"
+
+A portfolio full of sites that no longer exist tells you something about longevity. Check two of them yourself before the call.
+
+### "Show me the admin side"
+
+Clients see the polished front end. The internal tooling is where corners get cut, because nobody demos it. Ask to see it.
+
+### "What would you do differently if you built it again?"
+
+A thoughtful, specific answer indicates a team that reflects. "Nothing" indicates one that does not.
+
+## A scoring sheet you can fill in live
+
+<RateTable
+  headers={['Question', 'Good answer', 'Warning sign']}
+  rows={[
+    ['Used our data?', 'Yes, imported before the call', 'Declined, used their demo set'],
+    ['Show it going wrong', 'Clear, recoverable error states', 'Raw error or silent failure'],
+    ['What can it not do?', 'Two or three specific limits', '"Nothing really"'],
+    ['Data export', 'Self-serve, open format, everything', 'Support ticket, or not offered'],
+    ['Comparable reference', 'Named, similar size and sector', 'Generic logo wall'],
+    ['Recent releases', 'Three named, two upcoming', 'Vague roadmap talk'],
+    ['Support reality', 'Hours, target, channel, human first', '"We are very responsive"'],
+    ['Ugliest screen', 'Showed it, laughed', 'Deflected'],
+  ]}
+/>
+
+## Who should be in the room
+
+**The person who will use it daily.** Not their manager. The manager evaluates whether it looks capable; the daily user notices that the most common action takes four clicks.
+
+**Someone who will have to integrate it.** Even if that is an external developer joining for thirty minutes. They will ask about the API in a way you cannot.
+
+**A sceptic.** Every organisation has someone who instinctively finds the flaw. This is the one meeting where that disposition is an asset.
+
+**Not the whole committee.** Six people in a demo means nobody asks a follow-up, because there is no time and everyone is being polite.
+
+<Callout type="warning">
+Beware the demo where the vendor's technical person is absent. Sales-only demos cannot answer the questions that matter, and the follow-up email answering them is written by someone you never met and cannot cross-examine.
+</Callout>
+
+## The follow-up email that decides it
+
+After the demo, send one email with the three or four questions that got vague answers. Ask for written responses.
+
+This does two things. It gets you a written record, which is useful if the answer later turns out to be optimistic. And the quality of a written answer under mild pressure is far more revealing than a confident verbal one, because writing forces precision.
+
+A vendor who answers precisely in writing, including where the answer is "no", has just told you a great deal about what working with them will be like.
+
+## A worked example
+
+A 30-person firm evaluating three job-management products. They sent all three the same fifty real records and the same core scenario.
+
+**Vendor A** imported the data and demoed the scenario. Two records failed on import because of an apostrophe in a company name. They said so, explained the fix, and carried on. **This is the good outcome** - a small honest failure handled openly.
+
+**Vendor B** declined to import, saying it would take too long to set up, and ran their standard demo. Impressive, and it answered no questions about the actual fit.
+
+**Vendor C** imported the data, and the demo revealed that their system modelled a job as belonging to exactly one customer. The firm regularly runs jobs split across two customers. This was not discoverable from the website, the feature list, or a standard demo.
+
+The firm chose A. Vendor C would have been a two-year mistake discovered in month three, and it was surfaced by fifty rows of real data.
+
+## Objections, answered
+
+**"Vendors will not agree to all this."** Most will, for a serious buyer. Frame it as wanting to make a decision quickly, which is true: a demo with your data and your scenario removes three follow-up calls. If a vendor treats reasonable diligence as an imposition, extrapolate.
+
+**"We do not have time to prepare data."** Fifty rows exported from your existing system takes twenty minutes and is the highest-leverage twenty minutes in the whole evaluation.
+
+**"The demo looked great, is that not enough?"** Demos are designed to look great and mostly succeed. That is why the questions above are all about deliberately leaving the demo path.
+
+**"What if we are buying from a big, reputable vendor?"** The questions still apply, and some matter more. Large vendors have more products in maintenance mode, longer support queues, and roadmaps driven by their largest segment rather than by you.
+
+**"We are hiring an agency, not buying a product."** Then use the second set of questions, and add a paid trial. Nothing predicts a project like having run a small piece of it - see [how to choose an agency](/blogs/how-to-choose-a-web-development-agency).
+
+## What to do between demos
+
+Three or four demos in a fortnight blur together. These habits keep them comparable.
+
+**Score immediately, before the next call.** Memory decays and it decays in favour of whoever presented best. Fill in the sheet within an hour.
+
+**Have each attendee score independently.** Then compare. Where two people scored the same vendor very differently, you have found something worth discussing - usually one of them noticed something the other did not.
+
+**Keep a running list of "things I did not know to ask".** Every demo teaches you about the problem space. A question that occurs to you in demo three should be sent back to vendors one and two.
+
+**Write down the specific thing that impressed you.** "Good demo" is useless a week later. "Their bulk edit handled 200 rows without a page reload" is comparable.
+
+**Note who answered.** If the salesperson answered a technical question and the technical person stayed quiet, flag it for the follow-up email.
+
+## The trap of the impressive demo
+
+The best demo does not correlate well with the best product, and it is worth understanding why.
+
+Demo quality is a function of how much a vendor invests in sales. That investment is real and it tells you something - a company with a polished demo generally has resources and process - but it is orthogonal to whether the product fits your specific workflow.
+
+The mismatch shows up in a predictable way. Vendors with strong sales operations tend to have broad products aimed at a large market. Their demo is smooth because it has been refined across hundreds of calls. Whether it handles your unusual pricing rule is a different question entirely, and the demo is specifically designed not to raise it.
+
+Conversely, a smaller vendor with a rougher demo may have built exactly the thing you need, because they serve a narrower segment. Their demo is worse because they run three a month rather than three a day.
+
+<Callout type="warning">
+The correction is the same in both directions: use your own data and your own scenario. That single change strips out most of the polish differential and leaves you comparing fit, which is the thing you actually care about.
+</Callout>
+
+## If you are demoing to us
+
+We would rather show you a real client system with the client's permission, warts included, than a polished showcase. Send us your data shape and your core journey and we will walk through how we would build it, including the parts we think would be hard and the parts we would tell you not to build.
+
+If it turns out an off-the-shelf product fits, we will say so - see [custom software vs off-the-shelf](/blogs/custom-software-vs-off-the-shelf) for how we think about that. [Get in touch](/contactus) with the scenario you want to see.
+
+## Ten questions, printable
+
+Take this into the room.
+
+<RateTable
+  headers={['#', 'Question']}
+  rows={[
+    ['1', 'Can you run this on the fifty records we sent?'],
+    ['2', 'Can you walk through our scenario rather than your tour?'],
+    ['3', 'Can you show me that going wrong?'],
+    ['4', 'Show me the ugliest screen in the product.'],
+    ['5', 'What can this not do?'],
+    ['6', 'Show me a full data export, now.'],
+    ['7', 'What shipped in the last three months? What is next?'],
+    ['8', 'What does support look like at 4pm on a Friday?'],
+    ['9', 'Who has our shape of problem, and can I speak to them?'],
+    ['10', 'What would make us a bad fit for you?'],
+  ]}
+/>
+
+Question ten is the one people leave out and it is worth the whole list. A vendor who can describe their bad-fit customer understands their own product and is not trying to sell to everyone. A vendor who says "nobody, really" has just told you they will say yes to anything, which is the least useful answer a supplier can give.
+
+## After you choose: the first ninety days
+
+The evaluation is not finished at the decision. Most disappointment with a chosen product happens in implementation, not selection.
+
+**Week 1-2: import real data, not sample data.** The problems you found in the demo will reappear at full volume, plus new ones. Do this before configuring anything, because the data shape drives the configuration.
+
+**Week 3-4: configure for the process you have, not the one you want.** Changing the tool and the process simultaneously means you cannot tell which caused a problem. Match the current process first, stabilise, then improve.
+
+**Week 5-6: train in small groups by role.** A single all-hands session teaches nobody. Fifteen-minute sessions per role, using their actual work, retain far better.
+
+**Week 7-8: run in parallel.** Old and new, both live, numbers compared. Expensive and tedious and it is the thing that prevents the bad Monday. Covered in [how to migrate off a legacy system](/blogs/how-to-migrate-off-a-legacy-system).
+
+**Week 9-12: measure against the reason you bought it.** Go back to what you said success looked like. If the hours saved have not appeared, find out why now, while the vendor still considers you a new customer.
+
+## The demo checklist as a one-page form
+
+Print this and take one per vendor.
+
+<RateTable
+  headers={['Section', 'What to record']}
+  rows={[
+    ['Vendor / date / attendees', ''],
+    ['Used our data? (Y/N)', 'If no, why not'],
+    ['Ran our scenario? (Y/N)', 'What they substituted'],
+    ['Error state shown', 'What happened'],
+    ['Stated limitations', 'List them verbatim'],
+    ['Data export', 'Self-serve / ticket / none'],
+    ['Recent releases named', 'How many, how specific'],
+    ['Support target', 'Hours, channel, response time'],
+    ['Reference offered', 'Sector and size'],
+    ['Score /10', 'Filled in within the hour'],
+    ['Follow-up questions', 'Anything vague'],
+  ]}
+/>
+
+## The three answers that should end an evaluation
+
+Not warning signs. Disqualifiers.
+
+**"We do not offer a full data export."** You cannot leave. Nothing else about the product matters, because the decision becomes permanent the day you migrate in.
+
+**"That is on the roadmap"** for something you cannot operate without. Roadmaps slip and priorities change. Buy what exists today; treat anything promised as a bonus if it arrives.
+
+**"We would need to build that for you."** Now you are commissioning custom development from a vendor whose incentive is to keep you on their platform, at their rates, with the result locked inside their product. Occasionally right, usually the most expensive way to build anything.
+
+<Callout type="warning">
+The common thread is optionality. Each answer removes your ability to change your mind later, and a decision you cannot reverse deserves far more scrutiny than one you can.
+</Callout>
+
+## Trials beat demos, where you can get one
+
+A demo is the vendor showing you their product. A trial is you finding out what it is like to live with. Where a trial is available, it is worth ten demos.
+
+**Ask for two weeks with your real data and two real users.** Not a sandbox with sample records - your data, and people who will actually use it doing actual work.
+
+**Give the trial a task, not a browse.** "Process a week of real orders in it, in parallel with the current system." Browsing tells you the interface is pleasant. Doing the job tells you whether the ninth step of your process has a home.
+
+**Watch for the third-day feeling.** Most products are enjoyable on day one and honest by day three, once the novelty has worn off and the friction has become noticeable. Ask your trial users specifically what annoyed them on day three.
+
+**Count the workarounds.** If two people running a real week produce three "I just did it in a spreadsheet" moments, that is the future.
+
+Not every vendor offers trials, and for complex systems there is a real setup cost that makes a free trial unreasonable. A paid pilot is a fair compromise and worth proposing - a few thousand for a properly configured month tells you more than any evaluation process, and a vendor confident in their fit will usually agree.
+
+## Related reading
+
+- [How to Choose a Web Development Agency](/blogs/how-to-choose-a-web-development-agency) - the wider selection process
+- [Red Flags in a Software Quote](/blogs/red-flags-in-a-software-quote) - what the answers should look like on paper
+- [Web Application Security Checklist](/blogs/web-application-security-checklist) - the security questions vendors hope you skip
+- [Data Privacy for Web Applications](/blogs/data-privacy-for-web-applications) - the privacy questions that belong in the same conversation
+
+## Sources and further reading
+
+- [Nielsen Norman Group UX research methods](https://www.nngroup.com/articles/ux-research-cheat-sheet/) - structured ways to observe what users actually do rather than what they say
+- [GDPR](https://gdpr-info.eu/) - worth confirming in a demo how a vendor handles deletion and export requests
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/) - the baseline to ask any vendor about, including how they test against it
+- [FTC privacy and security guidance](https://www.ftc.gov/business-guidance/privacy-security) - what you remain responsible for regardless of which vendor you pick

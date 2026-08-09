@@ -316,7 +316,7 @@ export default function IntegrationsSection() {
 
                 <div className="mt-8 flex justify-center">
                     <Link
-                        href="/services"
+                        href="/services/web-engineering"
                         className="group inline-flex items-center gap-2 text-[14px] font-semibold text-neutral-900 dark:text-white"
                     >
                         See how we build with it

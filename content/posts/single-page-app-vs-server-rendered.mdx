@@ -1,0 +1,200 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+At some point in a web project someone will say "we'll build it as a single-page app" or "we should server-render this," and you will be asked to agree to something you have no obvious way to evaluate. It sounds like an internal engineering preference. It is not - the choice changes how fast your site feels to a first-time visitor, whether search engines index it reliably, how much hosting costs, and how expensive the third year of maintenance is.
+
+Here is the decision explained without requiring you to know what hydration is, followed by the questions that actually determine the answer for your project.
+
+## The two approaches, in one paragraph each
+
+**Server-rendered.** When a visitor requests a page, your server assembles the finished HTML - text, prices, product names, all of it - and sends it. The browser displays it immediately because there is nothing left to work out. Every navigation to a new page repeats the process. This is how the web worked for its first twenty years and how a great deal of it still works.
+
+**Single-page application (SPA).** The server sends a nearly empty page plus a large JavaScript bundle. The browser runs that JavaScript, which fetches your data and constructs the page in the visitor's device. After that first load, navigation between pages happens without going back to the server for a new document - the app swaps out what is on screen. Gmail, Figma and Linear work this way.
+
+The trade-off in a sentence: **server rendering is faster to first content and slower between pages; an SPA is slower to first content and faster between pages.**
+
+<Callout type="info">
+Notice who bears the cost in each. Server rendering spends your server's time. An SPA spends your visitor's device's time - and you do not control what device that is.
+</Callout>
+
+## Why the answer is usually "both, in the right places"
+
+The framing above is the textbook version and it is now ten years out of date. Modern frameworks let you server-render the first page *and* behave like an app afterwards, and that hybrid is what most well-built sites do today.
+
+The page arrives as finished HTML so it is fast and indexable. JavaScript then attaches to it so subsequent interactions are instant. Google's [rendering on the web](https://web.dev/articles/rendering-on-the-web) remains the clearest explanation of the full spectrum, and it is worth knowing the shape of it because vendors will use these words at you:
+
+- **Static generation** - pages built once at deploy time, served as files. Fastest and cheapest possible. Right for anything that does not change per visitor.
+- **Server rendering** - built per request. Slightly slower, necessary when content is personalised or highly dynamic.
+- **Client rendering** - built in the browser. The SPA approach.
+- **Hybrid** - the same site using different strategies per page, which is what you should expect from a competent build.
+
+React's [server components](https://react.dev/reference/rsc/server-components) and Next.js's [partial prerendering](https://nextjs.org/docs/app/getting-started/partial-prerendering) are two current expressions of the same idea: send the static shell instantly, stream in the parts that need computing. You do not need to understand the implementation. You need to know that "SPA or server-rendered?" is a false binary in 2026, and a team presenting it as one is describing an older way of working.
+
+## What each choice actually costs you
+
+<RateTable
+  headers={['', 'Server-rendered / static', 'Single-page app']}
+  rows={[
+    ['First page appears', 'Fast, consistently', 'Slower, device-dependent'],
+    ['Navigation after first load', 'A round trip', 'Instant'],
+    ['Search engine indexing', 'Straightforward', 'Works, with caveats'],
+    ['Behaviour on weak devices', 'Degrades gracefully', 'Degrades sharply'],
+    ['Hosting cost', 'Low for static, moderate for dynamic', 'Low, plus an API to run'],
+    ['Complexity of the codebase', 'Lower', 'Higher'],
+    ['Offline capability', 'Limited', 'Achievable'],
+    ['Best suited to', 'Content, commerce, marketing', 'Dashboards, tools, editors'],
+  ]}
+/>
+
+The device-dependence row is the one worth sitting with. A JavaScript bundle that takes 0.4 seconds to parse and execute on a current flagship phone can take four seconds on a mid-range Android handset three years old. If your audience is consumers rather than desk-bound professionals, a meaningful share of them are on exactly that device, and the SPA experience you tested on your own laptop is not the experience they are having. The [HTTP Archive's annual almanac](https://almanac.httparchive.org/en/2024/) has the population-level data on how much JavaScript the median site now ships, and it is not a flattering picture.
+
+## The search engine question, answered properly
+
+The old advice was that SPAs cannot be indexed. That was true once and is now wrong in a way that leads people astray in both directions.
+
+Google does execute JavaScript and does index client-rendered content. Its [JavaScript SEO documentation](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics) sets out the requirements. So "SPAs cannot rank" is false.
+
+But three caveats matter, and they are why serious commerce and content sites do not client-render their key pages:
+
+**Rendering is a second pass.** Crawling and rendering happen separately, and the gap is not guaranteed to be short. For a news site or a product catalogue where fresh pages matter, that delay is a real cost.
+
+**Other crawlers are less capable.** Social preview generators, LLM crawlers, and various search engines outside the top one are considerably less reliable at executing JavaScript. If a link to your product page posted in a chat shows no title or image, that is this problem.
+
+**Failure is silent and total.** A server-rendered page with a JavaScript error still shows its content. A client-rendered page with the same error shows nothing at all - to users and to crawlers.
+
+<Callout type="warn">
+The practical rule: any page you want found by search, shared on social, or read by someone on a poor connection should arrive as HTML. Any page behind a login can be built however suits the team.
+</Callout>
+
+## The five questions that decide it
+
+Forget the architecture debate and answer these. They determine the answer more reliably than any technical argument.
+
+**1. Is the page behind a login?** Content behind authentication does not need to be indexed and is usually being used by someone with a reason to wait a moment for it to load. That is SPA territory and always has been.
+
+**2. How much does a first-time visitor matter?** A marketing site's entire job is the first visit by a stranger, frequently from an ad, frequently on a phone, frequently impatient. Every hundred milliseconds is measurable. A tool that internal staff open at 9am and keep open all day has almost no first-load pressure.
+
+**3. How interactive is a session?** Ten clicks in a session, each loading new content, favours server rendering. Four hundred interactions on the same data - dragging, filtering, editing - favours an app.
+
+**4. What devices are your users on?** Check your analytics rather than guessing. If the median visitor is on a mid-range phone, JavaScript weight is a business metric.
+
+**5. Does anything need to work offline?** If yes, you need an application shell in the browser, and that decides it.
+
+Most projects answer some of these one way and some the other, which is precisely why the hybrid approach exists. A commerce site server-renders its catalogue and runs its checkout as an app. A SaaS product statically generates its marketing pages and runs its dashboard as an app. This is normal, correct, and the answer you should expect from a good team.
+
+## The vocabulary, so the technical conversation is not opaque
+
+You will hear these five words. Each of them is simpler than it sounds and knowing them lets you ask better questions in a meeting.
+
+**Hydration.** When a server-rendered page arrives as HTML and then JavaScript "wakes it up" so the buttons work. The gap between the page appearing and the page responding is the hydration window, and on a heavy page it can be a second or more of the site looking ready while ignoring clicks. If users complain the site "looked loaded but did nothing," this is what they are describing.
+
+**Bundle.** The JavaScript file, or set of files, sent to the browser. Its size is the single number most predictive of how a site feels on a mid-range phone. Ask for it in kilobytes, compressed.
+
+**Code splitting.** Sending only the JavaScript a given page needs rather than all of it. Cheap to do, frequently not done, and usually the largest available performance win on an existing SPA.
+
+**Streaming.** Sending the page in pieces as they become ready rather than waiting for the slowest part. It means a page with one slow database query can still show its header, navigation and most of its content immediately.
+
+**Time to first byte.** How long the server takes to start responding. A server-rendered page with a slow database is not fast just because it is server-rendered - rendering strategy does not rescue a slow backend, and a team that promises it will is skipping a harder conversation.
+
+The reason to know these: when someone says "we'll server-render it," the correct follow-up is "and what is the bundle size after hydration?" A team with a good answer has thought about it. A team without one has changed where the HTML is generated and nothing else.
+
+## What actually makes a page fast, in order
+
+Rendering strategy matters, and it is not the top of the list. In rough order of impact on a typical business site:
+
+1. **Images.** Wrongly sized, uncompressed, or in an old format. Usually the largest single payload on the page and the cheapest thing to fix.
+2. **Third-party scripts.** Tag managers, chat widgets, heat mapping, three analytics tools. These run on the main thread and block everything else. Nobody owns them and nobody removes them.
+3. **JavaScript bundle size.** Your own code, plus the libraries pulled in for one feature.
+4. **Rendering strategy.** Where the HTML is produced.
+5. **Server and database speed.** Matters enormously once the first three are handled, and is frequently blamed before them.
+6. **Fonts.** Blocking font loads that hold text invisible for a beat.
+
+The reason this order is worth knowing: a rendering rewrite is expensive, and items one and two can often be fixed in a week for a fraction of the cost. If a vendor proposes an architectural change as the answer to a speed problem without having measured the payload first, ask what the images and third-party scripts contribute. Frequently it is most of it.
+
+## A worked example
+
+A specialist equipment retailer had a site built as a full SPA two years earlier by a team who did what they knew. It had roughly 3,000 product pages.
+
+The symptoms the client described were commercial rather than technical: organic traffic had never grown despite consistent content work, the bounce rate on mobile was above 70%, and links shared by their sales team in emails showed no preview image.
+
+What measurement found:
+
+- First content on a mid-range Android over 4G took **6.1 seconds**. The JavaScript bundle was 1.4MB compressed, and a third of it was a charting library used on one page.
+- Of the 3,000 product pages, roughly 1,900 were indexed. Newly added products were taking two to three weeks to appear.
+- Social previews were empty because the metadata was set by JavaScript after load, and preview generators do not wait.
+
+The rebuild did not throw the application away. It moved rendering rather than replacing the codebase:
+
+- **Product and category pages** became statically generated, rebuilt when the catalogue changes. First content on the same test device: **1.3 seconds**.
+- **Search and filtering** stayed client-side, because that genuinely is an interactive experience and it is fast once the page is there.
+- **Basket and checkout** stayed an application, correctly - it is behind intent, not behind search.
+- **The charting library** was loaded only on the page that used it, removing 400KB from every other page.
+
+Four months after launch: indexed pages up from 1,900 to 2,950, organic sessions up 61%, mobile bounce rate down to 44%, and mobile conversion up 28%. Total cost was $34,000, considerably less than the rewrite the client had been quoted elsewhere, because the business logic was fine - only the rendering strategy was wrong.
+
+The lesson generalises. When an SPA is underperforming, the fix is usually not "rebuild it server-rendered." It is "identify which pages should never have been client-rendered and move those."
+
+## What this means for maintenance and cost
+
+**Complexity has a running cost.** An SPA is two applications - a front end and an API - with a contract between them. That is more code, more deployment, and more places for a bug. If your product genuinely needs it, that cost is worth paying. If it does not, you are paying it for nothing, every year, forever.
+
+**Hiring is affected.** Both approaches are mainstream, so neither locks you out of the market. But a simpler codebase means a new developer is productive in days rather than weeks, and over a five-year life that difference is real money.
+
+**Hosting differs more than people expect.** Statically generated pages are essentially free to serve at any traffic level and cannot fall over under load. Server-rendered pages need compute that scales with traffic. Client-rendered pages need an API that scales with traffic. If you have spiky traffic - a campaign, a press mention - static is the only one of the three that does not have a bad day.
+
+**Accessibility is easier with HTML.** Server-rendered pages start from working, standards-compliant markup. Client-rendered interfaces have to reimplement focus management, route announcements and keyboard behaviour that the browser gives you for free. It is achievable and it is extra work, which connects directly to what [accessibility compliance](/blogs/web-accessibility-legal-requirements) costs on a project.
+
+## Migrating an existing site without rewriting it
+
+If you already have a client-rendered site that is underperforming, the useful news is that this is one of the few architectural problems you can fix incrementally. You do not need a rewrite and you should be sceptical of anyone who proposes one as the opening move.
+
+The sequence that works:
+
+**Measure first, on the right device.** Get real numbers for first content, bundle size and indexed page count. Without them you cannot tell whether the rendering strategy is the problem or the scapegoat.
+
+**Pick the highest-value page type.** Usually product or article pages, because there are thousands of them and they are the ones search engines care about. Move that one route to server rendering or static generation. One route, in isolation, is typically two to four weeks.
+
+**Verify with the same measurements.** If indexing and load time improve as expected, you have proved the thesis on a real page rather than in an argument.
+
+**Repeat by value.** Category pages, then the homepage, then whatever else is public. Stop when you reach pages behind a login, because those are fine as they are.
+
+**Delete what you no longer need.** The step teams skip. When a route no longer client-renders, the JavaScript that used to build it should stop shipping. If it does not, you have added server rendering and kept the bundle, and you get the cost of both with the benefit of neither.
+
+Done this way the work is fundable in slices, each slice justifies the next, and you never have a period where the old site is off and the new one is not ready - the failure mode that makes full rewrites so risky.
+
+## Warning signs in a proposal
+
+**"We'll build it in React"** as the entire answer to a rendering question. React can do all of these; the framework is not the strategy.
+
+**No mention of first-load performance** for a public-facing site. If nobody has said a number for how fast the homepage should appear, nobody is going to be accountable for it.
+
+**A single approach for every page.** A team that server-renders the dashboard or client-renders the blog is applying a habit rather than a decision.
+
+**"SEO is handled by prerendering."** Bolting a prerendering service onto a client-rendered site is a workaround with real failure modes. It is sometimes the right pragmatic fix for an existing site; it is a poor plan for a new one.
+
+**Bundle size not discussed.** If nobody has asked how much JavaScript ships to a first-time visitor, it will be too much. It always is when nobody is watching.
+
+## What we do differently
+
+We decide rendering per route rather than per project, and we write down the reason for each. Marketing pages static, catalogue static with scheduled rebuilds, authenticated tools as applications, checkout server-rendered with client interactivity. There is no architectural purity to defend, only the question of who is waiting and why.
+
+We set a JavaScript budget at the start and fail the build when a page exceeds it, because bundle size grows silently and nobody notices the day it crossed the line.
+
+And we measure first-load on a real mid-range device, not on a developer laptop, because that is the only measurement that corresponds to what your customers experience.
+
+If you have a site that feels slow to strangers and fast to you, [that gap is measurable](/contactus) and it usually has this cause.
+
+## Related reading
+
+- [Choosing your stack](/blogs/choosing-your-stack) - the wider set of technology decisions this sits inside
+- [Core Web Vitals for business owners](/blogs/core-web-vitals-for-business-owners) - how the rendering choice shows up in your scores
+- [Next.js vs WordPress for business websites](/blogs/nextjs-vs-wordpress-for-business-websites) - the platform-level version of this question
+- [Website redesign vs rebuild](/blogs/website-redesign-vs-rebuild) - when moving rendering is enough and when it is not
+
+## Sources and further reading
+
+- [Rendering on the web](https://web.dev/articles/rendering-on-the-web) - the definitive explanation of the full spectrum and its trade-offs
+- [React server components](https://react.dev/reference/rsc/server-components) - the current mechanism for mixing server and client rendering
+- [Next.js partial prerendering](https://nextjs.org/docs/app/getting-started/partial-prerendering) - static shell plus streamed dynamic content
+- [Google's JavaScript SEO basics](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics) - what crawlers need from a client-rendered page
+- [HTTP Archive Web Almanac](https://almanac.httparchive.org/en/2024/) - population-level data on JavaScript weight and its effects
+- [Largest Contentful Paint](https://web.dev/articles/lcp) - the metric most directly affected by this decision

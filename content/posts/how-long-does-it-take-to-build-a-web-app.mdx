@@ -1,0 +1,277 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+"How long will it take?" is the question every project starts with and the one most estimates get wrong. Not because estimating is impossible, but because the answer people give is the *building* time, and the thing you actually care about is the *elapsed* time - and the gap between those two is where projects quietly lose a month.
+
+A build that is eight weeks of engineering can easily be fourteen weeks on the calendar. None of that extra time is the engineering team being slow. It is review cycles, content that has not been written, a third-party account that takes ten days to provision, and a decision nobody was available to make.
+
+This is a realistic guide to how long a web application takes, what makes it longer, and the handful of things you can control that move the date more than anything the development team does.
+
+## Typical timelines
+
+For a competent team working on a well-scoped project:
+
+<RateTable
+  headers={['What you are building', 'Engineering time', 'Realistic elapsed time']}
+  rows={[
+    ['Marketing site with CMS', '2 - 4 weeks', '3 - 6 weeks'],
+    ['MVP / first version', '5 - 9 weeks', '6 - 12 weeks'],
+    ['Internal tool or dashboard', '5 - 10 weeks', '6 - 14 weeks'],
+    ['Production SaaS platform', '10 - 20 weeks', '3 - 6 months'],
+    ['Replacing a legacy system', '16 weeks +', '6 - 12 months'],
+  ]}
+/>
+
+The two columns differ for reasons that have nothing to do with typing speed. Understanding why is how you compress the second one.
+
+## Where the calendar time actually goes
+
+### Review and approval cycles
+
+This is the big one and it is almost always underestimated. A two-day piece of work that waits five days for feedback has taken a week. Repeat that across thirty deliverables and you have added a month.
+
+The fix is boringly simple: agree a review window up front - 48 hours is a good default - and name one person who can approve. Not a committee. A named person.
+
+<Callout type="tip">
+If you change nothing else about how you run the project, do this. Fast, decisive feedback from a single owner compresses timelines more than any technical decision.
+</Callout>
+
+### Waiting on you
+
+Every project has a list of things only the client can supply: content, logos, legal copy, product data, access to an existing system, a merchant account. Each one that arrives late moves the end date by at least the length of the delay, and often more, because the team has to switch to something else and switch back.
+
+Ask for that list on day one and treat it as your part of the critical path. It is the single most useful thing a client can do.
+
+### Third parties on their own schedule
+
+Payment gateways, banks, government APIs, enterprise IT departments and app-store reviewers do not care about your launch date. Provisioning that "takes a few days" routinely takes three weeks.
+
+Start every external dependency in week one, before you need it. It costs nothing to have credentials sitting unused; it costs weeks to be waiting on them at the end.
+
+### The last 10%
+
+Every project has a phase where the software works and is nonetheless not finished. Error states, empty states, slow-connection behaviour, permissions edge cases, data migration, accessibility, browser quirks, load testing.
+
+This is genuinely 15 - 20% of the project. It looks like fussing because the demo already worked, which is why it gets squeezed - and squeezing it is precisely how you launch something that falls over in week one. Concretely, this phase is where you get [Largest Contentful Paint](https://web.dev/articles/lcp) and [Interaction to Next Paint](https://web.dev/articles/inp) inside Google's thresholds, and where [page experience](https://developers.google.com/search/docs/appearance/page-experience) stops being a slide and starts being a measurement.
+
+## What actually makes a project longer
+
+Ranked by how much time they add in practice:
+
+1. **Unclear requirements.** Building the wrong thing and rebuilding it costs more than anything else. A week of discovery routinely saves a month of construction.
+2. **Too many decision-makers.** Every additional approver adds a round trip and a chance of contradictory feedback.
+3. **Scope added mid-build.** Not just the build time - it also invalidates work already done and re-opens settled decisions.
+4. **Integrations with poorly documented systems.** Unbounded until you have actually connected to it once.
+5. **Novel data modelling.** If your domain has a concept nobody has built before, expect to model it twice.
+6. **Design produced in parallel with build.** Sounds efficient; usually means the team builds against a moving target.
+
+## What does not make it much faster
+
+**Adding developers.** Past a small team, coordination cost eats the gain. Two strong engineers who know the codebase generally outrun five who are learning it, and adding people mid-project reliably makes things slower for the first fortnight.
+
+**Skipping tests.** Buys days, costs weeks. The time reappears as debugging, and it reappears at the worst moment. The [DORA](https://dora.dev/) research is consistent on this point: the teams that ship fastest are the ones with the strongest automated verification, not the ones who skip it.
+
+**Working weekends.** Produces a burst then a trough, and the trough is longer.
+
+**Choosing a "faster" framework.** Framework choice is a rounding error next to requirements clarity.
+
+## A realistic MVP schedule
+
+What a well-run 10-week build actually looks like:
+
+<RateTable
+  headers={['Weeks', 'What happens', 'What we need from you']}
+  rows={[
+    ['1 - 2', 'Discovery, data model, written scope, key screens', 'Daily availability, decisions'],
+    ['3 - 4', 'Foundations: auth, schema, deployment pipeline', 'Third-party accounts provisioned'],
+    ['5 - 7', 'Core feature build, deployed every two weeks', 'Feedback within 48 hours'],
+    ['8', 'Secondary flows, admin, edge cases', 'Real content and data'],
+    ['9', 'Hardening: performance, accessibility, security', 'User testing with real people'],
+    ['10', 'Migration, launch, monitoring, handover', 'Go/no-go decision'],
+  ]}
+/>
+
+Note that you appear in every row. A project is not something that happens to you while you wait.
+
+## How to actually compress the timeline
+
+In order of effect:
+
+**Cut scope, not quality.** The only reliable accelerator. Ship two roles instead of four, one integration instead of three, and add the rest once real users have told you which mattered.
+
+**Name one decision-maker** with the authority to approve and the availability to do it within 48 hours.
+
+**Have your content ready before the build starts.** Real copy, real product data, real images. Placeholder content hides layout problems that surface late.
+
+**Start third-party provisioning in week one.**
+
+**Accept a phased launch.** Soft-launch to a subset of users, then widen. It moves the *useful* date forward by weeks even when the full launch does not move.
+
+<Callout type="warning">
+Be suspicious of a timeline that has no buffer. Not because the team is slow, but because every real project meets one genuine surprise. A schedule with no slack does not remove that surprise; it just guarantees the surprise becomes a missed date.
+</Callout>
+
+## When someone quotes you half the time
+
+Sometimes they are right, usually because their scope is smaller than you think. Worth checking:
+
+- Does it include testing, deployment and post-launch support, or only "development"?
+- Does it assume you provide finished designs?
+- Does it include data migration from your current system?
+- What happens to the date if your feedback takes a week?
+- Is that engineering time or elapsed time?
+
+That last question resolves most of the difference on its own.
+
+## A project that slipped, week by week
+
+Composite, but every delay in it is one we have actually seen. A 10-week MVP that became 16, and not one week of it was engineering being slow.
+
+<RateTable
+  headers={['Week', 'Planned', 'What actually happened', 'Slip']}
+  rows={[
+    ['1-2', 'Discovery, data model, scope', 'Ran to plan', '0'],
+    ['3', 'Foundations, auth, pipeline', 'Ran to plan', '0'],
+    ['4', 'Payment integration', 'Merchant account not applied for yet. Applied week 4, approved week 7.', '+0 (worked around)'],
+    ['5-6', 'Core build', 'Ran to plan', '0'],
+    ['7', 'Review of core flows', 'Reviewer on leave. Feedback arrived week 9.', '+2'],
+    ['8', 'Secondary flows', 'Built against unreviewed assumptions', '0'],
+    ['9', 'Feedback lands', 'Two core assumptions wrong. Rework.', '+1.5'],
+    ['10', 'Hardening', 'Payment approved. Integration + retest.', '+1'],
+    ['11', 'Launch prep', 'Real content arrives; three layouts break', '+1'],
+    ['12', 'Launch', 'Legal review of terms not started', '+0.5'],
+    ['13-16', '-', 'Rework, retest, launch', '-'],
+  ]}
+/>
+
+**Total slip: six weeks. Engineering days added: about four.**
+
+The rest is waiting, plus the rework caused by building on unreviewed assumptions in week 8. That week is the expensive one and it looks productive at the time, which is why it happens.
+
+Read the pattern rather than the specifics. Every delay was a decision or a dependency owned by the client side, and every one of them was preventable with a week of foresight rather than a month of recovery.
+
+## The three delays that cause most of the damage
+
+**A single reviewer with no deputy.** Week 7 in the table above. One person going on leave should not stop a project, and it does unless someone else has authority to approve. Name a deputy in week one and give them real authority, not the appearance of it.
+
+**Building ahead of feedback.** When review is late, the team faces a choice: idle, or build the next thing against assumptions. Idling looks wasteful so everyone chooses the second, and if the assumptions turn out wrong you pay twice. The fix is to have a queue of genuinely independent work available - infrastructure, test coverage, admin screens - that cannot be invalidated by pending feedback.
+
+**Content arriving at the end.** Real copy is longer than placeholder copy, real product names wrap, real images are the wrong aspect ratio. Every one of those is a small fix, and thirty of them in launch week is a week.
+
+<Callout type="tip">
+Send your real content in week two, even if it is a rough draft in a document. It does not need to be final; it needs to be realistic in length and shape so the layouts get built against something true.
+</Callout>
+
+## What to do when you are already late
+
+**Do not add people.** Onboarding cost lands immediately, output arrives in a fortnight, and the fortnight is exactly what you do not have.
+
+**Re-cut the scope against the deadline, in writing.** List every remaining item, mark each as must-have-for-launch or can-follow, and get the decision-maker to sign it. Most projects discover 30% of the remaining list is not needed for day one.
+
+**Ship to a subset.** A soft launch to ten friendly customers is a real launch. It gets you feedback, proves the system under real use, and gives you a legitimate answer to "did we launch".
+
+**Cut the second-tier roles.** If the admin console is not ready, an operator with a database client can run the business for a month. Ugly, effective, and reversible.
+
+**Fix the flow, not the date.** If the reason you are late is a two-week review latency, moving the date by two weeks changes nothing. Fix the latency or the new date slips too.
+
+## Reading a timeline someone has sent you
+
+Three things to look for, all of which are usually missing.
+
+**Are your dependencies on it?** A plan with only the supplier's tasks is a plan that will blame you later. Content deadlines, review windows and third-party provisioning should be rows, with dates.
+
+**Is there a buffer, and is it named?** A schedule where every task abuts the next assumes nothing surprising happens across three months. Something always does. A named contingency line is a sign of experience, not of padding.
+
+**Is there a decision point before the expensive part?** A good plan has a moment after discovery where you can stop, having spent 10 - 15% and holding a specification, and either continue or not. A plan with no such gate is asking you to commit the whole budget on day one.
+
+## Objections, answered
+
+**"Can you do it faster if we pay more?"** Marginally, and mostly in the first phase, by running design and architecture in parallel rather than in sequence. Past that, money does not buy speed on a small team - it buys a bigger team, which buys coordination overhead. Scope is the lever, not budget.
+
+**"Our last agency said six weeks."** They may have been quoting engineering time, or a smaller scope, or optimistically. Ask what they assumed about your review turnaround and whether testing, deployment and migration were included. The gap usually lives in those two answers.
+
+**"We have a hard deadline for an event."** Then work backwards and cut. Fix the date, make scope the variable, and decide now which features are ceremonial. A hard date with a fixed scope is not a plan, it is a wish with a calendar entry.
+
+**"Can we skip discovery to save two weeks?"** You can, and it is usually the most expensive two weeks you will ever save. Building the wrong thing and rebuilding it costs more than anything else on the project.
+
+## Phased launch, done properly
+
+"Launch" is treated as a single event and it does not have to be. Splitting it is the most underused way to bring the useful date forward.
+
+**Internal launch (week N).** Your own team uses it for real work. Finds the obvious problems with zero reputational cost. Usually possible two to three weeks before you think.
+
+**Friendly launch (N+1).** Ten customers who know it is new and will tell you things. This is where you learn what real usage does to your assumptions, and it is worth more than another fortnight of internal testing.
+
+**Segment launch (N+2 or 3).** One region, one product line, one customer tier. Full production conditions, contained blast radius.
+
+**Full launch (N+4).** By this point it is an announcement rather than a risk.
+
+Each step is a real launch that delivers value, and the first one typically lands weeks before the date on the plan. Teams that insist on a single big-bang launch usually do so because a marketing date exists, and marketing dates are almost always more movable than they are presented as being.
+
+<Callout type="info">
+The other advantage: a phased launch turns "are we ready?" from an argument into an observation. You have data from the previous phase instead of opinions about the next one.
+</Callout>
+
+## How long specific things actually take
+
+Useful for sanity-checking any plan you are handed.
+
+<RateTable
+  headers={['Piece of work', 'Typical engineering time']}
+  rows={[
+    ['Authentication with roles (using a hosted provider)', '3 - 5 days'],
+    ['Authentication built from scratch', '10 - 15 days, and do not'],
+    ['Payment integration, hosted checkout', '3 - 5 days'],
+    ['Payment integration, custom flow with saved cards', '10 - 15 days'],
+    ['A CRUD screen with validation and permissions', '1 - 2 days'],
+    ['A non-trivial report with filters and export', '3 - 5 days'],
+    ['Admin panel for a mid-sized app', '10 - 20 days'],
+    ['CI/CD, environments, monitoring from scratch', '4 - 6 days'],
+    ['Data migration from a legacy system', '5 - 20 days, mostly cleaning'],
+    ['Accessibility pass on an existing app', '5 - 10 days'],
+  ]}
+/>
+
+Two things to notice. Authentication built in-house costs three times the hosted version and carries a permanent security liability - the [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) is a fair measure of what you would be taking on. And data migration has the widest range on the list, because the work is not moving the data, it is discovering that the old system permitted things the new one should not.
+
+## Why estimates are wrong in a predictable direction
+
+Software estimates are almost never too high. That asymmetry is worth understanding, because it tells you what to do about it.
+
+**Estimation happens at the point of least knowledge.** You are asked how long something will take before anyone has looked closely at it. Every unknown discovered later adds time; almost none removes it. The distribution is one-sided.
+
+**People estimate the work they can picture.** The core feature is vivid, so it gets estimated well. The error states, the empty states, the permissions edge cases, the migration of eleven years of messy data - those are not vivid, so they get a smaller number than they deserve.
+
+**Integration effort is unknowable until you have connected.** Documentation describes the happy path. It does not mention that the sandbox behaves differently from production, that rate limits are undocumented, or that credentials take three weeks.
+
+**Nobody estimates the co-ordination.** Two people building related things spend real time agreeing interfaces. That time is invisible in a task list and unavoidable in reality.
+
+What to do with this: treat any estimate as the optimistic end of a range, ask what would have to be true for it to hold, and prefer suppliers who quote a band with a stated contingency over ones who quote a single tidy number. A supplier who says "eight weeks, and here is what would push it to eleven" is being more accurate than one who says "eight weeks".
+
+## The questions to ask before you accept a date
+
+1. **Is that engineering time or elapsed time?** The single highest-value question in this article.
+2. **What review turnaround does this assume from us?**
+3. **Which items are on the critical path, and which could slip without moving the date?**
+4. **What is the earliest we could have something real in front of users?** Not launch - anything usable.
+5. **Which part of this are you least confident about?** The honest answer names an integration or a data migration.
+6. **What happens to the date if that part takes twice as long?**
+7. **Is there a decision point where we could stop?**
+
+## How we schedule
+
+We quote elapsed time, not engineering time, and we mark your dependencies on the plan so it is visible whose turn it is. We deploy to a staging environment every two weeks, so "on track" is something you verify by clicking rather than something you are told in a status call. And when something slips, you hear it that week, not at the end.
+
+## Related reading
+
+- [From Idea to MVP in 6 Weeks: The Week-by-Week Playbook](/blogs/from-idea-to-mvp-in-6-weeks) - the week-by-week version of a short build
+- [How to Scope an MVP](/blogs/how-to-scope-an-mvp) - the scoping discipline that produces a short timeline
+- [How Much Does It Cost to Build a Web Application?](/blogs/web-application-development-cost) - what the same scope costs
+- [Managing a Software Project as a Client](/blogs/managing-a-software-project-as-a-client) - the client-side decisions that set the pace
+
+## Sources and further reading
+
+- [DORA](https://dora.dev/) - why automated verification correlates with speed rather than trading against it
+- [Largest Contentful Paint](https://web.dev/articles/lcp) and [Interaction to Next Paint](https://web.dev/articles/inp) - the measurable targets of the hardening phase
+- [Google page experience documentation](https://developers.google.com/search/docs/appearance/page-experience) - what "ready to launch" means to a search engine
+
+If you want a timeline for your specific project, [tell us what you are building](/contactus). For the cost side of the same question, we wrote about [what a web application actually costs](/blogs/web-application-development-cost), and if you are still choosing a partner, [how to choose an agency](/blogs/how-to-choose-a-web-development-agency) covers what to ask.

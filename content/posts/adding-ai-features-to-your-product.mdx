@@ -1,0 +1,206 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+There is pressure on almost every product to add AI, and most of it is coming from the wrong direction: a board asking what the AI strategy is, a competitor's announcement, a sense that not doing it looks negligent. That pressure produces features nobody uses, which is expensive, and occasionally produces features that give confidently wrong answers to customers, which is worse.
+
+This is a guide to doing it deliberately. What is actually worth building, what it costs to run, and the failure modes that turn a demo into a liability.
+
+## Start from the problem, not the technology
+
+The question that filters most of the bad ideas: **what does a user of your product currently spend time on that they would rather not?**
+
+Good answers usually look like one of these:
+
+- Reading a lot to find one thing.
+- Writing something formulaic - a summary, a first draft, a description.
+- Categorising or tagging by hand.
+- Extracting structured information out of unstructured documents.
+- Answering a question whose answer exists somewhere in your data but is hard to find.
+
+Bad answers look like: "our competitors have a chatbot", "customers expect AI now", or "we should have a copilot". These are not problems, and features built from them are built without a way of telling whether they worked.
+
+<Callout type="info">
+A useful test before committing budget: could you deliver this feature manually, for ten customers, using a person? If yes, do that for two weeks. You will learn what the output actually needs to look like, which is the hardest part to get right, and you will find out whether anyone wants it before spending $40,000.
+</Callout>
+
+## The categories, and what each costs
+
+**Text generation and summarisation.** Drafting descriptions, summarising long documents or threads, rewriting for tone. The cheapest and most reliably useful category, because the output is a draft a human edits rather than an answer a system acts on.
+
+**Classification and extraction.** Routing support tickets, tagging content, pulling structured fields out of invoices or CVs. Genuinely valuable, measurable, and unglamorous. Frequently the highest return available and rarely what gets proposed.
+
+**Search and question answering over your own data.** The pattern usually called retrieval-augmented generation: find the relevant material, then have a model answer using it. More involved and covered in [RAG pipelines explained](/blogs/rag-pipelines-explained).
+
+**Conversational assistants.** The most requested and the hardest to do well, because an open text box invites every question and most of them are outside what you built for.
+
+**Agents that take actions.** Systems that do things rather than say things. The most powerful and by far the highest risk, because a wrong answer becomes a wrong action. [Designing AI agents that do not hallucinate](/blogs/designing-ai-agents-that-dont-hallucinate) covers the constraints that make this safe.
+
+<RateTable
+  headers={['Feature type', 'Build cost', 'Monthly running cost', 'Risk']}
+  rows={[
+    ['Summarisation or drafting', '$8,000 - $25,000', '$100 - $2,000', 'Low'],
+    ['Classification or extraction', '$12,000 - $35,000', '$150 - $2,500', 'Low to medium'],
+    ['Search over your own content', '$25,000 - $80,000', '$400 - $6,000', 'Medium'],
+    ['Conversational assistant', '$40,000 - $150,000', '$800 - $15,000', 'Medium to high'],
+    ['Agent taking actions', '$60,000 - $250,000+', '$1,000 - $20,000', 'High'],
+  ]}
+/>
+
+Running cost is the line people forget. Unlike most software features, these have a per-use cost that scales with usage, and a popular feature can cost more than it earns if the pricing was never modelled. Work out the cost per interaction and multiply by realistic volume before you build, not after.
+
+## The failure modes
+
+**Confident wrong answers.** The defining risk. A model will produce a fluent, plausible, incorrect answer with no signal that it is guessing. In a summarisation tool that is an annoyance. In a system telling a customer their policy covers something, it is a liability.
+
+The mitigations are structural rather than clever: ground answers in your actual data and cite the source, constrain the scope of what the feature will attempt, and put a human between the output and any consequential action.
+
+**The empty text box.** An open-ended assistant invites questions your product cannot answer, and every one of those is a small disappointment. Narrow, obviously-scoped features - "summarise this thread", "extract the fields from this invoice" - are used more and disappoint less.
+
+**No way to tell if it is working.** Traditional features either work or they do not. These produce output on a quality spectrum, so you need a way of measuring it: a set of representative inputs with known-good outputs, checked whenever anything changes. Without this, you cannot tell whether a model update improved or degraded your feature, and you will find out from customers.
+
+**Cost that scales past the value.** A feature used ten times a day is cheap. The same feature used ten thousand times a day, in a product where the customer pays a flat fee, is a margin problem.
+
+**Privacy handled by accident.** Sending customer data to a third-party model provider is a data transfer with all the obligations that implies - see [data privacy for web applications](/blogs/data-privacy-for-web-applications). Know where the data goes, what the provider's retention policy is, whether it is used for training, and whether your privacy policy covers it. This gets missed constantly, because the feature is added through an API key rather than through a procurement process.
+
+**Latency.** These calls take seconds, not milliseconds. A feature that makes a page load four seconds slower will be worked around by users regardless of how good the output is. Stream the response, do the work in the background, or make it explicitly on-demand.
+
+**Provider dependency.** Your feature now depends on an external service with its own uptime, rate limits and deprecation schedule. Decide what your product does when that service is unavailable, because it will be, and a page that hangs for thirty seconds is a worse failure than a feature that says it is temporarily unavailable.
+
+<Callout type="warn">
+Before any AI feature goes to customers, answer one question in writing: what is the worst thing this can output, and what happens then? If the answer involves a customer acting on incorrect information about money, health, safety or legal rights, the feature needs a human in the loop rather than better prompting.
+</Callout>
+
+## Build, buy, or use what you already have
+
+Three routes, and the first question is whether you need to build anything at all.
+
+**Your existing tools may already have it.** Your CRM, support desk, CMS and analytics platform have all shipped AI features in the last two years, usually included or cheaply added. Before commissioning anything, check what you are already paying for. This is unglamorous advice and it saves five figures more often than not.
+
+**A specialist product may exist.** For common tasks - transcription, document extraction, support deflection, content generation - mature products exist that do one thing well. A $200-a-month subscription beats a $40,000 build unless the task is specific to your business.
+
+**Build when it is specific to you.** The case for building is your data, your workflow, or your domain. A summarisation feature that understands your document types and produces output in your house format is not something you can buy, and that is exactly when building is right.
+
+A fourth non-option worth naming: training your own model. For almost every business this is unnecessary. Modern general models with your data supplied at the point of use handle the overwhelming majority of business tasks, at a fraction of the cost and with none of the ongoing training burden. If someone proposes training a model, ask what specifically fails without it.
+
+## Choosing a model, without becoming an expert
+
+You do not need to follow the field. Four questions cover the decision.
+
+**Is the task hard or routine?** Classification, extraction and simple summarisation work well on smaller, cheaper, faster models. Complex reasoning, nuanced writing and multi-step work need the larger ones. Most products end up using more than one - a cheap model for the high-volume routine work and a capable one where quality matters.
+
+**How fast does it need to be?** Latency and cost usually move together with capability. A feature a user waits for has a different requirement from one running overnight.
+
+**Where can the data go?** This can eliminate options entirely. Some organisations require processing within a specific jurisdiction or inside their own cloud tenancy, and that narrows the field before any quality comparison.
+
+**How locked in are you?** Design so the model is a component you can swap. Providers change pricing, deprecate versions and ship better models regularly; an architecture where changing model means rewriting the feature is one you will regret within a year.
+
+What not to optimise for: benchmark scores. They correlate loosely with performance on your actual task. Test the candidates on thirty of your own real inputs - a day of work, and far more informative than any leaderboard.
+
+## Governance, briefly
+
+Two things worth knowing at a policy level, without turning this into a compliance article.
+
+Regulation is arriving. The [EU AI Act](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai) takes a risk-based approach, with obligations scaling from minimal to strict depending on what the system does - the [full text](https://eur-lex.europa.eu/eli/reg/2024/1689/oj) is available if you need the detail. Most business software features sit at the low-risk end, where the main obligation is transparency: telling people they are interacting with an AI system. Features touching employment, credit, education or essential services attract more.
+
+Security has its own version. The [OWASP Top 10 for LLM applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/) covers the failure modes specific to these systems - prompt injection, data leakage through outputs, over-permissive tool access - and it is the right reference to hand your engineering team. For structuring the wider question, [NIST's AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework) is the most usable non-legal treatment available.
+
+The practical minimum for a small business: know what data leaves your systems, tell users when they are talking to a machine, keep a human decision point on anything consequential, and log what the system produced so you can investigate a complaint.
+
+## What good implementation looks like
+
+**Grounded in your data, with citations.** Answers derived from your actual content, with a link to the source. This single design choice removes most of the hallucination risk and it makes the output verifiable by the person reading it.
+
+**A narrow, obvious scope.** The user should be able to predict what the feature will and will not do. Predictability beats capability for adoption.
+
+**A visible confidence signal or an honest refusal.** A system that says "I could not find this in your documents" is far more valuable than one that invents an answer. Building the refusal path is more work than it sounds and it is what makes the feature trustworthy.
+
+**Human review where it matters.** Draft, not send. Suggest, not act. The output is a starting point a person approves.
+
+**Editable output.** Users will want to change what it produced. Let them, and where possible learn from the edit.
+
+**Instrumented.** How often is it used, how often is the output accepted unchanged, how often edited, how often abandoned? These four numbers tell you whether the feature works, and almost nobody collects them.
+
+**A test set.** Thirty to fifty representative inputs with expected outputs, run whenever the prompt, model or data changes. This is the closest thing to automated testing available for this category, and skipping it means every change is a guess.
+
+The technique end of this is worth understanding at a high level - [prompt engineering guidance](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview) from model providers is readable and explains why some implementations are far more reliable than others - but the decisions above are product decisions, not technical ones.
+
+## Pricing it, if you charge for it
+
+Because these features have a real marginal cost, the pricing question is different from ordinary software and it needs answering before launch rather than after the first invoice.
+
+**Included in the plan.** Simplest, and safe only when usage is naturally bounded - a feature used once per document, or per matter, or per ticket, where volume tracks something you already charge for.
+
+**Usage-based, visible to the customer.** Credits, or a metered allowance. Aligns cost with revenue precisely and adds friction, because customers ration what they are metered on and light usage means the feature never becomes a habit.
+
+**A higher tier.** Put the AI features in a plan above your current one. Common, straightforward to communicate, and it self-selects for customers who value it.
+
+**Fair-use allowance with an overage.** A generous included quantity with a charge beyond it. Usually the best balance: no friction for normal use, protection against the outlier account that runs it ten thousand times a month.
+
+Whichever you choose, instrument usage per customer from day one. The distribution is always more skewed than expected - a small number of accounts generate most of the cost - and you cannot design pricing around a distribution you have not seen.
+
+One caution on the "just include it" route: costs per unit have fallen steadily and may continue to, which is an argument for optimism. They also rise when you move to a more capable model to fix a quality complaint, which is the more common direction in practice.
+
+## A worked example
+
+A professional services firm wanted "AI in the portal". The initial proposal from another supplier was a conversational assistant that could answer any client question about their matters, quoted at $120,000.
+
+We spent two days on what clients and staff actually spent time on. Three things came up repeatedly, and none of them was a chatbot.
+
+**Staff spent roughly six hours a week each** summarising case updates into client-readable notes.
+
+**Clients could not find documents** in a portal with 400 files per matter and a search that matched filenames only.
+
+**New matters took two days to set up** because someone read the intake form and manually created a structure, assigned categories and populated fields.
+
+What was built, over fourteen weeks and $71,000:
+
+- **Update drafting.** Staff click a button, get a client-readable draft of the week's activity, edit it, and send. Never sent automatically. Adoption reached 84% of eligible updates within two months and saved an estimated four hours per person per week.
+- **Document search grounded in content**, returning the passage and a link to the source document, with an explicit "not found in your documents" response rather than a generated answer. Client portal sessions rose 40% and document-related support emails fell by roughly half.
+- **Intake extraction.** Fields pulled from the intake form and proposed, with a human confirming before anything is created. Setup time went from two days to about three hours.
+
+Running cost settled at $940 a month at their volume.
+
+Two things were deliberately not built. A client-facing chatbot, because the risk of a confident wrong answer about a legal matter was unacceptable and no amount of prompting removes it. And automatic sending of any generated text, for the same reason.
+
+Their own assessment eleven months later was that the value was almost entirely in the first and third items - the unglamorous ones - and that the $120,000 chatbot would have been used briefly and then distrusted.
+
+## How to decide whether to build one at all
+
+Four questions. If you cannot answer three of them, wait.
+
+**What specific task does this remove or shorten?** Named, measurable, currently done by someone.
+
+**How will we know it worked?** A number that should move: time saved, tickets deflected, completion rate, adoption.
+
+**What is the cost per use and the realistic volume?** Multiply them. Compare to the value.
+
+**What happens when it is wrong?** If the honest answer is serious, you need a human in the loop, and that changes both the design and the value calculation.
+
+Features that survive these four are usually smaller and more boring than the ones that get proposed in a board meeting. They are also the ones that get used.
+
+A fifth question, for the board rather than the product team: what is the cost of not doing this? Occasionally it is real - a competitor genuinely removing work your customers resent doing. Frequently the honest answer is that nothing happens, and naming that is what allows a smaller, better-targeted investment rather than a defensive one.
+
+## What we do differently
+
+We start from where time is spent rather than from what the technology can do, which reliably produces smaller, more useful features than the reverse.
+
+We build the refusal path before the answer path. A system that knows when it does not know is the difference between a tool people trust and a demo people stop using.
+
+And we insist on a test set and usage instrumentation before launch, because these features degrade silently - a model updates, your data shifts, and the output gets worse without anything breaking. Without measurement you find out when a customer complains.
+
+If you have pressure to add AI and no clear idea what it should do, [that is a two-day conversation](/contactus) rather than a $120,000 one.
+
+## Related reading
+
+- [RAG pipelines explained](/blogs/rag-pipelines-explained) - the architecture behind search over your own content
+- [Designing AI agents that do not hallucinate](/blogs/designing-ai-agents-that-dont-hallucinate) - the constraints that make action-taking safe
+- [Data privacy for web applications](/blogs/data-privacy-for-web-applications) - the obligations that follow customer data leaving your systems
+- [How to scope an MVP](/blogs/how-to-scope-an-mvp) - the sequencing discipline that applies here too
+
+## Sources and further reading
+
+- [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework) - the most usable non-legal structure for thinking about AI risk
+- [EU AI Act overview](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai) and [full text](https://eur-lex.europa.eu/eli/reg/2024/1689/oj) - the risk-based obligations, if you operate in or sell to the EU
+- [OWASP Top 10 for LLM applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/) - the security failure modes specific to these systems
+- [Prompt engineering guidance](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview) - why some implementations are far more reliable than others
+- [Nielsen Norman Group UX research cheat sheet](https://www.nngroup.com/articles/ux-research-cheat-sheet/) - methods for finding where users actually spend time
+- [Google SRE book](https://sre.google/sre-book/table-of-contents/) - on monitoring systems whose output quality is a spectrum rather than a binary

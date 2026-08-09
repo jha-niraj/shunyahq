@@ -1,0 +1,278 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Someone has told you your site fails Core Web Vitals, or an agency has offered to fix them, and you now need to decide whether this is a real commercial problem or a technical person being enthusiastic about a metric.
+
+It is real, but not for the reason it is usually sold. The common pitch is "Google will rank you higher". That is true and weak - page experience is one signal among many and it will not lift a page above a better answer. The genuine reason to care is simpler: these metrics measure whether your site feels broken to the person using it, and people leave sites that feel broken.
+
+This is a guide to what the three metrics actually measure, what they cost to fix, and how to tell whether yours is a real problem or a report with red squares in it.
+
+## The three metrics, in plain English
+
+Google's [Core Web Vitals](https://web.dev/articles/vitals) are three measurements of how a page feels to a real person.
+
+### Largest Contentful Paint (LCP) - "when did the page appear?"
+
+The time until the biggest visible element - usually a hero image or headline - finishes rendering. Not when the page starts loading, and not when it finishes entirely. When the main thing appears.
+
+**Target: 2.5 seconds or less.** Above 4 seconds is poor. [Google's LCP documentation](https://web.dev/articles/lcp) has the detail.
+
+This is the metric most people intuitively mean by "the site is slow".
+
+### Interaction to Next Paint (INP) - "does it respond when I touch it?"
+
+How long the page takes to visibly react when someone taps or clicks. Not the whole action completing - the moment the interface acknowledges the input.
+
+**Target: 200 milliseconds or less.** Above 500ms is poor. [INP replaced First Input Delay](https://web.dev/articles/inp) as the responsiveness metric, and it is stricter because it measures every interaction rather than only the first.
+
+This is the metric behind "I tapped it twice because nothing happened".
+
+### Cumulative Layout Shift (CLS) - "did the page move while I was reading it?"
+
+How much content jumps around as things load. An image without reserved space pushes the text down; a late banner shifts the button you were about to press.
+
+**Target: 0.1 or less.** Above 0.25 is poor. [The CLS documentation](https://web.dev/articles/cls) explains the scoring.
+
+This is the metric behind tapping the wrong thing because the page moved.
+
+<Callout type="info">
+Notice that all three describe an experience rather than a technical property. That is deliberate. You can evaluate your own site against them in thirty seconds on a phone, without any tooling, and your judgement will broadly match the measurement.
+</Callout>
+
+## Lab data versus field data, and why your report may be wrong
+
+This distinction causes more confused conversations than anything else in the topic.
+
+**Lab data** comes from a tool loading your page once, on a simulated device and connection. Reproducible, useful for diagnosis, and not a measurement of your users.
+
+**Field data** comes from real visits by real people on their real phones and networks. Google collects this through the [Chrome UX Report](https://developer.chrome.com/docs/crux), and it is what actually informs page experience.
+
+The two frequently disagree, and when they do the field data is the one that matters. A site can score poorly in a lab test because the tool simulates a slow phone on a throttled connection, while your actual audience is on desktop with fibre. It can also score well in the lab and badly in the field, because your real users are on older phones than your agency's test device.
+
+**What this means practically:** before spending money on a fix, ask which dataset the problem was found in. A red lab score with green field data is usually not urgent. Green lab and red field is a real problem being masked by optimistic testing.
+
+<Callout type="warning">
+Field data needs enough traffic to be reported at all. Low-traffic sites often have no field data, which means nobody can tell you how they perform for real users - only how they perform in a simulation.
+</Callout>
+
+## What actually causes each problem
+
+Useful because it tells you which are cheap fixes and which are structural.
+
+### Slow LCP
+
+<RateTable
+  headers={['Cause', 'Typical fix', 'Effort']}
+  rows={[
+    ['Oversized images', 'Compress, resize, modern formats', '0.5 - 2 days'],
+    ['No image lazy loading below the fold', 'Add loading attributes', '0.5 day'],
+    ['Slow server response', 'Caching, query tuning, better host', '2 - 10 days'],
+    ['Render-blocking CSS or fonts', 'Inline critical CSS, preload fonts', '1 - 3 days'],
+    ['Too many third-party scripts', 'Audit and remove', '1 day plus politics'],
+    ['No CDN', 'Put one in front', '0.5 - 2 days'],
+  ]}
+/>
+
+The first two account for most slow LCP on content sites and both are cheap. Server response is where cost climbs, because it can mean architecture.
+
+### Poor INP
+
+<RateTable
+  headers={['Cause', 'Typical fix', 'Effort']}
+  rows={[
+    ['Too much JavaScript on the main thread', 'Split bundles, defer work', '3 - 10 days'],
+    ['Heavy third-party tags', 'Remove or load differently', '1 - 2 days'],
+    ['Expensive work on every keystroke', 'Debounce, move off main thread', '1 - 3 days'],
+    ['Large lists rendered at once', 'Virtualise or paginate', '2 - 5 days'],
+  ]}
+/>
+
+INP is the hardest of the three to fix cheaply, because it usually reflects how much JavaScript the site ships. That is an architectural property rather than a setting.
+
+### Poor CLS
+
+<RateTable
+  headers={['Cause', 'Typical fix', 'Effort']}
+  rows={[
+    ['Images without width and height', 'Add dimensions', '0.5 day'],
+    ['Ads or embeds with no reserved space', 'Reserve the space', '0.5 - 1 day'],
+    ['Fonts swapping and reflowing text', 'Font-display settings, preload', '0.5 - 1 day'],
+    ['Banners injected above content', 'Reserve space or reposition', '0.5 day'],
+  ]}
+/>
+
+CLS is almost always the cheapest to fix and the most visible improvement to a real user. If you do only one thing, do this.
+
+## What it costs, and what it is worth
+
+A realistic performance engagement on a content site:
+
+<RateTable
+  headers={['Scope', 'Cost', 'Typical result']}
+  rows={[
+    ['Quick wins (images, CLS, lazy loading)', '$1,500 - $4,000', 'Most sites move from poor to needs-improvement or better'],
+    ['Add server-side caching and a CDN', '$3,000 - $8,000', 'Meaningful LCP improvement'],
+    ['JavaScript reduction for INP', '$6,000 - $20,000', 'Depends heavily on the codebase'],
+    ['Re-platform for performance', '$25,000+', 'Last resort, rarely the right first step'],
+  ]}
+/>
+
+The first row is the one almost everyone should do, and a supplier who proposes the last row before the first is not serving you well.
+
+**Is it worth it commercially?** Honestly, it depends on where your traffic comes from.
+
+- **Paid acquisition at scale:** yes, clearly. You are paying per visit and losing a share of them to a slow load.
+- **E-commerce:** yes. Every step of a checkout that feels sluggish loses people.
+- **Organic search as a main channel:** yes, though as a supporting signal rather than a lever.
+- **Mostly referral or direct traffic, low volume:** the quick wins are worth doing; a large project probably is not.
+
+<Callout type="tip">
+Before approving anything, ask for the field data segmented by device. Frequently the site is fine on desktop and poor on mobile, and mobile is a specific fixable set of problems rather than a general one.
+</Callout>
+
+## The honest limits of this metric set
+
+Worth saying, because these numbers get treated as more important than they are.
+
+**They are one ranking signal among many.** Google's own [page experience guidance](https://developers.google.com/search/docs/appearance/page-experience) is explicit that content relevance dominates. A fast page with a worse answer will not outrank a slower page with a better one.
+
+**Passing is not a competitive advantage.** The [HTTP Archive Web Almanac](https://almanac.httparchive.org/en/2024/) shows a substantial share of the web now passes. Meeting the thresholds removes a disadvantage rather than creating an edge.
+
+**They do not measure whether your site is good.** A fast page with unclear copy and no obvious next step converts badly. Performance is a floor, not a strategy.
+
+**They can be gamed in ways that hurt users.** Deferring content to improve a score while making the page worse to use is entirely possible and entirely counterproductive.
+
+## What to ask your team or supplier
+
+**1. "Are we failing in the field or only in the lab?"** Decides urgency more than anything else.
+
+**2. "Which metric, on which template, on which device?"** "The site is slow" is not actionable. "Product pages have poor LCP on mobile" is.
+
+**3. "What are the three cheapest improvements?"** Anyone competent can answer immediately, and it is usually images, dimensions and a script audit.
+
+**4. "How much of this is third-party scripts?"** Often a large share, and the fix is a business conversation about which tags earn their place rather than an engineering task.
+
+**5. "What will regress this in six months?"** The real answer: new images uploaded without compression, and a new marketing tag. Ask what will prevent that.
+
+## Keeping it fixed
+
+The most common outcome of a performance project is that the site is fast for a quarter and then slowly is not. Prevention is cheaper than repeating the work.
+
+**Automate image handling.** If the pipeline compresses and resizes on upload, nobody has to remember. This single change prevents most regression on content sites.
+
+**Set a performance budget and check it in CI.** A build that fails when the JavaScript bundle grows past an agreed size turns an invisible drift into a visible decision.
+
+**Require a review before adding a third-party tag.** Not a veto - a five-minute conversation about what it costs and what it is for. Most tag bloat happens because nobody was asked.
+
+**Watch field data monthly**, not once at the end of a project.
+
+<Callout type="info">
+The pattern is the same as maintenance generally: small regular attention is cheap, and catching up after two years of drift is a project. See [what maintenance costs](/blogs/web-application-maintenance-cost).
+</Callout>
+
+## Third-party scripts: the part nobody wants to discuss
+
+On most business sites, the single largest performance cost is not the platform, the images or the code. It is the collection of tags that marketing, sales and analytics have each added over three years, none of which anyone reviews.
+
+A typical accumulation: analytics, a tag manager, a consent banner, a chat widget, a heat-mapping tool, two advertising pixels, a review widget, and a personalisation script. Each was individually justified. Together they can add more to the page than everything your developers wrote.
+
+**Why they hurt disproportionately.** Every one is a request to a server you do not control, executing JavaScript on the main thread, frequently loading further scripts of its own. A tag manager in particular is a script whose job is to load other scripts, so its cost is unbounded and invisible in any audit that only looks at the container.
+
+**The audit that takes an hour.** List every third-party script. For each, name the person who owns it, what decision it informs, and when that decision was last made using it. In our experience roughly a third of the list fails that test, usually because the person who added it has left or the campaign it supported ended two years ago.
+
+**The politics.** This is the awkward part, because every tag belongs to someone and removing it feels like removing their capability. Two things help: measure the cost per tag so the conversation is about a number rather than a preference, and propose a review date rather than deletion. "Let us turn this off for a month and see if anyone misses it" is far easier to agree than "let us delete this".
+
+<Callout type="warning">
+The chat widget deserves specific attention. Chat tools are commonly among the heaviest third-party scripts on a page, and they are frequently loaded on every page including ones where nobody would ever start a conversation. Loading it only on interaction, or only on pages where support questions actually arise, is often the single largest INP improvement available.
+</Callout>
+
+## How this differs by site type
+
+The same three metrics, but the pressure points are not the same.
+
+**Content and marketing sites.** LCP dominated by images, CLS by ads and embeds. Usually fixable cheaply, and the ceiling is high because there is little application logic.
+
+**E-commerce.** Product listing pages are the hard case: many images, filtering interactions, and third-party review and recommendation widgets. INP matters more than on a content site because people interact constantly. The commercial case is also clearest here, because every friction point sits between a visitor and a purchase.
+
+**Web applications behind a login.** Core Web Vitals matter far less for search, because those pages are not indexed. They still matter enormously for how the product feels, and INP is the metric that governs whether daily users find the software pleasant or exhausting.
+
+**Documentation and support sites.** LCP and CLS matter; INP rarely does. Often the cheapest sites to get to green.
+
+**Single-page applications.** A specific challenge, because the initial load is heavy by design and subsequent navigations are not measured the way full page loads are. Google's guidance on [rendering on the web](https://web.dev/articles/rendering-on-the-web) is the clearest explanation of the trade-offs, and it is a genuine architectural decision rather than a tuning exercise - covered in [single-page app vs server-rendered](/blogs/single-page-app-vs-server-rendered).
+
+## Measuring it yourself, without a supplier
+
+You do not need anyone to tell you whether you have a problem.
+
+**The thirty-second test.** Open your site on your own phone, on mobile data rather than office wifi, from a cold start. Does the main content appear quickly? Does tapping do something immediately? Does anything jump? Your instinct here is a reasonable proxy for all three metrics.
+
+**The free tools.** Google's PageSpeed Insights reports both lab and field data for any public URL, and the field section is the one to read. Chrome's built-in developer tools will show you the same metrics live as you use the page.
+
+**The comparison that matters.** Run the same test on two competitors. Absolute numbers are less informative than whether you are noticeably worse than the alternatives a visitor could choose instead.
+
+**What to record.** Metric, device type, page template, and date. Four columns, monthly. That is a performance monitoring practice and it costs ten minutes.
+
+<Callout type="tip">
+Test the pages that matter commercially, not the homepage. For most businesses the homepage is the best-optimised page on the site and the least representative. Test a product page, a blog post, and whatever page precedes your main conversion.
+</Callout>
+
+## A worked example
+
+A retailer with roughly 60,000 monthly sessions, mostly mobile, meaningful paid spend.
+
+**Starting position (field data, mobile):** LCP 4.1s (poor), INP 340ms (needs improvement), CLS 0.31 (poor).
+
+**What they did, in order:**
+
+<RateTable
+  headers={['Change', 'Effort', 'Effect']}
+  rows={[
+    ['Added width/height to all images', '0.5 day', 'CLS 0.31 -> 0.09'],
+    ['Reserved space for the promo banner', '0.5 day', 'Held CLS at 0.08'],
+    ['Compressed and resized product imagery', '1.5 days', 'LCP 4.1s -> 3.0s'],
+    ['Removed four unused marketing tags', '0.5 day', 'LCP 3.0s -> 2.6s, INP 340 -> 260ms'],
+    ['Added a CDN and edge caching', '2 days', 'LCP 2.6s -> 1.9s'],
+    ['Deferred the chat widget until interaction', '0.5 day', 'INP 260 -> 180ms'],
+  ]}
+/>
+
+**Total: 5.5 days.** All three metrics moved from poor to good, and the two largest single improvements came from compressing images and deleting marketing tags nobody could account for.
+
+Note what is not in that table: no re-platform, no framework change, no rewrite. That is the normal shape of a first performance engagement, and any proposal that skips straight to rebuilding should be asked why.
+
+## Objections, answered
+
+**"Our agency says we need to rebuild on a modern framework to fix this."** Sometimes true, usually premature. Images, layout dimensions and third-party scripts account for most of the problem on most sites, and none of them require a platform change. Ask for the cheap fixes first and re-measure. If you are still failing after that, the rebuild conversation is a real one - see [website redesign vs rebuild](/blogs/website-redesign-vs-rebuild).
+
+**"We pass on desktop, so we are fine."** Check the mobile field data. Most sites now receive the majority of visits on mobile, and mobile is where the thresholds bite.
+
+**"We have no field data."** Then your traffic is below the reporting threshold, which itself tells you something: at that volume, a large performance project is unlikely to pay for itself. Do the quick wins and spend the rest on content or acquisition.
+
+**"Will this improve our rankings?"** Marginally, and only where competing pages are otherwise similar. Improve it because slow pages lose people, and treat any ranking movement as a bonus rather than the business case.
+
+**"Our developers say the score is misleading."** They may be right about the lab score specifically, which is a simulation. Ask them to show you the field data instead. If that is also poor, the disagreement resolves itself.
+
+**"How often should we check?"** Monthly for field data, and on every significant release. Anything less frequent and you find out about regressions from a report rather than from a build.
+
+## How we handle it
+
+Performance is part of the build rather than a phase at the end: image handling automated in the pipeline, dimensions on every image, a bundle-size budget checked in CI, and third-party scripts treated as a decision rather than a default.
+
+On existing sites, we start with field data segmented by device and template, propose the cheap fixes first, and re-measure before proposing anything expensive. Quite often the engagement ends after five days because the numbers are green and there is nothing worth doing.
+
+If you have a report full of red squares and want to know which parts of it matter, [send it over](/contactus).
+
+## Related reading
+
+- [Why Your Website Is Slow](/blogs/why-your-website-is-slow) - the diagnosis, cause by cause, in order of likelihood
+- [Single-Page App vs Server-Rendered](/blogs/single-page-app-vs-server-rendered) - how the rendering choice shows up in your scores
+- [SEO for Web Applications](/blogs/seo-for-web-applications) - where performance sits among the other signals
+- [Next.js 15 Server Components in Production: What Actually Changed](/blogs/nextjs-15-server-components-in-production) - the rendering model behind the bundle reductions
+
+## Sources and further reading
+
+- [Core Web Vitals](https://web.dev/articles/vitals) - the definitions and thresholds, from Google
+- [Largest Contentful Paint](https://web.dev/articles/lcp), [Interaction to Next Paint](https://web.dev/articles/inp) and [Cumulative Layout Shift](https://web.dev/articles/cls) - per-metric detail
+- [Chrome UX Report](https://developer.chrome.com/docs/crux) - where field data comes from and how to access it
+- [Google page experience documentation](https://developers.google.com/search/docs/appearance/page-experience) - how these signals are actually used in ranking
+- [HTTP Archive Web Almanac](https://almanac.httparchive.org/en/2024/) and [state of the web](https://httparchive.org/reports/state-of-the-web) - real-world baselines to compare yourself against
+- [MDN web performance documentation](https://developer.mozilla.org/en-US/docs/Web/Performance) - the technical reference behind the fixes

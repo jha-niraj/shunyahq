@@ -403,7 +403,7 @@ const FEATURES: Feature[] = [
     },
     {
         id: "mobile-ecology",
-        href: "/services/mobile-ecology",
+        href: "/services/web-engineering",
         label: "Mobile Ecology",
         eyebrow: "Mobile Ecology",
         bigStat: "1",
@@ -421,7 +421,7 @@ const FEATURES: Feature[] = [
     },
     {
         id: "ai-integration",
-        href: "/services/ai-integration",
+        href: "/services/web-engineering",
         label: "AI Integration",
         eyebrow: "AI Integration",
         bigStat: "Custom",
@@ -440,7 +440,7 @@ const FEATURES: Feature[] = [
     },
     {
         id: "cloud-architecture",
-        href: "/services/cloud-architecture",
+        href: "/services/web-engineering",
         label: "Cloud Architecture",
         eyebrow: "Cloud Architecture",
         bigStat: "0",
@@ -458,7 +458,7 @@ const FEATURES: Feature[] = [
     },
     {
         id: "uiux-systems",
-        href: "/services/ui-ux-systems",
+        href: "/services/web-engineering",
         label: "UI/UX Systems",
         eyebrow: "UI/UX Systems",
         bigStat: "Pixel",
@@ -476,7 +476,7 @@ const FEATURES: Feature[] = [
     },
     {
         id: "devops-security",
-        href: "/services/system-security",
+        href: "/services/web-engineering",
         label: "DevOps & Security",
         eyebrow: "DevOps & Security",
         bigStat: "24/7",

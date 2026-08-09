@@ -41,7 +41,7 @@ export default function PricingPage() {
                         <span className="so-serif italic">engineered for ROI.</span>
                     </>
                 }
-                description="Select your service domain and currency to view our standardized rate card - no hidden fees, no surprises."
+                description="What a custom web application costs, published up front. Pick your currency - no hidden fees, no sales call required."
             />
 
             <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
@@ -54,7 +54,9 @@ export default function PricingPage() {
                     >
                         {/* Controls: service tabs + currency switcher */}
                         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-                            <div className="overflow-x-auto pb-1 -mx-4 px-4 lg:mx-0 lg:px-0 scrollbar-hide">
+                            {/* The studio offers one service, so a one-item tab strip would be a
+                                dead control. It renders only if a second domain is ever added. */}
+                            <div className={`overflow-x-auto pb-1 -mx-4 px-4 lg:mx-0 lg:px-0 scrollbar-hide ${Object.keys(pricingData).length < 2 ? "hidden" : ""}`}>
                                 <TabsList className="inline-flex h-auto w-fit gap-1 rounded-full border border-so-line bg-so-surface p-1">
                                     {
                                         Object.entries(pricingData).map(([key, data]) => (

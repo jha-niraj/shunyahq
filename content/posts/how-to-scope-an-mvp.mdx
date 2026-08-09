@@ -1,0 +1,267 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Most MVPs are not minimum and are frequently not viable. They are a full product with a few features removed, built to a deadline, and launched to an audience that never arrives.
+
+The term has been diluted to mean "version one, but cheaper", which loses the only useful thing about it. An MVP is an instrument for answering a question. If you cannot say what question yours answers, you are not building an MVP - you are building a small product, which is a legitimate thing to do but needs a different plan.
+
+This is how to scope one so that it is genuinely minimum, genuinely viable, and tells you something.
+
+## Start with the question, not the features
+
+Before any feature list, write one sentence: **"We believe X, and if we are wrong about it, nothing else matters."**
+
+Examples:
+
+- "We believe independent cafés will order stock online rather than by phone."
+- "We believe clinics will pay for automated recall reminders."
+- "We believe our matching algorithm produces results people accept."
+
+Each of those is falsifiable, and each implies a completely different build. The café one needs a real ordering flow and real cafés; it does not need invoicing, because invoicing does not test the belief. The algorithm one needs the algorithm and a thin interface; it barely needs accounts.
+
+<Callout type="info">
+Test for whether you have a real question: can you describe the result that would make you stop? If no outcome would change your mind, you are not testing anything, and the MVP framing is doing no work. Build the product properly instead.
+</Callout>
+
+## The one-flow rule
+
+**An MVP does one flow, end to end, for real.**
+
+Not five flows at 60%. One flow at 100%, including the parts that are not fun: the error states, the empty state, the confirmation email, what happens when someone does it twice.
+
+The reason is that partial flows do not produce evidence. A user who cannot complete the journey tells you nothing about whether they would have valued completing it. Half a product answers no questions.
+
+Everything not on that flow is a candidate for cutting.
+
+## What to cut, in order
+
+Work down this list. Most teams can cut the first four without touching the question they are testing.
+
+**1. Roles.** Ship for one user type. Admin work can be done by a competent operator with database access for the first three months. This is the single biggest saving available and the one people resist most.
+
+**2. The admin panel.** Frequently 15 - 20% of an MVP build, used by three people who are sitting in your office and can be trained on a spreadsheet-and-SQL workflow.
+
+**3. Settings and configuration.** Every "the user can choose" is a screen, a data field and a set of test paths. Hard-code the sensible default. If someone asks to change it, that is a signal worth having.
+
+**4. Secondary integrations.** Connect the system of record. Export CSV for everything else until the volume justifies wiring.
+
+**5. Notifications beyond the essential.** One transactional email is usually enough. The preference centre is not an MVP feature.
+
+**6. Onboarding flows.** For the first fifty users you can onboard them personally, and you will learn more from doing so than from any wizard.
+
+**7. Analytics dashboards.** Query the database. You do not need a charting library to answer questions about fifty users.
+
+**8. Mobile apps.** A responsive web app tests the same belief at a fraction of the cost, with no store review. Covered in [mobile vs web vs PWA](/blogs/mobile-vs-web-vs-pwa).
+
+## What never gets cut
+
+These four look like candidates and are not. Together they are perhaps 15% of the build, and cutting them is what turns a fast MVP into an expensive rewrite.
+
+**Authentication done properly.** Use a hosted provider. Rolling your own to save three days takes ten and creates a permanent liability - the [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) and [NIST's digital identity guidelines](https://pages.nist.gov/800-63-3/sp800-63b.html) give a sense of what you would be taking on.
+
+**The data model.** Everything you build later sits on it. Getting it wrong is the single most expensive category of MVP mistake, because the fix touches everything.
+
+**Deployment automation.** If shipping is a ritual, you will ship less often, which defeats the purpose of an MVP.
+
+**Basic error monitoring.** You need to know when it breaks for a user who will not tell you.
+
+<Callout type="warning">
+The seductive cut is testing. It feels like a fortnight saved. On a genuinely small MVP that survives three months, you might get away with it. If the MVP succeeds and becomes the product - which is the outcome you are hoping for - you have started your real codebase with no safety net.
+</Callout>
+
+## A scoping session that works
+
+Ninety minutes, the decision-maker plus whoever will build it.
+
+**Minutes 0-10: write the belief.** One sentence, agreed by everyone in the room.
+
+**Minutes 10-25: write the flow.** One paragraph. Start to finish. The main path only.
+
+**Minutes 25-45: list every feature anyone can think of.** No filtering. Get it all on the wall.
+
+**Minutes 45-70: sort into three columns.**
+- *Tests the belief* - on the flow, required for it to work end to end.
+- *Needed to not be embarrassing* - legal, security, the confirmation email.
+- *Everything else.*
+
+**Minutes 70-85: delete column three.** Not "later". Delete it from this document. Keep it in a separate list so people feel heard.
+
+**Minutes 85-90: sanity check.** Read column one back. Can a real user complete the flow with only these? If not, something essential is in column three and needs bringing back. If yes, that is your scope.
+
+The output is one page. If it is longer, you have not finished.
+
+## A worked example
+
+A marketplace connecting local tradespeople with homeowners.
+
+**The belief:** homeowners will describe a job in a form and accept a quote from a tradesperson they have not spoken to.
+
+**The one flow:** homeowner posts a job → tradespeople see it → three quote → homeowner accepts one → both get contact details.
+
+<RateTable
+  headers={['Feature', 'Column', 'Reasoning']}
+  rows={[
+    ['Job posting form', 'Tests the belief', 'The core of it'],
+    ['Tradesperson job list', 'Tests the belief', 'Without it, no quotes'],
+    ['Quote submission', 'Tests the belief', 'The thing being tested'],
+    ['Accept and reveal contacts', 'Tests the belief', 'Completes the loop'],
+    ['Email notifications (2)', 'Tests the belief', 'Nobody refreshes a page'],
+    ['Login for both sides', 'Not embarrassing', 'Hosted provider, 3 days'],
+    ['Terms and privacy policy', 'Not embarrassing', 'Non-negotiable'],
+    ['In-app messaging', 'Everything else', 'They can phone each other'],
+    ['Payments and escrow', 'Everything else', 'Not what we are testing'],
+    ['Ratings and reviews', 'Everything else', 'Meaningless at 50 users'],
+    ['Tradesperson verification', 'Everything else', 'Do it manually at this volume'],
+    ['Admin dashboard', 'Everything else', 'Founder uses SQL'],
+    ['Mobile apps', 'Everything else', 'Responsive web tests the same thing'],
+    ['Search and filtering', 'Everything else', 'Twelve jobs fit on one screen'],
+  ]}
+/>
+
+**Result:** roughly 6 weeks and $22,000, rather than the 5 months and $90,000 the full list implies.
+
+And note the cuts that carry real work: tradesperson verification happens, but a human does it over the phone. Payments happen, off-platform, and if the belief holds you learn what the payment problem actually looks like before building for it.
+
+## Defining what success means, before you launch
+
+Write the number down before launch, because afterwards everyone rationalises.
+
+**Bad:** "see if people like it."
+**Good:** "40 jobs posted in 6 weeks, at least 60% receiving 2+ quotes, at least 25% accepting a quote."
+
+Then state the decision in advance:
+- **Above target:** invest in phase two.
+- **Around half:** the belief is partly right; find out which part.
+- **Well below:** stop, or change the belief.
+
+<Callout type="tip">
+Write the stop condition down and show it to someone who will hold you to it. The most common MVP failure is not building the wrong thing - it is building the wrong thing, getting a weak result, and continuing because the sunk cost is uncomfortable.
+</Callout>
+
+## How you will know your scope is wrong
+
+**It has more than one user type doing meaningfully different things.** Almost always a sign that two products are in the document.
+
+**You cannot describe the flow in one paragraph.** Then it is more than one flow.
+
+**The estimate is over three months.** Not automatically wrong, but worth a hard re-read. Long MVPs usually mean the question was never sharpened.
+
+**Nobody can say what would make you stop.** No question is being asked.
+
+**The feature list includes reporting.** At MVP volumes you can answer any question with a database query. Reporting is a scale feature.
+
+## Objections, answered
+
+**"Our market expects a polished product."** Polish and scope are different axes. A small product done well beats a large product done roughly, and the one-flow rule is precisely how you afford the polish. Cut breadth, not quality.
+
+**"We are in an enterprise market, they need SSO and audit logs."** Then those are in column two, not column three, because without them your buyer cannot buy. The scoping method is the same; the boundary moves. It does mean your MVP costs more, which is worth knowing early.
+
+**"Investors want to see a full product."** Investors want evidence. Forty real users doing the core thing is stronger evidence than a broad demo with none. If your specific investor genuinely wants breadth, you are building a fundraising asset rather than an MVP, and it should be planned as one.
+
+**"If we launch something limited, we damage the brand."** A real risk in some markets. The answer is a limited audience, not a limited quality bar: soft-launch to fifty invited users rather than announcing publicly. See the phased-launch approach in [how long does it take to build a web app](/blogs/how-long-does-it-take-to-build-a-web-app).
+
+**"We will need all those features eventually anyway."** Some of them. But you will build them better after the MVP, because you will know which ones users actually reached for and what shape they need to be. Building them first means building them blind.
+
+**"Can we not just build it properly the first time?"** You can, and sometimes that is right - when the problem is well understood and the risk is execution rather than demand. Be honest about which you are facing. MVP thinking is for demand risk. If you already know people want it, skip the MVP and scope a proper v1 using [what a web application costs](/blogs/web-application-development-cost).
+
+## What happens after the MVP
+
+Scoping the MVP well only pays off if you know what the next decision is.
+
+**If the belief held.** Do not immediately build the cut list. Go back to the users who completed the flow and find out what they tried to do next, what they asked for, and where they got stuck. The genuine phase-two list is usually shorter and different from the one you wrote at the start.
+
+The first things to build are almost always the operational ones you deferred: the admin panel, because your founder cannot keep running SQL; the second role, because the manual workaround does not scale past a hundred users; and reporting, because now there is enough data for a question to be worth asking.
+
+**If it half held.** The most common outcome and the most useful. Some users completed the flow and some did not. The interesting work is finding out what distinguishes them - segment, use case, price point, channel. That distinction is usually a better product decision than any feature.
+
+**If it did not hold.** Stop, and be quick about it. The value of an MVP is entirely in the option to stop cheaply, and that option is worthless if you do not exercise it. Before abandoning the domain entirely, check whether the belief was wrong or the execution was: forty users who never found the site tell you nothing about demand.
+
+<Callout type="info">
+Write down what you learned, including the negative result, and keep it. The most valuable asset from a failed MVP is a documented, specific reason why - it stops the same idea being re-proposed in eighteen months with the same assumptions.
+</Callout>
+
+## Turning an MVP into a product
+
+If it worked, you now own a codebase built deliberately thin. Things to address before it becomes the real product:
+
+**The admin gap.** Manual operations were fine at fifty users and will not survive five hundred.
+
+**The data model, revisited.** You now understand the domain properly. This is the cheapest moment you will ever have to fix a modelling mistake, and the most expensive one to skip.
+
+**Test coverage on the core flow.** If you cut this, add it now, before the codebase grows around the gap.
+
+**The roles you deferred.** Add them one at a time, with real users, rather than all at once.
+
+**Monitoring and error tracking**, if you only had the basics.
+
+Budget roughly 40 - 60% of the original MVP cost to get to a genuinely maintainable v1. That is not a failure of the MVP approach; it is the deferred cost you consciously chose, and you chose it with better information than you would have had up front.
+
+## How we scope MVPs
+
+Discovery starts with the belief sentence and does not proceed until it exists. The output is a one-page scope, a data model, and a fixed price for the build, with the cut list attached so you can see what was deliberately excluded rather than forgotten.
+
+We deploy to a live environment from week two and put it in front of real users before the last feature is finished, because an MVP that launches on the final day has removed the only advantage of being small.
+
+[Tell us what you believe and how you would know if you were wrong](/contactus), and we will tell you the smallest thing that would answer it.
+
+## Five MVPs and what each one cut
+
+Different beliefs produce genuinely different scopes. Worth seeing the range.
+
+<RateTable
+  headers={['Product', 'The belief', 'What was cut']}
+  rows={[
+    ['B2B ordering portal', 'Trade customers will self-serve', 'Invoicing, payments, reporting, mobile app'],
+    ['Recall reminders for clinics', 'Clinics will pay to automate this', 'Multi-clinic, templates, analytics, integrations'],
+    ['Matching marketplace', 'People accept algorithmic matches', 'Messaging, payments, reviews, search'],
+    ['Internal approvals tool', 'Staff will use it instead of email', 'Roles beyond two, audit UI, mobile, SSO'],
+    ['Subscription box', 'People will subscribe at this price', 'Account management, pausing, gifting, referrals'],
+  ]}
+/>
+
+Look at the last row. The belief is about price and demand, so the MVP needs a landing page, a checkout and a fulfilment spreadsheet. Account management, pausing and gifting are all real requirements of the eventual product and none of them test whether anyone will subscribe. They come after the answer, not before it.
+
+Look at the fourth row too. Cutting SSO would be wrong in an enterprise context, where nobody can adopt without it, and is entirely right in a fifty-person company. The method is constant; the boundary moves with your market.
+
+## The most common scoping mistakes
+
+**Building for the user you hope to have.** Scope for the fifty users you can actually reach in the next two months, not the five thousand in the projection.
+
+**Treating the MVP as a smaller version of the roadmap.** It is not a subset of the product. It is an instrument for answering one question, and it may look nothing like the eventual product.
+
+**Cutting depth instead of breadth.** Ten features at 60% is far worse than three at 100%, because incomplete features generate no evidence and plenty of support burden.
+
+**Including a feature because a competitor has it.** Their feature exists because of a decision made with information you do not have. Copying it imports their assumptions.
+
+**Not deciding who is not the user.** Scope is defined as much by exclusion as inclusion. "This is not for enterprise buyers in version one" is a scoping decision that saves months.
+
+## Getting fifty real users
+
+An MVP with no users answers nothing, and this is where more of them fail than at any technical step. Scoping the build is the easy half.
+
+**Recruit before you build.** Line up the first twenty during discovery. If you cannot find twenty people willing to try it when it is free and new, that is a finding about demand and it arrived before you spent the money.
+
+**Go narrow.** Fifty users in one segment tells you far more than fifty scattered across five, because you can see whether the pattern is consistent. Pick the segment where the pain is sharpest.
+
+**Onboard them personally.** For the first fifty, a phone call or a screen share. It is not scalable and it is not supposed to be - you are buying observation, and watching someone fail at step three is worth more than any analytics dashboard.
+
+**Make it easy to complain.** A visible route to tell you something is wrong, and a fast response the first few times. Most users who hit friction leave silently, and silence is the least useful data.
+
+**Watch what they do, not what they say.** People are consistently generous in interviews and honest in behaviour. Did they come back? Did they complete the flow? Did they tell a colleague? The [Nielsen Norman Group's research methods](https://www.nngroup.com/articles/ux-research-cheat-sheet/) are a practical guide to the difference.
+
+<Callout type="warning">
+The most common MVP epitaph is "we built it and nobody came". That is almost never a product failure discovered late - it is a distribution question nobody asked early. Decide how you will reach the first fifty users before you decide what to build for them.
+</Callout>
+
+## Related reading
+
+- [From Idea to MVP in 6 Weeks: The Week-by-Week Playbook](/blogs/from-idea-to-mvp-in-6-weeks) - what a scoped build looks like week by week
+- [How We Ship Production MVPs in 4-8 Weeks](/blogs/shipping-mvps-fast) - the philosophy behind cutting scope rather than quality
+- [How to Write a Web Development Brief](/blogs/how-to-write-a-web-development-brief) - turning the scope into a document suppliers can quote
+- [What Happens After Launch](/blogs/what-happens-after-launch) - the phase that decides whether the MVP was worth building
+
+## Sources and further reading
+
+- [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) and [NIST SP 800-63B](https://pages.nist.gov/800-63-3/sp800-63b.html) - why authentication is not the place to save three days
+- [Nielsen Norman Group UX research methods](https://www.nngroup.com/articles/ux-research-cheat-sheet/) - how to get real signal from a small number of users
+- [DORA](https://dora.dev/) - why deployment automation belongs in even the smallest build
+- [GOV.UK Service Manual](https://www.gov.uk/service-manual/technology) - a public, well-argued reference on building services in thin slices

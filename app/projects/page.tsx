@@ -175,7 +175,7 @@ export default function ProjectsPage() {
                             <Link href="/contactus" className="so-btn so-btn-primary">
                                 Start a project <ArrowRight size={13} />
                             </Link>
-                            <Link href="/services" className="so-btn so-btn-ghost">
+                            <Link href="/services/web-engineering" className="so-btn so-btn-ghost">
                                 View services <ArrowRight size={13} />
                             </Link>
                         </div>

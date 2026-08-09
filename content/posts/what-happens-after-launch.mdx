@@ -1,0 +1,227 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Launch is treated as the finish line and it is closer to the starting gun. The build is the part with a plan, a budget and an end date. What follows has none of those by default, which is why so many organisations end up with software that was excellent on the day it shipped and mediocre eighteen months later.
+
+This is what actually happens after a web application goes live, what it costs, and what you need in place before the day rather than after it.
+
+## The first 48 hours
+
+Whatever testing happened, real users behave differently. Expect the following and plan for it.
+
+**A cluster of small defects.** Not because the work was poor - because 400 people using something for real generates paths that five testers did not. The measure of a good launch is not zero issues; it is how fast the list is worked through and how honestly it is reported.
+
+**Something unexpected in the data.** Someone registers with an apostrophe in their name, uploads a 60MB photograph, or enters a phone number in a format nobody anticipated. Real data is stranger than test data, always.
+
+**Load behaving differently than expected.** Usually fine. Occasionally the thing that was quick with 50 records is slow with 50,000.
+
+**At least one integration surprise.** The other system behaves differently in production than in its sandbox, or a rate limit that was never hit in testing gets hit in the first hour.
+
+What you need available: the people who built it, for two days, contactable. Not "in the support queue" - actually available. This should be in the contract, and if it is not, arrange it informally before launch day.
+
+<Callout type="warn">
+Do not launch on a Friday, before a public holiday, or when your key people are unavailable. This is not superstition. The first two working days produce most of the issues and you want the people who can fix them at their desks.
+</Callout>
+
+## The first month
+
+This is the highest-value month in the life of the product and it is routinely wasted.
+
+**Watch what people actually do.** Not what you designed for. Where do they stop? Which feature nobody uses? Which page do they visit six times? The gap between designed behaviour and real behaviour is where your best improvements are, and it is only visible now, while the data is fresh and the team still has context.
+
+**Fix the friction, not the features.** The temptation after launch is to start on version two. Resist it for a month. The highest-return work available is almost always removing a step, clarifying a label, or fixing the point where 40% of people abandon a form. These are hours of work with disproportionate effect.
+
+**Talk to ten users.** Not a survey. Ten conversations, fifteen minutes each. You will learn more than from any analytics dashboard, because the dashboard shows you what happened and the conversation tells you why. The [Nielsen Norman Group's research methods guide](https://www.nngroup.com/articles/ux-research-cheat-sheet/) is a good practical reference for doing this without a research background.
+
+**Establish the baseline numbers.** Whatever matters - signups, orders, completion rate, time to first value. Write them down. Every future claim about improvement is measured against this.
+
+Budget for this month explicitly. Ten to fifteen percent of the build cost, held back deliberately, spent on what the first weeks reveal. Projects that spend their entire budget by launch day arrive at the most informative moment of the whole endeavour with no capacity to act on it.
+
+## What ongoing costs actually look like
+
+<RateTable
+  headers={['Category', 'Typical annual cost', 'What happens without it']}
+  rows={[
+    ['Hosting and infrastructure', '$2,400 - $30,000', 'Nothing runs'],
+    ['Third-party services', '$1,200 - $18,000', 'Email, monitoring, auth stop'],
+    ['Security patching', '5-8% of build cost', 'Known vulnerabilities accumulate'],
+    ['Dependency and platform upgrades', '5-8% of build cost', 'A forced large migration later'],
+    ['Bug fixes and small changes', '5-10% of build cost', 'Small problems become permanent'],
+    ['Feature development', 'Whatever you choose', 'The product stops improving'],
+  ]}
+/>
+
+The first five lines are not optional. Together they come to roughly **15-20% of the original build cost annually**, plus infrastructure. That number is consistent enough across projects to plan on, and [web application maintenance cost](/blogs/web-application-maintenance-cost) breaks down where it goes.
+
+The sixth line is a business decision. A product that stops changing loses to one that does not, but the amount is genuinely yours to set.
+
+The costly mistake is treating the first five as deferrable. They are not saved by postponement; they compound. A year of skipped dependency updates does not cost a year's worth of updates to catch up - it costs considerably more, because the versions have diverged, the upgrade paths have multiplied, and something in the middle now has a breaking change. [The cost of cutting corners](/blogs/cost-of-cutting-corners) has the arithmetic.
+
+## What needs to exist on day one
+
+Six things. If any are missing at launch, arrange them in the first fortnight.
+
+**Monitoring that alerts a person.** Uptime, error rate, and a check on your most important user journey. An alert that goes to an unread inbox is not monitoring. Someone should receive a message on their phone when the site is down.
+
+**Error tracking.** Application errors collected somewhere, grouped, with the ability to see how often each occurs. Most launches produce a handful of errors nobody knew about, affecting a small percentage of users silently.
+
+**Backups, verified.** Running, encrypted, and restored at least once so you know it works and how long it takes.
+
+**A documented deployment process.** How a change gets from a developer's machine to production, ideally automated. If deploying is a manual ritual only one person knows, you have a single point of failure and a reason nobody will want to make small fixes. [Martin Fowler on continuous integration](https://martinfowler.com/articles/continuousIntegration.html) explains why this matters more than it sounds.
+
+**An access list.** Who can reach production, hosting, the domain, the repository and the payment provider. Reviewed quarterly.
+
+**A support route your users can find.** Obvious, frequently missing on the first version, and the absence of it means your first sign of a problem is a complaint on social media rather than a message you can act on.
+
+## Who owns it now
+
+The question that decides whether the next two years go well, and the one nobody assigns.
+
+**A product owner.** Someone whose job includes deciding what happens to this software. Not necessarily full-time, and necessarily named. Without one, the product drifts: requests arrive from everywhere, nothing is prioritised, and whoever shouts loudest gets their feature. Six months of that and the roadmap is a list of the last twelve complaints.
+
+**Someone technical who is accountable.** Either in-house or at your supplier, but named. The person who receives the alert, decides whether a vulnerability needs patching this week, and knows how the deployment works.
+
+**Someone who owns the numbers.** Looks at the analytics monthly and can say whether things are getting better. This is frequently the same person as the product owner and it should be somebody's explicit job, because a dashboard nobody reads is an expense rather than an asset.
+
+The failure pattern is diffusion: everybody is a little bit responsible, so nothing gets decided and problems wait for somebody to notice. Three names against three roles, written down, prevents most of it.
+
+## Handover, if the team is changing
+
+If the people who built it are not the people who will run it - a different agency, a new in-house hire, an internal team taking over - the handover needs to be a piece of work with time allocated, not an email.
+
+What should transfer:
+
+**Running documentation.** How to deploy, how to roll back, how to restore a backup, where the environments are, what the scheduled jobs do, which third parties are involved and what each one is for.
+
+**Architecture notes.** A page or two explaining how the pieces fit and, more valuably, why certain decisions were made. The reasoning is what saves the next team from undoing something for a reason that was already considered.
+
+**Credentials, properly.** Through a password manager, with the previous team's access removed afterwards.
+
+**A live walkthrough.** Two or three hours with someone who built it and someone who will run it, recorded. Worth more than any document.
+
+**A supported period.** Two to four weeks where the original team is contactable for questions. Cheap, and it is the difference between a handover and an abandonment.
+
+Budget a few thousand pounds for this. It reliably saves a multiple of itself in the first month of the new team's tenure.
+
+## The support arrangement
+
+Distinct from the build contract and it needs to be agreed before launch, not after.
+
+**Severity levels with response times.** Two or three tiers is enough. Site down, something broken, something cosmetic - and a stated response time for each. Most businesses need business-hours cover; out-of-hours costs meaningfully more and is worth it only if a night-time outage genuinely costs money.
+
+**What is included versus billable.** Bug fixes in warranty, dependency updates, hosting management, monitoring - and where the line falls between a fix and a change.
+
+**A monthly allocation of hours.** The common structure and a good one. Agree what happens to unused hours and to overruns before you need to know.
+
+**Who to contact and how.** One route, monitored, with a fallback for urgent issues.
+
+**Notice periods, both ways.**
+
+Expect this to cost 15-20% of the build cost annually for an actively used system. Cheaper arrangements exist and usually mean either a slower response or a narrower scope, both of which are legitimate choices if made knowingly.
+
+<Callout type="info">
+Ask one question of any support proposal: "What happens at 9pm on a Saturday if the site is down?" The answer tells you what you are actually buying, and it is frequently different from what the document implies.
+</Callout>
+
+## Year one, month by month, roughly
+
+**Months 1-2.** Defect list, friction fixes, first behavioural learnings, baseline numbers established.
+
+**Month 3.** The first dependency updates that matter. Also the point at which the initial enthusiasm has faded and it becomes clear whether anyone owns the product internally.
+
+**Months 4-6.** The first real feature work informed by usage rather than assumption. Usually the best work of the year, because it is grounded.
+
+**Months 6-9.** A platform or framework version arrives that will eventually need adopting. Doing it here is a week. Doing it in year three is a project.
+
+**Months 9-12.** Accumulated small changes have started to make some part of the code awkward. This is normal. A modest amount of deliberate tidying now prevents the state where every change is expensive - the mechanism described in [what is technical debt](/blogs/what-is-technical-debt).
+
+**End of year one.** A review: what did we build, what got used, what did not, what should be removed. Removing unused features is real work with real value and almost nobody does it.
+
+## Measuring whether it worked
+
+Six months after launch someone will ask whether the project was worth it. Deciding in advance what would answer that question is considerably easier than reconstructing it afterwards.
+
+**Pick two or three business measures, not technical ones.** Orders processed, hours saved, support tickets avoided, applications completed, time from enquiry to quote. Uptime and page speed are inputs, not outcomes.
+
+**Get the before number.** This is the step that gets missed. If you cannot say what the completion rate was on the old system, you cannot demonstrate improvement on the new one. Capture it before you switch over, even roughly.
+
+**Give it long enough.** Adoption takes time and the first month is distorted by novelty and by the people who were waiting for it. Three months is a fairer read.
+
+**Count the things that stopped.** A spreadsheet nobody maintains any more, a weekly meeting that is no longer needed, a manual reconciliation that took two days a month. These rarely appear in a business case and are frequently where the value is.
+
+**Be willing to record a mixed result.** Some of what you built will not have been used. Recording that honestly is what makes the next round of decisions better, and a review that concludes everything worked perfectly is a review nobody will trust or learn from.
+
+## A worked example
+
+A professional services firm launched a client portal. The build was $94,000 and went well. What happened next is the useful part.
+
+**They budgeted nothing for after launch.** The project closed on the launch date and the team moved on.
+
+**Month 2.** A defect where document uploads over 10MB failed silently. Reported by three clients, unnoticed by the firm because there was no error tracking. Fixed as an emergency at rush rates.
+
+**Month 5.** A dependency vulnerability disclosed publicly. Nobody was watching. Discovered in month 8 during a client's security review, which the firm nearly failed.
+
+**Month 8.** Their remedial work: error tracking, monitoring, dependency scanning, and patching fourteen months of accumulated updates. $18,000, and two of the updates required code changes because the versions had diverged too far for a clean upgrade.
+
+**Month 11.** A usage review, prompted by the above. Two of the eleven features had never been used by any client. One - a messaging system that had cost roughly $12,000 to build - had been used four times in a year, all by internal staff testing it.
+
+**Month 14.** They put a proper arrangement in place: $1,450 a month covering monitoring, patching, small changes and a quarterly review.
+
+Their own reckoning was that the first year cost about $31,000 more than it needed to, and that the messaging feature would never have been built if anyone had asked clients about it during the build. Both of those are the same underlying mistake: no mechanism for finding out what was actually happening.
+
+The contrast case is worth stating. A well-run first year on a $94,000 build looks like roughly $16,000 to $19,000 of maintenance and support, spent deliberately, plus whatever is chosen for improvements. The money is similar. What differs is whether it buys progress or repairs.
+
+## Things that break on their own
+
+A live system degrades even when nobody touches it, which surprises people who expect software to be static. The recurring ones, so you can put them in a calendar:
+
+**Certificates expire.** TLS certificates renew automatically in most modern setups and occasionally do not. An expired certificate makes your site display a security warning, which is worse than being down.
+
+**Domains lapse.** Registered to someone who left, renewal notice going to an unmonitored inbox. This takes a site off the internet entirely and recovery can be slow.
+
+**API keys and tokens expire.** Integrations that have run for a year stop on a specific Tuesday. Calendar the expiry dates you know about.
+
+**Third parties change or deprecate things.** A payment provider retires an API version, an email service changes its authentication requirements, a mapping service alters its pricing. You will receive an email about it months in advance and it will be read by nobody.
+
+**Storage fills up.** Logs, uploads, backups, database growth. Rarely dramatic, occasionally the cause of a strange Sunday.
+
+**Email deliverability drifts.** Domain authentication records fall out of date, sending volume changes, and transactional emails start landing in spam. Nobody notices because the system reports them as sent.
+
+None of these are failures of the build. They are the weather, and the response is a quarterly half-hour checking the list rather than a crisis three times a year.
+
+## Deciding what to build next
+
+Once the product is live you have a permanent question: what now? Three inputs, in order of reliability.
+
+**What users do.** Behavioural data. Where they stop, what they never touch, what they do repeatedly. The most reliable input and the least susceptible to whoever spoke loudest in the meeting.
+
+**What users ask for, interpreted rather than implemented.** Requests are descriptions of problems dressed as solutions. Someone asking for an export button might need a report, or an integration, or for the page to show the number they were going to calculate. Ask what they will do with it.
+
+**What the business needs.** Sometimes the right work has no user demand behind it - a compliance requirement, a cost reduction, groundwork for something else.
+
+What should carry less weight than it usually does: competitor feature lists, and the opinion of the most senior person in the room. Both are common drivers of work nobody uses.
+
+## What we do differently
+
+We hold back 10-15% of the budget for the month after launch as standard, and we say why during the proposal rather than after. It is the highest-return money in the project and spending it before launch guarantees you cannot act on what you learn.
+
+We put monitoring, error tracking and a tested restore in place before launch day, because all three are cheap in advance and the alternative is finding out you needed them from a customer.
+
+And we run a usage review at six and twelve months, including the question of what should be removed. Software gets better by subtraction more often than teams expect.
+
+If you have a system live with no arrangement behind it, [that is a fixable position](/contactus) and it is cheaper to fix before something happens.
+
+## Related reading
+
+- [Web application maintenance cost](/blogs/web-application-maintenance-cost) - the running numbers in detail
+- [The cost of cutting corners](/blogs/cost-of-cutting-corners) - what deferred maintenance compounds into
+- [Web application security checklist](/blogs/web-application-security-checklist) - the controls that need an owner after launch
+- [Managing a software project as a client](/blogs/managing-a-software-project-as-a-client) - the phase before this one
+
+## Sources and further reading
+
+- [Google SRE book](https://sre.google/sre-book/table-of-contents/) - the reference on running software in production, readable in parts
+- [The Twelve-Factor App](https://12factor.net/) - the operational practices that make an application straightforward to run
+- [DORA research](https://dora.dev/) - the evidence on deployment practice and delivery performance
+- [Continuous integration](https://martinfowler.com/articles/continuousIntegration.html) - why a documented, automated deployment matters after launch
+- [Nielsen Norman Group UX research cheat sheet](https://www.nngroup.com/articles/ux-research-cheat-sheet/) - practical methods for the ten conversations
+- [endoflife.date](https://endoflife.date/nodejs) - the upgrade clock running quietly in the background of every live system

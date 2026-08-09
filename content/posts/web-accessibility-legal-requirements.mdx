@@ -1,0 +1,260 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Accessibility gets treated as either a moral obligation or a legal threat, and both framings make it harder to act on. The moral framing produces agreement and no budget. The legal framing produces panic, a compliance audit, and a report nobody reads.
+
+The practical framing is more useful: a meaningful share of your potential customers cannot use a site that ignores accessibility, most of the fixes are cheap if you do them during a build, and a small number of them are genuinely required by law depending on where you operate and what you do.
+
+This is a guide to what is actually required, what it costs, and what to do first.
+
+## What the law actually says
+
+This is jurisdiction-dependent and this article is not legal advice. But the general shape is consistent enough to be useful.
+
+**United States.** The Americans with Disabilities Act has been applied to websites through litigation rather than through a single explicit web statute for private businesses. The Department of Justice publishes [guidance on web accessibility](https://www.ada.gov/resources/web-guidance/) setting out its position that the ADA applies to the web, and pointing at WCAG as the practical standard. Public entities have more specific obligations. Web accessibility lawsuits against private companies are common and the pattern is well established.
+
+**European Union.** The European Accessibility Act extends obligations to a broad range of private-sector digital services, with member-state implementation. Public sector bodies have had obligations for longer.
+
+**United Kingdom.** The Equality Act requires reasonable adjustments, and public sector bodies have specific regulations. The [GOV.UK Service Manual](https://www.gov.uk/service-manual/technology) is a useful public reference for the standard expected of government services, and it is a reasonable bar for anyone.
+
+**Everywhere.** The practical standard almost every regime points at is WCAG - the Web Content Accessibility Guidelines - usually level AA.
+
+<Callout type="warning">
+The most common misunderstanding: an accessibility overlay widget - the ones that add a floating accessibility button - does not make a site compliant. They are widely criticised by disability advocacy groups and have featured in litigation against the sites that installed them. Do not buy one instead of doing the work.
+</Callout>
+
+## What WCAG level AA actually asks for
+
+Stripped of the formal language, most of AA comes down to a manageable list.
+
+**Text alternatives.** Every meaningful image needs a description. Decorative images need to be marked as decorative so screen readers skip them.
+
+**Colour contrast.** Text must contrast sufficiently with its background. This is the single most commonly failed requirement and the easiest to fix.
+
+**Keyboard operability.** Everything must work without a mouse. Every interactive element reachable by tab, in a sensible order, with a visible focus indicator.
+
+**Labels on form fields.** Every input needs a programmatically associated label. Placeholder text is not a label.
+
+**Meaningful structure.** Headings in order, lists marked as lists, landmarks for navigation and main content. This is what lets a screen reader user skim.
+
+**Error identification.** When a form fails, say which field and why, in text rather than only colour.
+
+**No colour-only meaning.** "Required fields are in red" fails. Add an asterisk or the word required.
+
+**Resizable text.** The page must remain usable when text is enlarged to 200%.
+
+**No unexpected changes.** Focusing a field should not submit a form or navigate away.
+
+**Video captions.** Pre-recorded video needs captions.
+
+[MDN's accessibility documentation](https://developer.mozilla.org/en-US/docs/Web/Accessibility) is the best practical technical reference for implementing these.
+
+## How common are failures?
+
+Very. WebAIM runs an annual automated analysis of a million homepages - [the WebAIM Million](https://webaim.org/projects/million/) - and the consistent finding across years is that the overwhelming majority of pages have detectable failures, concentrated in a handful of categories: low contrast text, missing image alternatives, empty links, missing form labels, and missing document language.
+
+Two things follow from that.
+
+**You almost certainly have failures.** Not because your team is careless, but because these are easy to introduce and invisible unless you test for them.
+
+**The failures are concentrated.** Five categories account for most detected issues, and all five are cheap to fix. That is unusually good news for a compliance topic.
+
+## What it costs
+
+<RateTable
+  headers={['Scope', 'Cost', 'What it covers']}
+  rows={[
+    ['Automated scan and triage', '$500 - $1,500', 'Finds the mechanical failures'],
+    ['Fix the common five', '$2,000 - $6,000', 'Contrast, alt text, labels, headings, focus'],
+    ['Manual audit against WCAG AA', '$4,000 - $12,000', 'Including keyboard and screen reader testing'],
+    ['Full remediation of an existing site', '$8,000 - $40,000', 'Depends on size and how custom the components are'],
+    ['Building it in from the start', '5 - 10% of build cost', 'Far cheaper than retrofitting'],
+  ]}
+/>
+
+The bottom row is the whole economic argument. Accessibility built into a component library during a build costs a fraction of retrofitting the same behaviour across 200 existing pages, because you fix a component once rather than a page many times.
+
+<Callout type="info">
+If you are commissioning a new build, put "WCAG 2.2 level AA" in the brief as a non-negotiable. It is a small percentage on the build price and it removes the entire retrofit conversation later. Suppliers who build accessibly by default will not blink; ones who add a large contingency are telling you something.
+</Callout>
+
+## Automated testing finds perhaps a third of it
+
+An important limitation that vendors of automated tools are not always keen to emphasise.
+
+**What automation catches:** missing alt attributes, insufficient contrast ratios, missing form labels, missing document language, duplicate IDs, empty links and buttons. Real failures, mechanically detectable, and worth fixing immediately.
+
+**What automation cannot catch:** whether the alt text is *useful* rather than merely present, whether the tab order makes sense, whether a custom component announces itself correctly, whether an error message is actually helpful, whether the page is navigable by someone who cannot see it.
+
+A site can pass every automated check and remain unusable with a screen reader. The reverse is rarer but possible.
+
+**The practical approach:** automate the mechanical checks in your build pipeline so they never regress, and do manual testing periodically on the key journeys. You do not need a specialist for the basic manual test - unplug your mouse and try to complete your main conversion flow using only the keyboard. Most people find a blocking problem within five minutes.
+
+## The five things to do first
+
+In order of value per pound spent.
+
+**1. Fix colour contrast.** Usually a design-token change applied globally. One of the most commonly failed criteria and one of the cheapest to fix, and it benefits everyone reading on a phone in sunlight.
+
+**2. Add real alt text to meaningful images.** Not "image1.jpg". Describe what the image conveys in context. Mark decorative images as decorative.
+
+**3. Make the keyboard path work.** Visible focus indicator, sensible tab order, no traps. Test by unplugging your mouse.
+
+**4. Label every form field properly.** Programmatically associated, not just visually adjacent.
+
+**5. Fix heading structure.** One h1, headings in order, no skipping levels for visual reasons.
+
+Those five, done well, move most sites from "clearly failing" to "broadly reasonable" and address the majority of what automated tools detect.
+
+## What good alt text actually looks like
+
+The most common accessibility task, done badly more often than any other, and it takes ten seconds per image to do well.
+
+**The rule:** describe what the image conveys *in this context*, not what it depicts.
+
+The same photograph of a person at a laptop needs different alt text depending on where it sits. On a team page it is the person's name and role. In a blog post about remote work it might be decorative and need no description at all. In a product tutorial it might need to describe what is on the screen.
+
+<RateTable
+  headers={['Situation', 'Bad', 'Good']}
+  rows={[
+    ['Team photo', '"image1.jpg"', '"Sarah Nolan, Operations Director"'],
+    ['Product photo', '"product"', '"Blue ceramic mug, 350ml, front view"'],
+    ['Chart', '"chart"', '"Revenue rose from 1.2m to 1.9m between 2023 and 2025"'],
+    ['Logo in the header', '"logo"', '"ShunyaHQ home"'],
+    ['Decorative background', '"abstract pattern"', 'Empty alt, marked decorative'],
+    ['Icon beside text', '"tick icon"', 'Empty alt - the text already says it'],
+  ]}
+/>
+
+Two patterns worth internalising. **Charts need their finding, not their type** - a screen reader user gains nothing from being told there is a bar chart. And **an icon next to a text label should have empty alt**, because otherwise the label is announced twice.
+
+## Testing it yourself in twenty minutes
+
+You do not need a specialist to find the significant problems.
+
+**The keyboard test (5 minutes).** Unplug your mouse. Complete your main conversion flow using only Tab, Shift-Tab, Enter and the arrow keys. Note every point where you cannot see where you are, cannot reach something, or get stuck. Most sites fail this within two minutes, usually at a custom dropdown or a modal.
+
+**The zoom test (3 minutes).** Set browser zoom to 200%. Does the layout hold, or does content overlap and disappear? Then try 400%.
+
+**The colour test (3 minutes).** Use a browser extension or your operating system's greyscale mode. Is any information conveyed only by colour? Required fields, status indicators and chart series are the usual offenders.
+
+**The screen reader test (10 minutes).** Every major operating system ships one - VoiceOver on macOS and iOS, Narrator on Windows, TalkBack on Android. Turn it on, close your eyes, and try to understand your homepage. It is disorienting the first time and it is the single most informative twenty minutes you will spend on this topic.
+
+<Callout type="info">
+You will be bad at using a screen reader, and that is fine - the point is not to simulate an experienced user, it is to hear what your page actually announces. Unlabelled buttons read as "button". Images with no alt read as the filename. Those problems are audible immediately even to a novice.
+</Callout>
+
+## Where accessibility and other goals overlap
+
+Worth knowing, because it changes how you fund the work.
+
+**Search.** Semantic headings, descriptive link text and image alt attributes are accessibility requirements that also help search engines understand a page. Google's [SEO starter guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide) recommends much of the same structure for entirely different reasons.
+
+**Performance.** Reserved image dimensions prevent layout shift, which is both an accessibility benefit and the [CLS metric](https://web.dev/articles/cls) directly.
+
+**Mobile usability.** Larger tap targets, sufficient contrast and text that reflows at zoom are accessibility criteria that make the site better for everyone on a phone.
+
+**Maintainability.** Semantic markup and a component library with accessibility built in is simply better-structured code, easier for the next developer to work with.
+
+**Procurement.** Increasingly a direct commercial gate in enterprise and public-sector sales.
+
+The practical implication: accessibility rarely needs its own budget line fighting other priorities. Framed correctly it is part of the performance work, part of the SEO work, part of the design system work, and part of qualifying for tenders you currently cannot bid on.
+
+## A worked example
+
+A professional services firm with a 60-page site, prompted by a client procurement questionnaire asking about accessibility.
+
+**Automated scan found:** 412 contrast failures across 8 unique colour pairs, 96 images with missing or unhelpful alt text, 14 unlabelled form fields, 31 pages with skipped heading levels, and no visible focus indicator anywhere.
+
+<RateTable
+  headers={['Fix', 'Effort', 'Notes']}
+  rows={[
+    ['Adjust 8 colour pairs in the design tokens', '0.5 day', 'Resolved all 412 instances'],
+    ['Add focus indicator to the component library', '0.5 day', 'One CSS change, site-wide'],
+    ['Write alt text for 96 images', '1.5 days', 'Mostly a content task, not engineering'],
+    ['Fix 14 form labels', '0.5 day', ''],
+    ['Correct heading structure on 31 pages', '1 day', 'Template fixes covered most'],
+    ['Manual keyboard and screen reader pass', '1.5 days', 'Found 6 issues automation missed'],
+    ['Fix those 6', '1 day', 'Modal focus trap was the significant one'],
+  ]}
+/>
+
+**Total: 6.5 days.** Note the leverage in the first two rows: two changes, taking a day between them, resolved over 400 detected failures, because both were properties of the design system rather than of individual pages.
+
+Note also the manual pass. It found a modal dialogue that trapped keyboard focus, which no automated tool flagged and which made a significant part of the site unusable without a mouse.
+
+## Answering a procurement accessibility questionnaire
+
+Increasingly the trigger for this whole conversation, and worth handling well because a bad answer loses the deal and an over-claimed one creates a liability.
+
+**What they usually ask.** Which standard you conform to and at what level, whether you have been audited and when, whether you have a published accessibility statement, whether you have a remediation plan for known gaps, and who is accountable internally.
+
+**How to answer honestly and well.** Claim only what you can evidence. "We conform to WCAG 2.2 AA with the exceptions listed in our accessibility statement, audited in March, with the remaining items scheduled for Q3" is a far stronger answer than an unqualified "yes", because it is verifiable and it demonstrates a process rather than a claim.
+
+**Publish an accessibility statement.** A short public page stating the standard you target, what is known not to conform, what you are doing about it, and how someone can report a problem. Many regimes expect one, and it converts an awkward question into a link.
+
+**Do not over-claim.** Stating full conformance you cannot evidence is worse than declaring partial conformance with a plan. It is checkable, and being caught overstating it damages the commercial relationship far more than an honest gap would have.
+
+<Callout type="tip">
+If you are repeatedly asked and repeatedly cannot answer well, the cheapest fix is usually the automated scan plus the common-five remediation plus a published statement. A few days of work converts a recurring commercial blocker into a link you paste into every questionnaire.
+</Callout>
+
+## Objections, answered
+
+**"Our users do not have disabilities."** You do not know that, and the population is larger than most people assume once you include temporary and situational impairment - a broken wrist, a bright screen outdoors, a noisy environment where video needs captions. Age-related vision change alone covers a substantial share of most B2B audiences.
+
+**"Can we just add an accessibility widget?"** No. Overlays are widely criticised by the disability community and have not prevented litigation. They also frequently interfere with the assistive technology a user has already configured. Do the work.
+
+**"Is this actually enforced?"** Web accessibility litigation against private businesses in the US is common and well established, and procurement questionnaires increasingly ask about it, which is a commercial pressure independent of the legal one. Whether you personally are likely to be sued is a question for your lawyer; whether you are likely to be asked about it by a customer is a question you can answer by looking at your recent tenders.
+
+**"We will do it after launch."** It is several times more expensive after launch, because you fix pages rather than components. This is the single most consequential decision in the whole topic and it is made by whoever writes the brief.
+
+**"How do we know when we are compliant?"** Strictly, "compliant" is not a binary state you achieve and keep - it is a standard you meet at a point in time and can regress from. A dated audit against WCAG AA plus automated checks in your pipeline is the practical answer, and it is what a procurement questionnaire is really asking for.
+
+**"Our site is a web app behind a login, does this apply?"** Yes, and often more so - if your product is used by employees of your customers, their own accessibility obligations flow through to the tools they require staff to use. This is increasingly a procurement blocker in enterprise sales.
+
+## Two places people forget entirely
+
+**PDFs and documents.** A downloadable PDF is part of your service, and an inaccessible one is an inaccessible service. Scanned documents with no text layer are the worst case - a screen reader encounters an image and can say nothing about it. If you publish forms, reports or price lists as PDFs, either tag them properly or, better, publish the content as a web page and offer the PDF as a secondary format.
+
+**Third-party components.** Your cookie banner, chat widget, booking calendar, video player and payment form are all code you did not write, running on your pages, and each one can fail independently of everything you fixed. Test them, because an inaccessible cookie banner blocks the entire site before a visitor reaches any of your careful work. Where a supplier cannot demonstrate conformance, that is a procurement conversation rather than an engineering one.
+
+## Keeping it from regressing
+
+Like performance, accessibility is easy to fix once and easy to lose.
+
+**Automated checks in the build pipeline.** A build that fails on contrast or missing labels turns a slow drift into an immediate, cheap correction.
+
+**Accessible components, not accessible pages.** Fix the button once. Every page that uses it inherits the fix, and every future page starts correct.
+
+**Alt text required at upload.** If the CMS makes it mandatory, the problem stops recurring.
+
+**A keyboard pass in the release checklist.** Five minutes per significant release.
+
+**An annual manual audit** if accessibility is commercially material to you.
+
+<Callout type="tip">
+The highest-leverage single action for any organisation with a design system: fix accessibility at the component level and add the automated checks. After that, most new work is accessible by default rather than by effort, which is the only version of this that survives contact with deadlines.
+</Callout>
+
+## How we handle it
+
+Accessibility is part of the component library rather than a phase: contrast checked at the token level, focus states designed rather than defaulted, semantic markup as the norm, and automated checks running in CI so a regression fails the build.
+
+On existing sites we start with an automated scan to find the mechanical failures, fix them at the component level where possible, then do a manual keyboard and screen reader pass on the journeys that matter commercially. The first two usually take a couple of days and resolve most of what a procurement questionnaire is asking about.
+
+If you have been sent an accessibility questionnaire by a customer and want help answering it honestly, [get in touch](/contactus).
+
+## Related reading
+
+- [Design Systems: The Business Case](/blogs/design-systems-for-business) - why component-level fixes are the efficient ones
+- [Testing Software Before Launch](/blogs/testing-software-before-launch) - building the keyboard check into your testing
+- [Data Privacy for Web Applications](/blogs/data-privacy-for-web-applications) - the other compliance area procurement asks about
+- [Core Web Vitals for Business Owners](/blogs/core-web-vitals-for-business-owners) - the adjacent quality bar, measured the same way
+
+## Sources and further reading
+
+- [ADA guidance on web accessibility](https://www.ada.gov/resources/web-guidance/) - the US Department of Justice's stated position
+- [WebAIM Million](https://webaim.org/projects/million/) - the annual survey of how common accessibility failures actually are
+- [MDN accessibility documentation](https://developer.mozilla.org/en-US/docs/Web/Accessibility) - the practical implementation reference
+- [GOV.UK Service Manual](https://www.gov.uk/service-manual/technology) - a public standard worth holding any service to
+- [Digital.gov](https://digital.gov/) - US federal guidance and practical resources

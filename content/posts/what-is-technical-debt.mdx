@@ -1,0 +1,250 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Your developers keep saying "technical debt" and you keep hearing "we would like to spend your money tidying up". That translation is understandable and mostly wrong, and the misunderstanding costs businesses more than the debt itself.
+
+The metaphor is precise, which is why it has survived. [Ward Cunningham coined it and Martin Fowler has written the clearest explanation](https://martinfowler.com/bliki/TechnicalDebt.html): you take a shortcut to ship sooner, and you pay interest on that shortcut every time you touch the code afterwards. Like financial debt, some of it is sensible leverage and some of it is ruinous. The skill is telling them apart.
+
+This is a guide for the person approving the budget rather than the person writing the code.
+
+## The metaphor, taken seriously
+
+Borrowing to buy a business asset is rational. Borrowing at 30% to cover payroll is not. The debt is not the problem; the interest rate and what you bought with it are.
+
+Technical debt works the same way:
+
+**Deliberate and prudent.** "We will hard-code the tax rate to make the trade-show deadline, and fix it in January." Written down, scheduled, and the shortcut bought something real.
+
+**Deliberate and reckless.** "We do not have time for tests." Bought speed today at an unbounded cost later.
+
+**Accidental and prudent.** "Now that we have built it, we understand the problem better and would model it differently." This is not really debt at all; it is learning, and it is unavoidable.
+
+**Accidental and reckless.** "What is a data model?" This is not debt, it is damage.
+
+The important distinction for you: **the first kind is a decision, and the others are not.** A team that names its shortcuts, writes them down and schedules them is managing debt. A team that never mentions it is accumulating it invisibly.
+
+## How it shows up on your side of the wall
+
+You will never see the code. You will see these.
+
+**Estimates stop being predictable.** The clearest symptom. A change that sounds small keeps turning into a week, and nobody can tell you in advance which ones will.
+
+**The same bug comes back.** Fixed in March, back in July. Usually means the fix was local rather than structural, and there is no test preventing the regression.
+
+**Fixing one thing breaks another.** Components are entangled, so a change here has consequences there that nobody predicted.
+
+**Onboarding a developer takes a month.** The system cannot be understood from the code; it has to be explained.
+
+**Nobody wants to touch a particular area.** There is one module everyone routes around. That is a debt concentration with a name.
+
+**Releases get less frequent and more frightening.** Deploying is a ritual with a runbook and a nervous atmosphere, so it happens monthly instead of daily - which the [DORA](https://dora.dev/) research consistently identifies as the signature of a struggling delivery system.
+
+<Callout type="info">
+A useful executive question: "If I asked for this change, how confident are you in the estimate, on a scale of one to five?" Consistent threes and twos on small changes is technical debt speaking, and it is a more honest signal than asking about the code directly.
+</Callout>
+
+## What it actually costs
+
+The interest is real and it compounds. A rough shape of what accumulating debt does to delivery capacity:
+
+<RateTable
+  headers={['Debt level', 'Symptom', 'Share of effort lost']}
+  rows={[
+    ['Low', 'Occasional surprise, estimates mostly hold', '5 - 10%'],
+    ['Moderate', 'Regular rework, some areas avoided', '15 - 25%'],
+    ['High', 'Most changes take 2-3x the naive estimate', '30 - 50%'],
+    ['Severe', 'Feature work has effectively stopped', '50%+'],
+  ]}
+/>
+
+Those are illustrative rather than measured, but the shape is what matters: it is not linear. Debt gets more expensive faster than it accumulates, because each shortcut interacts with the others.
+
+The commercial translation: at "high", you are paying two engineers to get the output of one. If your team costs $200,000 a year, that is $80,000 annually in interest, invisible on every invoice.
+
+## Not all of it is worth paying down
+
+This is the part engineers sometimes get wrong and the part that makes budget holders sceptical of the whole conversation.
+
+**Debt in code that never changes costs nothing.** An ugly module written five years ago, touched twice since, working correctly, is not costing you anything. Interest is only paid when you touch it. Refactoring it is spending money for aesthetics.
+
+**Debt in code you are about to delete is free.** If that feature is being replaced next quarter, leave it alone.
+
+**Debt in code that changes weekly is where all the cost is.** Same amount of mess, completely different interest rate.
+
+<Callout type="tip">
+Ask your team to overlay two things: which files change most often, and which are hardest to work in. The intersection is your entire remediation list. Everything outside it can usually wait indefinitely, and saying so out loud makes the remediation ask much easier to approve.
+</Callout>
+
+## How to fund it without a "cleanup project"
+
+Big-bang refactoring projects are hard to approve, hard to justify midway, and frequently abandoned. These approaches work better.
+
+**The percentage rule.** A standing allocation - commonly 15 - 20% of each cycle - for debt work, chosen by the team. No approval theatre per item. Simple, and it stops debt accumulating faster than it is paid.
+
+**Pay as you go.** Whenever you touch an area for a feature, leave it slightly better. Cheap because you are already there with the context loaded.
+
+**Debt as an explicit line in the estimate.** "This feature is five days, or eight days including fixing the module it sits in, which will make the next three features faster." Now it is a business decision with visible upside rather than a request for tidying.
+
+**Fix it when it blocks something.** Perfectly legitimate. The module nobody wants to touch gets fixed the quarter you need to change it.
+
+**Do not: schedule a quarter of pure refactoring.** It is unshippable, unverifiable from the outside, and the first thing cut when priorities move.
+
+## A worked example
+
+A five-year-old platform, four engineers, feature velocity roughly halved over eighteen months.
+
+The team mapped change frequency against difficulty and found three areas accounting for most of the pain:
+
+<RateTable
+  headers={['Area', 'Changes/quarter', 'Problem', 'Fix', 'Effort']}
+  rows={[
+    ['Pricing engine', '~20', 'No tests, 900-line function', 'Extract and test', '12 days'],
+    ['Order status', '~15', 'Logic duplicated in 5 places', 'Consolidate', '6 days'],
+    ['Reporting queries', '~8', 'Slow, no indexes', 'Index and cache', '3 days'],
+    ['Legacy import tool', '~0', 'Genuinely awful', 'Leave it alone', '0 days'],
+  ]}
+/>
+
+**21 days of work.** The fourth row is the important one: the worst code in the system was correctly left untouched, because nobody had modified it in a year.
+
+Six months later, estimates on pricing changes were holding, and the team's own assessment was that a typical pricing feature had gone from around eight days to around four. That is a real return on 21 days, and it was approvable because it was specific, time-boxed and tied to a business outcome.
+
+## Preventing it in the first place
+
+Most debt is not a coding problem, it is a process problem.
+
+**Automated tests on the paths that matter.** Not 100% coverage. The critical flows, so a change that breaks them fails immediately rather than in production.
+
+**Code review by someone who will maintain it.** A second pair of eyes catches the shortcut before it is permanent.
+
+**Deployment that is boring.** If shipping is easy, changes are small. Small changes create less debt than big ones.
+
+**Dependency currency.** Being current is cheap; catching up is a project. See [what maintenance actually costs](/blogs/web-application-maintenance-cost).
+
+**A written record of deliberate shortcuts.** A file in the repository listing what was hard-coded, what was skipped, and why. Debt you can see is debt you can manage.
+
+**Realistic deadlines.** The single biggest cause. Sustained pressure to ship faster than is possible produces debt reliably, and the debt then makes everything slower, which produces more pressure.
+
+## Debt you took deliberately versus debt that happened to you
+
+The distinction matters more than the metaphor usually allows. Deliberate debt - a shortcut taken knowingly, recorded, with a rough idea of what repaying it costs - is a legitimate financing decision and frequently the right one under a deadline. Accidental debt is the code nobody chose, produced by a team that did not know a better shape existed or had no time to find one.
+
+They need different responses. Deliberate debt needs a date and an owner, and it gets repaid. Accidental debt needs someone to notice it, which is what code review and a periodic look at where changes are slow are actually for. A team that records the first and never looks for the second will still end up where this article started, just more tidily.
+
+## Objections, answered
+
+**"How do I know they are not just gold-plating?"** Ask for the change-frequency overlay. A team asking to fix code that changes twenty times a quarter has a case. A team asking to rewrite something nobody touches is doing aesthetics. The question is entirely reasonable to ask and a good team will welcome it.
+
+**"Can we just do a rewrite instead?"** Almost always the more expensive option. A rewrite discards years of accumulated small fixes, most undocumented, and rediscovers those problems in production. Incremental replacement using [the strangler pattern](https://martinfowler.com/bliki/StranglerFigApplication.html) is usually cheaper and always less risky. Rewrites are justified when the platform is unsupported or the architecture genuinely cannot support the direction, not when the code is untidy.
+
+**"Our developers created this debt, why should we pay to fix it?"** Some of it, fairly. Much of it was created by decisions about deadlines and scope that were not theirs. And the accidental-prudent category - "we understand the problem better now" - is unavoidable on any project that learns anything.
+
+**"We are replacing this system in two years anyway."** Then pay down only what blocks the next two years of work, and let the rest go. That is a legitimate and well-reasoned strategy. Say it out loud so the team can plan against it rather than quietly fighting the debt on your behalf.
+
+**"Can we measure it?"** Partially. Useful proxies: estimate accuracy over time, change failure rate, time from commit to production, and how long a new developer takes to make a first meaningful change. None is perfect; the trend in all four is informative.
+
+**"Is some debt healthy?"** Yes. A team with zero technical debt has probably over-engineered and shipped too slowly. The goal is to borrow deliberately, at a rate you can service, for something worth having.
+
+## Talking about it with your team
+
+The conversation goes badly in predictable ways. These reframings help.
+
+**Instead of "how much technical debt do we have?"** ask **"which parts of the system slow us down most?"** The first invites an unbounded list; the second produces a prioritised one.
+
+**Instead of "can you clean this up?"** ask **"what would make the next three features faster?"** Ties the work to outcomes you can verify.
+
+**Instead of "why did this happen?"** ask **"what would have to change for it not to happen again?"** The first is an autopsy and gets defensive answers; the second is a process question.
+
+**Instead of "can we afford this?"** ask **"what does not doing it cost per quarter?"** Puts both options on the same footing.
+
+And when the team says a change will take longer than you expected, the most useful follow-up is **"what would it take to make this kind of change fast?"** Sometimes the answer is a week of work that pays back within two months.
+
+## A quarterly review that takes an hour
+
+Debt is manageable when it is looked at regularly and unmanageable when it is looked at in a crisis. Once a quarter:
+
+**1. Estimate accuracy.** Of the last ten estimates, how many were within 25%? A declining trend is the earliest reliable signal.
+
+**2. The avoided-area list.** Ask which parts of the system people dislike touching. Compare with last quarter. New entries matter more than old ones.
+
+**3. Change frequency overlay.** Which files changed most? Intersect with the avoided list. That intersection is the remediation backlog.
+
+**4. Dependency and platform currency.** How far behind, and what is the next end-of-life date.
+
+**5. Pick one thing.** Not five. One item, time-boxed, with a stated expected benefit. Do it next quarter and check whether the benefit appeared.
+
+That last discipline - checking whether the predicted improvement actually happened - is what turns debt work from an article of faith into something you can fund confidently.
+
+## How we handle it
+
+Deliberate shortcuts are written down at the moment they are taken, with what was skipped and what it would cost to fix. That list is visible to you, so debt is a decision you are part of rather than something discovered later.
+
+On existing codebases we start with the change-frequency overlay rather than an opinion about code quality, because where the cost is and where the mess is are not the same place.
+
+If your estimates have stopped being predictable and you want a read on why, [tell us about the system](/contactus).
+
+## Where debt actually comes from
+
+Understanding the sources helps you prevent the next round rather than only paying for the last one.
+
+**Deadline pressure, sustained.** The largest single source by a distance. Occasional pressure is survivable and sometimes necessary. Continuous pressure produces debt reliably, and the debt then makes everything slower, which produces more pressure. This loop is the main reason teams get slower over time, and it is a management decision rather than an engineering one.
+
+**Requirements that changed after the design.** A data model built for one set of assumptions, then bent to fit another. Rarely anyone's fault and largely unavoidable, but it is why revisiting the model after the first real usage is money well spent.
+
+**Turnover.** Every departure takes context. The next person makes a locally reasonable decision that a person with the full picture would not have made.
+
+**Success.** A system built for 500 users now has 50,000. Nothing was done wrong; the assumptions simply expired. This is the most pleasant source of debt and it still costs money.
+
+**Copy-paste under time pressure.** Duplicating a function is faster today and means the next fix has to be applied in five places, four of which someone will miss.
+
+**Dependencies left to age.** Cheap to stay current, expensive to catch up. Covered in [what maintenance costs](/blogs/web-application-maintenance-cost).
+
+**Nobody owning the whole picture.** Several people making individually sensible decisions with no shared model produces a system that is coherent nowhere.
+
+<Callout type="info">
+Notice how few of these are about developer skill. Debt is mostly a by-product of how work is organised, funded and deadlined - which is why it is a leadership topic rather than an engineering one.
+</Callout>
+
+## A short script for the funding conversation
+
+If you are an engineer trying to get debt work approved, this framing works better than any technical explanation:
+
+*"Changes to the pricing module currently take about eight days. Most of that is working around a function that has no tests and does five things. Twelve days of work would bring a typical change down to roughly four days. We make around six pricing changes a quarter, so it pays back within two quarters and keeps paying after that."*
+
+Four elements: the current cost, the specific cause, the expected improvement, and the payback period. No mention of code quality, elegance or best practice - none of which are things a budget holder can evaluate.
+
+And then, crucially: come back a quarter later and report whether the predicted improvement actually appeared. Doing that once makes the next request far easier to approve, and being honest when it did not appear makes it easier still.
+
+## Debt in a system you are about to buy
+
+If you are acquiring a business, taking over an application, or inheriting a codebase from a previous supplier, technical debt is a due-diligence item with real financial consequences. A day of investigation tells you most of what you need.
+
+**What runtime and framework versions, and are they supported?** The first question, because anything past end of life is a mandatory project rather than a choice.
+
+**How long does it take to get running locally?** If a competent developer cannot clone the repository and have it running within an hour, the handover is incomplete and the documentation deficit is itself a cost.
+
+**Can it be deployed right now?** Ask for a deploy of an unchanged version. Surprisingly often this fails, and a system you cannot deploy cannot be patched, which makes every future problem an emergency.
+
+**What does the test suite cover?** Not the percentage. Ask whether the critical business flows are covered, and watch someone run the suite.
+
+**How many dependencies, and how many advisories?** A single command answers this, and the number of unresolved critical advisories tells you how the previous team operated.
+
+**What is the change history?** A repository with a steady commit history and reviewed pull requests is a different asset from one with sporadic bulk commits from a single account.
+
+**Who understands it, and are they staying?** The most important question and the least technical. Documentation is a poor substitute for the person who made the decisions.
+
+Price the answers into the deal. A system needing a runtime upgrade, deployment automation and a test baseline before anyone can safely change it is carrying maybe 20-40 days of work before it delivers any new value, and that is a number you can negotiate with.
+
+## Related reading
+
+- [The Real Cost of Cutting Corners in Software](/blogs/cost-of-cutting-corners) - the arithmetic behind the metaphor
+- [Signs You Have Outgrown Your Current System](/blogs/signs-you-have-outgrown-your-current-system) - when debt is really a ceiling
+- [CI/CD That Actually Ships: A Pipeline on Every Project](/blogs/ci-cd-that-actually-ships) - the safety net that makes paying it down affordable
+- [Testing Software Before Launch](/blogs/testing-software-before-launch) - the practice that stops it accumulating
+
+## Sources and further reading
+
+- [Martin Fowler on technical debt](https://martinfowler.com/bliki/TechnicalDebt.html) - the canonical explanation, including the four quadrants
+- [Martin Fowler on the strangler fig pattern](https://martinfowler.com/bliki/StranglerFigApplication.html) - why incremental replacement usually beats a rewrite
+- [DORA](https://dora.dev/) - the research linking deployment frequency and change failure rate to delivery performance
+- [Google SRE Book](https://sre.google/sre-book/table-of-contents/) - on toil, and the discipline of measuring operational drag
+- [Semantic Versioning](https://semver.org/) - the convention that keeps dependency debt from becoming a surprise

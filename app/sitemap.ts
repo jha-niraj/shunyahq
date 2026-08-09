@@ -1,72 +1,119 @@
 import type { MetadataRoute } from "next"
 import { SITE_URL } from "@/lib/site"
-import { BLOG_POSTS, BLOG_CATEGORY_KEYS } from "@/content/blog"
+import { BLOG_CATEGORY_KEYS, getPublishedPosts } from "@/content/blog"
 import { USE_CASE_SLUGS } from "@/content/use-cases"
+import { SERVICE_SLUGS } from "@/content/services"
+import { PROJECTS } from "@/content/projects"
+import { STARTUP_IDS } from "@/content/accelerator-startups"
 import { PRODUCT_TOOLS } from "./tools/tools-meta"
 
-const PROJECT_SLUGS = ["coderzai", "eventeye", "mp-solutions"]
+/**
+ * Stable "last meaningfully updated" date for the static marketing pages.
+ *
+ * It is a FIXED date, not `new Date()`, on purpose. If every URL reported lastmod = build time,
+ * each deploy would tell crawlers "every page on this site changed just now" - Google treats that
+ * as an unreliable signal and then ignores lastmod for the whole domain, which also throws away
+ * the accurate per-post blog dates below. Bump this only on a real content revamp of the static
+ * pages. Date-only (no time) is valid W3C.
+ */
+const STATIC_LAST_MODIFIED = "2026-08-09"
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const now = new Date()
+    // path -> [priority, changeFrequency]
+    const routes: Record<string, [number, MetadataRoute.Sitemap[number]["changeFrequency"]]> = {
+        "": [1.0, "weekly"],
+        pricing: [0.9, "weekly"],
+        projects: [0.9, "monthly"],
+        solutions: [0.8, "monthly"],
+        blogs: [0.8, "weekly"],
+        tools: [0.7, "monthly"],
+        aboutus: [0.7, "monthly"],
+        contactus: [0.7, "monthly"],
+        accelerator: [0.6, "monthly"],
+        "accelerator/pricing": [0.5, "monthly"],
+        "accelerator/startups": [0.5, "weekly"],
+        privacy: [0.2, "yearly"],
+        terms: [0.2, "yearly"],
+    }
 
-    const staticRoutes: MetadataRoute.Sitemap = [
-        { url: SITE_URL, lastModified: now, changeFrequency: "weekly", priority: 1.0 },
-        { url: `${SITE_URL}/services`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-        { url: `${SITE_URL}/projects`, lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-        { url: `${SITE_URL}/pricing`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-        { url: `${SITE_URL}/solutions`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-        { url: `${SITE_URL}/tools`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-        { url: `${SITE_URL}/blogs`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
-        { url: `${SITE_URL}/aboutus`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-        { url: `${SITE_URL}/contactus`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-        { url: `${SITE_URL}/accelerator`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-        { url: `${SITE_URL}/accelerator/pricing`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
-        { url: `${SITE_URL}/accelerator/startups`, lastModified: now, changeFrequency: "weekly", priority: 0.5 },
-        { url: `${SITE_URL}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
-        { url: `${SITE_URL}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.2 },
-    ]
+    // Published posts only - drafts stay noindex and unlisted until their slug enters the ledger.
+    const posts = getPublishedPosts()
 
-    const projectRoutes: MetadataRoute.Sitemap = PROJECT_SLUGS.map((slug) => ({
-        url: `${SITE_URL}/projects/${slug}`,
-        lastModified: now,
+    // /blogs is the one "static" route whose content genuinely changes on a schedule: a new card
+    // appears every time a post is published. Reporting the frozen date there would claim the
+    // listing never changes while we add to it, so it reports the newest post's date instead.
+    const newestPostModified =
+        posts.map((p) => p.dateModified ?? p.datePublished).sort().at(-1) ?? STATIC_LAST_MODIFIED
+
+    const staticEntries: MetadataRoute.Sitemap = Object.entries(routes).map(([path, [priority, changeFrequency]]) => ({
+        url: path ? `${SITE_URL}/${path}` : SITE_URL,
+        lastModified: path === "blogs" ? newestPostModified : STATIC_LAST_MODIFIED,
+        changeFrequency,
+        priority,
+    }))
+
+    // Every list below is DERIVED from its content module rather than retyped here. The previous
+    // version hardcoded three project slugs, two of which no longer matched content/projects.ts -
+    // so the sitemap advertised /projects/coderzai (a 404, reported against the whole domain) while
+    // four real case studies were missing from it entirely.
+    const serviceEntries: MetadataRoute.Sitemap = SERVICE_SLUGS.map((slug) => ({
+        url: `${SITE_URL}/services/${slug}`,
+        lastModified: STATIC_LAST_MODIFIED,
+        changeFrequency: "monthly",
+        priority: 0.95,
+    }))
+
+    const projectEntries: MetadataRoute.Sitemap = PROJECTS.map((p) => ({
+        url: `${SITE_URL}/projects/${p.slug}`,
+        lastModified: STATIC_LAST_MODIFIED,
         changeFrequency: "monthly",
         priority: 0.7,
     }))
 
-    const solutionRoutes: MetadataRoute.Sitemap = USE_CASE_SLUGS.map((slug) => ({
+    const solutionEntries: MetadataRoute.Sitemap = USE_CASE_SLUGS.map((slug) => ({
         url: `${SITE_URL}/solutions/${slug}`,
-        lastModified: now,
+        lastModified: STATIC_LAST_MODIFIED,
         changeFrequency: "monthly",
         priority: 0.7,
     }))
 
-    const toolRoutes: MetadataRoute.Sitemap = PRODUCT_TOOLS.filter((t) => !t.href).map((t) => ({
+    const toolEntries: MetadataRoute.Sitemap = PRODUCT_TOOLS.filter((t) => !t.href).map((t) => ({
         url: `${SITE_URL}/tools/${t.slug}`,
-        lastModified: now,
+        lastModified: STATIC_LAST_MODIFIED,
         changeFrequency: "monthly",
         priority: 0.6,
     }))
 
-    const blogPostRoutes: MetadataRoute.Sitemap = Object.entries(BLOG_POSTS).map(([slug, meta]) => ({
-        url: `${SITE_URL}/blogs/${slug}`,
-        lastModified: new Date(meta.dateModified ?? meta.datePublished),
+    const blogPostEntries: MetadataRoute.Sitemap = posts.map((p) => ({
+        url: `${SITE_URL}/blogs/${p.slug}`,
+        lastModified: p.dateModified ?? p.datePublished,
         changeFrequency: "monthly",
         priority: 0.7,
     }))
 
-    const blogTopicRoutes: MetadataRoute.Sitemap = BLOG_CATEGORY_KEYS.map((key) => ({
+    // Indexable and internally linked, so they belong here - they were missing entirely.
+    const startupEntries: MetadataRoute.Sitemap = STARTUP_IDS.map((id) => ({
+        url: `${SITE_URL}/accelerator/startups/${id}`,
+        lastModified: STATIC_LAST_MODIFIED,
+        changeFrequency: "monthly",
+        priority: 0.4,
+    }))
+
+    const blogTopicEntries: MetadataRoute.Sitemap = BLOG_CATEGORY_KEYS.map((key) => ({
         url: `${SITE_URL}/blogs/topics/${key}`,
-        lastModified: now,
+        lastModified: newestPostModified,
         changeFrequency: "weekly",
         priority: 0.6,
     }))
 
     return [
-        ...staticRoutes,
-        ...projectRoutes,
-        ...solutionRoutes,
-        ...toolRoutes,
-        ...blogPostRoutes,
-        ...blogTopicRoutes,
+        ...staticEntries,
+        ...serviceEntries,
+        ...projectEntries,
+        ...solutionEntries,
+        ...toolEntries,
+        ...startupEntries,
+        ...blogPostEntries,
+        ...blogTopicEntries,
     ]
 }

@@ -1,0 +1,214 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+SEO advice is written overwhelmingly for content sites. Publish more, build links, target keywords. Almost none of it addresses the situation most software businesses are actually in: you have an application, most of it is behind a login and correctly invisible to search engines, and the public part is a handful of pages nobody has thought about since launch.
+
+This is the version for that situation. What matters when your product is an application rather than an article, what the technical requirements actually are, and where the effort pays back.
+
+## The first decision: which pages should be found at all
+
+Before any optimisation, decide what should be indexed. Getting this wrong in either direction is the most common structural mistake.
+
+**Should be indexed:** your homepage, what the product does, pricing, integrations, use cases by industry or role, comparison pages, documentation, blog, and any public directory or profile pages your product generates.
+
+**Should not be indexed:** anything behind a login, search results pages, filtered variations of the same list, staging environments, and every URL that produces the same content with a different parameter attached.
+
+The second list matters more than people expect. A search engine allocates finite attention to your site. Spending it on 40,000 filter combinations of the same twelve products means the pages you care about get crawled less often. Google's [robots.txt documentation](https://developers.google.com/search/docs/crawling-indexing/robots/intro) covers blocking crawl; note that blocking crawl and preventing indexing are different operations, and confusing them is a classic error - a page blocked in robots.txt can still appear in results, it just appears with no useful information.
+
+<Callout type="warn">
+The most damaging technical SEO defect we find on application sites is a `noindex` tag left over from a staging environment, applied site-wide. It is invisible in the browser, it removes you from search entirely, and it can sit there for months. Check yours today: view source on your homepage and search for "noindex".
+</Callout>
+
+## The technical foundation
+
+These are the things that either work or do not. They are not a strategy; they are the floor beneath one.
+
+**Pages render as HTML.** If your marketing pages are client-rendered, you are relying on a second rendering pass that is neither instant nor guaranteed, and other crawlers - social previews, AI assistants, non-Google search - handle it considerably worse. Google's [JavaScript SEO documentation](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics) explains the requirements; [single-page app vs server-rendered](/blogs/single-page-app-vs-server-rendered) covers the decision itself. For public pages the answer is straightforward: send HTML.
+
+**Every page has exactly one h1.** Not zero, not four. This is the most common defect on application marketing sites, because headings are frequently styled `<div>` elements chosen for their appearance.
+
+**Every page has a unique title and description.** Titles roughly 50-60 characters, descriptions 120-160. Google's [guidance on title links](https://developers.google.com/search/docs/appearance/title-link) explains when it will rewrite yours, which it does when the title is unhelpful or duplicated across pages.
+
+**Canonical tags are self-referencing and correct.** Every page should declare its own preferred URL. The failure mode that quietly destroys application sites is a template where every page in a section canonicalises to the section index, which tells search engines that 200 pages are duplicates of one. Google's [guidance on consolidating duplicate URLs](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls) is the reference.
+
+**A sitemap that reflects reality.** Generated from your actual content rather than maintained by hand, excluding anything you have marked noindex, and submitted in [Search Console](https://search.google.com/search-console/about). The [build-a-sitemap guide](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap) covers the format.
+
+**Structured data where it applies.** [Schema.org](https://schema.org/) markup describing your organisation, your products, your FAQs and your articles. Google's [structured data introduction](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data) explains what it can produce in results. This matters more than it used to, because AI-generated answers lean heavily on machine-readable structure.
+
+**Performance within the thresholds.** [Core Web Vitals](/blogs/core-web-vitals-for-business-owners) are one signal among many and they are also the one that affects whether a visitor stays. Google's [page experience documentation](https://developers.google.com/search/docs/appearance/page-experience) sets out how it is used.
+
+**Internal links that connect things.** A page reachable only from the sitemap is a page you have told search engines you do not care about. Every important page should be linked from somewhere prominent.
+
+<RateTable
+  headers={['Check', 'How to verify', 'Frequency']}
+  rows={[
+    ['No stray noindex', 'View source, search "noindex"', 'Every deploy'],
+    ['One h1 per page', 'Browser inspector or a crawler', 'Monthly'],
+    ['Unique titles and descriptions', 'Crawl the site', 'Monthly'],
+    ['Correct canonicals', 'View source on ten pages', 'Monthly'],
+    ['Sitemap matches indexable pages', 'Compare crawl to sitemap', 'Monthly'],
+    ['No broken internal links', 'Crawl the site', 'Monthly'],
+    ['Structured data valid', 'Rich results test', 'On change'],
+  ]}
+/>
+
+None of this is expensive. A competent developer can audit all of it in a day, and most of the fixes are hours rather than days. It is skipped not because it is hard but because nobody owns it.
+
+## What actually drives traffic to a software product
+
+With the foundation in place, the question is what to publish. Application sites have a specific answer and it is not "blog more".
+
+**Pages for the problem, not the product.** Your customers search for their problem before they know your category exists. A page addressing "how to manage shift scheduling across multiple sites" reaches someone earlier than a page about your scheduling product. This is where most of the available traffic sits and where most application sites publish nothing.
+
+**Comparison pages.** People at the decision stage search for "X vs Y" and "alternatives to X". These pages convert at rates content marketers find implausible, because the reader is choosing right now. They have to be honest to work - a comparison that says you win on everything is transparently useless and readers discount the whole page.
+
+**Integration pages.** One page per system you connect to. Someone searching for "[their tool] + [your category]" is a qualified buyer with a specific requirement. These are cheap to produce from a template and they accumulate.
+
+**Use case pages by role or industry.** The same product described for the person who will use it. A finance director and an operations manager are searching for different words for the same capability.
+
+**Documentation, public.** Frequently the largest untapped source of qualified traffic for a software product. People search for how to do the thing, find your docs, and discover the product. Keeping documentation behind a login costs you this entirely.
+
+**Pricing, actually on the page.** "Contact us for pricing" removes you from every comparison a buyer makes. Even a starting figure or a structure is enough to stay in consideration.
+
+<Callout type="info">
+The ranking of value for most software businesses: fix the technical foundation, then publish comparison and integration pages, then problem-led content, then everything else. Most teams do this in reverse and start with a blog.
+</Callout>
+
+## Public application pages, if you have them
+
+Some products generate pages that should be public - profiles, listings, directories, shared documents. This is a large opportunity and a large risk, and the difference is entirely in the execution.
+
+**Only index pages with substance.** An empty profile, a listing with no description, a page created by a signup that was never completed - these are thin content, they are generated in volume, and at scale they damage how the whole site is assessed. Set a threshold and only index above it.
+
+**Handle deletion properly.** When a user removes a listing, the URL should return 410 or 404, not a soft error page that returns a success code. Search engines treat those differently.
+
+**Prevent duplicate paths to the same content.** If a profile is reachable at three URLs, canonicalise to one.
+
+**Consider whether users expect it.** A user who created a profile inside your product may not expect it to appear in search results under their name. This is a privacy question as much as an SEO one, and the answer is usually to make indexing a visible setting.
+
+## URL structure, and why it is worth ten minutes now
+
+URLs are one of the few decisions that are genuinely painful to change later, because every change means a redirect, and redirects accumulate into a maintenance problem of their own.
+
+**Keep them short and readable.** `/integrations/xero` beats `/pages/integrations?id=1129`. Readable URLs get clicked more in results and shared more accurately.
+
+**Use a stable hierarchy.** One level of category, then the item. Deep nesting adds nothing and makes reorganisation harder.
+
+**Do not put the date in article URLs.** It ages the content visibly and prevents you from updating and republishing without either a redirect or a lie.
+
+**Pick one form and enforce it.** Trailing slash or not, lowercase always, hyphens rather than underscores. Inconsistency creates duplicate URLs that then need canonical tags to clean up.
+
+**Avoid parameters for anything indexable.** Filters and sorts belong in query strings precisely because those should not be indexed. Content should have a clean path.
+
+**When you must change one, redirect permanently.** A 301 from the old URL to the new one, kept indefinitely. The traffic and the accumulated value transfer; without it, both are lost.
+
+This takes ten minutes to decide and is one of those decisions where the only wrong answer is not making it.
+
+## A worked example
+
+A field service management product had 14 public pages, ranked for almost nothing, and got 92% of its trial signups from paid search. Their previous agency had proposed a content programme at $9,000 a month.
+
+The audit came first and found three things worth fixing before publishing anything:
+
+- **All 14 pages canonicalised to the homepage.** A template error from launch. Effectively the entire site was declaring itself a duplicate of one page. Two hours to fix.
+- **The marketing site was client-rendered** on the same application framework as the product, with an average first content time of 5.4 seconds. Nine of the 14 pages were not indexed at all.
+- **No structured data, no sitemap, and the h1 on every page was the navigation logo.**
+
+Foundation work took three weeks and $14,000. Before publishing a single new page, indexed pages went from 5 to 14 and organic sessions roughly tripled off a very small base - which sounds impressive and was still not much traffic. The foundation makes publishing worth doing; it does not substitute for it.
+
+The publishing programme that followed was deliberately unglamorous:
+
+- **11 integration pages**, one for each system they connected to, written from a template with genuinely specific content about what each integration does. $6,000 total.
+- **6 comparison pages** against named competitors, written honestly, including the two cases where the competitor is a better fit. $7,000.
+- **9 problem-led articles** on scheduling, dispatch and invoicing problems their customers described in sales calls. Sourced from actual call recordings rather than keyword tools. $12,000.
+- **Documentation moved out from behind the login.** Two days of work.
+
+Eleven months later: organic sessions up 8x from the post-fix baseline, organic trials at 34% of total, and the two highest-converting pages on the entire site were a comparison page and an integration page. The documentation section alone accounted for a fifth of organic entries.
+
+Total spend was around $39,000 over a year - considerably less than five months of the proposed retainer - and the reason it worked was sequencing. Publishing into a site that canonicalises everything to the homepage is spending money to produce pages search engines have been told to ignore.
+
+## What a page needs to actually rank
+
+Beyond the technical floor, the pages that perform share a small set of properties. None of them are tricks.
+
+**It answers the question in the first screen.** Not after four paragraphs of context. A reader who has to scroll to find out whether they are in the right place frequently does not.
+
+**It is specific.** Numbers, named systems, real constraints. Generic content is indistinguishable from the forty other pages on the same topic, and there is no reason for anything to prefer it.
+
+**It matches the intent behind the search, not just the words.** Someone searching "best scheduling software" wants a list and a comparison. Someone searching "how to schedule shifts across sites" wants an explanation. Serving the wrong format loses even when the topic is right.
+
+**It is complete enough to end the search.** If the reader has to open another tab to finish answering their question, the page did not do its job.
+
+**It is maintained.** A page written three years ago with prices and product names from three years ago is actively worse than no page. Reviewing and updating existing pages usually returns more than writing new ones, and it is the work everyone postpones.
+
+**It links onward sensibly.** Both internally, to the next thing the reader needs, and externally, to primary sources. Linking out to authoritative sources is not a leak of value; it is one of the signals that the page was written by someone who knows the subject.
+
+## Who should own this
+
+A recurring reason application sites underperform is that nobody owns the work, and the reason nobody owns it is that it sits between two functions. The technical foundation is engineering; the content is marketing; neither team thinks the other half is theirs.
+
+The arrangement that works is a named owner on the marketing side who is accountable for the outcome, plus a standing engineering allocation - half a day a month is usually enough once the foundation is in place - for the technical items. The owner does not need to be able to fix a canonical tag. They need to be the person who notices it is wrong and has somewhere to send it.
+
+Two habits make this durable. Put the technical checks in the deployment pipeline so a broken canonical or a stray noindex fails the build rather than waiting for a monthly audit. And review the indexed-page count monthly, because it is a single number that moves when something structural breaks, which is exactly what a busy owner needs.
+
+## What to measure
+
+**Indexed pages versus pages you want indexed.** The single most diagnostic number and almost nobody tracks it. A gap means something structural.
+
+**Organic sessions to non-homepage pages.** Homepage traffic is largely brand. The rest is what your content is earning.
+
+**Queries you appear for.** Search Console shows the questions people asked before they saw you. This is the best free source of content ideas in existence and it describes your actual audience rather than a keyword tool's model of it.
+
+**Conversion by landing page.** Traffic is not the goal. A comparison page with 400 visits and 18 trials is worth more than an article with 9,000 visits and two.
+
+**Crawl errors.** They accumulate silently, especially on applications where URLs are generated.
+
+## Where AI search changes things, and where it does not
+
+Answer engines and AI assistants increasingly sit between a search and your site. Two consequences worth planning around.
+
+**Informational traffic declines.** Questions with a short factual answer get answered in the interface. Content whose only value was answering such a question loses its traffic. This has been happening for years with featured snippets and is accelerating.
+
+**Being cited requires being citable.** Content that gets referenced tends to be specific, structured, and clearly attributed - real numbers, clear headings, an identifiable author and organisation. Vague content that restates consensus has nothing to cite.
+
+What does not change: the technical foundation matters more, not less, because machine-readable structure is what these systems consume. Comparison, integration and pricing pages remain valuable because the buyer still needs to make a decision and an AI summary of a comparison is a reason to go and read it. And documentation remains excellent, because it is specific and answers real questions.
+
+The strategic adjustment is straightforward: publish fewer general explainers, more of what only you can write - your data, your product's specifics, your customers' actual situations.
+
+## Common objections
+
+**"Our buyers do not use search."** They use it before they are your buyers, when they are describing a problem rather than looking for a vendor. Check Search Console for what you already appear for; the queries are usually more revealing than the assumption.
+
+**"Our market is too small."** Small markets are the best case for this, because the competition is publishing nothing and a handful of specific pages can own the category. Low volume with high intent beats high volume with none.
+
+**"We tried a blog and it did nothing."** Usually true and usually explained by one of three things: the technical foundation prevented it, the topics were chosen by a keyword tool rather than by customers, or it was stopped after four months. This work compounds and the first two quarters look like failure.
+
+**"AI is going to make SEO irrelevant."** It is changing what gets traffic, discussed above. Buyers still research, still compare, and still need to reach a page that answers them. The pages losing traffic are the generic explainers; the pages describing your specific product, integrations and pricing are not substitutable.
+
+## What we do differently
+
+We audit before we publish, every time, because the most common finding is that the site is technically prevented from benefiting from content. Three weeks of foundation work ahead of a content programme regularly changes its return by an order of magnitude.
+
+We source content from sales calls rather than keyword tools. The phrasing customers actually use is both better targeted and better writing, and it produces pages that answer the question rather than surrounding it.
+
+And we treat comparison and integration pages as the first content investment rather than the last, because they reach people who are deciding rather than people who are reading.
+
+If your application site gets most of its traffic from paid search and you suspect it should not, [an audit is a day](/contactus) and it usually finds something structural.
+
+## Related reading
+
+- [Core Web Vitals for business owners](/blogs/core-web-vitals-for-business-owners) - the performance side of the foundation
+- [Single-page app vs server-rendered](/blogs/single-page-app-vs-server-rendered) - why rendering choice determines indexability
+- [Next.js vs WordPress for business websites](/blogs/nextjs-vs-wordpress-for-business-websites) - platform implications for a marketing site
+- [How to choose a web development agency](/blogs/how-to-choose-a-web-development-agency) - including how to tell whether they understand any of this
+- [Building a multi-language website](/blogs/building-a-multi-language-website) - hreflang, canonicals and serving the right version
+
+## Sources and further reading
+
+- [Google SEO starter guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide) - the primary source, and shorter than most summaries of it
+- [JavaScript SEO basics](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics) - essential if any public page is client-rendered
+- [Consolidating duplicate URLs](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls) - canonical tags, and how to get them wrong
+- [Robots.txt introduction](https://developers.google.com/search/docs/crawling-indexing/robots/intro) - and the crawl-versus-index distinction
+- [Build and submit a sitemap](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap) - format and submission
+- [Structured data introduction](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data) and [Schema.org](https://schema.org/) - machine-readable description of your pages
+- [Page experience](https://developers.google.com/search/docs/appearance/page-experience) - how performance is actually used
+- [Google Search Console](https://search.google.com/search-console/about) - free, and the only source of what people searched before finding you

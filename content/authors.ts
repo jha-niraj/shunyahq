@@ -41,7 +41,7 @@ export const AUTHORS: Record<AuthorKey, Author> = {
 		role: 'Engineering & Product, Shunya Tech',
 		email: 'contact@shunyatech.com',
 		image: '',
-		bio: 'The Shunya Tech engineering and product team. We architect, build, and scale production-grade digital products - web, mobile, AI, and cloud - and write about how we actually ship them.',
+		bio: 'The Shunya Tech engineering and product team. We architect, build, and scale production-grade web applications, and write about how we actually ship them.',
 		sameAs: [
 			'https://www.linkedin.com/company/shunya-tech',
 			'https://github.com/Shunya-Tech-Agency',

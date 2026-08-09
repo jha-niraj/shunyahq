@@ -34,6 +34,26 @@ This sounds slow. It is the fastest thing we do. A written spec is where we have
   ]}
 />
 
+## What discovery actually produces
+
+Two weeks sounds like a lot to spend before writing code, so it is worth being specific about what comes out of it. Six artefacts, none of them decorative.
+
+**The core loop, in one sentence.** Written down and agreed. Everything in the build is measured against whether it serves this sentence.
+
+**A user journey per role.** Screen by screen, what someone does from arriving to achieving the thing. This is where the real screen count emerges, and it is usually different from the one in the original brief.
+
+**The data model.** Boxes and lines. What entities exist, what relates to what, and which relationships are one-to-many. Nearly every argument about scope dissolves once this is on paper, because the shape of the data reveals what the product actually is.
+
+**The explicit out-of-scope list.** As important as the in-scope list and far more often omitted. A written "not in this version" list is what makes the later conversation about adding something a decision rather than a disagreement.
+
+**The assumptions.** Everything believed to be obviously true. "Every customer has an email address." "Only one person per account." Half of these turn out to be wrong, and finding out in week one costs a meeting.
+
+**Acceptance criteria.** How anyone will know it is done. Not "the booking feature works" - a description of what a person can do, which is testable.
+
+<Callout type="info">
+The written spec is not bureaucracy. It is the mechanism that lets us give you a fixed timeline, because a timeline is only meaningful against a fixed description of what is being built.
+</Callout>
+
 ## Speed comes from a small, opinionated stack
 
 We do not evaluate frameworks per project. We reach for a stack we know deeply - Next.js, tRPC, and Prisma - because the boring decisions are already made. End-to-end type safety means a change to the database schema shows up as a type error in the UI before it ships, not as a bug after launch.
@@ -55,6 +75,54 @@ None of this is "technical debt." It is deferred scope, and deferring it is a de
 Cutting scope is not the same as cutting corners. We never skip auth, never skip the real database, and never skip the production deploy. Those are the load-bearing walls. Everything else is furniture you can add once people move in.
 </Callout>
 
+## What "minimum" should actually mean
+
+The word does most of the damage. Teams read "minimum" as "cheap" or "rough", and it means neither. It means narrow.
+
+A useful reframing: an MVP should be **complete for a small audience rather than partial for a large one.** A product that does one job properly for one type of customer is testable, usable and honest. A product that does five jobs badly for four types of customer teaches you nothing, because every failure has too many possible causes.
+
+Three tests we apply to a proposed MVP scope:
+
+**Can one person get value on day one without you helping them?** If the answer requires a phone call and a manual setup, the loop is not closed yet.
+
+**If nobody uses it, will you know why?** A narrow product gives you a clean answer. A broad one gives you five hypotheses and no way to choose between them.
+
+**Is there anything in here we are building because it would be embarrassing not to?** This question surfaces more deferrable scope than any other, and the honest answer is usually a reporting dashboard or a settings page.
+
+## What we deliberately keep, and why it is not negotiable
+
+The cut list above is long. The keep list is short and it is worth explaining, because clients frequently offer to drop these to save time and it is always the wrong trade.
+
+**Authentication, properly.** Not because an MVP needs enterprise identity, but because retrofitting real accounts onto a system that faked them touches every table and every screen. It is cheap now via a hosted provider and expensive later. The [OWASP authentication guidance](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) is the baseline even at this stage.
+
+**A relational database with a real schema.** The data you collect in the first three months is the most valuable thing the MVP produces. Storing it in something unstructured because it was faster means the migration to a real model happens later, with real customer data in it. [Choosing a database](/blogs/choosing-a-database) covers why the boring answer wins here too.
+
+**A deployment pipeline.** Automated, from merge to production. Two days of setup that changes how the entire rest of the project feels, because small fixes stop being events.
+
+**Error tracking and basic monitoring.** An MVP with no visibility is an MVP whose problems you learn about from the customer you were trying to impress.
+
+**Tests on the core loop.** Not comprehensive coverage - the three or four paths that must never break. [Testing before launch](/blogs/testing-software-before-launch) explains the proportion.
+
+Those five are roughly 15% of the build and they are the reason the MVP is a foundation rather than a prototype you throw away. The distinction between deferring scope and cutting corners lives entirely in this list.
+
+## Where four to eight weeks comes from
+
+The range is not marketing. It is the two ends of a real distribution, and what moves a project between them is predictable.
+
+<RateTable
+  headers={['Factor', 'Four weeks', 'Eight weeks']}
+  rows={[
+    ['User types', 'One', 'Two or three'],
+    ['Core screens', '6-10', '18-25'],
+    ['Integrations', 'None', 'One or two'],
+    ['Payments', 'Not yet', 'Subscriptions live'],
+    ['Design', 'Component library, themed', 'Bespoke, art-directed'],
+    ['Client decision speed', 'Same day', 'A week per question'],
+  ]}
+/>
+
+The last row is the one clients control and most underestimate. On a six-week build, a week of waiting for an answer is a sixth of the project. This is the single largest schedule risk on a short engagement, and it is why we ask for a named decision maker before we start - the reasoning is set out in [managing a software project as a client](/blogs/managing-a-software-project-as-a-client).
+
 ## You see real software every two weeks
 
 From week three, we deploy to a staging environment every two weeks. You click through working software, not a status deck. This does two things: it catches misunderstandings while they are cheap to fix, and it keeps everyone honest about what "done" means.
@@ -62,3 +130,91 @@ From week three, we deploy to a staging environment every two weeks. You click t
 By the final week, the product is QA'd, deployed to production, documented, and handed over. Four to eight weeks after the first conversation, you have a live system - and the only thing left to do is the most important one: put it in front of real users and learn.
 
 That is the point of shipping fast. Not to be done. To start learning sooner.
+
+It is worth being blunt about the alternative, because the choice is not between six weeks and perfection. It is between six weeks of building followed by six months of learning, and nine months of building followed by the same six months of learning starting three quarters later - by which time the budget is spent, the market has moved, and the assumptions baked in at month one have never once been tested against a real person.
+
+## A worked example
+
+A founder came to us with a marketplace idea connecting independent tutors with parents. The original brief listed 34 features across three user types - tutors, parents and an internal admin - with payments, scheduling, messaging, reviews, a matching algorithm and a mobile app.
+
+Discovery took nine days. What came out of it:
+
+**The core loop, in one sentence:** a parent finds a suitable tutor and books a first lesson.
+
+Everything else was measured against that sentence, and most of it did not survive. Reviews require completed lessons, which require the loop to work first. The matching algorithm was a ranked search until there was enough data for anything cleverer. Messaging was deferred because the founder's own research showed the first contact almost always happened by phone anyway. The admin panel became database access plus three scripts, adequate at the expected volume of fewer than fifty tutors in the first quarter.
+
+What shipped in five weeks:
+
+- Tutor signup with profile, subjects and availability.
+- Parent search with filters, and a tutor profile page.
+- A booking request, confirmed by the tutor, with calendar invites both ways.
+- Payment taken at booking, held and released after the lesson.
+- Eleven screens, two user types, one integration.
+
+Cost was $46,000. The founder's earlier quote for the full 34-feature brief had been $190,000 over seven months.
+
+What the first six weeks of real use taught them, which no amount of specification would have:
+
+- **Parents did not search.** 80% arrived from a tutor's shared profile link. Search, which had been the centrepiece of the design, was barely used. The tutor's shareable link, added almost as an afterthought, was the actual product.
+- **Availability was wrong.** Tutors would not maintain a calendar. They wanted to state broad windows and negotiate specifics. The detailed availability grid was rebuilt as three checkboxes.
+- **The deferred messaging turned out to be needed** - but for a different reason than expected: parents wanted to ask one question before booking, not to hold a conversation. That is a much smaller feature than the one originally specified.
+
+They spent the held-back $6,000 on the shareable-link flow and the three-checkbox availability. Bookings in month three were more than triple month one, and none of that came from the features that were cut.
+
+The general point: five of the 34 original features were the product. The other 29 were assumptions, and building them first would have cost four months and buried the two things that actually mattered.
+
+## After the MVP ships, which is the part that matters
+
+Shipping in six weeks is only valuable if the six weeks after it are used properly. The most common way an MVP fails is not a bad build - it is a good build followed by nothing.
+
+**Get twenty real users on it inside a fortnight, not a waitlist of two hundred.** Not a waitlist. Actual people completing the loop. Twenty is enough to see patterns and small enough to talk to all of them.
+
+**Watch where they stop.** The drop-off point in your core loop is the highest-value thing you will learn all quarter, it is almost never where the team guessed, and fixing it is usually hours of work rather than a feature.
+
+**Talk to ten of them.** Fifteen minutes each. The analytics tell you what happened; the conversations tell you why, and the why is what determines what to build next. The [Nielsen Norman Group's research guide](https://www.nngroup.com/articles/ux-research-cheat-sheet/) is a practical starting point for doing this without a research background.
+
+**Hold budget back for it.** Ten to fifteen percent of the build, unspent at launch, allocated to whatever the first fortnight reveals. An MVP that consumes its entire budget arrives at the most informative moment of the project with no capacity to act. This is covered in more depth in [what happens after launch](/blogs/what-happens-after-launch).
+
+**Be willing to conclude it did not work.** The point of building the smallest real thing is that a negative answer is cheap. A team that cannot hear a negative answer has spent six weeks buying information it will not use.
+
+## What can go wrong on a short build
+
+Being honest about the failure modes, because a four-to-eight week timeline has less slack than a six-month one and the same problems hurt more.
+
+**Scope creep by increments.** Nothing large - a field here, a variant there, each one obviously reasonable. On a six-week project, four small additions are a week. We price changes even when they are small, not to be difficult, but because the alternative is a timeline that quietly stops being true.
+
+**A dependency that is not ready.** Content, brand assets, access to a system, a decision from someone on holiday. On a short build these are not delays of a day; they compress everything after them, because there is no slack anywhere in a six-week plan to absorb them.
+
+**Discovering the core loop was wrong in week four.** This happens, and it is better than discovering it in month six. The response is to stop, re-scope and restart the build phase rather than to continue building something the discovery invalidated.
+
+**A third party that does not behave as documented.** The classic short-project derailment. It is why we prefer no integrations in the first release wherever the business can tolerate it.
+
+**Treating the MVP as the product.** The most expensive one. An MVP that goes live and then receives no attention for eight months becomes the permanent product by default, and it was never designed to be that. The deferred scope list was written on the assumption that it would be revisited; when it is not, the deliberate omissions quietly turn into permanent gaps, and the thing that was correct as a first release becomes a thin product that nobody decided to build.
+
+**Judging it on the wrong measure.** An MVP is an instrument for learning, and grading it on revenue in month one asks it to be something else. The right questions are whether people completed the loop, whether they came back, and whether you now know something you did not know before.
+
+## What we do differently
+
+We write the out-of-scope list as carefully as the in-scope one, and we put both in the spec you sign. Most of the value of a fixed timeline comes from the second list.
+
+We never fake authentication, the database or the deployment, regardless of how tight the timeline is. Those three are what separate a system you can build on from a demo you rebuild.
+
+And we ask for a named decision maker with authority before the first sprint, because on a six-week build the cost of a slow answer is measured in a fraction of the whole project.
+
+If you have an idea and want to know whether it is a four-week or an eight-week version of itself, [that is a short conversation](/contactus).
+
+## Related reading
+
+- [How to scope an MVP](/blogs/how-to-scope-an-mvp) - the scoping discipline in more detail
+- [From idea to MVP in six weeks](/blogs/from-idea-to-mvp-in-6-weeks) - the week-by-week version
+- [What happens after launch](/blogs/what-happens-after-launch) - the phase that decides whether the MVP was worth building
+- [Choosing your stack](/blogs/choosing-your-stack) - why the foundation being decided is where the speed comes from
+
+## Sources and further reading
+
+- [The Agile Manifesto](https://agilemanifesto.org/) - four paragraphs behind the two-week deploy cadence
+- [GOV.UK agile delivery guidance](https://www.gov.uk/service-manual/agile-delivery) - what iterative delivery looks like in practice
+- [Continuous integration](https://martinfowler.com/articles/continuousIntegration.html) - the pipeline that makes a fortnightly deploy unremarkable
+- [OWASP authentication cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html) - the baseline even for a first release
+- [Nielsen Norman Group UX research cheat sheet](https://www.nngroup.com/articles/ux-research-cheat-sheet/) - talking to the first twenty users
+- [DORA research](https://dora.dev/) - the evidence on deployment frequency and delivery performance

@@ -1,0 +1,234 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+The staffing question usually gets answered on price, which is the one dimension where the three options look most comparable and matter least. A freelancer at $60 an hour, an agency at $120, and a salaried engineer at what looks like $75 once you divide the salary by 2,000 hours.
+
+Those numbers are not measuring the same thing, and none of them predicts whether your project ships. What predicts it is whether the arrangement matches the shape of the work: how long it lasts, how many disciplines it needs, and how much of the management you are able to do yourself.
+
+Here is how to think about it, including the cases where hiring us would be the wrong call.
+
+## The three options, honestly
+
+### Freelancer
+
+One person, contracted for a defined piece of work.
+
+**Strong when** the scope is clear and narrow, one discipline covers it, and you can specify and review the work yourself. A landing page, a specific integration, a defined set of screens against finished designs.
+
+**Weak when** the project needs design *and* backend *and* infrastructure, or when it runs long enough that a single person becoming unavailable stops everything. There is no bench. Illness, a better offer, or a family emergency and your project pauses indefinitely.
+
+**Real cost:** the hourly rate plus your own management time, which is substantial and usually uncounted. Someone has to write the spec, review the work, and make decisions. If that someone is you and you already have a job, that is the constraint.
+
+### Agency or studio
+
+A small team, contracted for an outcome.
+
+**Strong when** the project spans disciplines, when you want one accountable party rather than a set of contractors you coordinate, and when you need it to keep moving if one person is out. You are buying the coordination as much as the hours.
+
+**Weak when** the work is small and well-defined - you pay for process you do not need - and when the relationship becomes permanent by default. An agency should be building something, or maintaining it under a defined retainer. Indefinite unspecified engagement is where value goes to die.
+
+**Real cost:** a higher rate, of which a real share is project management, review and overhead. That is the product, not padding, but it means an agency is poor value for work that needs none of it.
+
+### In-house
+
+An employee.
+
+**Strong when** the work is continuous, the domain knowledge compounds, and the software is core to how the business runs. Nobody will ever understand your product like someone who works on it every day for three years.
+
+**Weak when** you do not yet have enough work to fill the role, when you cannot technically evaluate candidates, and when the person will be alone. A single engineer with no colleague to review their work has no feedback loop, and the code quietly becomes something only they can maintain.
+
+**Real cost:** far above salary. Employer taxes, benefits, equipment, software licences, recruitment fees, and the months of reduced output while they learn your domain. The [Stack Overflow Developer Survey](https://survey.stackoverflow.co/2025/) is a reasonable public reference for what compensation actually looks like by role and region.
+
+<Callout type="warning">
+The most common in-house mistake is hiring one engineer to build something significant from scratch. They have no reviewer, no second opinion on architecture, and a single point of failure is now the entire engineering function. Two juniors is often worse than one contractor.
+</Callout>
+
+## The comparison that actually matters
+
+<RateTable
+  headers={['', 'Freelancer', 'Agency', 'In-house']}
+  rows={[
+    ['Time to start', 'Days', '1 - 4 weeks', '2 - 4 months'],
+    ['Disciplines covered', 'One', 'Several', 'One per hire'],
+    ['Continuity if someone leaves', 'Project stops', 'Covered', 'Project stops'],
+    ['Who manages the work', 'You', 'Them', 'You'],
+    ['Domain knowledge over time', 'Leaves with them', 'Retained while engaged', 'Compounds'],
+    ['Cost for 3 months', 'Lowest', 'Middle', 'Highest (with hiring)'],
+    ['Cost over 3 years', 'Highest per hour', 'Middle', 'Lowest per hour'],
+    ['Best for', 'Defined tasks', 'Building a thing', 'Running a thing'],
+  ]}
+/>
+
+Read the last two rows together. The crossover is real: agencies are better value for building, employees are better value for running. Most companies get into trouble by using one for the other - keeping an agency on indefinitely to babysit a finished system, or hiring a team before there is a system for them to work on.
+
+## Match the arrangement to the shape of the work
+
+**"I need one specific thing built, and I can describe it."** Freelancer. Do not buy process you will not use.
+
+**"I need a product built and I cannot manage it day to day."** Agency. You are buying coordination and accountability, which is the expensive part and the part you actually need.
+
+**"I have a live product that changes constantly and is core to the business."** In-house, eventually. Start with an agency if the team does not exist yet, and plan the handover from the beginning rather than discovering it later.
+
+**"I have an in-house team and not enough of them."** Agency capacity that plugs into your process and your repository - not a walled-off deliverable. Be explicit that you want people working in your codebase to your standards, because that is a different engagement from "build us a thing".
+
+**"I do not know what I need yet."** A short paid discovery with an agency, then decide. This is the cheapest possible way to buy clarity, and the output is useful regardless of who builds it.
+
+## The hybrid that works well
+
+The arrangement we see succeed most often for a growing company:
+
+1. **An agency builds version one**, because the work spans disciplines and speed matters more than institutional knowledge at this stage.
+2. **The agency maintains it briefly** while the business works out whether the product has legs.
+3. **The company hires its first engineer** once there is a live system with real users - which is a far easier role to fill than "come and build something from nothing", because candidates can see what they would be working on.
+4. **A deliberate handover happens**: documentation, a walkthrough, repository and cloud access, and a period of overlap.
+5. **The agency drops to a small retainer or steps out.**
+
+The part that gets skipped is step four, and skipping it is how a company ends up owning software nobody there understands. A good agency will plan the handover with you and will not treat it as a loss - the point we make in [how to choose an agency](/blogs/how-to-choose-a-web-development-agency) is that willingness to hand over gracefully is a strong signal, not a weak one.
+
+<Callout type="tip">
+Ask any agency directly: "Have you ever handed a client over to their own in-house team, and how did it go?" The answer tells you whether they think in relationships or in lock-in.
+</Callout>
+
+## Costs people forget
+
+**With a freelancer:** your management time. The spec you write, the reviews you do, the decisions you make. If you have never scoped software before, add contingency, because the first attempt at a spec is usually the one that teaches you what a spec needs.
+
+**With an agency:** the ramp-up. The first two weeks are learning your domain, and you pay for them. This is why very short agency engagements are poor value and why changing agency mid-project is expensive.
+
+**With in-house:** recruitment fees (commonly a meaningful percentage of first-year salary), equipment, the tooling and licences every engineer needs, and three to six months before a new hire is fully productive. Also the risk: if it does not work out, you are back at the start having spent two quarters.
+
+**With all three:** ongoing maintenance, which does not go away regardless of who built it. Budget 15 - 20% of build cost annually - see [what maintenance costs](/blogs/web-application-maintenance-cost).
+
+## How to evaluate each of them
+
+**A freelancer:** ask for code you can have reviewed, not screenshots. Ask what happens if they are unavailable for two weeks. Agree a communication cadence in writing, because this is where freelance engagements most often fail.
+
+**An agency:** ask who writes the code and whether you can meet them, how scope changes are handled, and what happens at the end. [The full list is here](/blogs/how-to-choose-a-web-development-agency).
+
+**An employee:** get someone technical to run the interview, even if you have to pay an independent engineer for two hours. Hiring your first developer without technical evaluation is the single highest-variance decision in this whole comparison.
+
+## Three worked scenarios, over three years
+
+<RateTable
+  headers={['', 'Freelancer', 'Agency', 'In-house']}
+  rows={[
+    ['Scenario A - one 8-week build, then quiet', '$22,000', '$38,000', '$95,000+'],
+    ['Scenario B - build then continuous change', '$95,000', '$145,000', '$310,000'],
+    ['Scenario C - joining an existing team', 'n/a', '$180,000', '$290,000'],
+  ]}
+/>
+
+Those are rough three-year totals including the costs people leave out. Here is how each is built.
+
+### A. One contained build, then occasional changes
+
+A brochure site with a booking form. Eight weeks of work, then maybe a day a quarter.
+
+- **Freelancer:** ~$18,000 for the build, plus ~$1,200/yr of ad hoc changes. Your management time is the hidden cost, and on a well-specified project it is manageable. **This is the right answer.**
+- **Agency:** ~$32,000, because you are paying for coordination the project does not need.
+- **In-house:** absurd. You would be paying a salary for a role with a day of work a quarter.
+
+### B. A product that keeps changing
+
+A SaaS product. Build in three months, then continuous feature work.
+
+- **Freelancer:** ~$30,000 build, then roughly $22,000/yr. Works until it does not: one person is a single point of failure on something the business now depends on, and holidays become outages in delivery.
+- **Agency:** ~$55,000 build, then ~$30,000/yr of retained capacity. Continuity is covered and you are not managing anyone. **Right for years one and two.**
+- **In-house:** one engineer at, say, $85,000 salary is closer to $105,000 fully loaded, plus a recruitment fee and three months of ramp. Year one is the worst value of the three. Years three onward, the best. **Right from year two or three.**
+
+The pattern: agency for the build and the uncertain period, in-house once the work is provably continuous. Switching at the right time is worth more than picking correctly at the start.
+
+### C. Adding capacity to a team you already have
+
+Two in-house engineers, and a roadmap that needs four.
+
+- **Agency capacity:** ~$30,000/quarter for a pair who work in your repository, to your standards, in your process. Available in weeks. **Right when the need is a spike, or while you recruit.**
+- **In-house:** cheaper per hour and better long term, but three to six months from decision to productive.
+- **Freelancer:** possible, but a lone contractor inside an existing team needs the same onboarding as an employee for a fraction of the commitment.
+
+<Callout type="info">
+The most common expensive mistake in scenario C is waiting. Teams often refuse contract capacity on cost grounds, then spend five months recruiting while the roadmap slips. Five months of delay usually costs more than a quarter of contract capacity.
+</Callout>
+
+## Costs people leave out of the comparison
+
+**Recruitment.** An agency fee is commonly 15 - 25% of first-year salary. Even hiring direct costs advertising, screening time and interview time from people whose hours are expensive.
+
+**Ramp-up.** Three to six months before a new hire is fully productive, and longer if your domain is unusual. You pay full salary throughout.
+
+**The cost of a bad hire.** Some percentage of hires do not work out. When one does not, you have spent salary, recruitment fee and management attention, and you restart. This risk is real and it is asymmetric - it does not exist in the same way with a contract you can end.
+
+**Management overhead.** Employees need one-to-ones, reviews, career conversations and someone to escalate to. If your company has never employed an engineer, you are also building that capability.
+
+**Your own time with a freelancer.** Writing the spec, reviewing the work, deciding. Cheap to ignore in a spreadsheet, expensive in reality.
+
+**Agency ramp-up.** The first fortnight is learning your domain and you pay for it. Which is why short agency engagements are poor value and switching agency mid-project is expensive.
+
+## Mixing them: what works and what does not
+
+**Works: agency builds, in-house maintains.** The most successful pattern we see. Requires a real handover, planned from the start.
+
+**Works: in-house core, agency for spikes.** Your team owns the product; contract capacity absorbs a deadline or an unfamiliar area.
+
+**Works: freelancer for a specialism.** A one-off need for an accessibility audit, a performance investigation, a security review.
+
+**Does not work: two agencies on one codebase.** Nobody owns the outcome and every defect is arguable. If you must, split by service boundary with explicit interfaces, never by feature.
+
+**Does not work: a lone junior in-house engineer maintaining an agency build.** No reviewer, no mentor, inheriting decisions they were not part of. This is how a good codebase quietly degrades. Either pair them with agency support for six months or hire someone senior enough to work alone.
+
+**Does not work: an agency on an open-ended retainer with no defined scope.** Without a definition of done, the engagement becomes a subscription with no measurable output. Define maintenance, or define a project. Do not define availability.
+
+## How to trial each of them
+
+**A freelancer:** a small paid task, not a test. Something real and contained, with a deadline. Watch whether they ask clarifying questions before starting, and whether the estimate held.
+
+**An agency:** a paid discovery, run against the same brief as a competitor. Compare the written outputs, not the pitches. Covered in [how to choose an agency](/blogs/how-to-choose-a-web-development-agency).
+
+**An employee:** a paid work sample of two to four hours, plus a pairing session on real code. Do not use whiteboard puzzles - they select for interview practice. If you cannot evaluate technically, pay an independent senior engineer for two hours to sit in. It is the cheapest insurance in this entire article.
+
+## Objections, answered
+
+**"Agencies are just marked-up freelancers."** Some are. The distinction is whether there is a second person who reviews the work, whether someone else can pick it up if one person is unavailable, and whether project management is a real function rather than an invoice line. Ask who reviews the code. If nobody does, you are paying agency rates for freelance risk.
+
+**"Offshore is a fraction of the cost."** True on the rate, and there are excellent teams everywhere. What changes is the cost of ambiguity: a misunderstanding that takes an hour to fix in a shared timezone can take three days across a twelve-hour gap. That is manageable with clear written specifications and overlap hours, and punishing without them. Judge the team, not the geography, and be honest about how good your written requirements are.
+
+**"I want one person who really understands our business."** Reasonable, and it argues for in-house eventually. In the meantime, ask an agency to keep the same people on your account and put it in the agreement. Continuity of individuals is a fair thing to request.
+
+**"What if the agency holds us hostage?"** They cannot, if the code is in your repository, production is in your cloud accounts, and licences are in your name. Those three conditions turn a supplier relationship into a replaceable one. See [who owns the code](/blogs/who-owns-the-code-web-development).
+
+**"Should I hire a technical co-founder instead?"** Different question, and mostly not a staffing decision. Equity is the most expensive currency you have and it is irreversible. If the need is "build this thing", pay for it. If the need is a permanent partner who shares the risk, that is a relationship you should not rush into for delivery reasons.
+
+## Signals it is time to switch
+
+Most companies pick once and then stay too long. These are the moments to reconsider.
+
+**Freelancer to agency:** the project needs a second discipline. Or you have started managing them daily and it is eating your week. Or a two-week absence stopped everything and you realised how exposed you are.
+
+**Agency to in-house:** the change requests have become continuous rather than project-shaped. Or you are spending more annually on retained agency capacity than a salary. Or the domain knowledge is now the valuable part and it lives outside your company.
+
+**In-house to agency (yes, this direction too):** your single engineer is drowning and you cannot recruit fast enough. Or you need a specialism they do not have and hiring for it would be your third engineer. Or the roadmap has a spike that will pass.
+
+**Any of them to none of them:** you find an off-the-shelf product that covers the need. Genuinely the best outcome when it is available, and worth checking annually. See [custom software vs off-the-shelf](/blogs/custom-software-vs-off-the-shelf).
+
+## What we would say about ourselves
+
+We are an agency, so the honest disclosure is that this comparison has an obvious interested party in it.
+
+There are engagements we turn down because another option is genuinely better. A single well-specified page is a freelancer's job. A product that changes daily and is central to your business will eventually want people in-house, and if you already have the team, capacity that plugs into your process beats a walled-off deliverable.
+
+Where we are the right answer is building something real when you do not have a team, and building it in a way that a team could take over: your repository, your cloud accounts, documented deployment, boring technology someone else can hire for.
+
+If you want a straight read on which of the three fits your situation, [describe it to us](/contactus) - including if the answer is that you do not need us.
+
+## Related reading
+
+- [How to Choose a Web Development Agency](/blogs/how-to-choose-a-web-development-agency) - the selection process once you have picked a model
+- [Why Full-Stack Ownership Beats Handoffs](/blogs/full-stack-ownership) - why the delivery structure matters more than the headcount
+- [How Much Does a SaaS Platform Cost to Build](/blogs/how-much-does-a-saas-platform-cost) - team shape and what each arrangement costs per month
+- [Software Development Contract Checklist](/blogs/software-development-contract-checklist) - the agreement underneath whichever you choose
+
+## Sources and further reading
+
+- [Stack Overflow Developer Survey](https://survey.stackoverflow.co/2025/) - public reference on developer compensation and technology adoption
+- [DORA](https://dora.dev/) - what actually distinguishes high-performing delivery teams, regardless of how they are staffed
+- [The Twelve-Factor App](https://12factor.net/) - the standard to hold any arrangement to, so the result is operable by whoever comes next
+- [US Copyright Office, Circular 9](https://www.copyright.gov/circs/circ09.pdf) - why the ownership terms differ between an employee and a contractor

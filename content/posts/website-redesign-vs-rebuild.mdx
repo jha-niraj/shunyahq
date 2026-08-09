@@ -1,0 +1,249 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+"The site looks dated" and "the site does not work properly" sound like the same complaint and are completely different projects. One is a redesign: new visual language on the existing foundation. The other is a rebuild: new foundation, and the visual language is a consequence.
+
+Getting this wrong is expensive in both directions. Redesigning a site whose real problem is a broken foundation gives you an attractive version of the same difficulties, usually within a year. Rebuilding a site whose real problem is that it looks tired means spending four times what you needed to.
+
+Here is how to tell which one you actually need.
+
+## The distinction, stated plainly
+
+**A redesign** changes how the site looks and how content is arranged. The underlying platform, data model, integrations and hosting stay. Typically 3 - 6 weeks.
+
+**A rebuild** replaces the technical foundation. The design may be reused, refreshed or replaced, but the substantial work is underneath. Typically 8 - 20 weeks.
+
+**A re-platform** is a rebuild where the destination is a different system entirely - moving from a bespoke CMS to a headless one, or from a legacy framework to a current one.
+
+The confusing part is that all three can produce a site that looks new, which is why the conversation so often starts and ends with the visual.
+
+## The diagnostic
+
+Work through these. Each is a symptom, and symptoms point at different layers.
+
+<RateTable
+  headers={['Symptom', 'Points to', 'Why']}
+  rows={[
+    ['"It looks dated"', 'Redesign', 'Visual language, not architecture'],
+    ['"Our brand changed"', 'Redesign', 'Same problem, different trigger'],
+    ['"Conversion is poor"', 'Redesign or research first', 'Usually content and flow, not code'],
+    ['"It is slow"', 'Investigate before deciding', 'Could be images, could be foundations'],
+    ['"Editors cannot change anything"', 'Rebuild', 'Content model problem'],
+    ['"Every change needs a developer"', 'Rebuild', 'Same problem'],
+    ['"It breaks on phones"', 'Depends on age', 'Old sites often need rebuilding'],
+    ['"We cannot add the feature we need"', 'Rebuild', 'Architectural limit'],
+    ['"It is on an unsupported platform"', 'Rebuild, on a deadline', 'Security, not aesthetics'],
+    ['"Security scan flagged it"', 'Rebuild or urgent remediation', 'Not a design question'],
+  ]}
+/>
+
+<Callout type="info">
+A quick test that resolves most cases: if you got exactly the design you want, applied to the current site, would your problems be solved? If yes, redesign. If you would still be unable to publish a page without a developer, still be slow, still be unable to add that feature - the design was never the problem.
+</Callout>
+
+## The four questions that decide it
+
+**1. Can your team publish and edit content without a developer?**
+
+If no, that is a content-model problem and no amount of redesign fixes it. This single question resolves more of these decisions than any other, because "we need a new website" very often means "we cannot change our website".
+
+**2. Is the platform still supported?**
+
+Check the framework, CMS and runtime against their published support schedules - for Node the release calendar is [public](https://nodejs.org/en/about/previous-releases), and [endoflife.date](https://endoflife.date/nodejs) tracks it. An unsupported platform receives no security patches, and that is a rebuild on a clock rather than a choice.
+
+**3. Is it slow because of content or because of foundations?**
+
+Run the site through a performance check and look at what dominates. Oversized images, too many third-party scripts and missing caching are content and configuration problems, fixable in days. A server that takes two seconds to respond before anything renders is a foundation problem. Google's guidance on [Largest Contentful Paint](https://web.dev/articles/lcp) explains what the measurement is actually telling you, and the [HTTP Archive Web Almanac](https://almanac.httparchive.org/en/2024/) is a useful reference for what typical looks like.
+
+**4. What do you want to do in the next two years that you currently cannot?**
+
+If the answer is "publish more, look better", redesign. If it is "add a customer portal, take payments, integrate with our ERP", you are rebuilding whether you call it that or not.
+
+## Cost and time, honestly
+
+<RateTable
+  headers={['Project', 'Typical cost', 'Typical elapsed time', 'Risk']}
+  rows={[
+    ['Visual refresh (existing platform)', '$4,000 - $12,000', '3 - 6 weeks', 'Low'],
+    ['Full redesign with new content model', '$12,000 - $30,000', '6 - 10 weeks', 'Medium'],
+    ['Rebuild, same feature set', '$20,000 - $50,000', '8 - 14 weeks', 'Medium'],
+    ['Rebuild with new capability', '$40,000 - $120,000', '3 - 6 months', 'Higher'],
+    ['Re-platform with content migration', '$30,000 - $90,000', '3 - 5 months', 'Highest'],
+  ]}
+/>
+
+The bottom row is the most underestimated. Migrating content is not moving files - it is discovering that eleven years of pages use six different structures, that half the images have no alt text, and that two hundred URLs need redirects if you are not going to lose your search positions. Google's guidance on [consolidating duplicate URLs](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls) is worth reading before, not after.
+
+## The redesign that should have been a rebuild
+
+A composite, and a common one.
+
+A professional services firm has a six-year-old site. Marketing cannot add a case study without emailing a developer, publishing takes four days, and the site scores badly on mobile performance. They commission a redesign.
+
+The agency delivers a genuinely better-looking site on the same platform, because that was the brief. Nine months later:
+
+- Marketing still cannot publish without a developer. The content model was never the scope.
+- Performance improved slightly, then regressed as new images were added, because the underlying pipeline was untouched.
+- They wanted to add gated content. Not possible without the developer they were trying to stop needing.
+- Total spent: $18,000 on the redesign, then $40,000 on the rebuild eighteen months later.
+
+**The mistake was in the brief, not the delivery.** The brief said "the site looks dated", so that is what got fixed. Had the brief said "marketing cannot publish and we want gated content", every supplier would have proposed something different.
+
+This is exactly why a [brief should describe the problem rather than the solution](/blogs/how-to-write-a-web-development-brief).
+
+## The rebuild that should have been a redesign
+
+The other direction, less common but more expensive when it happens.
+
+A retailer with a functioning e-commerce site decides it looks tired and commissions a full rebuild on a new platform. The old site worked, converted acceptably and was maintained. Six months and a large sum later, the new site launches, conversion drops 18% for a quarter while the new checkout is tuned, and forty product-category URLs were not redirected, costing organic traffic that took months to recover.
+
+The design goal could have been met in six weeks on the existing platform for a fifth of the cost.
+
+<Callout type="warning">
+Rebuilding a system that works is the most under-appreciated risk in this decision. A working site has years of accumulated small fixes baked into it, most of them undocumented. A rebuild discards all of them and rediscovers the problems one at a time in production.
+</Callout>
+
+## The middle path: rebuild in place
+
+You do not always have to choose. The strangler pattern - [described by Martin Fowler](https://martinfowler.com/bliki/StranglerFigApplication.html) - lets you replace a system gradually rather than in one cut.
+
+In practice, for a website:
+
+1. Stand up the new platform alongside the old one.
+2. Route one section - the blog, say - to the new system while everything else stays where it is.
+3. Prove it: performance, editing workflow, deployment.
+4. Move the next section. Repeat.
+5. Retire the old platform when nothing is left on it.
+
+**Advantages:** no big-bang launch, no single moment where everything can break, and you learn on a low-stakes section first. **Cost:** running two systems for a while, and routing complexity that needs care with URLs and redirects.
+
+This is usually the right answer for large content sites and almost never worth the overhead for a fifteen-page brochure site.
+
+## Protecting what you already have
+
+Whatever you choose, these are the things a bad project quietly destroys.
+
+**Your URLs.** Every existing page that has links or search positions needs to keep its URL or get a redirect. This is the single most common way a redesign loses traffic, and it is entirely preventable with a crawl of the old site before launch.
+
+**Your metadata.** Titles and descriptions are often rewritten in bulk during a redesign, and the new ones are frequently worse because they were written by someone optimising for tidiness. Google's [title link documentation](https://developers.google.com/search/docs/appearance/title-link) explains what it actually uses.
+
+**Your structured data.** If the old site had it and the new one does not, you lose rich results silently. [Google's intro to structured data](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data) covers the basics.
+
+**Your accessibility.** Easy to regress in a visual refresh - contrast, focus states, form labels. The [WebAIM Million report](https://webaim.org/projects/million/) is a sobering annual survey of how common these failures are, and [MDN's accessibility docs](https://developer.mozilla.org/en-US/docs/Web/Accessibility) are the practical reference. In the US, the [ADA's web guidance](https://www.ada.gov/resources/web-guidance/) sets out why this is not merely good practice.
+
+**Your analytics continuity.** Keep the same measurement setup across the cut, or you cannot tell whether the new site is better.
+
+## The option in the middle
+
+There is a third answer that gets skipped because it has no exciting name: keep the platform, replace the front end route by route. New templates on the existing content and data, shipped a section at a time, with the old and new running side by side.
+
+It is unglamorous and it has the best risk profile of the three. Nothing is switched off, each slice is independently valuable, and the budget can stop after any slice without leaving you half-migrated. Where the underlying system is sound and the problem is genuinely how the site looks and performs, this is usually the correct answer and it is rarely the one proposed - largely because it is harder to write a proposal for than a rebuild.
+
+## Objections, answered
+
+**"Our site is only three years old, surely it does not need rebuilding."** Age is a weak signal. A three-year-old site on a well-maintained stack may be fine for another five. A three-year-old site on a framework two majors behind, with no test coverage and manual deploys, is a rebuild candidate. Check the foundations, not the calendar.
+
+**"Can we not just move it to a new platform ourselves?"** Sometimes, for small content sites, with good tooling. The part that catches people is redirects and content mapping, not the platform. Budget real time for that even on a DIY move.
+
+**"The agency says rebuild. Are they just selling a bigger project?"** Possibly. Ask them the four questions above and make them justify the answer against each. A supplier who says "redesign is enough, here is why" when a rebuild would earn them more has told you something valuable. It is worth getting a second opinion specifically framed as "talk me out of a rebuild".
+
+**"We want to rebuild and redesign at once. Bad idea?"** Not necessarily, but understand that you are changing two variables simultaneously. If conversion drops afterwards you will not know whether it was the design or the platform. If the site is commercially important, consider rebuilding on the existing design first, confirming the numbers hold, then redesigning.
+
+**"How do we avoid needing this again in three years?"** Mostly by keeping it maintained. Sites reach rebuild-or-die because nobody upgraded anything for four years, not because they were built badly. See [what maintenance actually costs](/blogs/web-application-maintenance-cost).
+
+## The audit that answers it in two days
+
+If you are genuinely unsure, this is cheap and conclusive.
+
+**1. Crawl the site.** Get a full list of URLs, page titles, and which pages get traffic. You need this for a redesign anyway and it is essential for a rebuild.
+
+**2. Run a performance measurement on your five most important pages.** Not the homepage alone. Look at what dominates the load: images, third-party scripts, or server response time. The first two are content problems fixable in days; the third is architectural.
+
+**3. Time a content change.** Ask a marketing colleague to publish a new page while you watch. How long, how many people involved, does it need a developer? This single test resolves most of the decision.
+
+**4. Check the platform versions** against their published support schedules. Anything past end of life converts the decision into a deadline.
+
+**5. List three things you want to do next year that you cannot do now.** Then ask whether each is blocked by design or by architecture.
+
+At the end of two days you have an evidence-based answer rather than an aesthetic one, and you have artefacts a supplier will need regardless of which route you take.
+
+## What a redesign cannot fix
+
+Worth stating plainly, because these get promised and then do not happen.
+
+**It cannot make a slow server fast.** Front-end optimisation helps, but if the server takes two seconds before sending anything, no amount of design changes that.
+
+**It cannot give your team publishing autonomy.** That is a content-model problem living underneath the design.
+
+**It cannot add capability the platform does not support.** Logins, payments, complex workflows.
+
+**It cannot fix bad content.** A better-looking page with the same unclear proposition converts about the same. This is the most common disappointment after a redesign, and the honest fix is a copywriter rather than a designer.
+
+**It cannot fix search visibility on its own,** and done carelessly it damages it. Preserve URLs and metadata.
+
+<Callout type="info">
+If your list of hopes for the new site includes two or more of the above, you are not describing a redesign, and buying one will leave you disappointed with a supplier who did exactly what you asked.
+</Callout>
+
+## How we approach it
+
+We start by asking the four questions rather than by looking at the site, because the answer is usually in the workflow rather than the visuals. If the answer is redesign, we will say so - it is a smaller project and we would rather do the right one.
+
+If it is a rebuild, we crawl the existing site first, map every URL, and treat redirects and metadata as launch-blocking deliverables rather than an afterthought.
+
+[Tell us what is frustrating you about the current site](/contactus) and we will tell you which project it is.
+
+## The launch checklist that protects your traffic
+
+Whichever route you take, these are launch-blocking. Skipping any of them is how a good project produces a bad quarter.
+
+**Crawl the old site and export every URL.** Do this before anything else. It is the source of truth for the redirect map and it becomes impossible to obtain once the old site is gone.
+
+**Map every old URL to a new one.** Every page that has inbound links or search traffic needs either the same URL or a permanent redirect. Redirect to the closest equivalent page, not to the homepage - a bulk redirect to the homepage is treated as a soft 404 and loses the value entirely.
+
+**Keep titles and descriptions unless you have a reason.** Bulk-rewriting them during a redesign is common and usually a downgrade, because the new ones optimise for tidiness rather than for the queries the page ranks for.
+
+**Carry over structured data.** If the old site had it and the new one does not, rich results disappear quietly.
+
+**Check the new site is crawlable before launch.** The most expensive single mistake in this whole process is shipping with the staging robots directive still in place. It happens regularly, it blocks the entire site from search, and it can take weeks to fully recover.
+
+**Submit the new sitemap and watch coverage for a fortnight.**
+
+**Keep analytics continuity.** Same measurement setup across the cut, or you cannot tell whether the new site performed better.
+
+**Test on a real phone on a real mobile connection.** Not a desktop browser resized.
+
+<Callout type="warning">
+Traffic usually dips for two to four weeks after any significant site change, even a well-executed one, while search engines re-crawl and re-evaluate. Agree that expectation with stakeholders before launch, or a normal fluctuation gets read as a failure.
+</Callout>
+
+## What to do if you cannot decide
+
+Two options when the diagnostic genuinely comes out balanced.
+
+**Option one: fix the content model first, keep the design.** Frequently the highest-value move and almost nobody does it, because it produces no visible change. If your real problem is that marketing cannot publish, solving that on the existing design gets you the benefit immediately and postpones the aesthetic question until you can afford it properly.
+
+**Option two: redesign now, plan the rebuild.** Legitimate when the visual problem is commercially urgent - a rebrand, a funding round, a sales cycle where the site is losing you credibility - and the foundations, while imperfect, are not yet dangerous. Do it knowing you are buying eighteen months, and put the rebuild in next year's budget rather than discovering it.
+
+**What not to do:** a rebuild that also redesigns, on a hard deadline, with content still being written. That is three simultaneous risks and it is how the horror stories start.
+
+## The question to ask three suppliers
+
+Send exactly this and compare the answers:
+
+*"Here is our site. Our problems are [list]. Tell us whether this is a redesign or a rebuild, and why. If it is a redesign, say what will still be broken afterwards."*
+
+That last clause is the whole test. A supplier who answers it honestly - "a redesign will fix the look, but your team still will not be able to publish without us" - has just told you they are describing reality rather than selling you the bigger project or the easier one. A supplier who says a redesign will fix everything either has not understood the problem or is telling you what you want to hear.
+
+## Related reading
+
+- [Why Your Website Is Slow](/blogs/why-your-website-is-slow) - measuring before you fund a rebuild
+- [How to Migrate Off a Legacy System](/blogs/how-to-migrate-off-a-legacy-system) - the larger version of the same decision
+- [Design Systems: The Business Case](/blogs/design-systems-for-business) - consolidating a site built by four teams
+- [SEO for Web Applications](/blogs/seo-for-web-applications) - protecting your search visibility through the change
+
+## Sources and further reading
+
+- [Martin Fowler on the strangler fig pattern](https://martinfowler.com/bliki/StranglerFigApplication.html) - replacing a system gradually instead of all at once
+- [Google on consolidating duplicate URLs](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls) - the redirect and canonical work a migration must not skip
+- [Largest Contentful Paint](https://web.dev/articles/lcp) and the [HTTP Archive Web Almanac](https://almanac.httparchive.org/en/2024/) - what "slow" actually means, with real-world baselines
+- [WebAIM Million](https://webaim.org/projects/million/) and [ADA web guidance](https://www.ada.gov/resources/web-guidance/) - accessibility, and why regressing it during a redesign matters

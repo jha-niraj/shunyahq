@@ -26,6 +26,20 @@ The overwhelming majority of slow SaaS queries are missing an index, using the w
 
 But indexes are not free. Every index slows down writes and consumes storage. We periodically check `pg_stat_user_indexes` for indexes that are never scanned and drop them. A pile of unused indexes is a tax you pay on every insert for no benefit.
 
+## How to read a slow query without being a DBA
+
+The tool for this is `EXPLAIN ANALYZE`, and you do not need to understand all of its output to get the answer. Three things tell you almost everything.
+
+**Sequential scan versus index scan.** A sequential scan reads the whole table. On a thousand rows that is fine; on ten million it is the problem. If a query you run frequently shows a sequential scan on a large table, you have found your missing index.
+
+**Rows estimated versus rows actually returned.** When the planner expects 12 rows and gets 240,000, it chose its strategy based on a wrong guess. Usually this means statistics are stale, and running `ANALYZE` fixes it.
+
+**Where the time actually went.** The output is a tree, and one node is usually responsible for nearly all of the duration. Optimising anything else is wasted effort.
+
+Three indexing rules cover most cases. Index the columns you filter and join on, not the ones you display. For a query filtering on two columns, one index covering both beats two separate indexes - and the order matters, with the more selective column first. And an index on a column you always query with a function applied to it will not be used; the index has to match the shape of the query. [Use The Index, Luke](https://use-the-index-luke.com/) is the best free treatment of this and it is written for people who are not specialists.
+
+The counterweight: indexes are not free. Each one slows writes and consumes storage. A table with fourteen indexes, most added speculatively, is a table where every insert does fourteen extra pieces of work. Add them in response to a measured query, not in anticipation, and periodically check which ones are never used - PostgreSQL tracks this and the answer is frequently uncomfortable.
+
 ## Connection management is the silent killer
 
 This is the problem that ambushes growing SaaS apps, especially on serverless. Postgres connections are expensive - each one is a backend process with real memory overhead. A serverless function that opens a connection per invocation will exhaust the database's connection limit long before CPU or disk is the bottleneck.
@@ -60,6 +74,40 @@ Most SaaS workloads are read-heavy. Dashboards, reports, and list views hammer t
 
 Event logs, audit trails, and time-series data grow without bound and eventually make even indexed queries slow. Partitioning by time range keeps each partition small, makes old data trivial to archive or drop, and lets Postgres skip irrelevant partitions entirely. We reach for this when a single table is in the hundreds of millions of rows and clearly time-structured.
 
+## Multi-tenancy, and the query pattern that bites
+
+Almost every SaaS product stores several customers' data in the same tables, separated by an organisation identifier. This is the right default and it has two consequences for performance that are worth knowing before they arrive.
+
+**Every index needs the tenant column, usually first.** A query filtering by organisation and then by date wants a composite index in that order. An index on date alone forces the database to scan across every tenant's rows and discard most of them, and it degrades as you add customers rather than as any one customer grows.
+
+**One large tenant distorts everything.** Query plans are built from table-wide statistics. When one customer has 400,000 records and the median has 900, the planner's assumptions are wrong for both of them - it will choose a scan for the small tenants where an index was right, or the reverse. This is the most common cause of a SaaS product that is fast for most customers and mysteriously slow for the biggest one, which is also the one paying you most.
+
+The other multi-tenant hazard is not performance at all but it lives in the same code: a query that forgets its tenant filter returns another customer's data. This is the most serious defect class in multi-tenant software, and the structural defence is a single data-access layer that applies the filter rather than relying on every query author remembering. [The security checklist](/blogs/web-application-security-checklist) treats it properly.
+
+## The N+1 problem, which is more common than indexing
+
+Worth naming separately because it is the single most frequent cause of a slow page in application code, and it is invisible in the database's slow query log.
+
+The shape: a page lists 50 orders, and for each one the code fetches the customer name. That is one query for the list and 50 more for the names - 51 round trips where two would do. Each individual query is fast, so nothing appears in the slow query log, and the page still takes four seconds.
+
+Two things make this worse in practice. It scales with page size, so it is fine in testing with five records and terrible in production with two hundred. And modern data-access libraries make it easy to write accidentally, because fetching a related record looks like reading a property.
+
+The fix is to fetch related data in one go rather than per row. The diagnostic is simpler than the fix: count the queries a page issues. If the number grows with the number of rows displayed, you have found it. Most frameworks can log this in development, and turning that on for an afternoon is one of the highest-return things a team can do.
+
+## Caching, and where to put it
+
+The fastest query is the one you never run. Before scaling the database, work out how much of its load is answering the same question repeatedly.
+
+**Cache computed results, not raw rows.** A dashboard summary recalculated identically for every page load is the classic case. Compute it once, store it, serve it from memory. [Redis](https://redis.io/docs/latest/) is the usual home for this and it is one of the few second data stores that reliably earns its place.
+
+**Set an expiry you can defend.** How stale can this be? For a dashboard counter, five minutes is usually fine and nobody notices. For an account balance, nothing is acceptable. This is a business decision and it should be made explicitly per cached item rather than by picking one number for everything.
+
+**Decide what happens when the cache is empty.** Every cached value has a first request. If a thousand of them arrive simultaneously after a deploy clears the cache, they all hit the database at once and you have built a self-inflicted outage. Serving a slightly stale value while one request refreshes it is the standard defence.
+
+**Do not cache to hide a missing index.** Caching a query that takes four seconds means it takes four seconds for the unlucky user who triggers the refresh, and you have added a second system to maintain. Fix the query first, then cache what is still expensive.
+
+The order matters and teams frequently invert it: index, remove N+1 patterns, then cache what remains. Caching first hides the diagnosis and leaves the underlying problem to be rediscovered later, usually under worse conditions.
+
 ## The things we never skip
 
 Scaling is not only about speed. A fast database that loses data is not a win. Across every SaaS we run, these are non-negotiable from day one:
@@ -67,7 +115,66 @@ Scaling is not only about speed. A fast database that loses data is not a win. A
 - **Automated backups with tested restores.** A backup you have never restored is a hope, not a backup.
 - **Migrations that are safe under load.** Adding a column with a default or a non-concurrent index lock can take a production table down. We write migrations to be online and reversible.
 - **Sensible defaults reviewed early.** Default `shared_buffers` and `work_mem` are conservative; on a real workload they often need raising.
+- **Point-in-time recovery, not just nightly snapshots.** The difference between losing a day and losing five minutes, and on a managed instance it is usually a checkbox and a small storage cost.
+- **A documented recovery time.** How long a full restore takes, measured rather than estimated. That number is your actual worst case and most teams have never established it.
+- **Statement timeouts.** A query with no upper bound can hold resources indefinitely and take the application down with it. A ceiling of a few seconds for user-facing queries turns a hang into a handled error.
 
 ## The takeaway
 
+Two closing observations for the person paying for this rather than doing it. First, almost every "we need a bigger database" conversation in our experience resolves into a week of measurement and a fortnight of targeted work, at a fraction of the cost of the architecture being proposed - so the cheapest possible response to a scaling proposal is to fund the measurement before the migration. Second, the work described here does not need a specialist on staff; it needs someone to look at the right five numbers on a regular basis, which is a habit rather than a hire.
+
 Scaling Postgres is mostly discipline, not heroics. Measure before you change anything. Fix the indexes. Put a pooler in front of it. Add read replicas when reads dominate. Reach for partitioning and sharding only when the numbers genuinely demand them - which, for most SaaS products, is much later than the team fears. The boring path keeps you on a single, well-understood database for years, and that simplicity is itself a feature.
+
+## What to watch, so you find out before your customers do
+
+Five signals, checked weekly, catch nearly everything before it becomes a page nobody can load.
+
+**The slowest queries by total time, not by individual duration.** A query taking 80 milliseconds and running 40,000 times an hour costs more than one taking four seconds that runs twice. PostgreSQL's statement statistics extension gives you this ranking directly and it is the single most useful view available.
+
+**Connection count against the limit.** Approaching the ceiling is the precursor to an outage that presents as a total failure rather than a gradual slowdown, which is why it surprises people.
+
+**Cache hit ratio.** The proportion of reads served from memory rather than from disk. Below roughly 95% on a normal workload means the instance needs more memory, and the symptom is a general sluggishness with no single slow query to blame.
+
+**Table and index size growth.** A table growing at a rate that will exceed your instance in eight months is a planning item today rather than an emergency then.
+
+**Replication lag, if you have a replica.** A replica seconds behind is fine for reports and wrong for anything a user just wrote - the classic symptom is a user saving a change and not seeing it, because the read went to a replica that had not caught up. Lag that grows during business hours is a warning that the replica cannot keep pace with write volume.
+
+Two more that catch the unglamorous failures: **dead tuple accumulation**, where updates and deletes leave rows that vacuum has not yet reclaimed and tables bloat quietly; and **the age of your oldest unvacuumed table**, which is the one that produces a genuine emergency if left long enough.
+
+None of this needs a specialist. It needs someone to look at a dashboard for five minutes a week and to know which direction is bad.
+
+## A worked example
+
+A B2B SaaS product with 340 customer organisations reported that the application had "hit a wall" at around 2 million rows in its main activity table. Pages that had been instant were taking four to nine seconds, and the previous team had proposed moving to a distributed database at $120,000.
+
+Measurement over two days found four separate problems, none of which was the database's capacity.
+
+**The activity list page issued 218 queries.** A classic N+1 across three relationships. Rewritten to fetch related records in one pass: 218 queries became 4, and the page went from 6.2 seconds to 340 milliseconds.
+
+**The main index did not lead with the tenant column.** It was on `created_at` alone, so filtering one organisation's activity scanned across all 340 of them. A composite index on organisation and date took the underlying query from 2.1 seconds to 8 milliseconds.
+
+**Their largest customer had 31% of all rows.** Table-wide statistics were skewed enough that the planner chose badly for everyone. Increasing the statistics target on the tenant column and running `ANALYZE` fixed the plan selection.
+
+**Reporting ran against the primary.** Three scheduled reports, each a heavy aggregate, running during business hours and competing with customer traffic. Moved to a read replica at $180 a month.
+
+The whole engagement was eleven days and about $14,000. Median page load across the application went from 3.8 seconds to 290 milliseconds, on the same instance size.
+
+Eighteen months later they are at 780 organisations and 9 million rows, on an instance one size larger than the original. The $120,000 distributed database has not been needed and, on the current trajectory, will not be.
+
+The general lesson is the one worth repeating: **"we have outgrown Postgres" is almost always "we have never looked at our queries."** Distributed databases exist for real problems that a single well-tuned instance cannot solve. Most businesses never arrive there, and the ones that do arrive knowing exactly which measurement sent them.
+
+## Related reading
+
+- [Choosing a database](/blogs/choosing-a-database) - the decision this post assumes you have already made
+- [Why your website is slow](/blogs/why-your-website-is-slow) - when the problem is not the database at all
+- [Signs you have outgrown your current system](/blogs/signs-you-have-outgrown-your-current-system) - distinguishing real ceilings from fixable ones
+- [Web application security checklist](/blogs/web-application-security-checklist) - the tenant-isolation failure that lives in the same code
+
+## Sources and further reading
+
+- [PostgreSQL indexing documentation](https://www.postgresql.org/docs/current/indexes.html) - the reference for the most common cause of slowness
+- [Use The Index, Luke](https://use-the-index-luke.com/) - the best free explanation of why queries are slow, written for non-specialists
+- [PostgreSQL architecture overview](https://www.postgresql.org/docs/current/tutorial-arch.html) - how the pieces fit, including connections and processes
+- [Jepsen consistency models](https://jepsen.io/consistency) - what replicas actually guarantee, before you route reads to one
+- [Google SRE book](https://sre.google/sre-book/table-of-contents/) - monitoring and capacity planning practices behind the measurement discipline
+- [Redis documentation](https://redis.io/docs/latest/) - the cache that removes work from the database entirely

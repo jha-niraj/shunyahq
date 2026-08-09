@@ -1,11 +1,13 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
-import { BLOG_POSTS, BLOG_CATEGORIES, BLOG_CATEGORY_KEYS } from "@/content/blog"
-import { SITE_URL, SITE_NAME } from "@/lib/site"
+import { BLOG_CATEGORIES, BLOG_CATEGORY_KEYS, getPublishedPosts } from "@/content/blog"
+import { SITE_URL } from "@/lib/site"
 import { PageHero } from "@/components/landing/page-hero"
 import { PageBackground } from "@/components/landing/page-background"
 import { formatBlogDate } from "./_components/format-date"
+import { pageMeta } from "@/lib/seo"
+import { TopicGlyph } from "@/components/blog/topic-glyph"
 
 const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -16,28 +18,22 @@ const breadcrumbSchema = {
     ],
 }
 
-export const metadata: Metadata = {
-    // No brand suffix here - the root layout's title template already appends `| ShunyaHQ`.
-    title: "Engineering & Product Blog",
+export const metadata: Metadata = pageMeta({
+    title: "Web Development Guides & Case Studies",
     description:
-        "How Shunya architects, builds, and ships production software - engineering deep dives, AI guides, product thinking, and real case studies from the team that owns the whole stack.",
-    alternates: { canonical: `${SITE_URL}/blogs` },
-    openGraph: {
-        title: `Engineering & Product Blog - ${SITE_NAME}`,
-        description:
-            "Engineering deep dives, AI guides, product thinking, and real case studies from the Shunya team.",
-        url: `${SITE_URL}/blogs`,
-        type: "website",
-    },
-}
+        "Practical guides on planning, budgeting and building custom web applications - plus engineering deep dives and case studies from products we have shipped.",
+    path: "/blogs",
+    // Next does not inherit the root opengraph-image into this segment, so it is named
+    // explicitly - without it this page ships with no og:image at all.
+    ogImage: "/opengraph-image",
+})
 
 const CATEGORY_BADGE =
     "bg-neutral-100 text-neutral-700 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700"
 
 export default function BlogPage() {
-    const posts = Object.entries(BLOG_POSTS).sort(
-        (a, b) => new Date(b[1].datePublished).getTime() - new Date(a[1].datePublished).getTime(),
-    )
+    // Published only - the ledger in content/active-posts.ts is the gate.
+    const posts = getPublishedPosts().map((p) => [p.slug, p] as const)
 
     const featured = posts[0]
     const rest = posts.slice(1)
@@ -101,7 +97,7 @@ export default function BlogPage() {
                                             <div
                                                 className="aspect-video lg:aspect-auto lg:min-h-[280px] bg-cover bg-center bg-so-accent-soft"
                                                 style={{
-                                                    backgroundImage: `url(${featured[1].ogImage})`,
+                                                    backgroundImage: `url(/blogs/${featured[0]}/opengraph-image)`,
                                                 }}
                                             />
                                             <div className="p-8 lg:p-10 flex flex-col justify-center">
@@ -140,16 +136,21 @@ export default function BlogPage() {
                             <p className="text-[14px] text-so-ink-2 mb-6">
                                 Jump into a topic hub for deeper coverage of a single area.
                             </p>
-                            <div className="flex flex-wrap gap-3">
+                            {/* Each hub carries a drawn glyph so six similarly-worded labels read as
+                                six distinct places rather than a row of pills. */}
+                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                                 {
                                     BLOG_CATEGORY_KEYS.map((key) => (
                                         <Link
                                             key={key}
                                             href={`/blogs/topics/${key}`}
-                                            className="group inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full so-card text-[13px] font-medium text-so-ink hover:shadow-md transition-all"
+                                            className="group so-card flex flex-col items-start gap-3 p-4 transition-all hover:shadow-md"
                                         >
-                                            {BLOG_CATEGORIES[key]}
-                                            <ArrowRight size={13} className="text-so-accent" />
+                                            <TopicGlyph topic={key} className="h-9 w-9 text-so-ink" />
+                                            <span className="text-[13px] font-medium leading-snug text-so-ink">
+                                                {BLOG_CATEGORIES[key]}
+                                            </span>
+                                            <ArrowRight size={13} className="mt-auto text-so-accent transition-transform group-hover:translate-x-0.5" />
                                         </Link>
                                     ))
                                 }
@@ -169,7 +170,7 @@ export default function BlogPage() {
                                         >
                                             <div
                                                 className="aspect-[16/9] bg-cover bg-center bg-so-accent-soft"
-                                                style={{ backgroundImage: `url(${meta.ogImage})` }}
+                                                style={{ backgroundImage: `url(/blogs/${slug}/opengraph-image)` }}
                                             />
                                             <div className="p-5 flex flex-col flex-1">
                                                 <div className="flex items-center gap-2 mb-3">

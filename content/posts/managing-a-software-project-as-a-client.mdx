@@ -1,0 +1,212 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Nobody tells you that commissioning software is a job. You hire a team, you agree a scope, and there is an unspoken assumption that they now go away and return with the thing. That is not how it works, and the difference between projects that land well and projects that do not is very often on the client side rather than the supplier side.
+
+This is a guide to doing your half properly. It is written for someone who is not technical, does not want to become a project manager, and has an actual job to do besides this.
+
+## The uncomfortable premise
+
+**Your involvement is not optional and it is not small.** Budget four to eight hours a week of your own time on an active project, more in the first fortnight and around launch. If you cannot find that, appoint someone who can, with authority to decide.
+
+The reason is structural. A software project generates a continuous stream of questions that only you can answer - what should happen in this edge case, which of these two behaviours is right, is this important enough to delay for. A supplier who cannot get answers has two options: wait, which costs you time, or guess, which costs you rework. Both are worse than four hours a week.
+
+<Callout type="warn">
+The most common cause of a project going badly is not incompetence on either side. It is a client-side decision maker who is too busy, so questions queue, assumptions get made, and the divergence is discovered at demo three.
+</Callout>
+
+## Before it starts
+
+**Name a single decision maker.** One person whose answer is final. Committees produce contradictory feedback with no mechanism to resolve it, and the supplier ends up choosing which stakeholder to disappoint. If several people must be consulted, that is fine - one of them still owns the answer.
+
+**Agree what "done" means, in writing.** Not a feature list. A description of what someone can do at the end. This becomes your acceptance criteria and it is the single most useful document in the project. [What to look for in a development contract](/blogs/software-development-contract-checklist) covers how it should be referenced.
+
+**Write down your assumptions.** The things you believe are obviously true. "Customers will always have an email address." "Orders can only be edited before dispatch." Every one of these that goes unstated is a coin flip.
+
+**Establish the cadence before week one.** A weekly call at a fixed time, a written update, a shared place where decisions are recorded. Agreeing this while everyone is enthusiastic is easier than introducing it during a difficult month.
+
+**Find out what they need from you and when.** Content, brand assets, access to systems, sign-offs, test users, legal review. Ask for the list in week one. Most projects that slip do so partly on client dependencies, and the dependency list is what makes that visible before it becomes an argument.
+
+## The rhythm of a healthy project
+
+Most competent suppliers work in iterations - one or two week cycles, each ending with something you can look at. The names vary and the shape does not. [The Agile Manifesto](https://agilemanifesto.org/) is the four-paragraph origin of the idea, and the [GOV.UK guidance on agile delivery](https://www.gov.uk/service-manual/agile-delivery) is a more practical description of what it looks like in an organisation.
+
+What you should see every cycle:
+
+**Something working.** Not a document, not a slide, not a design - software you can click. From early on, even when it is ugly and half of it does not function.
+
+**A short written update.** What was done, what is next, what is blocked, what decisions are needed from you. Half a page. If you are getting nothing in writing, ask; if you are getting fifteen pages, ask for less.
+
+**A demo you attend.** Thirty minutes. This is the mechanism that catches divergence early, and skipping it because you are busy is the most expensive time saving available.
+
+**Decisions recorded somewhere you can find them.** Not in a chat thread. Six months later "we agreed this in a call" is not a resolvable claim.
+
+<RateTable
+  headers={['Signal', 'Healthy', 'Worth a conversation']}
+  rows={[
+    ['Working software', 'Every cycle from week 2-3', 'Nothing to click by week 6'],
+    ['Written updates', 'Weekly, brief, specific', 'Absent or entirely status-green'],
+    ['Bad news', 'Arrives early and plainly', 'Arrives at the deadline'],
+    ['Questions to you', 'A steady trickle', 'None at all'],
+    ['Estimates', 'Refined as things are learned', 'Never change, then all change'],
+    ['Scope changes', 'Priced and approved in writing', 'Absorbed silently'],
+  ]}
+/>
+
+The row people find most surprising is "questions to you". A supplier asking nothing is not a supplier who has understood everything. It is a supplier making assumptions, and you will meet those assumptions later.
+
+## Reading a status report properly
+
+You will receive updates. Knowing what to look for turns them from reassurance into information.
+
+**Look at what changed, not at the summary.** A report saying "on track" every week for eleven weeks contains no information. A report saying "the export feature took longer than expected because the file format was undocumented; we absorbed it, but the reporting work has moved a week" contains a great deal.
+
+**Watch for work that keeps appearing.** The same item listed as in progress for four cycles is stuck, and nobody has said so. Ask what is actually blocking it - frequently the answer is a decision waiting on you.
+
+**Notice what disappeared.** Items that quietly leave the list without being marked done have either been deferred or forgotten, and the difference matters.
+
+**Ask about the things not mentioned.** Testing, deployment, documentation and security are the four that fall off status reports first, precisely because they are not features anyone demos.
+
+**Track the burn against the budget, in your own spreadsheet.** Suppliers report this and you should keep your own version. If 70% of the budget is spent and 45% of the scope is done, that is a conversation to have in month three, not month six.
+
+## Giving feedback that helps
+
+This is a genuine skill and most people are bad at it initially, including us when we are the client.
+
+**Describe the problem, not the solution.** "The save button should be blue" is a solution. "I could not tell whether my changes had saved" is a problem, and it might have a better answer than a blue button. Suppliers who receive solutions implement solutions; suppliers who receive problems solve problems.
+
+**Separate "wrong" from "not what I imagined".** Both are valid feedback and they cost differently. If the behaviour does not match what was agreed, that is a defect and they fix it. If it matches what was agreed but you have changed your mind, that is a change and it has a price. Being clear about which one you are raising prevents a large amount of friction.
+
+**Batch it.** Twenty messages across a day interrupt more than they inform. One consolidated list, prioritised, is easier to act on and easier to track.
+
+**Prioritise honestly.** If everything is urgent, nothing is. A useful discipline: for each item, say what happens if it ships as-is. If the answer is "nothing much", it is not urgent.
+
+**Say what is good, specifically.** Not politeness - information. A team that knows which parts landed well will make more decisions like those.
+
+## The decisions only you can make
+
+Suppliers will ask you these and it is worth knowing they are coming, because the answers require business judgement rather than technical knowledge.
+
+**Edge case behaviour.** What happens when a customer's card fails halfway through? When two people edit the same record? When someone uploads a file with the same name as an existing one? There is no technically correct answer; there is only the answer your business wants.
+
+**Trade-offs between speed and completeness.** Do you want a simpler version in four weeks or the full version in nine? This comes up repeatedly and it is always yours to decide.
+
+**What is acceptable to defer.** A supplier can tell you the cost of each item. Only you know which ones your customers will forgive.
+
+**Who the software is actually for.** When a design decision splits two user groups, someone has to say which one wins.
+
+**What data means.** Is a "customer" someone who has bought, or someone who has registered? Your team may use the word both ways. The database cannot.
+
+## Warning signs, and what to do about each
+
+**Nothing to click by week five or six.** Ask to see whatever exists, in whatever state. A supplier who cannot show you anything running is a supplier whose progress you cannot verify.
+
+**Status is always green, then suddenly is not.** Real projects have problems weekly. A supplier reporting only good news is either not looking or not telling. Ask specifically: "What is the thing most likely to cause a delay?" A team that cannot name one is not being straight with you.
+
+**Estimates never move.** Estimates should refine as things are learned. A number that stays identical for four months and then changes by 40% was never being tracked.
+
+**You are being asked to approve things you do not understand.** Say so. "Explain this to me as though I do not know what a database is" is a completely reasonable request, and the ability to do it is a good signal about the supplier.
+
+**Scope grows without anyone mentioning cost.** Pleasant in the moment, and it either ends in a large invoice or in the supplier quietly cutting something else to compensate.
+
+**The team you meet is not the team who pitched.** Ask who is actually working on your project and what their experience is. This is fair and normal to ask.
+
+**Communication drops off.** Usually the earliest visible symptom of a project in trouble, because a team under pressure stops writing updates first.
+
+<Callout type="info">
+The single most useful question to ask in a weekly call: "What would you do differently if this were your own project?" Suppliers usually have an opinion, rarely volunteer it unprompted, and it is frequently the most valuable thing said all week.
+</Callout>
+
+## Testing, when it is your turn
+
+At some point you will be asked to test. This is not a formality and it is where a surprising amount of value is either captured or lost.
+
+**Test as your users, not as a reviewer.** Do a real task from start to finish. Book the thing, place the order, run the report. Reviewers click every button; users follow a path, and paths are where the problems are.
+
+**Test on the devices your customers use.** Not just your laptop. Your phone, an older phone if you can find one, and whatever browser your customers actually have.
+
+**Try to break it.** Submit the form empty. Put a comma in the number field. Press back mid-process. Upload a 40MB image. Real users do all of this within a week of launch.
+
+**Write down what you did, not just what went wrong.** "It broke" is not actionable. "I did A, then B, then C, and expected X but got Y" gets fixed the same day.
+
+**Do not test alone.** Get two or three people who were not in the design conversations. They will find things you cannot see any more, for the same reason you cannot proofread your own writing.
+
+## When something goes wrong
+
+At some point in most projects there is a genuinely bad week - a missed milestone, a serious defect, a disagreement about what was agreed. How that week is handled matters more than the fact of it.
+
+**Deal with it in a call, not in writing.** Written exchanges during a dispute escalate reliably. Get on a call, establish what actually happened, and then write down what you agreed afterwards.
+
+**Separate the problem from the pattern.** One missed milestone is a problem. Three is a pattern, and they need different responses. Fixing the first as though it were the third damages a relationship that was fine.
+
+**Ask what would prevent it recurring** rather than who is at fault. The second question feels more satisfying and produces nothing useful.
+
+**Be willing to look at your own side.** A missed deadline caused by three weeks of waiting for content is not a supplier failure. Suppliers are frequently reluctant to say this plainly, so it is worth asking directly whether anything on your side contributed.
+
+**Escalate deliberately, not gradually.** If it is serious, say so clearly and early to whoever runs the supplier. A slow accumulation of unhappiness that surfaces as a sudden crisis serves neither side.
+
+The projects that recover are the ones where both parties still believe the other is trying. Protecting that belief is worth some patience, and the moment it goes, the sensible thing is usually to plan an orderly exit rather than a long decline.
+
+## Launch, and the fortnight after
+
+**Do not launch on a Friday.** Or before a holiday, or the day before your key people are away. Not superstition - the first few days generate the most issues and you want people available.
+
+**Agree what is being watched and by whom.** Error rate, signups, orders, whatever your critical numbers are. Someone should be looking at them daily for the first two weeks.
+
+**Expect a bug list.** Every launch has one. The measure of a good supplier is not the absence of a list but the speed and honesty with which it is worked through.
+
+**Keep a fortnight of budget and attention in reserve.** Launch is the beginning of learning what real users do, and the most valuable improvements you will ever make are the ones informed by the first two weeks of real behaviour.
+
+**Have the support arrangement in place before you launch, not after.** The gap between a build ending and a support agreement starting is where the worst weeks happen.
+
+## Managing the people around the project
+
+The supplier relationship is only half of it. Internally, three groups need handling and each one derails projects in its own way.
+
+**Executives who appear at the end.** A senior stakeholder who was not involved during the build and turns up at the final demo with strong opinions is a genuine risk to a finished project. The prevention is cheap: get them to the demo at week four and week ten, briefly. Fifteen minutes twice is enough to make them a participant rather than a reviewer.
+
+**The people who will use it daily.** They know things nobody else does - the workarounds, the exceptions, the reason a process that looks illogical exists. Include two of them from the start. Their objections in week three are the objections your whole team will raise in month two, and the difference is that in week three you can act on them.
+
+**The person whose job the software changes.** Software projects change how people work, and someone usually loses something they liked. This is a change management problem wearing a technology costume, and no amount of good engineering resolves it. Name it, involve them, and be honest about what is changing.
+
+The general rule: everyone who can block the project at the end should be involved in the middle. Involvement is cheaper than a veto.
+
+## A worked example
+
+A membership organisation commissioned a portal for their 4,000 members. The build was quoted at nineteen weeks and delivered in twenty-two, which by industry standards is a good outcome. What made the difference was almost entirely on their side.
+
+**They named one decision maker** - their operations director - with explicit authority to decide without going to the board. Every question got an answer within a day.
+
+**They wrote down thirty assumptions** in week one. Nine turned out to be wrong. Finding that out in week one cost a meeting; finding it out in week fourteen would have cost rework.
+
+**They attended every demo.** Twenty-two of them. At demo six they realised the renewal flow assumed members renewed individually, when in fact 30% renewed as organisations paying for several people. That was a significant change, and catching it at week six cost eleven days. At week eighteen it would have been a rebuild of the billing model.
+
+**They tested with real members.** Eight volunteers, not staff. The volunteers found that the term "subscription" meant something different to members than to the organisation, which caused confusion that nobody internal could see because they were too close to it.
+
+**They kept two weeks of budget back.** In the fortnight after launch they used it to rework the onboarding email sequence based on where people actually got stuck, which lifted completed registrations from 61% to 88%.
+
+The three weeks of overrun came from the renewal-flow change, which was their own discovery and unambiguously worth making. Their assessment afterwards was that the demos were the highest-value hour they spent each fortnight, and that they would have skipped them if the supplier had not insisted.
+
+## What we do differently
+
+We insist on a named decision maker before we start, and we say plainly that the project will be slower and worse without one. It is an awkward conversation and it prevents the most common failure mode there is.
+
+We write down assumptions in week one and review them at every milestone, because the wrong ones are cheap to find early and expensive to find late.
+
+And we bring problems as soon as we see them rather than when they are unavoidable. A supplier who only reports good news is protecting the relationship at the expense of the project, and that trade always resolves badly in the end.
+
+If you are about to start a project and want a second view on your side of the preparation, [we are glad to help](/contactus).
+
+## Related reading
+
+- [How to write a web development brief](/blogs/how-to-write-a-web-development-brief) - the document that starts all of this
+- [Why software projects fail](/blogs/why-software-projects-fail) - the patterns this guide is designed to avoid
+- [Software development contract checklist](/blogs/software-development-contract-checklist) - the agreement underneath the process
+- [Questions to ask in a software demo](/blogs/questions-to-ask-in-a-software-demo) - for the selection stage
+
+## Sources and further reading
+
+- [The Agile Manifesto](https://agilemanifesto.org/) - four paragraphs, and still the clearest statement of the working model
+- [GOV.UK agile delivery guidance](https://www.gov.uk/service-manual/agile-delivery) - what iterative delivery looks like inside an organisation
+- [DORA research](https://dora.dev/) - the evidence on what actually predicts software delivery performance
+- [Nielsen Norman Group UX research cheat sheet](https://www.nngroup.com/articles/ux-research-cheat-sheet/) - practical methods for testing with real users
+- [Continuous integration](https://martinfowler.com/articles/continuousIntegration.html) - the practice behind "something to click every cycle"

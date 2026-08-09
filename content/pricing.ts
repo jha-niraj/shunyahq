@@ -26,7 +26,7 @@ export type PricingDomain = {
     key: string
     title: string
     description: string
-    icon: "globe" | "smartphone" | "clapperboard" | "server"
+    icon: "globe"
     tiers: PricingTier[]
 }
 
@@ -53,84 +53,6 @@ export const PRICING: Record<string, PricingDomain> = {
                 name: "Enterprise", basePrice: 8500, suffix: "project scope", icon: "crown",
                 description: "Complex distributed systems for large organizations.",
                 features: ["Microservices Architecture", "Custom AI/LLM Integration", "Real-time Systems (WebSockets)", "Global CDN Strategy", "RBAC & Audit Logs", "Dedicated Project Manager", "90 Days Priority Support"],
-                missing: [],
-            },
-        ],
-    },
-    mobile: {
-        key: "mobile",
-        title: "Mobile Ecology",
-        description: "Native-feel cross-platform applications using React Native and Expo.",
-        icon: "smartphone",
-        tiers: [
-            {
-                name: "MVP Mobile", basePrice: 2599, suffix: "starts at", icon: "zap",
-                description: "Get your app on iOS and Android stores quickly.",
-                features: ["React Native / Expo", "iOS & Android Build", "Basic Auth & Profile", "Push Notifications", "App Store Submission", "Standard UI Components"],
-                missing: ["Offline Mode", "Biometrics", "Custom Native Modules"],
-            },
-            {
-                name: "Pro Ecosystem", basePrice: 5500, suffix: "starts at", icon: "shield", popular: true,
-                description: "Feature-rich applications with native capabilities.",
-                features: ["Everything in MVP", "Offline-First Architecture", "Biometric Security (FaceID)", "In-App Purchases", "Real-time Chat/Data", "Advanced Analytics", "Deep Linking"],
-                missing: ["Bluetooth/Hardware Integration"],
-            },
-            {
-                name: "Enterprise Native", basePrice: 12000, suffix: "starts at", icon: "crown",
-                description: "Complex hardware integration and high-security needs.",
-                features: ["Custom Native Modules (Swift/Kotlin)", "IoT / Bluetooth Integration", "Enterprise MDM Support", "End-to-End Encryption", "Automated CI/CD for Mobile", "Dedicated QA Team", "SLA Guarantee"],
-                missing: [],
-            },
-        ],
-    },
-    video: {
-        key: "video",
-        title: "Visual Narrative",
-        description: "Cinematic storytelling and motion graphics for modern brands.",
-        icon: "clapperboard",
-        tiers: [
-            {
-                name: "Social Shorts", basePrice: 599, suffix: "per package", icon: "zap",
-                description: "High-retention editing for Reels, TikTok, and Shorts.",
-                features: ["5 Short-Form Videos", "Dynamic Captions", "Stock Footage/Music", "Color Correction", "2 Revisions per Video", "Vertical Format (9:16)"],
-                missing: ["Motion Graphics", "Scriptwriting", "3D Elements"],
-            },
-            {
-                name: "Brand Story", basePrice: 1599, suffix: "starts at", icon: "shield", popular: true,
-                description: "Long-form content and promotional trailers.",
-                features: ["1 Long-Form Video (up to 10m)", "Advanced Sound Design (SFX)", "Custom Motion Graphics", "Narrative Structuring", "Thumbnail Design", "4K Export", "Project File Access"],
-                missing: ["On-Location Shoot"],
-            },
-            {
-                name: "Full Production", basePrice: 4500, suffix: "starts at", icon: "crown",
-                description: "End-to-end production for commercials and launches.",
-                features: ["Creative Direction & Scripting", "3D Product Rendering", "Advanced VFX / Compositing", "Multi-Platform Resizing", "Voiceover Artist", "Unlimited Revisions", "Dedicated Creative Director"],
-                missing: [],
-            },
-        ],
-    },
-    cloud: {
-        key: "cloud",
-        title: "Cloud Infra",
-        description: "Scalable backend architecture and DevOps solutions.",
-        icon: "server",
-        tiers: [
-            {
-                name: "Setup", basePrice: 1200, suffix: "one-time", icon: "zap",
-                description: "Initial server setup and security hardening.",
-                features: ["AWS/DigitalOcean Setup", "SSL Installation", "Basic Firewall", "Docker Config"],
-                missing: ["Auto-scaling", "Load Balancing"],
-            },
-            {
-                name: "Scale", basePrice: 2800, suffix: "one-time", icon: "shield", popular: true,
-                description: "Kubernetes orchestration and high availability.",
-                features: ["K8s Cluster Setup", "Load Balancer Config", "CI/CD Pipeline", "Database Clustering", "Auto-scaling Rules"],
-                missing: [],
-            },
-            {
-                name: "Retainer", basePrice: 1500, suffix: "per month", icon: "crown",
-                description: "Ongoing management and 24/7 monitoring.",
-                features: ["24/7 Uptime Monitor", "Security Patching", "Log Analysis", "Incident Response", "Cost Optimization"],
                 missing: [],
             },
         ],

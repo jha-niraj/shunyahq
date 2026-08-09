@@ -272,7 +272,7 @@ function TierCard({ tier }: { tier: Tier }) {
             </ul>
 
             <div className="mt-7">
-                <Link href="/submit" className="so-btn so-btn-primary w-full justify-center">
+                <Link href="/contactus" className="so-btn so-btn-primary w-full justify-center">
                     {tier.cta} <ArrowRight size={13} />
                 </Link>
                 <p className="text-[12px] text-center text-so-ink-3 mt-3">{tier.note2}</p>
@@ -589,7 +589,7 @@ export default function PricingPage() {
                             Get the support you need without the excessive costs of traditional accelerators.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center gap-3">
-                            <Link href="/submit" className="so-btn so-btn-primary">
+                            <Link href="/contactus" className="so-btn so-btn-primary">
                                 Apply now <ArrowRight size={13} />
                             </Link>
                             <Link href="/contactus" className="so-btn so-btn-ghost">

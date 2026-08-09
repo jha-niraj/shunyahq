@@ -40,7 +40,7 @@ export const LANDING_FAQS: { q: string; a: string }[] = [
 export const PRICING_FAQS: { q: string; a: string }[] = [
     {
         q: "Why do you publish prices when most agencies don't?",
-        a: "Because hiding pricing behind a sales call wastes everyone's time. Our rate cards give you a realistic starting point for web, mobile, visual production, and cloud work before you ever talk to us. The final number depends on scope, but you'll never hit a 'contact for quote' wall for standard projects.",
+        a: "Because hiding pricing behind a sales call wastes everyone's time. Our rate card gives you a realistic starting point for a custom web build before you ever talk to us. The final number depends on scope, but you'll never hit a 'contact for quote' wall for standard projects.",
     },
     {
         q: "Are these prices fixed or a starting point?",
@@ -55,8 +55,8 @@ export const PRICING_FAQS: { q: string; a: string }[] = [
         a: "Every build ships with documentation and a post-launch support window (2-90 days depending on tier) covering bug fixes and handover. After that, we offer ongoing retainers for monitoring, security patching, and feature work.",
     },
     {
-        q: "Can I mix services across tiers?",
-        a: "Absolutely. Most real projects combine web, mobile, AI, and cloud work. Tell us your scope and we'll assemble a single, transparent proposal across whatever services you need.",
+        q: "What if my project does not fit a single tier?",
+        a: "Yes. A real project usually spans several tiers - a Scale build with one Enterprise-level requirement, say. Tell us the scope and we assemble one transparent proposal rather than forcing you into a box.",
     },
     {
         q: "Do you offer equity or deferred arrangements for startups?",

@@ -1,0 +1,206 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+"We'll add other languages later" is one of the most expensive sentences in web development. Not because translation is hard, but because supporting more than one language touches the data model, the URL structure, the content workflow, the design and the search strategy - and retrofitting all five is considerably more work than building for it once.
+
+This is what multi-language actually involves, what it costs, and how to tell whether you need it now or can genuinely defer it.
+
+## Two words that are not the same thing
+
+**Translation** is converting text from one language to another. **Localisation** is making the product appropriate for a place: currency, date formats, address fields, phone number formats, units, legal requirements, payment methods, imagery, and what is considered polite.
+
+Most projects budget for the first and encounter the second. A German translation of a checkout that still asks for a five-digit ZIP code and displays prices in dollars has been translated and not localised, and customers notice the second failure more than the first.
+
+The distinction matters for scoping. Translation cost scales with word count. Localisation cost scales with how many assumptions about place are baked into your application, and those assumptions are everywhere: date formats, name fields that assume a first and last name, address forms modelled on one country, sorting that assumes the Latin alphabet.
+
+<Callout type="info">
+A quick test of how ready your application is: can it display a date, a price and a person's name correctly for a locale you have never considered? If those three are hard-coded, localisation is architecture work rather than content work.
+</Callout>
+
+## The decisions to make before anything is built
+
+**Which languages, and is there a default?** Not aspirationally - which ones will actually have maintained content in twelve months. An unmaintained language version is worse than none, because visitors find outdated information in their own language and trust it.
+
+**Is content translated or authored separately per market?** These are different systems. Translation means one source of truth with translated versions. Market-specific authoring means each region writes its own, which is right when the offering genuinely differs by market and expensive when it does not.
+
+**What happens when a translation is missing?** Fall back to the default language, hide the page, or show a partial page? Every multi-language site faces this constantly, because translations always lag the source, and the answer needs deciding once rather than argued each time.
+
+**How does someone choose a language?** Automatically from browser settings, from location, or by explicit choice? The answer that works is: guess sensibly, make the choice obvious and easy to change, and remember it. The answer that frustrates people is a hard redirect based on IP address with no way to override.
+
+**Do URLs differ per language?** Almost always yes, and the structure is a decision with SEO consequences discussed below.
+
+## URL structure
+
+Three options, and the choice is close to permanent.
+
+**Subdirectories** - `example.com/de/produkte`. The usual recommendation. One domain, so accumulated authority is shared, straightforward to host, easy to add languages. Right for most businesses.
+
+**Subdomains** - `de.example.com`. Cleaner separation, useful when regional teams operate independently. Slightly more setup and the search value is a little more divided.
+
+**Country domains** - `example.de`. Strongest local signal and by far the highest cost: separate registrations, separate certificates, separate authority to build from zero for each. Worth it for large organisations with genuine per-country operations and rarely otherwise.
+
+Whichever you choose, two technical requirements apply. Each language version needs to declare the others exist, using hreflang annotations, so search engines serve the right version to the right person - Google's [guidance on localised versions](https://developers.google.com/search/docs/specialty/international/localized-versions) is the reference and it is worth following precisely, because hreflang is easy to get subtly wrong. And each version needs its own canonical URL pointing at itself, not at the default language.
+
+<Callout type="warn">
+The most common technical defect on multi-language sites is every language version canonicalising to the English page. This tells search engines the other languages are duplicates and removes them from results entirely. Check this before anything else if your translated pages are not ranking.
+</Callout>
+
+## What actually has to change in the application
+
+Beyond content, here is the engineering work people do not anticipate.
+
+**Text extraction.** Every piece of text in the interface must come from a translation file rather than being written into the code. On an existing application this is tedious, mechanical work across every screen, and it is the largest single line in most retrofit budgets.
+
+**Layout that survives length changes.** German text runs roughly 30% longer than English. Finnish longer still. A button sized to fit "Save" will not fit "Speichern unter". Buttons, navigation, tables and labels all need to tolerate expansion, and the fix is a design constraint rather than a translation one.
+
+**Right-to-left support, if applicable.** Arabic and Hebrew reverse the entire layout, not just the text. This is genuinely more work - mirrored layouts, flipped icons, adjusted spacing - and it should be a deliberate scope decision rather than a surprise.
+
+**Formatting by locale.** Dates, numbers, currency, sorting order. Do not hand-roll this. The browser and every modern runtime include internationalisation support - [the Intl API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) handles formatting correctly for every locale, and [CLDR](https://cldr.unicode.org/) is the underlying data set that makes it possible. Teams that write their own date formatting always get some locale wrong.
+
+**Pluralisation.** English has two forms, singular and plural. Several languages have more, with rules that do not map. A translation system that only supports two forms will produce wrong grammar in those languages. Established libraries handle this; string concatenation does not.
+
+**Forms and validation.** Address fields, postcode formats, phone numbers, name structure. The assumption that everyone has a first name and a last name is wrong in several cultures, and a required "last name" field is a real barrier rather than a pedantic point.
+
+**Emails and documents.** Transactional emails, invoices, PDFs and exports all need the same treatment and are always forgotten until someone receives a confirmation email in the wrong language.
+
+**Search.** If your site has internal search, it needs to work per language, including handling accented characters and different word-stemming rules. A search index built for English will return poor results for German compound words and will ignore accents in French unless it is configured not to.
+
+**The language attribute on the page.** A single HTML attribute declaring which language the content is in. It costs nothing, and without it screen readers pronounce the page using the wrong language's rules, which makes it unusable rather than merely awkward.
+
+## What it costs
+
+<RateTable
+  headers={['Work', 'Built in from the start', 'Retrofitted']}
+  rows={[
+    ['Text extraction and framework setup', '$3,000 - $8,000', '$8,000 - $30,000'],
+    ['Layout adaptation for text expansion', 'Included in design', '$4,000 - $15,000'],
+    ['Locale formatting (dates, currency)', '$1,000 - $3,000', '$3,000 - $10,000'],
+    ['URL structure and hreflang', '$1,500 - $4,000', '$3,000 - $9,000'],
+    ['Content workflow and CMS setup', '$2,000 - $8,000', '$5,000 - $15,000'],
+    ['Right-to-left support', '$4,000 - $12,000', '$10,000 - $35,000'],
+    ['Per language, translation', '$0.10 - $0.30 per word', 'Same'],
+  ]}
+/>
+
+Two notes on reading that table. The retrofit column assumes an application of moderate size - 30 to 50 screens - and scales roughly with screen count, because text extraction is per-screen work. And right-to-left support is listed separately because it is the one item you can legitimately scope out entirely; the others are not optional once you have decided to support a second language.
+
+Translation itself is the predictable part. A 15,000-word site at $0.18 a word is $2,700 per language for professional human translation, plus review. Machine translation with human editing is roughly half that and increasingly adequate for straightforward content, though not for anything where nuance or legal precision matters.
+
+The ongoing cost is the one that surprises people. **Every content change now has to be made in every language.** A site with four languages does four times the content work forever, or accepts that three of the four drift out of date. This is the single most common reason multi-language sites deteriorate, and it is an operating cost rather than a project cost.
+
+## Machine translation, used sensibly
+
+The quality of machine translation has changed enough that the old advice - never use it for anything public - is no longer right. The current advice is more specific.
+
+**Reasonable to machine translate with light review:** product descriptions, documentation, help articles, blog content, anything long and factual where an occasional awkward phrase costs little.
+
+**Worth paying a human for:** your homepage, pricing, anything legal, and anything where a specific term of art matters. These are short, high-stakes, and the cost difference on a few thousand words is trivial.
+
+**Never machine translate without review:** terms of service, privacy policies, safety information, and any regulated content. The failure mode is not awkwardness, it is being wrong about an obligation.
+
+Two practical points. Machine translation is inconsistent across a site unless you supply a glossary - your product names, feature names and category terms should be fixed rather than re-translated differently on each page. And the review pass needs someone who knows the product, not only the language; a fluent translator with no context will translate your feature name into a common noun and nobody will notice for a year.
+
+The honest economics: machine translation with a competent review pass costs roughly 40-60% of full human translation and is adequate for most of a typical site's word count. Spending the saved budget on getting the twelve most important pages properly translated is a better allocation than spreading a mediocre standard evenly.
+
+## The workflow question, which decides whether it lasts
+
+Technical support for multiple languages is achievable. Keeping them current is the actual problem, and it is organisational.
+
+**Who translates?** An agency, an internal bilingual colleague, or machine translation with review? Each is a different turnaround time and a different quality level.
+
+**What triggers a translation?** If publishing English content does not automatically create a task to translate it, translation happens when someone remembers.
+
+**Who approves?** Somebody who speaks the language and understands the business. A translation agency can produce accurate text that uses the wrong term for your product.
+
+**How does the system show what is stale?** A source page edited after its translation was made needs to be flagged. Without this, translations silently become wrong rather than merely absent, which is worse.
+
+**Who is accountable per language?** Not who translates - who is responsible for that version being current. Without a name against each language, the ones nobody owns are the ones that rot, and they rot invisibly because the people who would notice do not read that language.
+
+A CMS configured for this makes it manageable. A CMS not configured for it makes multi-language a permanent manual chore, and the version that survives contact with a busy marketing team is the one where the workflow is built in.
+
+## Content that does not translate
+
+Some things break when moved between languages and they are worth flagging during scoping, because they surface late otherwise.
+
+**Text inside images.** A banner with the headline baked into a JPEG needs a new image per language. Multiply by the number of banners and the number of languages, and this becomes a real cost. Keep text as text over images wherever possible.
+
+**Idioms and wordplay.** Marketing copy built on a pun does not survive. Good translators will flag it and propose an equivalent, which costs more than a straight translation and needs approval from someone who understands the intent.
+
+**Culturally specific examples.** Case studies, currency amounts used illustratively, references to national institutions, sports metaphors. All of these need adapting rather than translating.
+
+**Sorting and alphabetisation.** A list of countries alphabetised in English is not alphabetised in German. Sorting must happen after translation, in the target locale.
+
+**Legal and compliance pages.** These are not translations, they are separate documents. Consumer rights, cancellation terms and privacy obligations differ by jurisdiction, and a translated English policy may state something untrue about the reader's rights. This is a legal task rather than a linguistic one, and it intersects directly with [data privacy obligations](/blogs/data-privacy-for-web-applications).
+
+**Names and addresses in your database.** Character encoding, non-Latin scripts, names that do not split into two fields. If your database or forms cannot store them, translating the interface around them does not help.
+
+## A worked example
+
+A B2B software company selling in five European countries had an English site and a plan to add German, French, Spanish and Italian. Their initial expectation was that this was a translation project costing about $12,000.
+
+The assessment found the translation was the smaller half.
+
+**Technical work required:** every string was written directly into components across 34 pages and a web application; date and currency formatting was hard-coded to US conventions in eleven places; the address form had a required "State" dropdown containing US states; the pricing page assumed dollars; and the entire URL structure had no provision for language.
+
+**The work, over nine weeks:**
+
+- **Text extraction and framework setup:** $11,000. The largest line, and entirely a consequence of not doing it at the start.
+- **Locale-aware formatting** using the platform's internationalisation support: $2,800.
+- **Address and form rework** to accept international formats: $4,200.
+- **URL structure, hreflang and per-language sitemaps:** $3,600.
+- **CMS workflow** so editors see translation status and get a task when source content changes: $5,400.
+- **Layout adaptation** where German text broke navigation and three button labels: $2,900.
+- **Translation of 21,000 words into four languages:** $16,800 including review by native speakers with product knowledge.
+
+Total $46,700 against an expected $12,000. Building it in during their original project would have cost an estimated $14,000 of the technical work, plus the same translation cost.
+
+Eleven months on, the German and French versions produce 34% of their organic traffic and 28% of their pipeline. The Italian version has not been updated since launch, because nobody was assigned to it - which is exactly the failure the workflow was meant to prevent, and the workflow only prevents it if someone owns the resulting tasks.
+
+## Measuring whether it worked
+
+Adding a language is an investment and it should be assessed like one. Four measurements, all available without special tooling.
+
+**Organic traffic by language version.** The clearest signal, and the one that takes longest to appear - three to six months before a new language version accumulates meaningful search visibility.
+
+**Conversion rate compared to the default language.** If the German version gets traffic but converts at a fraction of the English rate, that usually means the translation is technically correct and commercially flat, or something in the flow is not localised. Both are fixable and neither shows up in a traffic number.
+
+**Support enquiries in each language.** A useful proxy for real usage, and a cost to plan for: serving customers in a language you cannot support is a promise you have not kept.
+
+**Which pages get read in each market.** Frequently different from the default language, and it tells you where to concentrate translation effort next rather than translating everything evenly.
+
+The decision this data supports is whether to add the next language, deepen the ones you have, or retire one. All three are legitimate outcomes, and retiring a language nobody uses is a saving rather than a failure.
+
+## When to defer, honestly
+
+Multi-language is not always the right investment, and there are two clean reasons to wait.
+
+**Your buyers work in English.** In several B2B categories the purchasing audience reads English professionally, and a translated site adds cost without adding reach. Check before assuming either way - your analytics show where visitors come from, and your sales team knows what language deals happen in.
+
+**You do not yet know which markets matter.** Adding four languages speculatively is expensive. Adding one to a market that is already producing enquiries is evidence-led.
+
+What you should do even when deferring: **build the application so that adding a language is a content project rather than an engineering project.** Extract strings, use locale-aware formatting, and design the URL structure with a language segment even if only one is used. That preparation costs a few thousand pounds during a build and saves five figures later. It is the same argument as designing [multi-tenancy](/blogs/how-much-does-a-saas-platform-cost) in before you need it.
+
+## What we do differently
+
+We externalise all interface text and use locale-aware formatting on every project, whether or not a second language is planned, because the cost during a build is small and the cost afterwards is not.
+
+We design with text expansion in mind - components that tolerate a 30% longer label rather than assuming English brevity - which turns a layout problem into a non-event.
+
+And we treat the translation workflow as part of the deliverable, not a content team problem, because the technical capability to serve four languages is worthless if only one of them stays current.
+
+If you are considering additional languages and want to know which part is engineering and which part is translation, [send us the site](/contactus).
+
+## Related reading
+
+- [Headless CMS explained](/blogs/headless-cms-explained) - the content architecture that makes multi-language manageable
+- [SEO for web applications](/blogs/seo-for-web-applications) - the technical foundation, including canonicals
+- [How much does a SaaS platform cost](/blogs/how-much-does-a-saas-platform-cost) - where internationalisation sits in a build budget
+- [Web accessibility: what is actually required](/blogs/web-accessibility-legal-requirements) - the other requirement that is cheap in advance and expensive after
+
+## Sources and further reading
+
+- [Google on localised versions and hreflang](https://developers.google.com/search/docs/specialty/international/localized-versions) - the definitive guidance on serving the right language version
+- [MDN Intl API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) - built-in formatting for dates, numbers and currency, per locale
+- [Unicode CLDR](https://cldr.unicode.org/) - the locale data that makes correct formatting possible
+- [Consolidating duplicate URLs](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls) - why canonical tags matter more, not less, across languages
+- [GOV.UK Service Manual](https://www.gov.uk/service-manual/technology) - public-sector practice on serving diverse audiences
+- [MDN accessibility documentation](https://developer.mozilla.org/en-US/docs/Web/Accessibility) - language declaration is an accessibility requirement as well as an SEO one

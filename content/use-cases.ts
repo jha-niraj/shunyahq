@@ -1,7 +1,7 @@
 // Data-driven content for the /solutions/[audience] use-case pages.
 // Each entry is real, audience-specific copy for Shunya Tech - a software
 // engineering studio that architects, builds, and scales production-grade
-// digital products across web, mobile, AI, and cloud.
+// web applications - SaaS platforms, dashboards and marketing sites.
 
 import type { PricingKey } from "@/content/services"
 
@@ -70,6 +70,8 @@ export interface UseCase {
     relevantServices: ServiceSlug[]
     // Pricing domain key to surface a "starting at" snapshot.
     pricingKey: PricingKey
+    /** SERP copy, 110-160 chars. `heroSubtitle` is on-page copy and far too long for a meta tag. */
+    seoDescription: string
     // Proof points / outcome stats.
     stats: UseCaseStat[]
     faqs: UseCaseFaq[]
@@ -86,6 +88,8 @@ export const USE_CASE_SLUGS: UseCaseSlug[] = [
 export const USE_CASES: Record<UseCaseSlug, UseCase> = {
     startups: {
         slug: "startups",
+        seoDescription:
+            "Web engineering for startups and founders - from kickoff to a live MVP in 4-8 weeks, owned by one team through design, build and deploy.",
         label: "For Startups & Founders",
         eyebrow: "For startups and founders",
         heroTitle: "Ship the product you can't",
@@ -211,6 +215,8 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
     },
     businesses: {
         slug: "businesses",
+        seoDescription:
+            "Web engineering for growing businesses - replace brittle internal tools and legacy front ends with systems that scale, without downtime.",
         label: "For Growing Businesses",
         eyebrow: "For growing businesses",
         heroTitle: "Modernize what's holding you",
@@ -295,7 +301,7 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
             "ai-integration",
             "system-security",
         ],
-        pricingKey: "cloud",
+        pricingKey: "web",
         stats: [
             { value: "0 hrs", label: "Downtime with incremental migration" },
             { value: "Auto", label: "Scaling cloud that absorbs spikes" },
@@ -336,6 +342,8 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
     },
     enterprises: {
         slug: "enterprises",
+        seoDescription:
+            "Web engineering at enterprise scale - secure, auditable services with role-based access and the delivery visibility procurement expects.",
         label: "For Enterprises",
         eyebrow: "For enterprise engineering and IT leaders",
         heroTitle: "Distributed systems, built to a higher",
@@ -420,7 +428,7 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
             "web-engineering",
             "ai-integration",
         ],
-        pricingKey: "cloud",
+        pricingKey: "web",
         stats: [
             { value: "RBAC", label: "And audit trails by design" },
             { value: "1 PM", label: "Single point of accountability" },
@@ -461,6 +469,8 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
     },
     "product-teams": {
         slug: "product-teams",
+        seoDescription:
+            "Web engineering for product teams - senior capacity that plugs into your roadmap and ships features without a hiring cycle first.",
         label: "For Product & Engineering Teams",
         eyebrow: "For product and engineering teams",
         heroTitle: "Ship faster with one command",

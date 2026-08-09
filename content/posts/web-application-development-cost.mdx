@@ -1,0 +1,256 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Someone asks an agency what a web application costs and gets back a range so wide it is useless: "anywhere from ten thousand to half a million, depending on requirements." Which is true, and tells you nothing. It is the software equivalent of asking what a house costs and being told it depends on the house.
+
+The reason the honest answer is a range is real. But the reason nobody narrows the range for you is usually not. Most of the cost of a web application is predictable if you know what actually drives it, and the drivers are boring, countable things rather than mysteries.
+
+This is our attempt to give you the numbers and the reasoning behind them, including the parts that make projects more expensive than the first quote suggested. We build web applications for a living and we publish our own rate card, so read this knowing we are one of the vendors you might be pricing. Everything below is how we scope and price work, not a sales pitch dressed as a guide.
+
+## The short answer
+
+For a custom web application built by a competent team, in 2026:
+
+<RateTable
+  headers={['Type of build', 'Typical range (USD)', 'Typical timeline']}
+  rows={[
+    ['Marketing site with CMS', '$4,000 - $12,000', '3 - 6 weeks'],
+    ['MVP / first version of a product', '$15,000 - $45,000', '6 - 12 weeks'],
+    ['Production SaaS platform', '$45,000 - $150,000', '3 - 6 months'],
+    ['Internal tool or dashboard', '$20,000 - $60,000', '6 - 14 weeks'],
+    ['Enterprise system integration', '$100,000+', '6 months +'],
+  ]}
+/>
+
+Those ranges assume a senior team, a real production deployment, and code you own at the end. They exclude ongoing hosting and third-party services, which we cover further down.
+
+<Callout type="info">
+If a quote comes in dramatically under these numbers, it is not automatically wrong. It usually means one of three things: the scope is smaller than you think, the team is junior, or something has been excluded that you assumed was included. Ask which.
+</Callout>
+
+## What actually drives the number
+
+Almost every line of a software quote traces back to one of five things. Understanding them lets you predict your own cost before you talk to anyone, and lets you spot a quote that has misunderstood your project.
+
+### 1. The number of distinct user roles
+
+This is the single most under-appreciated cost driver. Each role is not just a login - it is a separate set of screens, permissions, edge cases and test paths.
+
+An application with one role (everyone sees the same thing) is dramatically cheaper than one with four (admin, manager, staff, customer). It is not four times the work, but it is rarely less than double. When you write your requirements, count the roles first. If you can launch with two instead of four, you have probably just saved a third of the budget.
+
+### 2. How much of the data model is genuinely novel
+
+Standard entities are cheap because everyone has built them before: users, organisations, invoices, comments. There are known-good patterns, libraries, and well-understood failure modes.
+
+Novel entities are expensive because they have to be designed. If your business has a concept nobody else has - a scheduling rule with unusual constraints, a pricing model with conditional tiers, an approval flow that branches on who is asking - that concept has to be modelled, argued about, built, and then usually re-modelled once you see it working. This is where projects overrun, and it is the part a cheap quote almost always underestimates.
+
+### 3. Integrations, and how well-behaved they are
+
+Every external system you connect to is a fixed cost plus a risk. A well-documented, modern API with a sandbox environment is a day or two. A legacy SOAP endpoint at a bank, with no test environment and a two-week turnaround for credentials, can be several weeks and is impossible to estimate confidently up front.
+
+When you list your integrations, mark each one as "modern API", "old but documented", or "we will have to find out". That third category is where you need a contingency, and any honest estimate will say so rather than pretending otherwise.
+
+### 4. Whether you already know what you want
+
+A project with signed-off designs, written requirements and a decision-maker who can answer questions in a day runs at a completely different speed than one where the product is being figured out as it is built.
+
+Discovery is not waste - it is often the highest-value part of a project - but it should be a named, budgeted phase rather than an invisible tax on the build. If you cannot describe the core user journey in a paragraph, budget for discovery explicitly.
+
+### 5. What "done" means to you
+
+"Done" is a range, not a point. Consider two versions of the same feature:
+
+- It works when used correctly, by someone who has been shown how.
+- It works when used incorrectly, on a slow connection, by someone who has never seen it, with a screen reader, and it tells you when it breaks.
+
+The second is perhaps 40% more expensive, and it is what "production-grade" actually means. That is not a matter of taste either - it maps onto published, measurable standards: Google's [Core Web Vitals](https://web.dev/articles/vitals) thresholds for loading and responsiveness, [MDN's accessibility guidance](https://developer.mozilla.org/en-US/docs/Web/Accessibility) for assistive technology, and the [OWASP Top 10](https://owasp.org/www-project-top-ten/) for the security failures that actually get exploited.
+
+Both definitions are legitimate choices. Choosing the first without knowing you chose it is what causes the rewrite eighteen months later.
+
+## Where the money goes
+
+A useful sanity check on any quote is whether the shape of it makes sense. On a typical build, the split looks roughly like this:
+
+<RateTable
+  headers={['Phase', 'Share of budget', 'What you get']}
+  rows={[
+    ['Discovery and architecture', '10 - 15%', 'Written scope, data model, technical plan'],
+    ['Design and UI system', '15 - 20%', 'Screens, components, states, responsive behaviour'],
+    ['Core build', '45 - 55%', 'The actual application, tested and reviewed'],
+    ['Infrastructure and deployment', '10 - 15%', 'Environments, CI/CD, monitoring, backups'],
+    ['Hardening and launch', '10 - 15%', 'Performance, accessibility, security, migration'],
+  ]}
+/>
+
+If a quote is 90% "development" with almost nothing for architecture, infrastructure or hardening, that work has not been removed from the project. It has been removed from the quote. You will do it later, under time pressure, and it will cost more.
+
+## The costs that are not in the build quote
+
+These catch people out because they are real, ongoing, and usually nobody mentions them until month two.
+
+**Hosting and infrastructure.** For most applications this is $20 - $200 per month at launch and scales with usage. Platform pricing is public - [Vercel's deployment docs](https://vercel.com/docs/deployments) are a reasonable reference point for what a managed Next.js host actually involves. Serverless platforms are cheap until they are suddenly not; a managed database is typically the largest single line.
+
+**Third-party services.** Authentication, email delivery, error monitoring, analytics, payments, file storage, and any AI APIs. Individually small, collectively $50 - $500 per month for a typical product.
+
+**Maintenance.** Dependencies release security patches, browsers change, platforms deprecate APIs. This is not hypothetical: Node.js publishes a [fixed support schedule](https://nodejs.org/en/about/previous-releases) where every major line eventually stops receiving security fixes, and new vulnerabilities land in the [National Vulnerability Database](https://nvd.nist.gov/) continuously. Budget 15 - 20% of the original build cost per year to keep an application current. Skipping this does not save the money, it defers it into a painful catch-up later.
+
+**Changes after launch.** Every product that gets used generates change requests, because real usage teaches you things no amount of planning does. This is a sign of success, but it is a line in the budget, not a surprise.
+
+<Callout type="tip">
+A reasonable total-cost-of-ownership rule: the first year costs roughly the build price plus 20 - 30%. If your budget is exactly the build quote and nothing more, the budget is short.
+</Callout>
+
+## Fixed price or time and materials
+
+Both are legitimate. They price risk differently, and the right choice depends on how well-defined your project is.
+
+**Fixed price** works when the scope is genuinely known and written down. You get budget certainty; the vendor carries the estimation risk and prices a buffer for it, so you pay slightly more on average. It creates pressure on both sides to resist change, which is good discipline on a well-understood project and painful on an exploratory one.
+
+**Time and materials** works when you expect to learn as you go. You carry the risk, so there is no buffer in the rate, but you need real trust and weekly visibility to keep it honest.
+
+**A hybrid is often best**: a fixed-price discovery phase producing a written scope, then a fixed price for the build based on what discovery found. You buy certainty about the thing that is knowable and stay flexible about the thing that is not.
+
+## Cheap quotes and what they usually mean
+
+A significantly lower quote is a signal, not a verdict. The most common explanations:
+
+- **The scope was read narrowly.** They quoted the happy path and not the admin panel, the error states, or the data migration.
+- **The team is junior.** Real savings on the hourly rate, often lost again on rework and timeline.
+- **Testing and deployment are excluded.** You will pay for them eventually, either in fees or in incidents.
+- **It is a loss leader for a retainer.** Sometimes fine, as long as you know the retainer is where the actual price lives.
+- **They intend to charge for changes.** A low base plus expensive change requests can land well above a higher honest quote.
+
+The way to tell them apart is not to negotiate the number. It is to compare the written scopes line by line and see what one includes that the other does not.
+
+## How to get an estimate you can trust
+
+Before you approach anyone, write down:
+
+- The core journey, in one paragraph. What does the main user do?
+- The roles. Who logs in, and what can each of them see?
+- The integrations. What systems must this talk to?
+- The constraint that matters most. Deadline, budget, or scope - pick the one you cannot move.
+- What success looks like six months after launch.
+
+A team that reads that and comes back with questions about your data model and edge cases is engaging with the problem. A team that comes back with only a number has not.
+
+## Three worked examples
+
+Ranges are only useful once you can see how one is arrived at. These are composites of real project shapes, with the line items an honest quote would contain.
+
+### A. Booking system for a 6-location clinic group
+
+**The ask:** patients book online, reception manages the diary, each location sees only its own schedule, and it syncs with the existing practice-management system.
+
+<RateTable
+  headers={['Line item', 'Days', 'Notes']}
+  rows={[
+    ['Discovery, data model, written scope', '6', 'Three roles, six locations, one integration'],
+    ['Design system and screens', '9', 'Patient flow, reception console, admin'],
+    ['Auth, roles, tenancy', '5', 'Location-scoped permissions'],
+    ['Booking engine and availability rules', '14', 'The novel part: overlapping clinician rules'],
+    ['Reception console', '8', 'Diary, rescheduling, no-shows'],
+    ['Practice-management integration', '9', 'Documented API, no sandbox'],
+    ['Notifications (email + SMS)', '4', ''],
+    ['Infrastructure, CI/CD, environments', '5', ''],
+    ['Hardening, accessibility, load test', '7', ''],
+    ['Migration and launch', '4', 'Import existing appointments'],
+    ['Total', '71 days', 'Roughly 14 weeks elapsed'],
+  ]}
+/>
+
+At a blended senior rate that lands around **$38,000 - $52,000**. The single biggest line is the availability engine, because "which slots are actually bookable" turned out to involve clinician-specific rules, room constraints and buffer times. That is the novel data model doing what novel data models do.
+
+**What moved the number:** dropping from six locations to a single pilot site would have saved almost nothing, because the tenancy work is the same. Dropping SMS and shipping email-only would have saved 2 days. Deferring the reception console and letting staff use the admin screens for three months would have saved 8. Scope cuts only help when they remove a *concept*, not an instance of one.
+
+### B. Marketing site with a headless CMS
+
+**The ask:** 12 page templates, a blog, case studies, two languages, editable by the marketing team without a developer.
+
+<RateTable
+  headers={['Line item', 'Days', 'Notes']}
+  rows={[
+    ['Discovery and content model', '3', 'The content model IS the project'],
+    ['Design system', '6', 'Components, not pages'],
+    ['Template build', '9', '12 templates from ~20 components'],
+    ['CMS setup and editor training', '4', ''],
+    ['Localisation', '3', 'Two languages, routing and fallbacks'],
+    ['SEO foundations', '3', 'Metadata, sitemap, structured data'],
+    ['Performance and accessibility', '3', ''],
+    ['Launch and redirects', '2', 'From the old site'],
+    ['Total', '33 days', 'Roughly 6 weeks elapsed'],
+  ]}
+/>
+
+Around **$16,000 - $22,000**. Note the content model at the top: three days spent deciding what a "case study" actually is saves a fortnight of rework later, and it is the line most often deleted from a cheap quote.
+
+<Callout type="tip">
+On a content site, count components rather than pages. Twelve pages built from twenty shared components is a normal project. Twelve bespoke pages is nearly three times the work and will be impossible for your marketing team to extend.
+</Callout>
+
+### C. Internal operations tool replacing a spreadsheet
+
+**The ask:** replace a shared spreadsheet that 15 staff use to track jobs through six stages, with an audit trail and a weekly report.
+
+This is the cheapest category of custom software and the one people most often over-buy. A focused version is around **20 - 26 days**, or **$11,000 - $15,000**: one role, one core entity, a state machine with six states, an audit log and one report.
+
+The way this project becomes a $60,000 project is role proliferation. "While we are in there" adds a manager view, a client-facing portal, and a permissions matrix, and now it is four roles and three interfaces. Everything in the first paragraph of section 1 applies.
+
+## What actually moves the number, in order
+
+If you want to spend less, these work, roughly in order of effect.
+
+**Cut a role, not a feature.** Removing an entire user type removes its screens, its permissions, its edge cases and its test paths. Removing one feature from a role you are keeping removes a fraction of that.
+
+**Defer the admin panel.** Early on, a competent operator plus direct database access does the job. A full admin interface is frequently 15 - 20% of an MVP and is used by three people.
+
+**Use one integration, not three.** Connect the system of record; export CSV for the rest until you know the volume justifies the wiring.
+
+**Take the vendor's UI where you can.** Hosted checkout, hosted auth pages, hosted document viewers. Each one you embed rather than rebuild removes days and a permanent maintenance liability.
+
+**Accept a design system rather than bespoke screens.** A component library adapted to your brand looks professional and costs a fraction of pixel-level custom design.
+
+**Do not cut:** tests, deployment automation, error monitoring, backups, or the data model. Those are the four things that make everything after month three cheaper, and they are collectively maybe 15% of the build.
+
+## Objections we hear, and honest answers
+
+**"Another agency quoted half this."** Likely true, and it may be the right choice. Put the two written scopes side by side and find the differences: role count, admin tooling, testing, deployment, data migration, post-launch support. If the cheaper scope genuinely covers everything yours does, take it. Most of the time there are three or four line items that simply are not there.
+
+**"Can we start smaller and see how it goes?"** Yes, and we would encourage it. The caveat is that a small first phase has a fixed overhead - discovery, architecture, environments, pipeline - that does not shrink proportionally. A $10,000 phase one of a $50,000 system is not 20% of the product, it is more like 12%, because you paid the setup once. That is still usually worth it.
+
+**"Why is discovery not free? Other agencies do it free."** Free discovery is priced into the build, or it is a sales call wearing a lab coat. Paid discovery produces a written specification and a data model that belong to you whether or not you continue. If a supplier will not put their pre-build thinking in writing, that tells you something about what the build documentation will look like.
+
+**"Can we pay in equity instead?"** Sometimes, and we have. It is a genuinely different deal - it changes who carries the risk - and it needs to be documented properly rather than agreed in a call. Ask, but expect a conversation rather than a yes.
+
+**"What if we run out of budget halfway?"** Then you should own everything the paid invoices cover, in a deployable state. Confirm that in writing before you start. This is covered in [who owns the code](/blogs/who-owns-the-code-web-development).
+
+## Five questions that expose a quote's assumptions
+
+Send these to every supplier. The answers differ more than the prices do.
+
+1. **How many user roles have you assumed?** The most common source of a gap between two quotes.
+2. **Is deployment, CI/CD and monitoring included, or assumed to exist?**
+3. **What have you assumed about data migration from our current system?**
+4. **Which integrations have you priced as "known" and which as "to be discovered"?**
+5. **What is explicitly out of scope?**
+
+A supplier who answers all five in a paragraph each has actually scoped the work. A supplier who answers "it is all included" has not read their own quote.
+
+## What we do
+
+We scope in a paid discovery phase that produces a written specification, a data model and a fixed price for the build, so the estimate is based on something real rather than on optimism. Our published rate card starts at $1,599 for a small build and moves up with scope, and every engagement includes deployment, CI/CD and post-launch support rather than treating them as extras.
+
+## Related reading
+
+- [How Much Does a SaaS Platform Cost to Build](/blogs/how-much-does-a-saas-platform-cost) - the platform-shaped version of the same question
+- [What Does It Cost to Maintain a Web Application?](/blogs/web-application-maintenance-cost) - what happens to the number after launch
+- [Red Flags in a Software Quote](/blogs/red-flags-in-a-software-quote) - checking a number you have been given
+- [What API Integration Actually Involves](/blogs/api-integration-for-businesses) - the line item most often underestimated
+
+## Sources and further reading
+
+- [Core Web Vitals](https://web.dev/articles/vitals) and [Largest Contentful Paint](https://web.dev/articles/lcp) - Google's published performance thresholds
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/) - the security risks a production build should account for
+- [Node.js release schedule](https://nodejs.org/en/about/previous-releases) and [endoflife.date](https://endoflife.date/nodejs) - why maintenance is a recurring cost
+- [Stack Overflow Developer Survey](https://survey.stackoverflow.co/2025/) - what engineers are actually building with
+
+If you want a number for your specific project, [tell us what you are building](/contactus) and we will come back within a business day with a scoped estimate and the assumptions behind it. If you would rather see the tiers first, they are on the [pricing page](/pricing).

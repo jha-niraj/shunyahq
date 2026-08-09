@@ -58,9 +58,9 @@ export const PRODUCT_TOOLS: ToolMeta[] = [
             { q: "Is SyncOrbit ready for production use?", a: "It's currently in beta. Core features - the Git-integrated Kanban, client portals, automated reports, and CI/CD visibility - are working today, and we onboard beta teams directly so we can shape it around how you work." },
             { q: "How do I get access?", a: "Reach out through the contact page and tell us about your team. We're letting teams into the beta in batches and will get you set up." },
         ],
-        seoTitle: "SyncOrbit - real-time command center for engineering teams",
+        seoTitle: "SyncOrbit - Command Center for Engineering Teams",
         seoDescription:
-            "SyncOrbit unifies code, tasks, and client communication in one real-time interface: Git-integrated Kanban, automated sprint reports, client portals, and CI/CD visualization.",
+            "SyncOrbit unifies code, tasks and client communication in one real-time interface - Git-integrated Kanban, sprint automation and live delivery status.",
     },
     {
         slug: "budget-estimator",
@@ -69,12 +69,12 @@ export const PRODUCT_TOOLS: ToolMeta[] = [
         status: "Live",
         palette: "emerald",
         tagline:
-            "Get a transparent, instant cost estimate for your project across web, mobile, AI, and cloud - no 'contact for quote' wall.",
+            "Get a transparent, instant cost estimate for your project for your web project - no 'contact for quote' wall.",
         heroTitle: "Know what your project costs - instantly.",
         heroDescription:
-            "Skip the 'contact for quote' wall. Pick your scope across web, mobile, AI, and cloud and get a transparent, itemized estimate in seconds, in your currency.",
+            "Skip the 'contact for quote' wall. Pick your scope and get a transparent, itemized estimate in seconds, in your currency.",
         summary:
-            "Most agencies hide pricing behind a sales call. We don't. The Project Budget Estimator lets you build a rough scope - platform, features, and complexity - and returns a transparent cost range across web, mobile, AI, and cloud work. It shows a per-line breakdown so you can see exactly what drives the number, works in four currencies, and never asks you to sign up first.",
+            "Most agencies hide pricing behind a sales call. We don't. The Project Budget Estimator lets you build a rough scope - platform, features, and complexity - and returns a transparent cost range for the build. It shows a per-line breakdown so you can see exactly what drives the number, works in four currencies, and never asks you to sign up first.",
         howItWorks: [
             { step: "01", title: "Pick your scope", body: "Choose the platforms and capabilities your project needs - web, mobile, AI, cloud - and set the complexity that matches your ambitions." },
             { step: "02", title: "See it break down", body: "The estimator builds a transparent, itemized cost range, line by line, so you can see exactly what each part of the build contributes." },
@@ -82,7 +82,7 @@ export const PRODUCT_TOOLS: ToolMeta[] = [
         ],
         features: [
             "Instant estimate, no sales call required",
-            "Covers web, mobile, AI, and cloud scope",
+            "Covers the full web build scope",
             "Transparent per-line scope breakdown",
             "Four currencies (USD, EUR, AUD, INR)",
             "No signup - just answers",
@@ -90,13 +90,13 @@ export const PRODUCT_TOOLS: ToolMeta[] = [
         faqs: [
             { q: "How accurate is the estimate?", a: "It's a transparent ballpark, not a fixed quote. The estimator uses the same pricing logic we apply internally, so it gets you to a realistic range fast. The exact number is confirmed once we scope the details together." },
             { q: "Do I have to sign up or talk to sales first?", a: "No. There's no signup and no 'contact for quote' wall. Pick your scope and you get an itemized range in seconds." },
-            { q: "What kinds of projects can I estimate?", a: "Web, mobile, AI, and cloud work, across different complexity levels. You choose the platforms and capabilities your project needs and the estimator builds the range from there." },
+            { q: "What kinds of projects can I estimate?", a: "Custom web applications across different complexity levels. You choose the capabilities your project needs and the estimator builds the range from there." },
             { q: "Which currencies are supported?", a: "Four: USD, EUR, AUD, and INR. Switch between them so you can budget in the currency your business actually runs on." },
             { q: "What do I do with the estimate?", a: "Bring it to a free strategy call. We'll pressure-test the scope, refine the number, and turn it into a concrete plan with no obligation." },
         ],
-        seoTitle: "Project Budget Estimator - instant transparent project pricing",
+        seoTitle: "Project Budget Estimator - Instant Pricing",
         seoDescription:
-            "Get an instant, transparent cost estimate for your web, mobile, AI, or cloud project across four currencies - with a full scope breakdown and no 'contact for quote' wall.",
+            "Get an instant, transparent cost estimate for your web project across four currencies, with a full breakdown of what drives the number.",
     },
     {
         slug: "rate-card",
@@ -105,7 +105,7 @@ export const PRODUCT_TOOLS: ToolMeta[] = [
         status: "Live",
         palette: "goldNoir",
         tagline:
-            "Standardized, transparent pricing across 4 currencies for web, mobile, and visual production.",
+            "Standardised, transparent web engineering pricing across four currencies.",
         heroTitle: "Transparent pricing, in your currency.",
         heroDescription:
             "Standardized rate cards for web engineering, mobile, and visual production - shown across four global currencies, with no hidden fees.",
@@ -132,7 +132,7 @@ export const PRODUCT_TOOLS: ToolMeta[] = [
         ],
         seoTitle: "Global Rate Card - transparent agency pricing in 4 currencies",
         seoDescription:
-            "Standardized, transparent rate cards for web, mobile, and visual production across four global currencies, with clear inclusions and no hidden fees.",
+            "Standardised, transparent rate cards for web engineering across four global currencies, with clear inclusions so you can budget before any call.",
         href: "/pricing",
     },
     {
@@ -169,7 +169,7 @@ export const PRODUCT_TOOLS: ToolMeta[] = [
         ],
         seoTitle: "Free Strategy Call - 30-min technical project discovery",
         seoDescription:
-            "Book a free 30-minute technical discovery call with a Shunya engineer to scope your project, choose the right stack, and get an honest timeline.",
+            "Book a free 30-minute technical discovery call with a ShunyaHQ engineer to scope your project, choose a stack and get a realistic timeline.",
         href: "https://cal.com/niraj-jha/30min",
     },
 ]

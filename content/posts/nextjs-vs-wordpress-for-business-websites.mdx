@@ -1,0 +1,255 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+This comparison usually gets argued by people with a stake in the answer, which makes it hard to find a straight one. So here is our position up front: we build on Next.js, and for a large number of business websites **WordPress is the correct choice** and we will tell you so.
+
+The two are not really competitors. WordPress is a content management system with a vast plugin ecosystem, aimed at people who want to assemble a site. Next.js is an application framework, aimed at people building software. The question is not which is better. It is which category your project is in.
+
+## What each one actually is
+
+**WordPress** powers a very large share of the web - [W3Techs tracks the numbers](https://w3techs.com/technologies/overview/content_management) and it has been the dominant CMS for over a decade. You get an admin interface, a themes and plugins marketplace, and a hosting market with thousands of providers. Most things you might want already exist as a plugin.
+
+**Next.js** is a React framework for building web applications. There is no admin interface, no plugin marketplace and no content editing until someone builds it. What you get is a foundation for arbitrary application behaviour, strong performance defaults, and full control - [the docs](https://nextjs.org/docs) are the reference.
+
+A useful reframing: WordPress is a product you configure. Next.js is a toolkit you build with. Configuring is faster. Building is more capable.
+
+## The honest comparison
+
+<RateTable
+  headers={['', 'WordPress', 'Next.js']}
+  rows={[
+    ['Time to a basic site', 'Days', 'Weeks'],
+    ['Cost for a brochure site', '$3,000 - $10,000', '$8,000 - $20,000'],
+    ['Cost for an application', 'Rises steeply, fights the platform', 'Linear, this is what it is for'],
+    ['Content editing', 'Excellent, built in', 'Needs a headless CMS wiring in'],
+    ['Who can maintain it', 'A very large pool', 'React developers'],
+    ['Performance ceiling', 'Good with care', 'Excellent by default'],
+    ['Plugin ecosystem', 'Enormous', 'npm, but you assemble it'],
+    ['Security posture', 'Depends heavily on plugin hygiene', 'Smaller surface, you own it'],
+    ['Hosting', 'Cheap and everywhere', 'Managed platforms or your own cloud'],
+    ['Custom business logic', 'Possible but awkward', 'Native'],
+  ]}
+/>
+
+## When WordPress is the right answer
+
+**A content-led marketing site.** Pages, posts, case studies, a team page, contact forms. This is what WordPress was built for and it does it well and cheaply.
+
+**Your team must own publishing entirely.** The editing experience is mature and familiar, and there is a large pool of people who already know it.
+
+**Budget is genuinely constrained.** A capable WordPress site costs a fraction of a bespoke build. If the choice is a good WordPress site now or a Next.js site in six months when budget allows, take the site now.
+
+**Standard functionality covers you.** Forms, SEO tooling, newsletter signup, event listings, basic e-commerce. Mature plugins exist and are maintained by people whose whole business is that plugin.
+
+**Nobody in your organisation will manage a development relationship.** WordPress can be maintained by a freelancer, an agency, or in some cases your marketing team. Next.js needs a developer.
+
+<Callout type="info">
+If your honest description of the site is "we need to publish content and look credible", the answer is almost certainly WordPress or a hosted site builder, and spending three times as much on a bespoke build buys you very little.
+</Callout>
+
+## When Next.js is the right answer
+
+**The site is really an application.** Accounts, dashboards, saved state, permissions, workflows. The moment users log in and do things, you have crossed out of content management.
+
+**Performance is commercially material.** Where a fraction of a second changes revenue - high-traffic commerce, paid acquisition at scale. Next.js gives you server rendering, fine-grained caching and modern image handling as defaults rather than as plugins fighting each other. Google's guidance on [rendering on the web](https://web.dev/articles/rendering-on-the-web) explains the trade-offs, and [Core Web Vitals](https://web.dev/articles/vitals) is the measurable target.
+
+**You need real integrations.** Not "connect to Mailchimp", which a plugin does. Two-way sync with an ERP, a pricing engine that calls your internal API, a booking system with unusual availability rules.
+
+**The interface is genuinely custom.** Multi-step configurators, live filtering over large datasets, anything interactive enough that you would be fighting a theme.
+
+**You want to control your security surface.** Most WordPress compromises come through plugins rather than core. A build with twelve dependencies you chose has a materially smaller attack surface than one with thirty plugins from thirty maintainers - and [OWASP's list](https://owasp.org/www-project-top-ten/) has included vulnerable and outdated components for years for exactly this reason.
+
+**You expect the site to become software.** If the roadmap has a customer portal on it, starting on the platform you will end on saves a migration.
+
+## The hybrid nobody mentions
+
+You can have both, and for content-heavy businesses that also need application behaviour, this is frequently the best answer.
+
+**Headless WordPress with a Next.js front end.** Your marketing team keeps the WordPress admin they know. The public site is rendered by Next.js, pulling content over the API. You get the editing experience and the performance and the ability to add application features later.
+
+**Cost:** more than plain WordPress, less than a full custom build with a bespoke CMS. **Complexity:** two systems to maintain instead of one, which is a real cost and the main reason not to.
+
+The same pattern works with a purpose-built headless CMS instead of WordPress, which is usually cleaner if your team has no existing WordPress attachment.
+
+## A worked comparison
+
+The same brief, three ways: a 40-page site for a professional services firm, with a blog, case studies, and a client login area showing project documents.
+
+<RateTable
+  headers={['Approach', 'Build cost', 'Annual running', 'Where it strains']}
+  rows={[
+    ['WordPress + membership plugin', '$11,000', '$1,800', 'The login area. Plugin does 70% of it.'],
+    ['Next.js + headless CMS', '$34,000', '$2,400', 'Nothing, but you paid for that.'],
+    ['Headless WP + Next.js front end', '$26,000', '$2,600', 'Two systems to keep patched.'],
+  ]}
+/>
+
+**If the client area is genuinely simple** - a list of documents behind a login - the WordPress option is right and saves $23,000.
+
+**If the client area is where the business value is** - project status, approvals, comments, notifications - the plugin will fight you within a year, and you will pay the difference plus a migration.
+
+The deciding question is not the page count. It is what happens after the login.
+
+## Things people get wrong about both
+
+**"WordPress is insecure."** WordPress core is actively maintained and reasonably solid. The risk is the plugin surface and the maintenance discipline. A well-maintained WordPress site with a small plugin count is fine. An unmaintained one with thirty plugins is a liability, and so is an unmaintained Next.js app with forty stale npm packages.
+
+**"WordPress is slow."** It can be very fast with sensible hosting, caching and image discipline. It is slow when it has a heavy page builder, twelve plugins injecting scripts, and unoptimised images - which describes a lot of WordPress sites, but that is a configuration outcome rather than a property of the platform.
+
+**"Next.js is faster automatically."** Better defaults, not immunity. You can build a slow Next.js site by shipping too much JavaScript, and plenty of people do. The [Web Almanac](https://almanac.httparchive.org/en/2024/) is a good reality check on what real-world sites actually achieve.
+
+**"WordPress cannot scale."** It runs some of the largest publishing operations in the world. What is awkward is not traffic; it is complex custom business logic.
+
+**"Next.js is only for developers."** True, and that is the honest cost. If nobody in your organisation will own a development relationship, that is a strong argument against it regardless of technical merit.
+
+<Callout type="warning">
+The most expensive version of this decision is choosing WordPress for a project that is really an application, then spending two years bolting plugins and custom code onto it until you have the maintenance burden of custom software with none of the control. See [custom software vs off-the-shelf](/blogs/custom-software-vs-off-the-shelf) - the configuration trap is the same shape.
+</Callout>
+
+## The decision, in six questions
+
+1. **Do users log in and do things?** Yes points to Next.js.
+2. **Is the interface substantially custom, or a theme with your branding?** Custom points to Next.js.
+3. **Does your team need to publish without a developer?** Yes points to WordPress or headless.
+4. **Is there a real integration with an internal system?** Yes points to Next.js.
+5. **Who will maintain it in two years?** No developer relationship points to WordPress.
+6. **Is there a portal or app on the two-year roadmap?** Yes points to Next.js now, to avoid migrating later.
+
+Mostly WordPress answers: build WordPress, do it well, spend the saving on content. Mostly Next.js answers: you are building an application and should treat it as one. A genuine split: look hard at the headless hybrid.
+
+One thing that is not a deciding factor, though it is frequently presented as one: neither platform is inherently faster. A carefully built site on either will outperform a careless one on the other, and the variable that actually predicts speed is who built it and whether anyone measured.
+
+## Objections, answered
+
+**"You build Next.js, of course you recommend it."** Which is exactly why the sections above are weighted the way they are. We turn down brochure-site work regularly because a good WordPress developer will do it better and cheaper, and a badly-fitted bespoke build helps nobody.
+
+**"Our developer says WordPress is unprofessional."** That is taste, not engineering. The professional question is whether the platform fits the problem, and for content-led sites it very often does.
+
+**"Can we start on WordPress and move later?"** Yes, and it is a reasonable strategy if you keep the content model clean and avoid deep plugin entanglement. Moving content out of WordPress is straightforward; unpicking business logic embedded in a page builder is not.
+
+**"What about site builders like Squarespace or Webflow?"** Legitimate options at the simpler end, and often better than a poorly-built WordPress site. Same test applies: fine until users need to log in and do things.
+
+**"We already have WordPress and it is fine, but slow."** Then the project is probably performance work, not a platform change. Measure first - see [website redesign vs rebuild](/blogs/website-redesign-vs-rebuild) for how to tell whether the problem is content or foundations.
+
+## Total cost over three years
+
+The comparison people usually run is the build cost. Over a realistic horizon the picture changes, in both directions.
+
+<RateTable
+  headers={['Line', 'WordPress', 'Next.js']}
+  rows={[
+    ['Build (40-page content site)', '$9,000', '$26,000'],
+    ['Hosting, 3 years', '$1,100', '$2,200'],
+    ['Plugin/service licences, 3 years', '$1,800', '$1,400'],
+    ['Maintenance, 3 years', '$5,400', '$7,200'],
+    ['One redesign in year 3', '$5,000', '$6,000'],
+    ['Three-year total', '$22,300', '$42,800'],
+  ]}
+/>
+
+For a content site, WordPress stays cheaper across the whole period and it is not close. Anyone telling you otherwise is not counting honestly.
+
+Now change one thing - add a customer login area in year two:
+
+<RateTable
+  headers={['Line', 'WordPress', 'Next.js']}
+  rows={[
+    ['Three-year total from above', '$22,300', '$42,800'],
+    ['Add member area, year 2', '$14,000 (plugin + custom)', '$9,000 (native)'],
+    ['Ongoing friction with the plugin', '$4,000', '$0'],
+    ['Revised three-year total', '$40,300', '$51,800'],
+  ]}
+/>
+
+Still cheaper on WordPress, but the gap has closed by more than half and the trajectory has reversed. Add a second application feature in year three and they cross.
+
+**The decision is therefore about trajectory, not today's price.** If the site will stay a content site, WordPress wins permanently. If application features are coming, the crossover arrives sooner than the initial quotes suggest.
+
+## Maintenance differs in kind, not just amount
+
+**WordPress:** core updates, plugin updates, theme updates, and PHP version upgrades. The risk concentrates in plugins - each one is a separate maintainer with their own release cadence and their own abandonment risk. A plugin that stops being updated is a security liability with no fix except replacing it.
+
+**Next.js:** npm dependencies and framework majors. Fewer moving parts if you kept the dependency list small, and upgrades are more likely to require code changes rather than being click-to-update. [Dependabot](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates) and [`npm audit`](https://docs.npmjs.com/cli/v10/commands/npm-audit) automate the detection.
+
+Neither is lower effort in the abstract. WordPress maintenance is more frequent and shallower; Next.js maintenance is less frequent and deeper. Both are covered by the same 15 - 20% annual rule from [what maintenance costs](/blogs/web-application-maintenance-cost).
+
+## What we do
+
+We build on Next.js with a headless CMS, and we will tell you when that is more than you need. If your site is content and credibility, we would rather point you at a good WordPress developer than sell you a build you will not get the value from.
+
+Where we are the right answer is when the site is really software: logins, workflows, integrations, custom interfaces, or performance that has money attached.
+
+[Describe what the site needs to do](/contactus) and we will tell you honestly which category it is in.
+
+## Who maintains it, which is the question people skip
+
+Platform choice is often made on capability and then regretted on staffing. Worth thinking about before rather than after.
+
+**WordPress.** A very large pool of people can work on it, at a wide range of rates. You can change supplier easily, hire a freelancer for a small change, and in some cases your marketing team can handle routine edits. This is a genuine and underrated advantage: you are not dependent on any one relationship.
+
+**Next.js.** You need a React developer. The pool is large in absolute terms but far smaller than WordPress, rates are higher, and small changes need a developer rather than a content editor. You are more dependent on continuity of relationship.
+
+The honest question: **if your current supplier disappeared tomorrow, how quickly could you replace them?** For WordPress the answer is days. For a bespoke build it is weeks, and it depends heavily on whether the previous team documented anything - which is why the handover terms in [who owns the code](/blogs/who-owns-the-code-web-development) matter more on a custom build than on a WordPress site.
+
+None of that makes Next.js wrong. It makes it a commitment, and commitments should be made knowingly.
+
+## A five-year view
+
+<RateTable
+  headers={['Scenario', 'Likely best choice', 'Why']}
+  rows={[
+    ['Content site, stable requirements', 'WordPress', 'Cheaper at every horizon'],
+    ['Content site, portal coming in year 2', 'Headless hybrid', 'Avoids a migration'],
+    ['Product with a marketing site attached', 'Next.js + headless CMS', 'One platform, one team'],
+    ['E-commerce, standard catalogue', 'A hosted commerce platform', 'Neither, honestly'],
+    ['E-commerce, unusual pricing or logic', 'Next.js', 'Where platforms fight you'],
+    ['Internal tool', 'Next.js', 'WordPress is the wrong shape'],
+    ['Microsite or campaign', 'Whatever is fastest', 'It will be retired in a year'],
+  ]}
+/>
+
+Row four is worth noting. For a conventional online shop, a hosted commerce platform usually beats both options in this article, and an agency that never suggests it is not being straight with you.
+
+## Performance: what actually causes slow sites
+
+Since performance is the most-cited reason for moving off WordPress, it is worth being precise about where slowness comes from - because the platform is usually not the main factor.
+
+**Images.** Consistently the largest contributor on content sites. Unoptimised, wrong format, no responsive sizing, no lazy loading. This is a configuration problem on any platform and it is fixable in a day.
+
+**Third-party scripts.** Analytics, chat widgets, heat maps, tag managers, consent banners, ad pixels. Each adds a network request and JavaScript execution, and they compound. A site with nine third-party scripts will be slow regardless of what rendered it.
+
+**Server response time.** Where the platform genuinely matters. A shared host running an unoptimised database query before sending a single byte is slow in a way front-end work cannot rescue.
+
+**Client-side JavaScript weight.** Where a badly-built Next.js site loses. Shipping a large bundle to render what could have been HTML is entirely possible, and Google's guidance on [rendering on the web](https://web.dev/articles/rendering-on-the-web) is the clearest explanation of the trade-offs.
+
+**Layout instability.** Content jumping as images and fonts load. Measured as [Cumulative Layout Shift](https://web.dev/articles/cls) and fixable on either platform by reserving space.
+
+The honest ordering: on a typical slow WordPress site, images and third-party scripts account for most of the problem, and both are fixable without changing platform. If you have not addressed those, a platform migration is an expensive way to solve a cheap problem.
+
+Where Next.js wins is the ceiling rather than the floor. Once images and scripts are under control, a well-built Next.js site can go faster than a well-built WordPress site, because server rendering and fine-grained caching are the default rather than something added on top. Whether that headroom is worth the cost depends entirely on whether performance has money attached to it for you.
+
+## Migrating between them
+
+If you are already on one and considering the other, the practical realities differ sharply by direction.
+
+**WordPress to Next.js.** The content comes out cleanly - WordPress has a well-documented API and the export path is well trodden. What does not come out cleanly is anything encoded in a page builder, because visual builders store layout as proprietary markup rather than as structured content. A site built with a heavy builder is effectively a manual re-entry job. A site with clean custom fields migrates in days.
+
+**Next.js to WordPress.** Rare, and usually a sign the original build was over-specified for the need. Straightforward for content, but any application behaviour has to be rebuilt as plugins or abandoned.
+
+**WordPress to headless WordPress.** The easiest path of the three. Content and admin stay exactly where they are; only the front end changes. This is why the hybrid is such a common destination - it is the migration that does not disturb your team.
+
+In every direction, the work that dominates is the same one that dominates every site move: URL mapping and redirects. Budget for it explicitly rather than discovering it at launch, and see the launch checklist in [website redesign vs rebuild](/blogs/website-redesign-vs-rebuild).
+
+## Related reading
+
+- [Headless CMS Explained](/blogs/headless-cms-explained) - the middle path between the two
+- [Single-Page App vs Server-Rendered](/blogs/single-page-app-vs-server-rendered) - the rendering decision inside the platform choice
+- [Why Your Website Is Slow](/blogs/why-your-website-is-slow) - diagnosing speed before blaming the platform
+- [Next.js 15 Server Components in Production: What Actually Changed](/blogs/nextjs-15-server-components-in-production) - what building on the modern framework actually involves
+
+## Sources and further reading
+
+- [W3Techs CMS usage statistics](https://w3techs.com/technologies/overview/content_management) - the actual market share picture
+- [Next.js documentation](https://nextjs.org/docs) and [rendering on the web](https://web.dev/articles/rendering-on-the-web) - what server rendering does and why it matters
+- [Core Web Vitals](https://web.dev/articles/vitals) and the [HTTP Archive Web Almanac](https://almanac.httparchive.org/en/2024/) - the measurable performance targets and real-world baselines
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/) - why plugin and dependency count is a security decision on either platform
+- [WordPress project](https://wordpress.org/about/) - the platform's own description of what it is for

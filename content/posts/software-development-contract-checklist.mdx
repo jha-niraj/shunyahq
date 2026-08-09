@@ -1,0 +1,241 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+The contract is the part of a software project people skim. It arrives at the end of a good sales process, everyone is keen to start, and the document gets a quick read for the price and the dates. Then eight months later there is a disagreement, and the contract turns out to be the only thing that decides it.
+
+This is a checklist of what should be in that document, why each clause matters, and what the standard wording usually says versus what you actually want it to say. It is written for the person signing, not for a lawyer, and it is not legal advice - it is the list of things to raise with one.
+
+## The clauses that decide the most
+
+### Who owns the code
+
+The single most consequential clause and routinely the vaguest. In many jurisdictions, unless the contract says otherwise, **the developer owns what they wrote** - you have paid for a licence to use it, not for the thing itself. That is the opposite of what most clients assume.
+
+What you want: full assignment of intellectual property in the work produced, transferring on payment. What you frequently get: a licence, sometimes perpetual, sometimes not, sometimes limited to a stated purpose.
+
+There is a nuance worth understanding rather than fighting. No agency can assign you ownership of the open-source libraries your application depends on, because nobody owns those in that sense - they come with their own licences, and [the Open Source Initiative's licence list](https://opensource.org/licenses) explains what each permits. Nor will most agencies assign their internal tooling and boilerplate; they will licence it to you perpetually, which is normally fine. The line to hold is that **everything specific to your business is yours**, and that the licensed remainder cannot be withdrawn.
+
+Ask for a written list of what is being assigned and what is being licensed. If the answer is uncomfortable, that is the conversation you needed to have. [Who owns the code](/blogs/who-owns-the-code-web-development) covers this in more detail, including the practical consequences of getting it wrong.
+
+### What happens to your accounts and infrastructure
+
+Separate from code ownership and equally important. The hosting account, the domain, the database, the third-party services, the repository, the DNS - who holds them?
+
+The pattern that causes trouble is an agency holding everything in their own accounts and rebilling you. It is convenient during the project and it means that on the day you part ways, your entire business is inside someone else's login. Even in a friendly separation this creates weeks of migration work.
+
+What to require: all production infrastructure in accounts your company owns, with the agency granted access. Domain registered to you. Repository owned by your organisation. This costs nothing to set up on day one and is expensive to unwind later.
+
+<Callout type="warn">
+Ask directly: "On the last day of this contract, what do I have, and what do I need from you to keep running?" A good answer is a short list. A vague answer is the finding.
+</Callout>
+
+### Scope, and how it changes
+
+Every project changes. The contract should not pretend otherwise; it should say how.
+
+What you want is a defined scope document referenced by the contract, plus a written change process: how a change is requested, who estimates it, who approves it, and how it affects price and timeline. The absence of this process is not flexibility - it is an argument scheduled for later.
+
+Watch for scope defined only by a feature list with no detail. "User management" is not a scope; it is a heading. Ambiguity in a scope document resolves in favour of whoever wrote it, and that was not you.
+
+### Acceptance
+
+How does anyone decide the work is done? This clause is missing more often than any other and it is the one that determines whether the final payment is a formality or a standoff.
+
+A workable acceptance clause states: what is delivered, a testing period with a stated length, how defects are reported, what counts as a defect versus a change request, how long the supplier has to fix defects, and what happens if they are not fixed. Without the defect-versus-change distinction, every bug becomes a negotiation.
+
+Ten working days is a common and reasonable testing window. Deemed acceptance - where the work is considered accepted if you do not object within the window - is standard and fair, provided the window is realistic and you actually use it.
+
+### Payment terms and what triggers them
+
+Milestone payments tied to deliverables are the norm and the right structure. Two things to check.
+
+**Is any milestone tied to a date rather than a deliverable?** If so, you can be paying for time regardless of progress.
+
+**Is there a meaningful final payment?** A project where 95% is paid before completion has no financial incentive left at the end, which is exactly when momentum matters most. 20-30% held to acceptance is normal.
+
+For the wider question of how the pricing structure itself shapes the project, [fixed price vs time and materials](/blogs/fixed-price-vs-time-and-materials) is the longer treatment.
+
+### Warranty
+
+What happens when something breaks a week after launch?
+
+A standard warranty covers defects - the software not doing what it was specified to do - for a stated period, typically 30 to 90 days, at no cost. It does not cover new requirements, changes you asked for, or problems caused by third parties.
+
+Check two things: the length, and whether the warranty survives the final payment. A warranty that expires on acceptance is not a warranty.
+
+### Termination
+
+Both sides need an exit and the terms should be symmetrical.
+
+What you want: the ability to terminate for convenience with reasonable notice, paying for work completed; immediate termination for material breach; and - this is the clause people forget - **a defined exit process**. On termination, the supplier hands over code, credentials, documentation and any work in progress, within a stated number of days.
+
+Without an exit clause you are relying on goodwill at precisely the moment goodwill has run out.
+
+### Liability
+
+Suppliers cap their liability. That is normal and you should expect it. The question is where the cap sits.
+
+A cap at the total contract value is common and defensible. A cap at one month's fees on a nine-month project is not really a cap, it is an exclusion. Certain things are typically carved out of the cap - breach of confidentiality, intellectual property infringement, and data protection breaches - and you want those carve-outs present.
+
+<RateTable
+  headers={['Clause', 'Common default', 'What to push for']}
+  rows={[
+    ['IP ownership', 'Licence to use', 'Assignment on payment'],
+    ['Infrastructure', 'Agency accounts', 'Your accounts, their access'],
+    ['Warranty', '30 days or absent', '90 days, surviving acceptance'],
+    ['Liability cap', 'Varies widely', 'Contract value, with carve-outs'],
+    ['Exit process', 'Absent', 'Defined handover in 10 days'],
+    ['Final payment', 'Sometimes 10%', '20-30% on acceptance'],
+    ['Change process', 'Informal', 'Written, estimated, approved'],
+  ]}
+/>
+
+### Timelines, and what a date in a contract means
+
+Most software contracts contain dates and most of those dates are not commitments in the way clients read them. Worth establishing which kind you have.
+
+**Indicative dates** are estimates. Missing them is not a breach. This is the most common arrangement and it is honest, provided everyone understands it.
+
+**Committed dates with consequences** - liquidated damages, or a right to terminate - are rarer and more expensive, because the supplier prices the risk. If a date genuinely matters to your business, say so before the estimate, not after.
+
+**Dates dependent on you.** Almost every timeline assumes you will review, approve and supply things within a certain time. Content, brand assets, access to systems, decisions, testing. Good contracts state this and say what happens when a dependency slips. Bad ones leave it implicit, and then a delay caused by three weeks of waiting for content becomes a dispute about whose fault it is.
+
+The practical version: ask for the list of what the supplier needs from you and when. If they have not produced one, they have not thought about the timeline properly, and the first slip will be attributed to you regardless of the contract.
+
+## The clauses people miss entirely
+
+**Data protection.** If the supplier will process personal data - and they will, at minimum in a staging environment - you need a data processing agreement. This is a separate document in most cases and it is a legal requirement under several regimes. See [data privacy for web applications](/blogs/data-privacy-for-web-applications) for what it should cover.
+
+**Open-source licensing.** Your application will include third-party code under various licences. Most are permissive and cause no issue. A few - the copyleft family - carry obligations that can matter if you ever distribute the software rather than run it as a service. Ask for a dependency list with licences, which tooling generates automatically using identifiers from [the SPDX licence list](https://spdx.org/licenses/). It is a five-minute task for them and it prevents an awkward discovery during due diligence.
+
+**Confidentiality, running both ways.** Standard, usually present, worth checking that it binds subcontractors too.
+
+**Subcontracting.** Can the supplier hand your work to someone else? Frequently yes, by default, without telling you. Requiring notification is reasonable.
+
+**Key personnel.** If you selected the supplier partly because of specific people, name them. Otherwise the team that pitched is not necessarily the team that builds.
+
+**Publicity.** Can they name you as a client, put your logo on their site, write a case study? Usually fine and occasionally not. Decide rather than discover.
+
+**Source code escrow.** For business-critical systems from a small supplier, an escrow arrangement means the code is deposited with a third party and released to you if the supplier fails. Adds cost and administrative overhead; worth it only when the dependency is genuinely critical.
+
+**Non-solicitation.** Frequently a clause preventing you from hiring their staff. Read the term and the scope; a two-year global restriction is more than it needs to be.
+
+## Support after launch is a separate agreement
+
+The build contract ends. Then the software runs, and running it is a different arrangement that should be documented separately and priced separately.
+
+What that agreement needs to say:
+
+**What is covered.** Bug fixes, dependency updates, hosting management, monitoring, small changes - and which of those are included versus billable.
+
+**Response times, by severity.** A site that is down and a typo on a page are not the same urgency. Two or three severity levels with a stated response time each is sufficient for most businesses.
+
+**Hours of cover.** Business hours in a stated timezone, or something wider. Out-of-hours cover costs meaningfully more and most businesses do not need it - but discovering you do not have it at 8pm on a Friday is a bad way to find out.
+
+**How changes are requested and charged.** A monthly allocation of hours is the common structure and works well, provided unused hours and overruns are both addressed.
+
+**Notice period.** Both ways.
+
+Expect ongoing support to cost 15-20% of the build cost annually for an actively used system. [Web application maintenance cost](/blogs/web-application-maintenance-cost) breaks that down. The failure mode to avoid is finishing a build with no support arrangement at all, which leaves you calling the supplier as a favour and paying whatever a rush job costs.
+
+## What "reasonable" looks like on the commercial terms
+
+Three numbers people ask about.
+
+**Deposit.** 20-40% upfront is standard for a new relationship. 50%+ is high unless the project is short.
+
+**Payment terms.** 14 to 30 days from invoice. Watch for terms requiring payment before work is delivered on a rolling basis, which shifts all cash-flow risk to you.
+
+**Late payment interest.** Normal to include. Check the rate is not punitive.
+
+## A worked example
+
+A logistics company signed a $180,000 contract with a mid-sized agency. The document was eleven pages and they read it once.
+
+Fourteen months later they wanted to move development in-house. Four things surfaced.
+
+**The IP clause granted a licence, not ownership.** The licence was perpetual, which helped, but it was limited to "use in the client's internal business operations". They intended to offer the platform to their customers as a paid service, which the licence arguably did not permit. Renegotiating this after the fact, with no leverage, cost $40,000.
+
+**The domain was registered to the agency.** Recovering it took six weeks and a solicitor's letter, not because the agency was obstructive but because the person who registered it had left and nobody could pass the registrar's verification.
+
+**There was no exit clause.** The handover consisted of a zip file and a phone call. Two of the four environments could not be rebuilt because the configuration existed only on a machine at the agency. Reconstructing it took an in-house developer five weeks.
+
+**There was no dependency licence list.** During a later funding round, due diligence flagged a copyleft-licensed component in the codebase. Establishing that it did not create an obligation - it did not, because the software was never distributed - took a legal review costing $9,000 and delayed the round by a fortnight.
+
+Total avoidable cost: comfortably over $60,000, from a contract nobody had spent a day on. Every one of the four problems would have been prevented by a clause that a competent supplier would have agreed to without argument at signing, because at signing none of them cost anything.
+
+## How to run the review without a large legal bill
+
+You do not need a full commercial legal review of every software contract, and for a $30,000 project it would be disproportionate. A workable middle path:
+
+**Read it yourself against this list.** An hour. Mark anything absent or ambiguous.
+
+**Send the supplier your questions before involving a lawyer.** Most will simply agree to the reasonable ones. Ownership, infrastructure and exit are the three worth insisting on regardless of project size.
+
+**Get a lawyer for the clauses you cannot evaluate.** Liability, indemnities and termination language reward professional attention. Two hours of a commercial solicitor's time on a specific list of clauses costs a fraction of a full review and catches most of the risk.
+
+**Keep the scope document with the contract.** It is the thing everyone refers to and the thing most often filed separately and lost.
+
+<Callout type="info">
+The best signal in a contract negotiation is how the supplier responds to reasonable requests. A supplier who agrees readily to IP assignment, your infrastructure and a defined exit is telling you they expect the relationship to end well. Resistance on those three is worth understanding before you sign.
+</Callout>
+
+## The five clauses to insist on, whatever the project size
+
+If you take one thing from this page, make it this list. These five are non-negotiable regardless of whether the project is $15,000 or $500,000, and a reasonable supplier will agree to all of them without a fight.
+
+**1. IP assigns to you on payment.** In writing, using the word assign, with a list of what is assigned and what is licensed.
+
+**2. Infrastructure lives in your accounts.** Domain, hosting, repository, third-party services. Their access is granted, not owned.
+
+**3. There is a defined exit process.** What you receive on termination and within how many days.
+
+**4. There is a warranty that survives acceptance.** Thirty days minimum, ninety preferred.
+
+**5. There is a written change process.** How a change is raised, estimated and approved.
+
+Everything else on this page is worth having and can be traded. These five are the difference between a project you own and a project you rent.
+
+## Warning signs
+
+**No scope document, or one written entirely by the supplier without your review.**
+
+**Ownership language that avoids the word "assign".** "You will have full rights to use" is a licence.
+
+**A liability cap far below contract value**, with no carve-outs.
+
+**No warranty period**, or one expiring on acceptance.
+
+**Nothing about what happens on termination.**
+
+**A change process that consists of "we'll agree it at the time".**
+
+**Pressure to sign quickly** because a slot is about to be filled. Slots have never once, in our experience, actually disappeared.
+
+**A contract that references documents you have not seen.** Standard terms, a service description, a rate card attached elsewhere. If it is incorporated by reference, it is part of the agreement and you should read it.
+
+**Automatic renewal on the support agreement** with a long notice period. Twelve months rolling with three months' notice is a two-year commitment wearing a shorter label.
+
+## What we do differently
+
+We assign intellectual property on payment as standard, without being asked, and we say in the contract what is assigned and what is licensed so nobody has to interpret it later.
+
+We set up infrastructure in the client's own accounts on day one. It takes an extra hour at the start and it means the handover question is answered permanently.
+
+And we include an exit process in the contract even though nobody enjoys discussing it during a kickoff, because the version negotiated while everyone is happy is far better than the version negotiated when they are not.
+
+If you have a contract in front of you and something on this list is missing, [we are happy to tell you whether it matters](/contactus).
+
+## Related reading
+
+- [Who owns the code](/blogs/who-owns-the-code-web-development) - the IP question in full
+- [Red flags in a software quote](/blogs/red-flags-in-a-software-quote) - what to catch before the contract stage
+- [Fixed price vs time and materials](/blogs/fixed-price-vs-time-and-materials) - how pricing structure shapes the agreement
+- [How to choose a web development agency](/blogs/how-to-choose-a-web-development-agency) - the selection process this concludes
+
+## Sources and further reading
+
+- [Open Source Initiative licence list](https://opensource.org/licenses) - what the common licences actually permit
+- [SPDX licence list](https://spdx.org/licenses/) - the identifiers your dependency tooling will report
+- [US Copyright Office on works made for hire](https://www.copyright.gov/circs/circ09.pdf) - why ownership does not default to the person paying
+- [GOV.UK Service Manual](https://www.gov.uk/service-manual/technology) - public-sector contracting practice, useful as a model for what good looks like
+- [Stack Overflow developer survey](https://survey.stackoverflow.co/2025/) - context on how development teams actually work, useful when assessing key-personnel clauses

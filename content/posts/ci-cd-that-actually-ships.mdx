@@ -41,6 +41,20 @@ This is the piece teams most often skip and most regret skipping. Every pull req
 
 Preview deploys collapse the feedback loop. A misunderstanding that would otherwise be discovered after launch gets caught in code review, because someone actually used the feature. For an agency, this is also how we keep clients in the loop: they see the working change before it merges, on a link they can open on their phone.
 
+## Environments, and how many you actually need
+
+A recurring source of complexity is teams maintaining five environments because someone once needed four. For most business software, three is right.
+
+**Local.** Where developers work. Should be startable with one command and should not require access to shared infrastructure - a developer blocked because a shared dev database is broken is a developer not working.
+
+**Preview, per pull request.** Ephemeral, created on push and destroyed on merge. This replaces the shared staging environment that everyone queues for and that is always in an unknown state because three people deployed to it this morning.
+
+**Production.** The real one.
+
+Some teams also keep a long-lived staging environment for client user acceptance testing, and that is legitimate - see [testing before launch](/blogs/testing-software-before-launch) for why UAT wants a stable target rather than a moving one. What is not legitimate is a staging environment that has drifted from production in its configuration, because then "it worked in staging" stops meaning anything. The environments should differ in their data and their scale, not in how they are built.
+
+Two rules that keep this honest. Every environment is created from the same code and the same configuration mechanism, differing only by values - the [twelve-factor](https://12factor.net/) principle, and the reason environment drift stops being a category of bug. And no environment holds real customer data unless it has production-grade access control, which is a [security](/blogs/web-application-security-checklist) requirement more often violated than any other.
+
 ## Make production deploys a non-event
 
 When everything passes CI and the PR is merged, deploying to production should happen automatically, with no human ceremony. The drama is removed precisely because all the checking already happened. Merging is the decision; deploying is the consequence.
@@ -58,8 +72,139 @@ Automatic deploys without a rollback plan are not confidence - they are gambling
 
 The pipeline's job ends at deploy; observability tells you whether the deploy was actually fine. Error tracking, uptime monitoring, and basic performance metrics turn "I think it is working" into "I can see it is working." When an error rate spikes right after a deploy, you know which change to roll back. Without this, production is a black box and every report comes from an annoyed user instead of a dashboard.
 
+## What it costs to set up
+
+The honest numbers, because "worth the setup cost" is easier to accept with a figure attached.
+
+<RateTable
+  headers={['Piece', 'Effort', 'Ongoing']}
+  rows={[
+    ['Automated tests running on every PR', '1-3 days', 'Minutes per run'],
+    ['Type check, lint and build gate', 'Half a day', 'Nothing'],
+    ['Preview deployment per PR', '1-2 days', 'A few dollars a month'],
+    ['Automated production deploy on merge', '1-2 days', 'Nothing'],
+    ['Database migrations in the pipeline', '1-2 days', 'Nothing'],
+    ['Rollback that works and has been tested', 'Half a day', 'Nothing'],
+    ['Error tracking and deploy annotation', 'Half a day', '$0-100/mo'],
+  ]}
+/>
+
+Call it five to nine days on a typical project - roughly 3-5% of a three-month build. It is the highest-return 3-5% available, because it changes the cost of every change made afterwards for the life of the system.
+
+The [DORA research programme](https://dora.dev/) has spent years measuring which practices predict delivery performance, and the finding that matters most here is counterintuitive: teams that deploy more frequently also have *fewer* failures, not more. Speed and stability move together, because the same pipeline that makes deployment fast is the thing that catches problems early.
+
+## The failure modes of a bad pipeline
+
+A pipeline that exists is not automatically a pipeline that helps. Five ways they go wrong.
+
+**It is too slow.** A twenty-minute pipeline is a pipeline developers work around. They batch changes, they skip it locally, they merge and hope. Under ten minutes is the target, and the way to get there is the test pyramid - many fast tests, few slow ones. The [practical test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) is the reference.
+
+**It is flaky.** A test that fails one run in eight teaches the team to re-run rather than investigate, and after a month nobody looks at a red build at all. A flaky test is worse than no test, because it erodes trust in every other test alongside it. The correct response is to fix it or delete it the same week - not to add it to a list where it will sit for a quarter.
+
+**It only runs on the main branch.** Then it is not preventing anything, it is reporting. All the value is in catching the problem before it merges.
+
+**Deploying is still manual after the tests pass.** A green build that requires someone to run three commands has automated the checking and left the risky part alone.
+
+**There is no rollback, or nobody has tried it.** A rollback path that has never been exercised is a plan, not a capability. Test it deliberately, on a quiet afternoon, and time it.
+
+<Callout type="warn">
+The single most diagnostic question about a team's pipeline: when did you last deploy on a Friday afternoon? Not whether you do it as policy - whether you could, without anyone getting nervous. Teams with a real pipeline shrug at the question.
+</Callout>
+
+## Database migrations, which is where pipelines actually break
+
+Application code rolls back cleanly. Database changes do not, and this is the part most pipelines handle badly.
+
+The rule that makes it work: **every migration must be safe to run while the old code is still live.** Deployments are not instantaneous, and for a period both versions are running. A migration that drops a column the old code still reads takes the site down for that window.
+
+In practice this means splitting destructive changes across releases:
+
+**Adding a column:** add it as nullable, deploy code that writes to it, backfill, then make it required in a later release. Three deploys instead of one, each individually safe.
+
+**Removing a column:** stop writing to it, deploy, confirm nothing reads it, then drop it in a later release. The temptation is to do it in one step and it is exactly the step that causes an outage.
+
+**Renaming anything:** never rename. Add the new, write to both, migrate readers, remove the old. A rename is a drop and an add wearing a friendlier name.
+
+**Large backfills:** run them in batches outside the deploy, not inside a migration. A migration that locks a table with four million rows for eleven minutes is an outage regardless of how good the rest of the pipeline is, and it will happen at the worst possible time because that is when the table is largest.
+
+This discipline is unglamorous and it is the difference between a team that deploys twenty times a month and a team that deploys twice, because the second team learned to be afraid after a migration took production down.
+
+## What to do when a deploy goes wrong
+
+It will, and the measure of a pipeline is what happens next rather than whether it ever happens.
+
+**Roll back first, diagnose second.** The instinct to find the cause while the site is broken is strong and wrong. Restore service, then investigate with the pressure off. A rollback is not an admission of failure; it is the feature the pipeline exists to provide.
+
+**Know in advance which changes cannot be rolled back.** Anything that has already written data in a new shape, or sent something to a customer. This is why the migration discipline above matters - it keeps the rollback path open.
+
+**Have the alert reach a person.** An automated deploy with no monitoring behind it means a bad release is discovered by a customer. Error rate and a check on the main user journey, alerting to a phone.
+
+**Annotate deploys in your monitoring.** When the error rate steps up at 14:32 and a deploy landed at 14:31, the investigation is over before it started. This is a fifteen-minute integration and it saves hours repeatedly.
+
+**Write down what happened, without blame.** Not a lengthy document - what broke, why, and what change prevents a repeat. Teams that do this stop repeating incidents; teams that do not repeat them roughly annually.
+
 ## Why this is worth the setup cost
 
 Standing up this pipeline takes real time at the start of a project, and it is tempting to skip it when you are racing to ship. We do not, because the pipeline is what lets us ship fast and keep shipping fast. It is the machinery that makes "deploy continuously from week two" possible instead of terrifying.
 
 A team with a good pipeline ships small changes constantly, catches problems while they are cheap, and recovers from mistakes in seconds. A team without one ships rarely, batches risk, and treats every release as an event. The difference is not talent or effort. It is whether the boring, automated safety net exists - and building that net is one of the first things we do on every project.
+
+There is a second-order effect worth naming, because it is the one clients notice. A team that can deploy safely makes small improvements. The typo gets fixed, the confusing label gets rewritten, the slightly-too-slow page gets a look. None of those are worth a release event, so on a team without a pipeline they simply never happen, and the product accumulates small frictions that nobody ever had a good enough reason to address. The pipeline is what makes caring about the details affordable.
+
+## What to ask your supplier about this
+
+If you are commissioning software rather than building it, the pipeline is invisible in a demo and it determines what the next three years cost. Five questions.
+
+**"How does a change get from a developer's laptop to production?"** You want a description of an automated process, not a list of manual steps performed by a named person.
+
+**"What runs automatically before a change can merge?"** Tests, type checking, a build. If the answer is "code review", the checking is entirely human and humans miss things consistently.
+
+**"Can I see a change on a live URL before it merges?"** Preview deployments. This one also benefits you directly - it is the difference between reviewing screenshots and reviewing the actual thing.
+
+**"How long does a rollback take, and when did you last do one?"** A number and a recent date. "We would restore from backup" is an answer that means no rollback capability.
+
+**"How often do you deploy on a typical project?"** Multiple times a week is healthy. Monthly means changes are batched, which means every release is riskier than it needs to be, which is why they are monthly.
+
+None of these need technical knowledge to evaluate. They need a specific answer rather than a reassuring one, and the specificity itself is the signal.
+
+## A worked example
+
+A B2B software company was deploying once every three weeks, in a two-hour window on a Wednesday evening, with three people present. Their engineering lead described releases as "the worst night of the month", which is a sentence we have now heard from four different clients.
+
+What the process actually was: a manual test pass against a checklist in a spreadsheet, a database migration run by hand, a build produced on one developer's machine, files copied to the server, and a fifteen-minute period where the site returned errors. Rollback meant restoring the previous build from a folder and hoping the migration had not already run.
+
+The consequences were downstream of that, and none of them looked like a deployment problem from the outside:
+
+- **Every release carried three weeks of changes.** When something broke, the cause was one of forty commits, and finding it took a day.
+- **Nobody made small fixes.** A one-line copy change waited three weeks, so people stopped raising them.
+- **Estimates included release risk.** Work was padded because shipping it was uncertain.
+
+The work took nine days:
+
+- Tests moved from a spreadsheet to an automated suite covering their four critical journeys. Four days, and it found two existing bugs on the way.
+- Type check, lint and build wired to run on every pull request. Half a day.
+- A preview deployment per pull request. One day, and it immediately changed how their product manager reviewed work - links instead of screenshots.
+- Automated deploy on merge to main, with the migration discipline described above. Two days.
+- Rollback tested, timed at 40 seconds, and documented. Half a day.
+- Error tracking with deploy annotations, alerting to a phone. Half a day.
+
+Six months later: **deployments went from 0.3 a month to 31 a month.** Median time from a merged fix to production went from 19 days to 22 minutes. Failed deployments rose from roughly zero to about one in twenty - which sounds worse and is not, because the mean recovery time is now 40 seconds rather than an evening, and a failure now affects one small change rather than three weeks of them.
+
+The line their engineering lead used afterwards is the honest summary: the pipeline did not make the team better at avoiding mistakes. It made mistakes cheap enough to stop being frightening.
+
+## Related reading
+
+- [The cost of cutting corners](/blogs/cost-of-cutting-corners) - what an absent pipeline compounds into
+- [Testing software before launch](/blogs/testing-software-before-launch) - what should be running in the pipeline
+- [Full-stack ownership](/blogs/full-stack-ownership) - why the team that builds it should be able to deploy it
+- [What happens after launch](/blogs/what-happens-after-launch) - the monitoring that closes the loop
+
+## Sources and further reading
+
+- [Continuous integration](https://martinfowler.com/articles/continuousIntegration.html) - the practice, from the person who named it
+- [DORA research](https://dora.dev/) - the evidence that deployment frequency and stability improve together
+- [The practical test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) - how to keep a pipeline under ten minutes
+- [Google SRE book](https://sre.google/sre-book/table-of-contents/) - release engineering, rollback and blameless postmortems
+- [The Twelve-Factor App](https://12factor.net/) - the application properties that make automated deployment possible
+- [Vercel deployment documentation](https://vercel.com/docs/deployments) - preview deployments as a platform primitive
+- [Playwright](https://playwright.dev/docs/intro) - reliable end-to-end tests that can run on every pull request

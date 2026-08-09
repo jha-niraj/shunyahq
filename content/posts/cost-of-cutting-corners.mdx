@@ -45,6 +45,120 @@ This is how a six-week project becomes a six-month rescue. Not through one catas
 The most expensive software is not the software that was built carefully. It is the software that was built quickly and carelessly, shipped, depended on, and then could not be changed. Speed without quality does not save money. It defers and multiplies the cost.
 </Callout>
 
+## Putting numbers on it
+
+The argument above is qualitative and the qualitative version loses to a deadline every time. Here is the version with figures, from projects where we have been able to measure both sides.
+
+<RateTable
+  headers={['Where the defect is found', 'Cost to fix', 'Multiple']}
+  rows={[
+    ['While the developer is writing it', 'Minutes', '1x'],
+    ['In code review, same day', 'Under an hour', '~3x'],
+    ['In automated tests, before merge', 'Under an hour', '~3x'],
+    ['In manual testing before launch', 'Half a day', '~15x'],
+    ['By a customer, after launch', '1-3 days all-in', '~50x'],
+    ['By a customer, in a system with no tests', 'A week, plus fear', '100x+'],
+  ]}
+/>
+
+The last row is the one that matters and it is not really about the defect. It is about what happens to a codebase where nobody can change anything confidently. Every subsequent piece of work is priced against the risk of breaking something invisible, and that surcharge applies to all future work, permanently, not just to the thing that was rushed.
+
+Two other numbers worth carrying:
+
+**Testing adds 8-20% to a build** and removes most of the 50x column. That is not a close calculation.
+
+**Deferred maintenance does not hold its value.** A year of skipped dependency updates costs perhaps three times a year's worth of updates to catch up, because versions diverge, upgrade paths multiply, and something in the middle has a breaking change. [Web application maintenance cost](/blogs/web-application-maintenance-cost) has the detail.
+
+## The corners that are actually fine to cut
+
+A piece arguing that shortcuts are expensive is not credible unless it names the ones that are not. These are genuinely cheap to defer, and we defer them routinely.
+
+**Comprehensive test coverage.** Test the three or four paths that must never break. Chasing a coverage percentage produces tests written to satisfy a metric, and they catch nothing.
+
+**Abstractions for a second case that does not exist.** Two similar things do not need a shared abstraction. Three might. Building the abstraction at one is how codebases acquire indirection nobody can follow.
+
+**Performance work with no measurement behind it.** Optimising a query nobody runs is waste. Measure, then optimise the thing that showed up.
+
+**Internal admin tooling, early.** Database access and a few scripts is an honest bridge at ten customers. It stops being honest at a hundred.
+
+**Design polish on screens with no users yet.** Ship the functional version, spend the design budget on the screens people actually reach.
+
+**Handling scale you do not have.** Building for a million users at four hundred users is not diligence, it is a different kind of waste, and it has all the same compounding properties in reverse - complexity that every future change has to accommodate.
+
+**Documentation of things that are self-evident from the code.** A comment restating what the line above does is maintenance overhead. Write down the decisions and the reasoning, which the code cannot express, and skip the narration.
+
+**Supporting browsers and devices nobody uses.** Check your analytics rather than defending against a hypothetical. Testing matrices grow by accretion and are rarely pruned.
+
+The common thread: these are all deferrals of *work*, not deferrals of *correctness*. Nothing on that list means the thing you shipped fails silently or corrupts data.
+
+## How to tell whether you have inherited a corner-cut codebase
+
+You will not read the code. Six questions produce a reliable read anyway, and each one has a version you can ask your team on a Tuesday.
+
+**How long from a one-line change to it being live?** Hours is healthy. Days means the release process is the bottleneck. Weeks means people avoid making changes, which is the real symptom.
+
+**What happens when you change something in area A? Does area B break?** Ask how often that happens. "Sometimes" is a coupling problem.
+
+**Can you deploy on a Friday?** Not whether you do - whether you could. A team that will not is telling you it does not trust the safety net.
+
+**How often does the same bug come back?** Recurrence means the fix addressed a symptom, and the underlying shape was left alone.
+
+**How long does a new developer take to be useful?** Two weeks is normal. Two months means the system cannot be understood from the outside.
+
+**What is the estimate for a change that sounds simple?** When a small-sounding change is quoted at three weeks, the number is usually honest and it is telling you about the codebase rather than the feature.
+
+<Callout type="info">
+None of these require reading a line of code, and together they give a more accurate picture of a system's health than any audit report. Ask them of your own team, and ask them of a supplier before you hire one.
+</Callout>
+
+## Who actually pays
+
+Worth naming, because the incentive structure is why this keeps happening rather than any individual failing.
+
+**The developer taking the shortcut rarely pays.** They hit the deadline, the feature ships, they are thanked. The bill lands on whoever touches that code in eight months, who is frequently a different person.
+
+**The supplier who quoted low rarely pays.** A quote that omits testing and deployment automation looks cheaper in a comparison, wins the work, and the consequences arrive after the engagement ends. This is not always cynical - frequently the omission is genuine and the supplier is simply optimistic - and the effect on you is identical either way.
+
+**The executive who applied the pressure rarely pays.** The deadline was hit, which is what was measured. The cost surfaces two budget cycles later as "everything takes longer than it used to", with no obvious cause attached.
+
+**You pay.** Whoever owns the software over its life is the only party present for the whole story.
+
+The practical consequence is that quality has to be specified rather than assumed, because nobody else in the chain has a strong incentive to insist on it. Put tests, error handling and a deployment pipeline in the scope as named deliverables. That single move converts them from things a supplier can quietly drop into things you would notice were missing.
+
+## Paying it down without stopping everything
+
+If you have inherited the compounded version, the instinct is a rewrite. That is almost always wrong, for the reasons set out in [website redesign vs rebuild](/blogs/website-redesign-vs-rebuild). What works is duller and more reliable.
+
+**Stop adding to it first.** A quality bar for new work - tests on new code, no new hardcoded configuration, error handling required to merge. Nothing improves while the hole is still being dug, and this step costs nothing except the discipline to enforce it.
+
+**Add tests where you are about to change something.** Not a project to test everything, which never finishes. Tests around the area of each piece of work, written just before the change. Over a year this covers the parts that actually get touched, which are the parts that matter.
+
+**Fix the deployment pipeline early.** It is the highest-leverage single item, because it changes the cost of every subsequent fix and it is usually a week of work rather than a project. [CI/CD that actually ships](/blogs/ci-cd-that-actually-ships) covers what good looks like.
+
+**Take one structural problem per quarter.** Named, scoped, funded like a feature. The god object, the duplicated logic, the module every change touches.
+
+**Track one number.** Time from change to production, or defects reaching customers per month. A payback programme with no measurement gets cancelled at the first budget review, because nobody can show it worked. One number, reported monthly, is enough - and the improvement is usually visible within a quarter, which is what keeps the allocation funded.
+
+**Delete rather than fix, where you can.** Some of the worst code in any system belongs to features nobody uses. Before scheduling work on a module, check whether anyone touches it. Removing it is faster than improving it and it shrinks the surface everything else has to accommodate.
+
+Budget 15-20% of engineering capacity for this, permanently. Not a project - a standing allocation, in the same way a building has a maintenance budget.
+
+## A worked example
+
+A recruitment platform, four years old, came to us because a feature their sales team had promised - a second contract type - had been quoted internally at four months. It sounded like a two-week change.
+
+The four months was honest. Contract type was not a field; it was an assumption threaded through 60-odd files. There were three copies of the fee calculation, subtly different. There were no tests, so every change had to be verified by hand across a dozen flows, and their one developer who knew the system had learned to be extremely careful, which is another way of saying slow.
+
+We priced two options.
+
+**The rewrite:** $340,000, nine months, and a period in the middle where the business runs on the old system while paying for both.
+
+**Stabilise, then change:** $95,000 over five months. Tests around the fee calculation and the contract flow first. The three copies consolidated into one. Contract type made a real field. Deployment automated. Then the feature.
+
+They took the second. The feature shipped in month five as planned. The more interesting number came later: over the following year, six further changes to that area were quoted at an average of nine days each, against a pre-work baseline where anything touching contracts was quoted in months. The $95,000 bought the feature and it also bought back the ability to change that part of the system at all.
+
+Their CTO's summary was the honest one. Nobody had made a bad decision four years earlier. A dozen people had each made a small, reasonable decision under time pressure, and nobody had ever been given a day to go back.
+
 ## What "doing it right" actually means
 
 Doing it right does not mean gold-plating. We are not advocating for exhaustive test suites on throwaway prototypes or elaborate abstractions for code that will run once. Over-engineering is its own form of waste. Doing it right means the load-bearing parts are solid:
@@ -61,3 +175,41 @@ None of this is slow. A team that does these by default ships at the same pace a
 Deadlines are real and we hit them. When time is short, our move is always the same: we cut the feature list, never the engineering quality of what remains. We would rather hand over four features that are genuinely done than eight that are half-built. The four-feature version is something you can build on. The eight-feature version is something you will have to rescue.
 
 The real cost of cutting corners is not the rework, painful as that is. It is the slow loss of the ability to change your own software - the moment a team becomes afraid to touch their own codebase. Protecting that ability is the most valuable thing engineering discipline buys you, and it is why we treat quality as a way to go fast, not a tax on going fast.
+
+## Making the case internally
+
+If you are the person who has to argue for this against a deadline, the abstract version loses. Three framings that work better.
+
+**Price the alternative, not the quality.** Do not ask for two weeks of testing. Show what the same feature costs to change in year two with and without it. The 50x column above is the argument; the request for two weeks is just its conclusion.
+
+**Name what you are trading away, explicitly.** "We can hit the date by dropping the export feature, or by shipping everything without error handling. The second means silent failures in production and roughly three weeks of rework in Q2." Given a real choice, most people choose correctly. They choose badly when the second option is invisible.
+
+**Use the recurring-cost frame.** Corner-cutting is not a one-off charge, it is a subscription. Every future change to that area pays it. Executives who resist a one-time cost frequently understand a permanent one immediately.
+
+And one thing not to do: describe it as technical debt without translating. The metaphor is accurate and it has been used loosely for so long that it reads as engineers asking for time to tidy up. Say what specifically will cost more, and when.
+
+## What we do differently
+
+We cut features rather than quality on every tight deadline, and we say so in writing when we do it, so the deferred item is a decision on the record rather than something that quietly never happened.
+
+We include tests on the critical paths and a deployment pipeline in every quote as line items rather than assumptions, because an invisible line is the first one to get cut in a comparison against a cheaper bid that simply omitted it.
+
+And when we inherit a system in this state, we stabilise before we extend. Building a new feature on top of a foundation nobody can change safely produces a more expensive version of the same problem.
+
+If you have a change that sounds simple and has been quoted in months, [that gap is diagnosable](/contactus) and the answer is usually cheaper than a rewrite.
+
+## Related reading
+
+- [What is technical debt](/blogs/what-is-technical-debt) - the concept, and how to talk about it without the metaphor doing the work
+- [Testing software before launch](/blogs/testing-software-before-launch) - what the 8-20% actually buys
+- [Web application maintenance cost](/blogs/web-application-maintenance-cost) - the recurring number
+- [Website redesign vs rebuild](/blogs/website-redesign-vs-rebuild) - why the rewrite instinct is usually wrong
+
+## Sources and further reading
+
+- [Martin Fowler on technical debt](https://martinfowler.com/bliki/TechnicalDebt.html) - the original framing, and its limits
+- [DORA research](https://dora.dev/) - the evidence linking delivery practice to both speed and stability, which are not a trade-off
+- [Continuous integration](https://martinfowler.com/articles/continuousIntegration.html) - the practice that makes the safety net real
+- [The practical test pyramid](https://martinfowler.com/articles/practical-test-pyramid.html) - what proportionate testing looks like
+- [Strangler fig pattern](https://martinfowler.com/bliki/StranglerFigApplication.html) - paying down structural problems without stopping delivery
+- [endoflife.date](https://endoflife.date/nodejs) - the deferred-maintenance clock nobody is watching

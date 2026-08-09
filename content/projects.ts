@@ -1,7 +1,7 @@
 // Single typed source of truth for the /projects archive and the
 // /projects/[projectslug] case-study pages. Each entry is real, shipped client
 // work for Shunya - a software engineering studio that architects, builds, and
-// scales production-grade digital products across web, mobile, AI, and cloud.
+// scales production-grade web applications - SaaS platforms, dashboards and marketing sites.
 
 export interface ProjectCapability {
     title: string
@@ -18,9 +18,25 @@ export interface ProjectFaq {
     a: string
 }
 
+/** One phase of how the project was actually delivered, in order. */
+export interface ProjectApproachStep {
+    /** Short phase label, e.g. "Discovery". */
+    phase: string
+    title: string
+    body: string
+}
+
 export interface Project {
     slug: string
     title: string
+    /**
+     * SERP copy, 110-160 chars. Separate from `description` because that field is on-page card
+     * copy - reusing it as the meta description produced 173-219 char descriptions that Google
+     * truncates mid-sentence.
+     */
+    /** SERP title, <= 60 chars. `title - tagline` overflowed on four of six projects. */
+    seoTitle: string
+    seoDescription: string
     /** Short positioning line shown under the hero title and used as the meta description. */
     tagline: string
     /** 1-2 sentence summary used on the archive cards. */
@@ -38,6 +54,8 @@ export interface Project {
     challenge: string
     /** A full paragraph describing what we designed and shipped. */
     whatWeBuilt: string
+    /** How we ran the engagement, phase by phase. Rendered as the animated delivery spine. */
+    approach: ProjectApproachStep[]
     keyCapabilities: ProjectCapability[]
     outcomes: ProjectOutcome[]
     faqs: ProjectFaq[]
@@ -46,6 +64,29 @@ export interface Project {
 export const PROJECTS: Project[] = [
     {
         slug: "buildrhq",
+        seoTitle: "BuildrHq - Engineering Intelligence Suite Case Study",
+        approach: [
+            {
+                phase: "Discovery",
+                title: "Mapping a learner's real path",
+                body:
+                    "We started from the thing every learning product gets wrong: the assumption that a curriculum is a list. We interviewed learners and mentors, traced where people actually stall, and modelled a path as a graph of dependencies rather than a sequence. That decision shaped every screen that followed.",
+            },
+            {
+                phase: "Architecture",
+                title: "One data model, many surfaces",
+                body:
+                    "Roadmaps, assessments, projects and the bounty marketplace all read from the same skill graph. Modelling it once meant a new surface became a query rather than a rebuild, which is why the intelligence engine and the project foundry could ship weeks apart rather than quarters.",
+            },
+            {
+                phase: "Delivery",
+                title: "Shipped in slices, in front of users",
+                body:
+                    "We deployed to a live environment from week two and put each slice in front of real learners before building the next. The bounty marketplace changed shape twice because of what that surfaced - cheaply, because nothing downstream had been built on the old assumption yet.",
+            },
+        ],
+        seoDescription:
+            "How we built BuildrHq, an engineering intelligence suite - the architecture, the real-time collaboration layer, and what shipping it took.",
         title: "BuildrHq",
         tagline: "The Engineering Intelligence Suite.",
         description:
@@ -119,6 +160,29 @@ export const PROJECTS: Project[] = [
     },
     {
         slug: "vidhica",
+        seoTitle: "Vidhica - AI Tax & Audit Research Case Study",
+        approach: [
+            {
+                phase: "Discovery",
+                title: "Reading the law before writing the code",
+                body:
+                    "Tax and audit answers are worthless without a citation, so the first phase was not technical. We sat with practising chartered accountants, collected the questions they actually get asked, and built the evaluation set that everything after was measured against.",
+            },
+            {
+                phase: "Architecture",
+                title: "Retrieval first, generation last",
+                body:
+                    "The hard part of a legal AI product is fetching the right passage, not phrasing the answer. We invested in chunking the corpus along statutory boundaries and in metadata that lets a query filter by act, section and year, then treated the model as the thin layer on top.",
+            },
+            {
+                phase: "Delivery",
+                title: "Grounded, cited, and measured",
+                body:
+                    "Every answer carries its source passages, and we scored each release against the evaluation set before shipping it. When accuracy regressed we could point at which retrieval change caused it rather than guessing at the prompt.",
+            },
+        ],
+        seoDescription:
+            "How we built Vidhica, a cited AI research tool for Nepal's tax and audit law - grounding, OCR vouching, and auto-drafted reports.",
         title: "Vidhica",
         tagline: "Nepal's tax & audit, answered with the law.",
         description:
@@ -191,6 +255,29 @@ export const PROJECTS: Project[] = [
     },
     {
         slug: "syncorbit",
+        seoTitle: "SyncOrbit - Agency Command Center Case Study",
+        approach: [
+            {
+                phase: "Discovery",
+                title: "Finding the one screen that was missing",
+                body:
+                    "An agency's real state lives in five tools and nobody can see it at once. We shadowed delivery managers for a week and found the question they could never answer quickly: which projects are actually at risk right now. That became the product.",
+            },
+            {
+                phase: "Architecture",
+                title: "The data model was the hard part",
+                body:
+                    "Deciding what a project, an allocation and an hour mean across systems that each define them differently took longer than building the dashboard. Once that vocabulary was settled the interface was almost a consequence of it.",
+            },
+            {
+                phase: "Delivery",
+                title: "A cache that keeps proving itself",
+                body:
+                    "Aggregated state goes stale silently, which is the worst failure mode for a tool people trust. Webhooks push changes the moment they happen and a scheduled reconciliation sweep re-checks against the source, so drift is caught by the system rather than by a user noticing.",
+            },
+        ],
+        seoDescription:
+            "How we built SyncOrbit, one screen that shows the true state of every client project - the data model, aggregation, and reconciliation.",
         title: "SyncOrbit",
         tagline: "The calm operating system for running clients at once.",
         description:
@@ -271,6 +358,29 @@ export const PROJECTS: Project[] = [
     },
     {
         slug: "gurukul",
+        seoTitle: "Gurukul - School Management Platform Case Study",
+        approach: [
+            {
+                phase: "Discovery",
+                title: "Built for how schools actually run",
+                body:
+                    "We started in school offices, not in a design tool. That is where we learned the academic year runs on the Bikram Sambat calendar, that fee collection happens through eSewa and Khalti, and that connectivity outside the valley cannot be assumed. Each of those became a constraint, not a feature request.",
+            },
+            {
+                phase: "Architecture",
+                title: "Multi-tenant from the first commit",
+                body:
+                    "Every school is a hard tenant boundary with its own grading scheme, fee structure and calendar configuration. Building that in at the schema level rather than retrofitting it is what made onboarding a new school a configuration task instead of a deployment.",
+            },
+            {
+                phase: "Delivery",
+                title: "Phased rollout, module by module",
+                body:
+                    "Schools cannot switch everything at once mid-term. We sequenced the rollout - student records first, then fees, then attendance, then exams - so each module was in real use before the next arrived, and the staff learned one thing at a time.",
+            },
+        ],
+        seoDescription:
+            "How we built Gurukul, a school management platform for Nepal - attendance, fees, exams and parent communication in one system.",
         title: "Gurukul",
         tagline: "Run your school. Not your paperwork.",
         description:
@@ -339,6 +449,29 @@ export const PROJECTS: Project[] = [
     },
     {
         slug: "eventeye",
+        seoTitle: "EventEye - College Events Platform Case Study",
+        approach: [
+            {
+                phase: "Discovery",
+                title: "Following one attendee end to end",
+                body:
+                    "We traced a single student from seeing a poster to walking through the door, and found the drop-offs were all at handoffs: discovery to registration, registration to payment, payment to entry. Closing those seams became the brief.",
+            },
+            {
+                phase: "Architecture",
+                title: "One record from discovery to door",
+                body:
+                    "A ticket is the same object whether it is being browsed, paid for or scanned at entry. Modelling it that way removed the reconciliation work that normally sits between a registration list and a door list.",
+            },
+            {
+                phase: "Delivery",
+                title: "Tested against a real event",
+                body:
+                    "We launched against an actual campus event rather than a staging dataset. Door scanning under patchy venue wifi is the kind of problem that only shows up when several hundred people arrive in ten minutes, and it is why offline-tolerant check-in exists in the product.",
+            },
+        ],
+        seoDescription:
+            "How we built EventEye, a college events platform covering discovery, ticketing and door check-in - the stack and the launch.",
         title: "EventEye",
         tagline: "College events, from discovery to door, in one platform.",
         description:
@@ -408,6 +541,29 @@ export const PROJECTS: Project[] = [
     },
     {
         slug: "mp-solutions",
+        seoTitle: "M.P. Solutions - Pharma Inventory Case Study",
+        approach: [
+            {
+                phase: "Discovery",
+                title: "Where the stock counts diverge",
+                body:
+                    "Pharmaceutical distribution fails at the gap between what the system says is in the warehouse and what is actually on the shelf. We traced every point where those two numbers could drift and built the brief around closing them.",
+            },
+            {
+                phase: "Architecture",
+                title: "Real-time, with an audit trail",
+                body:
+                    "Inventory movements are events, not overwrites. Recording them that way means the current count is derived rather than asserted, so a discrepancy can be traced to the exact movement that caused it instead of being silently corrected.",
+            },
+            {
+                phase: "Delivery",
+                title: "Rolled out warehouse by warehouse",
+                body:
+                    "We ran the new system alongside the existing process at one site until the numbers agreed for a full cycle, then expanded. Parallel running costs a few weeks and removes the risk of discovering a modelling error after the old system is gone.",
+            },
+        ],
+        seoDescription:
+            "How we built MP Solutions, real-time pharmaceutical inventory for B2B supply chains - the sync architecture and rollout.",
         title: "M.P. Solutions",
         tagline: "Real-time pharmaceutical inventory for B2B supply chains.",
         description:

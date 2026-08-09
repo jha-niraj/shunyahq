@@ -1,0 +1,213 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+A design system is usually pitched to a business as a design initiative, which is why it usually gets declined. Design consistency sounds like an aesthetic preference, and aesthetic preferences lose to feature requests every time.
+
+The better argument is a cost argument. A design system is the reason building the twentieth screen of a product costs a third of what building the fifth one did, and the reason two developers can work on different features without producing two different-looking applications. It is infrastructure, not decoration.
+
+Here is what one actually is, what it saves, and when it is not worth the investment.
+
+## What it is, concretely
+
+A design system is a shared set of reusable interface pieces, plus the rules for using them. In practice it consists of four layers.
+
+**Tokens.** The raw values: colours, spacing steps, font sizes, corner radii, shadows. Defined once, referenced everywhere. Changing the brand's primary colour becomes one edit rather than a search across 200 files.
+
+**Components.** Buttons, inputs, dropdowns, tables, modals, cards, navigation. Each built once, correctly, with all their states - hover, focus, disabled, loading, error, empty.
+
+**Patterns.** How components combine to solve recurring problems: a form layout, a confirmation flow, a data table with filtering, an empty state.
+
+**Documentation.** What exists, when to use each thing, and what not to do. Without this, a design system is a folder of components nobody can find.
+
+The critical property is that it is **one implementation shared by design and code**. A design file full of consistent components with a codebase that does not match is not a design system; it is a style guide, and style guides drift within months.
+
+<Callout type="info">
+The test for whether you have one: can a developer build a new screen without asking a designer what a button should look like, and can a designer specify a screen without inventing anything new? If both are true, you have a design system. If either requires a conversation, you have a collection of files.
+</Callout>
+
+## The business case, with numbers
+
+The saving comes from three places and they compound.
+
+**Building screens gets faster.** The first ten screens of a product are slow because every element is being designed and built for the first time. Once the components exist, a new screen is assembly. On projects we have measured, screen build time drops by 40-60% once the system is established, and the effect is permanent.
+
+**Changes get cheaper.** A brand refresh, an accessibility fix, a change to how errors are displayed - all of these are one change in one place rather than a hunt across the application. This is where the largest savings occur over a multi-year life, and they are invisible in a first-year business case.
+
+**Fewer decisions get made badly.** Every time a developer has to decide what a disabled state looks like, there is a chance of an inconsistent answer. Removing thousands of small decisions removes thousands of small inconsistencies, and it removes the meetings about them.
+
+There is a fourth benefit that is harder to put a number on and is frequently the one users feel. A consistent interface is easier to learn, because a control that behaves the same way everywhere only has to be learned once. Applications assembled from fourteen different button styles and four modal implementations are harder to use than the sum of their screens suggests, and the cost of that shows up in support tickets rather than in a development budget.
+
+<RateTable
+  headers={['Project size', 'Cost to establish', 'Typical payback point']}
+  rows={[
+    ['Small site, under 15 screens', '$3,000 - $8,000', 'Rarely pays back - use a library'],
+    ['Application, 25-60 screens', '$12,000 - $30,000', 'Around screen 20-25'],
+    ['Platform, 60+ screens', '$25,000 - $70,000', 'Around screen 25-30, then compounds'],
+    ['Multiple products, shared', '$40,000 - $150,000', 'Second product'],
+  ]}
+/>
+
+The row worth reading carefully is the first. **On a small project, building a design system from scratch is a net cost.** The right move there is to adopt an existing component library and theme it, which gets you most of the benefit for a fraction of the effort.
+
+## Build or adopt
+
+This is the actual decision for most businesses, and building from scratch is the wrong answer far more often than teams assume.
+
+**Adopt and theme an existing library.** Take a mature open-source component library, apply your tokens, and extend where needed. You inherit years of accessibility work, keyboard handling, browser edge cases and testing. [Material Design](https://m3.material.io/) is the most documented public example of a full system, and there are numerous implementation libraries in every framework.
+
+Cost: a fraction of building. Constraint: you are working within someone else's structural decisions, which for most business applications is fine and occasionally is not.
+
+**Build on unstyled primitives.** A middle path that has become the common default. Use a library that provides behaviour - focus management, keyboard navigation, accessibility semantics - with no visual opinion, and supply all the styling yourself. You get complete visual control and inherit the genuinely hard parts, which are the interaction behaviours nobody enjoys reimplementing.
+
+This is the right answer for most product companies with a distinct visual identity.
+
+**Build from scratch.** Justifiable when your interface is genuinely unusual, when you are a large organisation with several products to unify, or when your product's differentiation is the interface itself. Expensive, and the expense is not the visual design - it is the accessibility, keyboard behaviour, focus management and edge-case handling that mature libraries already contain.
+
+<Callout type="warn">
+The most common way a from-scratch design system fails: components are built to look right and not to behave right. Six months later somebody runs an accessibility audit and every custom dropdown, modal and tab set fails keyboard navigation. Retrofitting that across 40 components costs more than adopting a library would have.
+</Callout>
+
+## What a good component actually includes
+
+This is where estimates go wrong. A button is not one thing.
+
+A production-quality button component has: default, hover, active, focus, disabled and loading states; visible focus indication that meets contrast requirements; correct semantics so assistive technology announces it properly; keyboard activation; size variants; icon support with correct spacing; and a full-width option. That is a day of work, not an hour, and it is a day spent once.
+
+Multiply across the twenty or so components a typical application needs and the establishment cost in the table above stops looking arbitrary.
+
+The corollary: when someone quotes $4,000 for a full design system, they are quoting for the visual layer. Ask what states each component includes and whether keyboard behaviour is covered. The gap between a component that looks right and one that works right is most of the cost, and it is the part that determines whether you pass an [accessibility audit](/blogs/web-accessibility-legal-requirements) later.
+
+## What to build first
+
+You do not build a design system in one go, and attempting to is how they become expensive without becoming useful. The sequence that works:
+
+**Tokens first, before any component.** Colours, spacing scale, type scale, radii. An afternoon of decisions that everything else references. Doing this after building components means retrofitting values into things that already hard-coded them.
+
+**Then the six components you use most.** In almost every business application these are: button, text input, select, modal, table and card. Six components cover a surprising majority of every screen you will build.
+
+**Then the form pattern.** Layout, labels, help text, validation messages, error summary, submit states. Forms are where business applications actually live, and where inconsistency is both most visible to users and most likely to cause an accessibility failure.
+
+**Then whatever the next screen needs.** Grow the system from real requirements rather than from a list of components other systems have. A tab component nobody needs is maintenance without benefit.
+
+**Documentation continuously, not at the end.** A component added without a note explaining when to use it is a component someone will duplicate, in a slightly different way, three months later.
+
+This ordering means the system starts returning value in week two rather than week ten, which matters for both the budget and the political survival of the initiative.
+
+## Accessibility is the strongest argument
+
+If the efficiency case does not persuade, this one usually does.
+
+Accessibility requirements apply per component, not per page. A dropdown either handles keyboard navigation correctly or it does not, and if it does not, every one of the 60 pages using it fails.
+
+That means accessibility is either extremely cheap or extremely expensive, depending entirely on whether you have a design system. Fix the dropdown once and 60 pages are fixed. Have 14 bespoke dropdowns across an application built by four developers over three years, and you have 14 separate fixes and no way to know you found them all.
+
+This is the single most compelling reason to establish the system early. Building accessibility into 20 components during a build is a manageable increment. Retrofitting it across an application built without one is one of the more expensive pieces of remediation available, and it is increasingly demanded by procurement rather than optional.
+
+## How they fail
+
+**Nobody maintains it.** The system is built during a project, the project ends, and there is no owner. Six months later developers are building one-off components because the system does not cover a new case and nobody can extend it. Within a year there are two systems.
+
+**It is too rigid.** A system that cannot accommodate a legitimate new requirement gets bypassed. Bypassing is how the second system starts. Good systems have a documented route for proposing additions.
+
+**Design and code diverge.** Designers update the design file, developers do not update the components, and the two drift. Within a year the design file describes an application that does not exist.
+
+**It is built for the wrong scope.** A component library with 90 components on a product that needs 18 is a maintenance liability. Build what you use.
+
+**Documentation is absent.** Components exist and nobody knows which one to use, so they build a new one. [Storybook](https://storybook.js.org/docs) or equivalent - a browsable catalogue of every component in every state - is the standard answer and it is worth the setup time.
+
+The common thread is ownership. A design system is a product with internal customers, and products without owners decay. Budget a small amount of ongoing time - a day a month is usually enough - rather than treating it as a one-off build.
+
+## How it changes the way projects run
+
+Beyond the direct saving, a design system alters three things about how work happens, and these are frequently what people notice first.
+
+**Estimates get more reliable.** When a new screen is assembled from known pieces, estimating it is arithmetic rather than judgement. Teams with a mature system routinely estimate front-end work within 20%, which is unusual in this industry.
+
+**Design review gets shorter.** Most design feedback on a system-built screen is about layout and content rather than about what a button should look like. That removes an entire category of meeting.
+
+**Onboarding gets faster.** A new developer productive in days rather than weeks, because the question "how do we do X here?" has a documented answer. Over a multi-year project with normal staff turnover, this is a larger saving than it sounds.
+
+**Handover between suppliers becomes possible.** This one matters commercially. An application built on a documented system can be picked up by a different team without a rewrite. An application where every screen was built ad hoc effectively locks you to whoever built it, which weakens your position in every future negotiation.
+
+That last point is worth weighing when a supplier argues a design system is unnecessary overhead on your project. It may be, and it is also the thing that makes you portable.
+
+## A worked example
+
+A logistics company had a customer portal built over four years by three different suppliers. It had 71 screens.
+
+The symptoms they described: every change took longer than expected, the interface looked visibly different depending on which section you were in, and they had failed a customer's accessibility review.
+
+What an audit found: **fourteen distinct button styles**, six different date pickers, four modal implementations, and three separate approaches to form validation messaging. None of it was anyone's fault - each supplier had built reasonably within their own engagement, and nothing had connected them.
+
+The accessibility review had failed on keyboard navigation in the date pickers and modals, colour contrast on three of the button styles, and missing form labels in two sections.
+
+The work took eleven weeks:
+
+- **Audit and inventory** of every interface element in use: one week, and by itself worth the money, because it made the scale of the divergence visible to people who had been arguing about whether it was a real problem.
+- **Token definition** - colours, spacing, type scale - agreed with their brand team: one week.
+- **Twenty-two components built** on unstyled accessible primitives, covering everything the audit found in use: five weeks. This included consolidating fourteen button styles into one component with four variants.
+- **Migration of the 71 screens** to the new components: three weeks, done section by section so the portal was never broken.
+- **Documentation and a component catalogue:** one week.
+
+Cost: $58,000. Measured afterwards:
+
+- The accessibility review was passed on the second attempt with two minor findings, because fixing components fixed every page at once.
+- Average time to build a new screen went from an estimated 4.5 days to 1.6 days.
+- A brand colour change requested six months later, which they had previously quoted at three weeks, took two hours.
+
+Their finance director's summary was that the system paid for itself in eleven months on screen-build time alone, before counting the accessibility remediation it replaced - which had been separately quoted at $34,000 as a page-by-page fix.
+
+## Questions to ask about a proposal
+
+If a design system is in a quote, five questions establish whether it is real.
+
+**"Are we building from scratch or on top of something?"** From scratch should have a stated reason. "It gives us more control" is not one on a business application.
+
+**"Which components, and what states does each include?"** A list of names is not an answer. Focus, disabled, loading and error states are where the work is.
+
+**"Is keyboard and screen reader behaviour included, and how is it tested?"** If this cannot be answered specifically, accessibility is not in the price and will be quoted separately later at a higher number.
+
+**"Where will the documentation live and who writes it?"** A catalogue that developers can browse, kept current, or the system decays into a folder.
+
+**"What is the process for adding a component after the project ends?"** Systems that cannot grow get bypassed, and a bypassed system is worse than none because you now maintain two.
+
+A supplier who answers all five specifically is quoting for a design system. One who answers vaguely is quoting for a set of styled components, which is a legitimate thing to buy and a different thing, and the difference is usually visible in the price.
+
+## When not to bother
+
+**A marketing site under fifteen pages.** Use a well-built theme or a component library. A bespoke system is not going to pay back.
+
+**A prototype or a product you might discard.** Move fast, accept inconsistency, and build the system when the product has proved it deserves one. Building infrastructure for something that may not survive contact with customers is the wrong order.
+
+**A single short project with no future.** If nobody will touch it again, the compounding benefit never arrives.
+
+**When you cannot fund an owner.** An unmaintained design system becomes an obstacle within a year. Better to use a library that somebody else maintains.
+
+**When the team is one person.** A single developer building consistently does not need a system to enforce consistency; they need it when a second person arrives. Establish it at the point of the second developer, not before.
+
+In all four cases the fallback is the same and it is not "no system" - it is somebody else's system, adopted and themed. That gets you consistency, accessibility and speed without the maintenance obligation, and it is a legitimate permanent answer rather than a stopgap.
+
+## What we do differently
+
+We build on accessible unstyled primitives rather than from scratch, because the hard part of a component is its behaviour and that problem is already solved well by people who work on nothing else.
+
+We define tokens before designing screens, so that the brand refresh three years from now is a configuration change rather than a project.
+
+And we deliver the component catalogue as part of the work, not as documentation to be written later, because a system nobody can browse is a system nobody will use.
+
+If your application looks like it was built by four teams over four years, [it probably was](/contactus), and the fix is more tractable than it looks.
+
+## Related reading
+
+- [Web accessibility: what is actually required](/blogs/web-accessibility-legal-requirements) - why component-level fixes are the efficient ones
+- [How much does a SaaS platform cost](/blogs/how-much-does-a-saas-platform-cost) - where front-end effort sits in a build budget
+- [What is technical debt](/blogs/what-is-technical-debt) - the general form of the fourteen-buttons problem
+- [Website redesign vs rebuild](/blogs/website-redesign-vs-rebuild) - when consolidation is enough and when it is not
+
+## Sources and further reading
+
+- [Nielsen Norman Group on design systems](https://www.nngroup.com/articles/design-systems-101/) - a clear, vendor-neutral explanation of what one is and is not
+- [Material Design](https://m3.material.io/) - the most thoroughly documented public design system, useful as a reference regardless of whether you adopt it
+- [Storybook documentation](https://storybook.js.org/docs) - the standard tool for a browsable component catalogue
+- [MDN accessibility documentation](https://developer.mozilla.org/en-US/docs/Web/Accessibility) - what a component has to do beyond looking correct
+- [WebAIM Million](https://webaim.org/projects/million/) - the annual survey showing how common component-level accessibility failures are
+- [ADA guidance on web accessibility](https://www.ada.gov/resources/web-guidance/) - the compliance context for the component argument

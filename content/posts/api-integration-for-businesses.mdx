@@ -1,0 +1,193 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Every business software project eventually arrives at the same sentence: "and then it just connects to our CRM." That word - *just* - is carrying an enormous amount of weight, and it is the reason integration work is the single most commonly underestimated line item in software budgets.
+
+This is a guide to what actually happens when two systems are made to talk to each other, why the estimates vary so wildly, and how to tell the difference between a two-day job and a two-month one before you commit to a timeline.
+
+## What an API is, in the only terms that matter to you
+
+An API is a documented set of instructions that one piece of software publishes so other software can use it without a human in the middle. When your accounting system pulls yesterday's orders from your website overnight, that is an API. When a customer pays and the payment provider tells your system it succeeded, that is an API.
+
+The useful mental model is not "a connection" but **a contract**. The other system publishes what it will accept, what it will return, and what it promises about availability. Your system holds up its end. When integrations break - and they do - it is almost always because one side changed its half of the contract without telling the other.
+
+That framing explains most of what follows. Integration is not plumbing you install once. It is a relationship with another organisation's software, and relationships need maintenance.
+
+<Callout type="info">
+Ask any vendor pitching you an integration one question: "What happens when their API changes?" A good answer describes monitoring, versioning and an alert. A bad answer is "it shouldn't."
+</Callout>
+
+## The three shapes integration takes
+
+Almost everything you will be quoted for is one of three patterns, and knowing which one you are buying tells you most of what you need about cost and risk.
+
+**Pull, on a schedule.** Your system asks the other system for data at intervals - every night, every hour, every five minutes. Simplest to build, simplest to debug, and perfectly adequate for anything where a delay is acceptable. Nightly financial reconciliation does not need to be instant.
+
+**Push, by webhook.** The other system tells yours the moment something happens. A payment clears, a ticket is closed, a form is submitted. Faster and more efficient, but it means you are running an endpoint the outside world can call, which brings security requirements, duplicate-delivery handling and a place to put messages that arrive while you are down. [Webhooks.fyi](https://webhooks.fyi/) is a good plain-language reference for what a well-behaved webhook implementation looks like on both sides.
+
+**Two-way sync.** Both systems can change the same record and both must end up agreeing. This is the expensive one, and the gap between it and the other two is not incremental - it is a different category of problem. If a customer's address is edited in your CRM at the same moment your support team edits it in the helpdesk, something has to decide which wins. That decision is a business rule, not a technical one, and nobody can write it for you.
+
+<RateTable
+  headers={['Pattern', 'Typical build', 'Ongoing risk', 'Good for']}
+  rows={[
+    ['Scheduled pull', '3-10 days', 'Low', 'Reporting, reconciliation, imports'],
+    ['Webhook push', '5-15 days', 'Medium', 'Payments, notifications, live status'],
+    ['One-way sync', '2-4 weeks', 'Medium', 'Master system feeding a satellite'],
+    ['Two-way sync', '4-12 weeks', 'High', 'Systems both teams edit daily'],
+  ]}
+/>
+
+When someone quotes you three days for something that is genuinely two-way sync, they have either misunderstood the requirement or they are going to build a one-way sync and let you discover the difference in production.
+
+## Why estimates for "the same" integration differ by 10x
+
+Two agencies quote for connecting your site to the same CRM. One says four days, one says five weeks. Neither is necessarily lying. Here is what actually drives the spread.
+
+**The quality of the other side's API.** This is the largest single factor and it is entirely outside your control. A well-designed, well-documented API with a sandbox environment and clear error messages can be integrated in days. An undocumented one, or a SOAP endpoint from 2009 with a 400-page PDF, can take weeks before a single record moves. Ask which it is before you accept an estimate. [Google's API design guide](https://cloud.google.com/apis/design) describes what good looks like; a vendor who has read the target API can tell you in ten minutes which category it falls into.
+
+**Whether a sandbox exists.** If you cannot test against a safe copy, every test is a live test against real data. Development slows to a crawl because nobody wants to be the person who emailed 4,000 customers twice.
+
+**How much the data models disagree.** Your system has customers. Their system has accounts, and an account can have several contacts, and one of them is primary except when it is not. Every mismatch between the two shapes is mapping logic somebody has to write and someone has to decide. This is where the hours actually go, and it is invisible in the initial conversation because both sides say "customer" and assume they mean the same thing.
+
+**Rate limits.** Most APIs cap how many requests you may make. If you have 200,000 records to sync and the cap is 100 requests per minute, that is not a coding problem, it is a queue, a retry strategy and a run that takes a day and a half. It has to be designed for, not discovered.
+
+**Error handling depth.** A demo integration handles the happy path. A production integration handles the API being down, returning a partial response, timing out after it already processed your request, or rejecting one record in a batch of 500. The happy path is perhaps 30% of the code.
+
+<Callout type="warn">
+The most expensive integration surprise is discovering after the contract is signed that the vendor charges for API access, or restricts it to a higher tier. Confirm both the technical and the commercial availability of the API before the estimate is fixed.
+</Callout>
+
+## The questions to ask before you approve an integration budget
+
+Take these to the kickoff. They take twenty minutes and they routinely halve the uncertainty in an estimate.
+
+1. **Which direction does data flow, and can both sides edit the same field?** If yes to the second, you are buying two-way sync. Price it as such.
+2. **How current does the data need to be?** "Real time" is expensive and usually unnecessary. Ask what actually breaks if the data is fifteen minutes old. Frequently the answer is nothing.
+3. **What is the volume, today and in three years?** 500 records and 5 million records are different architectures.
+4. **What is the identifier that links a record on one side to the record on the other?** If there is not a stable, unique one - and email address is not stable - you have a data problem to solve before you have an integration to build.
+5. **Who is notified when it fails, and how?** If the answer is "we'll see it in the logs," it will fail silently for six weeks.
+6. **What happens to records that fail validation?** They need somewhere to go and someone to look at them. A dead-letter queue nobody reads is the same as no error handling.
+
+## What it costs
+
+Ranges below are for a competent team building production integrations - monitored, error-handled, documented - rather than a proof of concept.
+
+<RateTable
+  headers={['Integration', 'Typical range', 'Main driver']}
+  rows={[
+    ['Payment provider (Stripe and similar)', '$3,000 - $9,000', 'Excellent docs, webhooks, edge cases'],
+    ['Email or marketing platform', '$2,000 - $6,000', 'Usually straightforward, list-mapping heavy'],
+    ['Mainstream CRM, one-way', '$4,000 - $12,000', 'Field mapping and auth'],
+    ['Mainstream CRM, two-way', '$15,000 - $45,000', 'Conflict rules, volume, testing'],
+    ['Accounting system', '$6,000 - $20,000', 'Financial accuracy is unforgiving'],
+    ['Legacy or in-house system', '$12,000 - $60,000+', 'No docs, no sandbox, no support'],
+    ['Shipping or logistics provider', '$4,000 - $15,000', 'Rate calculation and label edge cases'],
+  ]}
+/>
+
+Then add ongoing cost. Budget **10-20% of the build cost annually** for maintenance on any integration you depend on. That is not padding; it is the cost of the other side shipping a version 3 of their API, deprecating an authentication method, or changing a field from optional to required.
+
+Payment integrations are worth calling out as the pleasant surprise in that table. Providers with strong developer documentation - [Stripe's API reference](https://docs.stripe.com/api) is the usual benchmark - make what should be the highest-risk integration in your system one of the most predictable, because every failure mode is documented and testable.
+
+## Build, buy, or middleware
+
+You have three routes and they are not interchangeable.
+
+**Direct integration.** Your developers write code against the other system's API. Maximum control, maximum flexibility, and you own the maintenance. Right when the logic is specific to your business or the volume is high.
+
+**Off-the-shelf connector.** The vendor or a marketplace already publishes an integration between these two systems. If it does what you need, use it - a $40 a month connector beats $18,000 of bespoke code every time. The trap is the 80% connector: it does most of it, and the remaining 20% is the part your business actually cares about, and you cannot modify it.
+
+**Integration platform (middleware).** Zapier, Make, and their enterprise equivalents sit between systems and move data with configuration rather than code. Excellent for low-volume, non-critical flows and for prototyping a workflow before committing engineering time. They become a poor fit at volume - per-task pricing scales badly - and when the logic gets complex, at which point you have built a critical system inside a tool with no version control, no tests and no code review.
+
+<Callout type="info">
+A reasonable default: middleware for anything you would be willing to do by hand if it broke, direct integration for anything you would not.
+</Callout>
+
+## A worked example
+
+A wholesale distributor with roughly 400 orders a week wanted their new customer portal connected to their existing accounting system and their warehouse's shipping provider. The first quote they received was $8,000 for "full integration."
+
+What the requirement actually decomposed into:
+
+- **Orders out to accounting.** One-way, scheduled hourly. The accounting system's API was documented and had a sandbox. Nine days of work.
+- **Stock levels in from accounting.** One-way, scheduled every fifteen minutes, with a cached fallback so the portal never showed a blank where a number should be. Six days.
+- **Shipments out to the courier, tracking back.** Webhook in both directions, plus label generation. The courier's API had a rate limit of 60 calls a minute and an undocumented behaviour where address validation failed silently on certain postcodes. Fourteen days, four of them spent on that one behaviour.
+- **Customer records, two-way.** This was the one the $8,000 quote had assumed was simple. Sales edited customers in accounting; customers edited their own details in the portal. Deciding what happened when both changed took three meetings with the finance director before a line of code was written. The rule they landed on - portal wins for contact details, accounting wins for anything affecting credit terms - is a business decision that no developer could have made for them. Nineteen days including the migration of existing mismatched records.
+
+Total: $41,000 rather than $8,000. The difference was not that the first estimate was dishonest. It was that "connect to accounting" was four projects wearing a trench coat, and nobody had separated them before quoting.
+
+The distributor's own conclusion was the useful one: the three meetings about conflict rules should have happened *before* the tender went out, not after. They would have received comparable quotes instead of a spread from $8,000 to $50,000.
+
+## Failure modes worth designing for
+
+These are the ones that turn up in production for every integration, without exception. If your specification does not mention them, they are not budgeted.
+
+**The other system is down.** Yours must degrade rather than fail. Queue the work, retry with increasing delays, and show your users something honest rather than a stack trace.
+
+**Duplicate delivery.** Webhooks get delivered twice more often than people expect. Every operation triggered by an incoming message must be safe to run twice - charge once, not twice, if the same payment notification arrives again. This property is called idempotency and it is cheap to build in and expensive to retrofit.
+
+**Partial failure.** A batch of 500 records where 3 fail. Do you roll back all 500 or process 497 and quarantine 3? Both are defensible; silently dropping 3 is not.
+
+**Silent schema change.** They add a required field. Your requests start returning errors that your code treats as transient and retries forever. This is why monitoring integrations means alerting on *error rate*, not just on total failure.
+
+**Credential expiry.** Tokens expire, certificates lapse, someone rotates a key. An integration that has run flawlessly for a year stops on a Tuesday. Calendar the expiry dates; do not discover them.
+
+## How to keep integrations from decaying
+
+The teams whose integrations still work three years later do four unglamorous things.
+
+**They log every exchange.** Not the contents of sensitive fields, but the fact of the call, the response code and the timing. When someone asks "did that order reach accounting?" the answer takes thirty seconds rather than a day.
+
+**They monitor success rate rather than uptime.** An integration that is up and rejecting 40% of records is worse than one that is down, because nobody notices.
+
+**They pin the API version.** Most serious providers let you specify which version of their API you are calling. Pinning means their upgrade is your scheduled work rather than your Monday morning outage.
+
+**They write down the mapping.** One document, listing which field on your side corresponds to which field on theirs and what transformation happens in between. It takes an afternoon and it is the single most valuable artefact when the person who built it has moved on. This is the same discipline that keeps [technical debt](/blogs/what-is-technical-debt) from accumulating in the rest of the system.
+
+## A note on authentication, because it decides more than it looks like it should
+
+How the two systems prove who they are is usually presented as a technical footnote and is frequently the thing that determines the shape of the whole project.
+
+**API keys** are the simplest: a long secret string, sent with every request. Easy to build against, and the security question is entirely about where that string lives. It must never be in the front-end code, never in a repository, and never in a shared document. It belongs in a secrets manager, with a record of who can read it.
+
+**OAuth** is what you get when the integration acts on behalf of a specific user rather than the business as a whole - a customer connecting their own account to yours. Considerably more work: a consent screen, a token exchange, refresh logic, and a plan for what happens when a user revokes access. Budget several extra days over a key-based integration, and expect the approval flow to need design attention rather than just engineering.
+
+**Service accounts and certificates** turn up in enterprise and financial systems. The build is not usually harder; the procurement is. Getting a certificate issued inside a large organisation can take longer than writing the integration, and that wait belongs on the project plan rather than being discovered in week three.
+
+The practical consequence for you: ask which of the three you are dealing with at the same time you ask about the sandbox. It changes both the estimate and who needs to be in the room.
+
+## When to say no to an integration
+
+Not every connection is worth making. Three cases where the honest answer is to leave the systems apart.
+
+**When the volume does not justify it.** If someone exports a spreadsheet once a month and it takes them twenty minutes, that is four hours a year. A $15,000 integration to save four hours a year is not a saving.
+
+**When the source data is bad.** Integrating two systems does not clean the data; it copies the mess into a second place and then keeps them synchronised in their wrongness. Fix the data first, or accept that you are automating a problem.
+
+**When the other system is being replaced within eighteen months.** Build the cheapest thing that survives until the replacement lands. A CSV drop and a scheduled import is not elegant, and it is exactly right when the endpoint has a known expiry date.
+
+## What we do differently
+
+We separate integrations into their component flows before quoting, because "connect to X" is almost never one thing, and a single number for four different flows hides all of the risk in the most complex one.
+
+We insist on the conflict rules conversation early. Where both systems can edit the same data, the business rule that resolves a clash is a decision for you, and having it in week one costs a meeting. Having it in week nine costs a rebuild.
+
+And we treat monitoring as part of the deliverable rather than an extra. An integration you cannot see the health of is an integration you will find out about from a customer.
+
+If you have an integration in a quote and you are not sure whether the number is realistic, [send us the scope](/contactus) and we will tell you which of the four patterns it actually is.
+
+## Related reading
+
+- [How much does a web application cost](/blogs/web-application-development-cost) - where integration sits in a full project budget
+- [Red flags in a software quote](/blogs/red-flags-in-a-software-quote) - what a suspiciously round integration number usually means
+- [Signs you have outgrown your current system](/blogs/signs-you-have-outgrown-your-current-system) - when integration stops being the answer
+- [How to migrate off a legacy system](/blogs/how-to-migrate-off-a-legacy-system) - integrating with something you intend to replace
+- [Case study: building SyncOrbit](/blogs/building-syncorbit-case-study) - webhooks, reconciliation and what four integrations actually cost
+
+## Sources and further reading
+
+- [OpenAPI Specification](https://spec.openapis.org/oas/latest.html) - the standard a well-documented API is described in; ask whether the target system publishes one
+- [Google API design guide](https://cloud.google.com/apis/design) - a readable statement of what good API design looks like
+- [Webhooks.fyi](https://webhooks.fyi/) - practical guidance on building and consuming webhooks reliably
+- [Stripe API reference](https://docs.stripe.com/api) - the usual benchmark for developer documentation quality
+- [RFC 9110: HTTP Semantics](https://datatracker.ietf.org/doc/html/rfc9110) - the underlying specification, for when two teams disagree about what a status code means
+- [MDN HTTP status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status) - the practical reference your team will actually keep open

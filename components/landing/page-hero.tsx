@@ -61,7 +61,10 @@ export function PageHero({
                                 </span>
                             )
                         }
-                        <div
+                        {/* An <h1>, not a styled <div>. Every page built on this hero - services,
+                            projects, solutions, blog hubs, legal - was shipping with zero h1
+                            elements, which is the single strongest on-page relevance signal. */}
+                        <h1
                             className="mt-5"
                             style={{
                                 fontSize: "clamp(34px, 5vw, 58px)",
@@ -72,7 +75,7 @@ export function PageHero({
                             }}
                         >
                             {title}
-                        </div>
+                        </h1>
                         {
                             description && (
                                 <p

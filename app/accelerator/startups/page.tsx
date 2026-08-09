@@ -330,7 +330,7 @@ export default function DiscoverPage() {
                                         <span>{startup.advisorsInterested} Advisors Interested</span>
                                     </div>
                                     <Link
-                                        href={`/startups/${startup.id}`}
+                                        href={`/accelerator/startups/${startup.id}`}
                                         onClick={(e) => e.stopPropagation()}
                                         className="inline-flex items-center gap-1 text-[13px] font-medium text-so-ink-3 hover:text-so-ink transition-colors"
                                     >
@@ -370,7 +370,7 @@ export default function DiscoverPage() {
                         <p className="text-[15px] leading-[1.7] text-so-ink-2 max-w-[52ch] mb-8">
                             Tell us what you&apos;re building and the areas you need help with-we&apos;ll take it from there.
                         </p>
-                        <Link href="/submit" className="so-btn so-btn-primary">
+                        <Link href="/contactus" className="so-btn so-btn-primary">
                             Submit your idea <ArrowRight size={13} />
                         </Link>
                     </div>
@@ -413,7 +413,7 @@ export default function DiscoverPage() {
                             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                                 Close
                             </Button>
-                            <Link href={`/startups/${selectedStartup.id}`} className="so-btn so-btn-primary">
+                            <Link href={`/accelerator/startups/${selectedStartup.id}`} className="so-btn so-btn-primary">
                                 <ExternalLink size={14} />
                                 View full details
                             </Link>

@@ -67,6 +67,64 @@ The honest caveat is platform support. PWA capabilities are excellent on Android
 
 What we like most about the PWA is that it is a hedge. Build the web app well, enhance it into a PWA, and you have kept the door open. If the product later proves it truly needs native, you have lost nothing - the web app keeps serving everyone while you build the native client for the cases that demand it.
 
+## The middle option nobody mentions: cross-platform native
+
+There is a fourth answer that sits between the PWA and two native codebases, and it is worth knowing about because it is frequently the right one when native genuinely is required.
+
+Cross-platform frameworks let you write one codebase that compiles to real iOS and Android applications. You get store presence, deep device access and native performance for most workloads, from roughly one and a half codebases rather than two.
+
+**When it fits:** you need to be in the stores, you need capability the web cannot provide, and your interface is conventional rather than heavily platform-specific.
+
+**When it does not:** the product is graphics-intensive, depends on brand-new platform features the moment they ship, or needs to feel unmistakably native on each platform in a way users would notice.
+
+**The honest cost:** roughly 60-70% of building both natively, with a maintenance profile closer to one codebase than two. Not the 50% the marketing implies, because platform-specific work never disappears entirely - permissions, store submission, notifications and the last 10% of polish all remain per-platform.
+
+The reason it is left out of most versions of this comparison is that it does not change the decision - it changes the price of one branch of it. If the answer to "do we need to be in the store" is no, cross-platform is irrelevant. If it is yes, it is usually the cheaper way to get there.
+
+## What each one really costs
+
+The cost conversation is where this decision usually gets decided, so here are honest ranges for equivalent functionality.
+
+<RateTable
+  headers={['', 'Responsive web app', 'PWA', 'Native (iOS + Android)']}
+  rows={[
+    ['Build cost', '$60,000 - $180,000', '$70,000 - $200,000', '$140,000 - $420,000'],
+    ['Codebases to maintain', 'One', 'One', 'Two, plus a web presence'],
+    ['Annual maintenance', '15-20% of build', '15-20% of build', '25-35% of build'],
+    ['Time to first release', 'Weeks', 'Weeks', 'Months, plus review'],
+    ['Shipping a fix', 'Minutes', 'Minutes', 'Days, and users must update'],
+    ['Store fees on digital sales', 'None', 'None', 'Platform commission'],
+  ]}
+/>
+
+Two rows carry more weight than the build cost.
+
+**Shipping a fix.** On the web, a bug found at 10am is fixed by 11am for every user. On native, you build, submit, wait for review, release - and then wait for people to update, which some never do. Supporting three versions of your app simultaneously is a permanent tax that nobody includes in the original estimate.
+
+**Store commission.** If you sell digital goods or subscriptions through a native app, platform rules generally require their payment system and their cut. On a subscription product this is frequently the largest single number in the whole comparison, and it recurs forever.
+
+## The distribution question, which decides more than the technology
+
+The strongest argument for native is not technical, and the strongest argument against it is the same one.
+
+**For:** the store is a discovery channel, and an icon on a home screen is a permanent piece of attention that a bookmark never is. For consumer products where habit matters, that is real.
+
+**Against:** getting someone to install an app is one of the highest-friction actions on the internet. Every step - store, download, account, permissions - loses people, and for a product someone uses monthly rather than daily, the install is a barrier that outweighs everything the app does better.
+
+The honest test: **would your user install this?** Not would they use it - would they go to a store and download it. For a consumer product used daily, plausibly yes. For a B2B tool, a booking flow, a portal used quarterly, or anything a customer encounters for the first time via a link, the answer is usually no, and building it anyway means building something most of your audience will never open.
+
+## What the web genuinely cannot do, in 2026
+
+The list has shrunk considerably and it is worth being precise, because most articles on this either exaggerate or ignore it.
+
+**The web handles well:** camera, microphone, location, offline storage, background sync, push notifications on both major platforms, file access, payments, biometric-backed authentication, and installation to the home screen.
+
+**The web still cannot match native for:** sustained high-performance graphics and gaming, deep hardware access such as Bluetooth peripherals in some configurations, background processing that continues indefinitely while the app is closed, and tight integration with platform features like widgets, share sheets and system-level shortcuts.
+
+**The web is behind but usable for:** heavy media processing, very large offline datasets, and consistency of push notification behaviour across platforms.
+
+If nothing your product needs appears in the second list, the technical case for native is weaker than it feels, and the decision becomes the distribution question above rather than a capability one.
+
 ## How we actually decide
 
 We do not start from the technology. We start from three questions about the product:
@@ -76,3 +134,70 @@ We do not start from the technology. We start from three questions about the pro
 3. **What can the team afford to build and maintain?** One codebase that updates instantly is web or PWA. Two platforms and a review cycle on every change is the standing cost of native.
 
 For most products that come through our door, the answer is "build it on the web, make it a PWA if mobile matters, and go native only when the product earns it." That ordering is deliberate. It is cheapest to start where reach is widest and cost is lowest, and to add platform-specific capability only when there is a real user need pulling for it - not a hunch that you ought to have an app. The right platform is the one that fits the product, and the most expensive mistakes here come from choosing the platform first and discovering the fit later.
+
+## A worked example
+
+A veterinary group with 34 practices wanted an app for pet owners: appointment booking, vaccination reminders, prescription reordering and access to records. Their first quote was $290,000 for native iOS and Android.
+
+The four questions changed the answer.
+
+**Where are users when they use it?** On a phone, usually while doing something else. Mobile mattered. Native did not automatically follow.
+
+**How often?** Their own data showed the median client contacted a practice about four times a year. That is not habit-forming frequency, and it is the frequency at which an install is a barrier rather than a convenience.
+
+**What does it need from the device?** Camera for uploading a photo of a symptom, push for reminders, offline reading of records. All available on the web.
+
+**Would clients install it?** They surveyed 400. 22% said they probably would. For a service used four times a year, that meant building for a fifth of their client base and leaving the rest with nothing.
+
+They built a PWA. $112,000, live in fourteen weeks:
+
+- Booking, reminders, reordering and records, all mobile-first.
+- Installable to the home screen with a prompt shown only after a second successful booking, so the ask arrives after value rather than before it.
+- Push notifications for reminders and prescription readiness.
+- Offline access to vaccination records, which was the only genuinely offline requirement.
+
+Eighteen months on: 71% of clients have used it, roughly 19% have installed it to their home screen, and appointment no-shows are down 31% - which the practice manager attributes almost entirely to the reminders, a feature that would have reached 22% of clients in the native version.
+
+The instructive number is that one. The native app would have been better for the people who installed it and unavailable to four fifths of the people it was for. Reach beat capability, because the product's value was in reminders reaching everyone rather than in anything a native runtime could have done better.
+
+## How to decide in an afternoon
+
+If you need to reach an answer without a discovery phase, these five questions in order will get you there, and the first one that gives a clear answer usually ends it.
+
+**1. Do you need to be found by search?** If discovery matters at all, you need a web presence regardless. This does not rule out an app; it does mean the web is not optional, so the real question is whether an app is worth adding on top.
+
+**2. Does the product need something the web genuinely cannot do?** Check against the capability list above rather than assuming. If yes, you are choosing between cross-platform and fully native.
+
+**3. How often does a typical user use it?** Daily justifies an install. Monthly or less does not, and the friction of the store will cost you more users than the app gains you.
+
+**4. Do you sell digital goods or subscriptions in-app?** If yes, model the platform commission over three years before deciding. It frequently changes the answer on its own.
+
+**5. Can you maintain what you are proposing?** Two native codebases plus a website is three things needing updates, security patches and platform-version support, permanently. If that is beyond your budget in year two, it is the wrong choice in year one.
+
+## Where this decision goes wrong
+
+Four patterns worth recognising.
+
+**"We need an app" as a strategy.** An app is a distribution channel, not a product decision. The question underneath is usually "how do we stay present with customers", and push notifications on the web now answer that for most businesses.
+
+**Building native for a feature the web supports.** Camera, location and push are the three most commonly cited reasons for going native, and all three work on the modern web. Confirm the capability gap is real before paying for it.
+
+**Underestimating two codebases.** Native means iOS and Android as separate builds, plus a website anyway, because people will still find you through a search result. That is three things to maintain, forever, and it is why the annual maintenance percentage in the table above is higher.
+
+**Ignoring the update problem.** Web fixes reach everyone immediately. Native fixes reach whoever updates. On a product handling anything sensitive, having users on a version you know has a defect is a genuine operational problem, not an inconvenience.
+
+## Related reading
+
+- [Single-page app vs server-rendered](/blogs/single-page-app-vs-server-rendered) - the rendering decision inside the web option
+- [How much does a SaaS platform cost](/blogs/how-much-does-a-saas-platform-cost) - where this choice sits in a full budget
+- [Core Web Vitals for business owners](/blogs/core-web-vitals-for-business-owners) - why web performance carries the weight it does here
+- [Choosing your stack](/blogs/choosing-your-stack) - the technology decisions that follow from this one
+
+## Sources and further reading
+
+- [MDN web performance documentation](https://developer.mozilla.org/en-US/docs/Web/Performance) - what the platform can actually do, and at what cost
+- [HTTP Archive Web Almanac](https://almanac.httparchive.org/en/2024/) - population-level data on mobile web performance
+- [Google page experience documentation](https://developers.google.com/search/docs/appearance/page-experience) - the discoverability advantage the web keeps
+- [web.dev on fast load times](https://web.dev/articles/fast/) - closing the perceived performance gap with native
+- [MDN accessibility documentation](https://developer.mozilla.org/en-US/docs/Web/Accessibility) - an area where the web starts ahead
+- [Stripe payments documentation](https://docs.stripe.com/payments) - what payments look like outside a platform's commission

@@ -87,9 +87,10 @@ export default async function ServiceDetailPage({ params }: PageProps) {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         itemListElement: [
+            // Two levels, not three: /services now 301s to this page, and a breadcrumb item
+            // pointing at a redirect is a dead rung in the trail.
             { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-            { "@type": "ListItem", position: 2, name: "Services", item: `${SITE_URL}/services` },
-            { "@type": "ListItem", position: 3, name: service.name, item: url },
+            { "@type": "ListItem", position: 2, name: service.name, item: url },
         ],
     }
 
@@ -116,8 +117,6 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                     <div className="so-container py-4">
                         <nav className="flex items-center gap-2 font-mono text-[12px] text-so-ink-4">
                             <Link href="/" className="hover:text-so-ink transition-colors">Home</Link>
-                            <span>/</span>
-                            <Link href="/services" className="hover:text-so-ink transition-colors">Services</Link>
                             <span>/</span>
                             <span className="text-so-ink-2">{service.name}</span>
                         </nav>
@@ -388,7 +387,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                                 <Link href="/contactus" className="so-btn so-btn-primary">
                                     Start a project <ArrowRight size={13} />
                                 </Link>
-                                <Link href="/services" className="so-btn so-btn-ghost">
+                                <Link href="/services/web-engineering" className="so-btn so-btn-ghost">
                                     All services <ArrowRight size={13} />
                                 </Link>
                             </div>

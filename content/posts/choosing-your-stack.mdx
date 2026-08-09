@@ -10,6 +10,8 @@ When the foundation is decided, the team stops spending energy on solved problem
 
 A team that knows one stack deeply will out-ship a team assembling a bespoke "perfect" stack every time. Fluency compounds. The tenth project on a familiar stack is faster than the first project on a novel one, even if the novel one is theoretically better.
 
+The effect is larger than people expect because it is not only about typing speed. A familiar stack means you already know its failure modes, you have a deployment pipeline that works, you have solved authentication before, you know which of its sharp edges matter and which are theoretical, and when something breaks at 11pm you recognise the error message. None of that transfers to a stack you picked last month.
+
 <Callout type="info">
 A default is a starting point, not a religion. We swap pieces when a project genuinely needs it. But the burden of proof is on changing the default, not on keeping it.
 </Callout>
@@ -31,6 +33,8 @@ The payoff is concrete. Rename a column in Prisma, and the type error propagates
 
 And it is all one language. TypeScript from the schema to the button. No context-switching between a backend language and a frontend one, no maintaining two type definitions of the same object, no glue code translating between worlds.
 
+The business consequence is worth naming, because "type safety" sounds like an engineering preference. It is the mechanism that removes the frontend-to-backend handoff described in [full-stack ownership](/blogs/full-stack-ownership). Two teams agreeing an API contract in a document and discovering the discrepancies at integration is a recurring cost on most projects. When the contract is the type system, the discrepancy is a compile error rather than a bug report.
+
 ## We choose boring tools on purpose
 
 Each piece of this stack is well-supported, widely used, and unlikely to be abandoned. That is a deliberate selection criterion. The goal is software that still runs in two years, that a future engineer can pick up, and that has answers on the internet when something breaks.
@@ -39,16 +43,162 @@ Each piece of this stack is well-supported, widely used, and unlikely to be aban
 "Boring" is high praise for production infrastructure. The exciting tool that nobody else uses is the one you will be debugging alone at 2am. Choose the technology with the biggest, calmest community.
 </Callout>
 
+There is a hiring argument underneath this that clients feel more than engineers do. A stack with a large community is a stack you can hire for. If your application is written in something with four hundred practitioners worldwide, your recruitment pool is four hundred people, your day rates are set by scarcity, and losing one engineer is a genuine event. The [Stack Overflow developer survey](https://survey.stackoverflow.co/2025/) is the most useful annual read on this - not as a popularity contest, but as a hiring-pool map.
+
+## How to actually evaluate a stack choice
+
+When a supplier proposes a stack, or when your team wants to change one, these are the questions that separate a considered decision from a preference.
+
+**Who can we hire who knows this?** Ask for a number, roughly. If the honest answer is "our team would train them", factor in three months per hire and accept that your first choice of candidate may not want to specialise in it.
+
+**What happens if the maintainers stop?** For a genuinely open, widely-adopted project, not much - somebody forks it and life continues. For a tool maintained by one company with a commercial interest, or by one person, this is a real risk with a real probability.
+
+**Is it in long-term support, and what is the upgrade cadence?** Every runtime and framework has a support window. [endoflife.date](https://endoflife.date/nodejs) tracks them, and a project starting on a version that leaves support in eight months has bought itself an upgrade it did not budget for.
+
+**How many pieces are we introducing at once?** Novelty is survivable one component at a time. A project adopting a new framework, a new database and a new deployment platform simultaneously has no stable ground to debug from.
+
+**Does it fit the shape of the problem?** A content site, a dashboard, a real-time collaborative editor and a data pipeline are genuinely different problems. Most business software is the first two, which is precisely why a conventional stack fits so often.
+
+**How disciplined is its versioning?** A project that follows [semantic versioning](https://semver.org/) properly is telling you which upgrades are safe and which will break you. One that ships breaking changes in point releases will consume maintenance time indefinitely, and you will find out about it a year in.
+
+**What does it cost to run?** Not the licence - the operational cost. A stack requiring a Kubernetes cluster and a platform engineer costs more per month than one that deploys to a managed platform, and for most businesses the second is correct.
+
+<Callout type="warn">
+The single most reliable predictor of a stack decision going badly: it was made by the person who wanted to learn the technology, not by the person who will be maintaining it in year three. Ask who made the choice and what they will be doing in eighteen months.
+</Callout>
+
+## What actually goes in the decision
+
+For a typical business application, the stack is roughly seven decisions. Here is the shape of each and where the defaults sit.
+
+<RateTable
+  headers={['Decision', 'Sensible default', 'Change it when']}
+  rows={[
+    ['Language', 'TypeScript', 'Heavy data or ML work'],
+    ['Framework', 'Next.js', 'You need a pure API with no UI'],
+    ['Database', 'PostgreSQL', 'You have a specific, measured reason'],
+    ['Data access', 'Prisma or equivalent', 'Extreme query complexity'],
+    ['API style', 'tRPC internally', 'A public API for external clients'],
+    ['Hosting', 'A managed platform', 'Compliance or genuine scale'],
+    ['Auth', 'A hosted provider', 'Unusual identity requirements'],
+  ]}
+/>
+
+The pattern across the table is the same one: pick the conventional answer unless you can name the specific requirement that rules it out. Every one of these is reversible at some cost, and the cost rises left to right in the list - changing hosting is a week, changing the database is a project, and [choosing a database](/blogs/choosing-a-database) covers why that one deserves the most care.
+
 ## When we reach for something else
 
 A default that you never question is just dogma. We move off the stack when the project genuinely calls for it:
 
-- **Heavy data engineering or ML pipelines** - Python earns its place.
-- **A team that does not write TypeScript** - fluency in the team beats fluency on paper.
+- **Heavy data engineering or ML pipelines** - Python earns its place, and pretending otherwise to keep one language is the wrong kind of consistency.
+- **A team that does not write TypeScript** - fluency in the team beats fluency on paper. Handing a PHP team a TypeScript codebase produces worse software than letting them use what they know well.
 - **Real-time systems with strict latency budgets** that need specialised infrastructure.
-- **An existing codebase** to extend rather than a greenfield to start.
-- **A public API for many external clients**, where documented REST or GraphQL may fit better than tRPC's tight frontend-backend coupling.
+- **An existing codebase** to extend rather than a greenfield to start. Rewriting a working system to match a preferred stack is almost never the right first move.
+- **A public API for many external clients**, where documented REST or GraphQL fits better than tRPC's tight frontend-backend coupling. tRPC's advantage is that both ends share a type definition; when the other end is somebody else's software, that advantage disappears and you want an [OpenAPI](https://spec.openapis.org/oas/latest.html) contract instead.
+- **Content sites with a non-technical publishing team and no application logic**, where a mature CMS is genuinely a better fit than a custom build. [Next.js vs WordPress](/blogs/nextjs-vs-wordpress-for-business-websites) works through that comparison honestly.
+
+## The arguments against a default, answered
+
+**"You are just using what you know."** Yes, deliberately. Fluency is not a bias to overcome, it is the largest single input to delivery speed and defect rate. The relevant question is not whether we are biased towards what we know - it is whether what we know is adequate for your problem. For the overwhelming majority of business web applications, it is.
+
+**"We will be locked in."** Partly true and worth understanding precisely. Framework code is portable in principle and expensive to move in practice. The mitigations are structural: keep business logic out of framework-specific files, keep the database standard rather than proprietary, and avoid platform features that have no equivalent elsewhere. Done that way, a future migration is expensive rather than impossible.
+
+**"Newer tools are better."** Sometimes. They are also less documented, less tested against real production load, and more likely to change under you. A tool with two years of production history behind it has had its worst bugs found by somebody else. Adopting at the point where a technology is boring but not yet declining is a genuinely good strategy.
+
+**"Our situation is unusual."** It is worth checking. In our experience roughly one project in six has a requirement that genuinely changes the stack answer - real-time collaboration, extreme data volume, a regulatory constraint on where code runs. The other five believe they are unusual and are not, and the belief costs them the fluency advantage for nothing.
+
+**"We want to be able to switch suppliers."** A good instinct, and a default stack serves it better than a bespoke one. A conventional codebase can be picked up by any competent team; an unusual one narrows your options to people who know that specific combination. Portability is an argument for boring tools, not against them.
+
+## The stack decisions that are not technology at all
+
+Four choices get made alongside the technology and matter as much as any of it. They are frequently left implicit, which is how they get made badly.
+
+**Where the code lives, and who owns the account.** Your organisation, not the supplier's. This is a two-minute setup at the start and a genuine problem later. Covered in the [contract checklist](/blogs/software-development-contract-checklist).
+
+**How code reaches production.** An automated pipeline that runs tests and deploys on merge, or a manual ritual one person performs. The first is a day or two of setup and changes how the whole project feels; the second is a single point of failure and a reason nobody makes small fixes.
+
+**What is observable.** Error tracking, logs and uptime monitoring chosen at the start cost almost nothing and are the difference between knowing a feature is broken and hearing it from a customer.
+
+**How dependencies are kept current.** Automated scanning and a monthly patching window, decided on day one, or a nineteen-month gap discovered during a security review. This is a process decision, not a tooling one, and it belongs in the stack conversation because that is the only time anyone is thinking about it.
+
+A supplier who discusses the framework at length and none of these four is describing half the decision.
+
+## A worked example
+
+A healthtech company came to us wanting to rebuild their patient portal. Their internal proposal specified a microservices architecture, a message queue, a document database, a separate GraphQL gateway and Kubernetes.
+
+Their actual requirements: about 4,000 patients, roughly 300 concurrent users at peak, a booking flow, document upload, secure messaging, and an integration to their practice management system. Growth expectation was maybe 15,000 patients in three years.
+
+The proposed architecture was designed for a business two orders of magnitude larger. We priced both, honestly:
+
+<RateTable
+  headers={['', 'Proposed architecture', 'Conventional stack']}
+  rows={[
+    ['Build', '$310,000', '$148,000'],
+    ['Timeline', '11 months', '6 months'],
+    ['Monthly infrastructure', '$2,900', '$420'],
+    ['People needed to operate it', '1.5 FTE', '0.2 FTE'],
+    ['Handles 15,000 patients', 'Yes', 'Yes, comfortably'],
+  ]}
+/>
+
+The last row is the one that ended the discussion. Both architectures met the requirement. One cost twice as much to build, seven times as much to run, and needed a platform engineer they did not have and did not want to hire.
+
+They built on the conventional stack. Two years on they are at 11,000 patients on a single managed database instance one size larger than the original, and the busiest hour of their week uses about a third of available capacity.
+
+The instructive detail is where the original proposal came from: a senior engineer who had worked at a company operating at genuine scale and had carried the architecture across without re-deriving whether it fitted. That is not incompetence - it is the most common way over-engineering enters a project, and the only defence is asking what specific requirement each piece of complexity is serving.
+
+## Changing a stack you already have
+
+If you have inherited something and are wondering whether to move, the honest framing is that a stack migration is one of the highest-risk, lowest-visibility investments available. It consumes months, produces no new features, and the business case has to be genuinely strong.
+
+Reasons that are strong enough:
+
+**The runtime or framework is unsupported.** Security patches have stopped. This is not a preference, it is an exposure, and the upgrade is mandatory.
+
+**You cannot hire.** If recruitment has genuinely failed for six months because of the technology, that is a business constraint rather than an engineering opinion.
+
+**A licence cost has become material.** A commercial database or platform at scale is a real line item with a calculable payback.
+
+**Operating it consumes disproportionate effort.** A stack requiring a specialist you do not have, or producing incidents you cannot diagnose, has a running cost that may exceed the migration.
+
+Reasons that are not strong enough: the team prefers something else, a conference talk was persuasive, or the current system is slow and nobody has measured why. That last one is the most common and the most expensive - [why your website is slow](/blogs/why-your-website-is-slow) works through the diagnosis, and the cause is almost never the framework.
+
+When a move is justified, do it in slices. Route by route, service by service, with the old and new running side by side - the [strangler fig pattern](https://martinfowler.com/bliki/StranglerFigApplication.html), which is the only migration approach with a good track record. A big-bang rewrite of a working system is the single most reliable way to spend a year and end up behind where you started.
+
+## What a good stack decision looks like written down
+
+Whatever you choose, write down three things. It takes twenty minutes and it is what lets someone revisit the decision properly in two years rather than either defending it out of habit or discarding it out of fashion.
+
+**What we chose.** The components, and the major versions they were pinned to at the time.
+
+**Why, in terms of the requirement.** Not "it is modern" - "we need server rendering for the catalogue because it must be indexable, and the team is fluent in this framework."
+
+**What would make us change our minds.** The condition that would invalidate the choice: a scale threshold, a capability we would need, a support window ending. This is the part everyone skips and the part that makes the decision reviewable.
+
+Keep it in the repository next to the code, updated when a decision changes rather than rewritten from memory later. A decision record is the cheapest documentation there is, it answers the question every new engineer asks in month one, and it is the difference between a stack that was chosen and one that merely accumulated.
 
 ## The point
 
-The value of a default stack is not that these are the only good tools. It is that having a strong default - one the team knows cold and that gives you type safety end to end - removes a dozen decisions from every project and lets the team spend its judgment where it matters: on the product. Next.js, tRPC, and Prisma are ours. The lesson is to have one.
+The value of a default stack is not that these are the only good tools. It is that having a strong default - one the team knows cold and that gives you type safety end to end - removes a dozen decisions from every project and lets the team spend its judgment where it matters: on the product.
+
+Next.js, tRPC, and Prisma are ours. The lesson is to have one, to know exactly what would make you deviate from it, and to require that a deviation be argued rather than assumed.
+
+## Related reading
+
+- [Choosing a database](/blogs/choosing-a-database) - the least reversible decision in the list
+- [Single-page app vs server-rendered](/blogs/single-page-app-vs-server-rendered) - the rendering decision inside the framework choice
+- [Next.js vs WordPress for business websites](/blogs/nextjs-vs-wordpress-for-business-websites) - when a custom stack is the wrong answer entirely
+- [Full-stack ownership](/blogs/full-stack-ownership) - the team structure the stack is chosen to support
+
+## Sources and further reading
+
+- [Next.js documentation](https://nextjs.org/docs) - the framework at the centre of the default
+- [PostgreSQL architecture overview](https://www.postgresql.org/docs/current/tutorial-arch.html) - why the boring database keeps winning
+- [OpenAPI Specification](https://spec.openapis.org/oas/latest.html) - the right contract when the API has external consumers
+- [Stack Overflow developer survey](https://survey.stackoverflow.co/2025/) - the hiring-pool map behind the boring-tools argument
+- [endoflife.date](https://endoflife.date/nodejs) - support windows, and the upgrade you did not budget for
+- [The Twelve-Factor App](https://12factor.net/) - the operational properties worth preserving whatever you choose
+- [DORA research](https://dora.dev/) - the evidence that delivery performance comes from practice rather than technology choice
+- [Strangler fig pattern](https://martinfowler.com/bliki/StranglerFigApplication.html) - the only stack migration approach with a good track record
+- [Semantic versioning](https://semver.org/) - what a version number is promising, and why upgrade planning depends on it

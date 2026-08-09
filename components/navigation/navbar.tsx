@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import {
-    ChevronRight, ChevronDown, Menu, X, ArrowRight, Code2, Smartphone, BrainCircuit,
+    ChevronRight, ChevronDown, Menu, X, ArrowRight, Code2,
     Cloud, Palette, ShieldCheck, Heart, BookOpen, Rocket, Mail,
     Orbit, Calculator, Wallet, PhoneCall, Activity, ScanSearch, Component
 } from "lucide-react"
@@ -27,41 +27,31 @@ interface CompanyItem {
     icon: React.ElementType
 }
 
+// With the studio narrowed to web engineering there is only one service, so this menu lists the
+// four real destinations a buyer wants next rather than six sibling services that no longer exist.
 const SERVICES: FeatureItem[] = [
     {
         title: "Web Engineering",
         href: "/services/web-engineering",
-        description: "High-performance web apps built to scale",
+        description: "SaaS platforms, dashboards, and marketing sites",
         icon: Code2,
     },
     {
-        title: "Mobile Ecology",
-        href: "/services/mobile-ecology",
-        description: "Native and cross-platform mobile systems",
-        icon: Smartphone,
-    },
-    {
-        title: "AI Integration",
-        href: "/services/ai-integration",
-        description: "Intelligent features wired into your product",
-        icon: BrainCircuit,
-    },
-    {
-        title: "Cloud Architecture",
-        href: "/services/cloud-architecture",
-        description: "Resilient infrastructure that just works",
+        title: "Pricing",
+        href: "/pricing",
+        description: "Transparent rate card, no sales call required",
         icon: Cloud,
     },
     {
-        title: "UI/UX Systems",
-        href: "/services/ui-ux-systems",
-        description: "Design systems users actually love",
+        title: "Our Work",
+        href: "/projects",
+        description: "Case studies from products we have shipped",
         icon: Palette,
     },
     {
-        title: "System Security",
-        href: "/services/system-security",
-        description: "Hardened, audited, production-ready systems",
+        title: "Who We Build For",
+        href: "/solutions",
+        description: "Startups, businesses, enterprises, product teams",
         icon: ShieldCheck,
     },
 ]
@@ -156,7 +146,7 @@ const TOOLS: ToolItem[] = [
 ]
 
 const MOBILE_LINKS = [
-    { label: "Services", href: "/services" },
+    { label: "Services", href: "/services/web-engineering" },
     { label: "Solutions", href: "/solutions" },
     { label: "Work", href: "/projects" },
     { label: "Pricing", href: "/pricing" },
@@ -209,11 +199,11 @@ function ServicesDropdown({ onClose }: { onClose: () => void }) {
             </div>
             <div className="w-[240px] shrink-0 border-l border-neutral-100 dark:border-neutral-800/70 p-4 flex flex-col gap-3">
                 <Link
-                    href="/services"
+                    href="/services/web-engineering"
                     onClick={onClose}
                     className="inline-flex items-center gap-1 text-[12px] font-semibold text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors"
                 >
-                    View all services
+                    Explore web engineering
                     <ArrowRight className="w-3 h-3" />
                 </Link>
                 <div className="mt-auto rounded-xl bg-neutral-900 dark:bg-neutral-800 p-4 flex flex-col gap-3">

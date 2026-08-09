@@ -16,6 +16,7 @@ import { PageHero } from "@/components/landing/page-hero"
 import { PageBackground } from "@/components/landing/page-background"
 import { PageFAQ } from "@/components/landing/page-faq"
 import { TechBadge } from "@/components/landing/tech-icon"
+import { ProjectApproach } from "@/components/projects/project-approach"
 import { PROJECTS, getProjectBySlug } from "@/content/projects"
 import { SITE_URL, SITE_NAME } from "@/lib/site"
 
@@ -32,17 +33,17 @@ export async function generateMetadata({
     const project = getProjectBySlug(projectslug)
     if (!project) return {}
 
-    const title = `${project.title} - ${project.tagline}`
+    const title = project.seoTitle
     const url = `${SITE_URL}/projects/${project.slug}`
 
     return {
         title,
-        description: project.description,
+        description: project.seoDescription,
         keywords: [project.title, project.industry, ...project.technologies, "case study", "Shunya"],
         alternates: { canonical: url },
         openGraph: {
             title,
-            description: project.description,
+            description: project.seoDescription,
             url,
             type: "article",
             siteName: SITE_NAME,
@@ -50,7 +51,7 @@ export async function generateMetadata({
         twitter: {
             card: "summary_large_image",
             title,
-            description: project.description,
+            description: project.seoDescription,
         },
     }
 }
@@ -70,7 +71,7 @@ export default async function ProjectCaseStudyPage({
         "@context": "https://schema.org",
         "@type": "Article",
         headline: `${project.title} - ${project.tagline}`,
-        description: project.description,
+        description: project.seoDescription,
         url,
         ...(project.image ? { image: `${SITE_URL}${project.image}` } : {}),
         author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
@@ -191,6 +192,8 @@ export default async function ProjectCaseStudyPage({
                             </p>
                         </section>
                     </div>
+
+                    <ProjectApproach steps={project.approach} />
 
                     {/* Key capabilities */}
                     <section className="mb-20">

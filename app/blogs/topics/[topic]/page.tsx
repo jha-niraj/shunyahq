@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { TopicGlyph } from "@/components/blog/topic-glyph"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ArrowRight, ArrowLeft } from "lucide-react"
@@ -19,30 +20,35 @@ function isBlogCategory(value: string): value is BlogCategory {
 }
 
 const TOPIC_META: Record<BlogCategory, { title: string; description: string }> = {
-    engineering: {
-        title: "Engineering Guides",
+    "buying-guide": {
+        title: "Web Development Buying Guide",
         description:
-            "How Shunya architects, builds, and ships production systems - the stacks, patterns, and trade-offs behind software that goes live and stays up.",
+            "What a custom web application costs, how to tell a good engineering partner from a bad one, and what to ask before you sign anything.",
     },
-    ai: {
-        title: "AI Engineering Guides",
+    guides: {
+        title: "Web Project Guides",
         description:
-            "Practical AI engineering from the trenches - RAG pipelines, LLM agents, and intelligent automation built to survive real users and real data.",
+            "Step-by-step guides to planning and running a web build - scoping it, sequencing it, and knowing what finished actually looks like.",
     },
-    product: {
-        title: "Product Guides",
+    comparisons: {
+        title: "Comparisons",
         description:
-            "How we think about building the right thing - ownership, scope, velocity, and the product decisions that decide whether software gets used.",
+            "Custom against off-the-shelf, web against native, and the stack choices that decide what your product costs to maintain over time.",
     },
     "case-studies": {
         title: "Case Studies",
         description:
-            "Deep dives into real products Shunya has designed, built, and launched - the challenge, the architecture, and what it took to ship.",
+            "Deep dives into real products we have designed, built and launched - the problem, the architecture, and what changed after launch.",
     },
-    startups: {
-        title: "Startup Guides",
+    insights: {
+        title: "Insights",
         description:
-            "Lessons for founders and early teams - shipping MVPs, picking a stack you will not regret, and turning a rough idea into a working product.",
+            "Why software projects succeed or fail - ownership, scope discipline, and the compounding cost of decisions that looked cheap early.",
+    },
+    engineering: {
+        title: "Engineering Guides",
+        description:
+            "The technical corner - how we architect, build and ship production systems, written for engineers who want the detail not the summary.",
     },
 }
 
@@ -133,6 +139,11 @@ export default async function TopicHubPage({
                             </>
                         }
                         description={topicMeta.description}
+                        right={
+                            <div className="flex items-center justify-center">
+                                <TopicGlyph topic={topic} className="h-40 w-40 text-[rgba(245,239,224,0.55)]" />
+                            </div>
+                        }
                     />
 
                     <section className="so-section bg-so-surface">

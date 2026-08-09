@@ -1,0 +1,281 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+Software projects rarely fail the way people expect. There is no moment where the code stops working and everyone agrees the project is dead. What happens is slower and more embarrassing: the thing gets built, it gets launched, and then it does not get used. The budget was spent, the deliverable exists, and nothing changed.
+
+That is the most common failure and almost nobody counts it as one, because there is a working system to point at.
+
+Having watched this from the supplier side for a while, the causes are unglamorous and repetitive. Almost none of them are technical. Here they are, ranked by how often they are the real reason, with what to do about each.
+
+## 1. Nobody agreed what problem was being solved
+
+The most common cause by a distance.
+
+Everyone nods at the kick-off. The sales director thinks this is about winning more deals. Operations thinks it is about reducing errors. Finance thinks it is about cutting the licence bill. Nobody notices the disagreement because "we need a new system" is a sentence they can all agree with.
+
+Six months later the system reduces errors and does not help sales, and the sales director calls it a failure. He is not wrong from where he stands.
+
+**The fix is a paragraph.** One statement of the problem, agreed in writing by everyone who can call the project a failure. Not the solution - the problem. If you cannot get three stakeholders to sign the same paragraph, you have found the risk before spending anything. This is why a [brief should describe the problem rather than the solution](/blogs/how-to-write-a-web-development-brief).
+
+## 2. The people who will use it were not involved
+
+The system is specified by managers and built for staff. It arrives, and it does not match how the work is actually done - because the process document describes the official process, and the real one has fourteen exceptions that live in people's heads.
+
+Adoption fails, staff route around it, and within a year the spreadsheet is back.
+
+**The fix costs two days.** Sit with the actual users and watch them work before writing any specification. Do not ask what the process is; ask them to show you, including the parts they apologise for. Every workaround is a requirement in disguise. The [Nielsen Norman Group's research methods](https://www.nngroup.com/articles/ux-research-cheat-sheet/) are a practical starting point, and observation beats interviews for exactly this reason.
+
+## 3. No single person could make a decision
+
+Every question goes to a committee. The committee meets fortnightly. Half the decisions get revisited. The project does not fail dramatically; it slows to a stop and then quietly runs out of budget.
+
+**The fix:** one named decision-maker with authority, one named deputy, and a 48-hour response commitment. Not a steering group. A person. This is the single highest-leverage thing a client can do, and it costs nothing.
+
+<Callout type="warning">
+The tell is a project where nobody can approve anything without checking. If your supplier's status updates keep saying "awaiting feedback", the project is already failing and the cause is on your side of the table.
+</Callout>
+
+## 4. Scope grew and nobody priced it
+
+Not one big change. Forty small ones, each individually reasonable, none of them written down. "While you are in there, could you also..." repeated over four months.
+
+The budget runs out with the core incomplete, because the core kept being interrupted by additions nobody counted.
+
+**The fix:** a written change process agreed before you need it. Every change priced and approved before work starts. This feels bureaucratic for the first three and then saves the project. Set aside 10 - 15% as an explicit change budget so additions are a decision rather than a crisis.
+
+## 5. The data was worse than anyone admitted
+
+The build goes fine. Then migration starts and the truth emerges: duplicate customers, orders with no line items, a status field with twenty-three distinct values where the manual says six.
+
+Suddenly there is a data-cleaning project nobody scoped, running in parallel with a launch date that was set before anyone looked.
+
+**The fix:** profile the data before quoting the build, not after. Two days of counting produces a quality report that changes the plan while changing it is still cheap. See [how to migrate off a legacy system](/blogs/how-to-migrate-off-a-legacy-system).
+
+## 6. Launch was treated as the finish line
+
+The project plan ends at go-live. There is no budget for the eight weeks afterwards, no training plan, no owner, and no one funded to fix the things real usage will surface.
+
+The system launches into an organisation that has not been prepared for it and nobody is responsible for making it stick.
+
+**The fix:** budget 10 - 15% of build cost for post-launch stabilisation, name an internal owner before launch, and plan training as a work item rather than an email.
+
+## 7. It was too big
+
+A twelve-month project with one delivery at the end is a twelve-month bet that the requirements written in month one are still right in month twelve. They will not be.
+
+Long projects also hide their own failure. Everything is "on track" until month nine, because nothing has been tested against reality.
+
+**The fix:** ship something real in the first six to eight weeks, even to a handful of internal users. Then again. The [DORA](https://dora.dev/) research is consistent that frequent small delivery outperforms infrequent large delivery on both speed and stability, and the [GOV.UK Service Manual](https://www.gov.uk/service-manual/technology) is a good public reference for how to structure work that way.
+
+## 8. The wrong thing was measured
+
+The project reported on activity - features delivered, tickets closed, percentage complete - rather than on outcome. "Eighty percent complete" is not a measurement of anything, because the last 20% routinely contains half the work.
+
+**The fix:** define success as an outcome before you start. Not "the system is live" but "morning transcription is eliminated" or "order errors below one a month". Then report against that.
+
+## What almost never causes failure
+
+Worth stating, because it is where anxious buyers focus.
+
+**The choice of programming language or framework.** Almost never the deciding factor. Any mainstream stack maintained by competent people will do the job.
+
+**Not having enough developers.** Adding people to a late project makes it later. Under-resourcing is a real problem; it is rarely the *primary* cause.
+
+**Offshore versus local.** Excellent and poor teams exist everywhere. What actually varies is the cost of ambiguity, which is a communication and specification problem rather than a geography one.
+
+**A bug at launch.** Every launch has some. It is only fatal when there is no process to fix them quickly.
+
+## The pattern behind all of it
+
+Read the eight again and the shape is obvious: **seven of them are decided before any code is written, and none of them are technical.**
+
+That is the useful conclusion. If you want to reduce the risk of a software project, the highest-leverage work is in scoping, stakeholder alignment and decision structure - not in vetting the supplier's technology choices.
+
+<Callout type="info">
+A blunt way to check your own risk: can you name the one person who decides, state the problem in a paragraph they would sign, and describe the measurable outcome you expect in six months? Three yeses puts you ahead of most projects that fail.
+</Callout>
+
+## A pre-flight checklist
+
+Run this before committing budget. Each no is a risk worth closing first.
+
+<RateTable
+  headers={['Question', 'Why it matters']}
+  rows={[
+    ['Can three stakeholders sign the same problem statement?', 'Catches cause 1'],
+    ['Have you watched the actual users work?', 'Catches cause 2'],
+    ['Is there one named decision-maker and a deputy?', 'Catches cause 3'],
+    ['Is there a written, priced change process?', 'Catches cause 4'],
+    ['Has anyone profiled the data?', 'Catches cause 5'],
+    ['Is there post-launch budget and a named owner?', 'Catches cause 6'],
+    ['Will something real ship inside 8 weeks?', 'Catches cause 7'],
+    ['Is success defined as a measurable outcome?', 'Catches cause 8'],
+  ]}
+/>
+
+## A worked example of a near-miss
+
+A distributor commissioning an order-management replacement. At kick-off, the supplier asked all three stakeholders to write the problem in one sentence, separately.
+
+- **Operations:** "Stop the two hours of nightly transcription."
+- **Finance:** "Get invoices into Xero without re-typing."
+- **Sales:** "Let customers see their order history so they stop phoning us."
+
+Three different projects. Same budget.
+
+Rather than proceeding, they spent a day agreeing that the primary problem was transcription, that Xero was in scope because it was the same data flowing further, and that customer order history was **explicitly out of scope for phase one**, with a note that phase two would address it.
+
+The sales director was not thrilled. But he knew in week one rather than at launch, and the project delivered against a definition everyone had signed. It shipped in fourteen weeks and was judged a success by all three.
+
+**Total cost of preventing the most common failure mode: one day.**
+
+Worth naming one pattern that spans all of the above: almost none of these failures are visible in the first third of a project. Scope confusion, an absent decision maker and an untested assumption all feel fine in week three and arrive together in month five. That is why the diagnostic questions matter more than the reassurance - the reassurance is accurate right up until it is not.
+
+## Objections, answered
+
+**"This all sounds like the client's fault."** A fair reading of the list, and it is not the intended message. Suppliers cause plenty of failures - poor estimation, weak communication, over-promising in the sale, junior staffing. But those are largely detectable in advance, and [how to choose an agency](/blogs/how-to-choose-a-web-development-agency) covers how. The eight above are the ones a good supplier cannot fix for you.
+
+**"We do not have time for all this pre-work."** The pre-flight checklist is roughly three days of effort. Against a project of any size, that is a rounding error, and it addresses the causes of most failures. It is the cheapest risk reduction available.
+
+**"Our project is small, does this apply?"** Causes 1, 3 and 8 apply at every size. The rest scale down. A small project with one stakeholder and one decision-maker has already avoided most of the list.
+
+**"What if we are already mid-project and it is going badly?"** Stop and diagnose against the eight before adding resources. Most struggling projects are suffering from 1, 3 or 4, and adding developers to any of those makes things worse. Re-cut the scope in writing, name a single decision-maker, and ship something small to re-establish that delivery is possible.
+
+**"Should we cancel a failing project?"** Sometimes, and sooner than most people do. The test is not how much you have spent - that is gone either way - but whether the remaining spend produces something valuable. A project that has lost its problem statement rarely finds it by continuing.
+
+## The warning signs, by project stage
+
+Failure is detectable early if you know what to watch.
+
+**Weeks 1-2.** Stakeholders describing different problems. No named decision-maker. Nobody has spoken to end users. Discovery being skipped for speed.
+
+**Weeks 3-6.** Feedback taking more than a week. "Small additions" arriving without being written down. Nothing deployed anywhere you can click. Status reported as a percentage rather than as working software.
+
+**Weeks 7-12.** The same items appearing as "in progress" three weeks running. Data migration not started. Nobody has mentioned training. The date has not moved but the remaining list has grown.
+
+**Final month.** Testing compressed to make the date. Real content still not supplied. No rollback plan. Nobody named as the post-launch owner.
+
+**After launch.** Usage below expectation and nobody investigating why. Support requests going nowhere. The measurable outcome from the brief quietly not being measured.
+
+<Callout type="tip">
+The single most reliable early warning is the absence of deployed software. If nothing has been in front of a real user by week six, the project is running on assumptions, and assumptions are where all eight failure causes live.
+</Callout>
+
+## A weekly check that takes ten minutes
+
+Four questions, asked every week, catch most of what goes wrong.
+
+**1. What can I click this week that I could not click last week?** If the answer is nothing, three weeks running, something is wrong regardless of the status report.
+
+**2. What are you waiting on from us?** Surfaces your own blocking items before they become someone else's excuse.
+
+**3. What changed that we did not write down?** Catches scope creep while it is still one conversation.
+
+**4. What are you least confident about right now?** The answer moves over time, and a supplier who always says "nothing" is either not thinking or not telling you.
+
+Ask them of the person doing the work, not only of the account manager. The answers differ, and the difference is informative.
+
+## How we try to prevent it
+
+Discovery starts with the problem statement, signed by everyone who could later call the project a failure. We ask to observe the actual users before writing a specification. We require a named decision-maker and a deputy in writing. We profile the data before quoting the build. And we deploy something real in the first fortnight, because a project that has never shipped has never been tested.
+
+None of that is clever. It is just the list above, run in reverse.
+
+If you are planning a project and want a second opinion on where its risk actually sits, [tell us about it](/contactus).
+
+## The failures that are the supplier's fault
+
+The eight causes above are mostly on the buyer's side, which is a genuinely incomplete picture. These are ours, and they are worth knowing so you can screen for them.
+
+**Selling with seniors and delivering with juniors.** Common enough that it is the first question in [how to choose an agency](/blogs/how-to-choose-a-web-development-agency). Not automatically fatal, but you should know before you sign.
+
+**Estimating optimistically to win the work.** A supplier who genuinely believes their number and is wrong will absorb some of it and then start cutting corners quietly. The tell at proposal stage is a number with no stated contingency and no named risks.
+
+**Not saying "no" early enough.** Suppliers are bad at telling clients their scope does not fit their budget, because it risks the sale. The result is a project that runs out of money at 70% complete, which is worse for both sides than an honest conversation in week one.
+
+**Reporting status rather than showing software.** Percentages are easy to produce and mean nothing. The correction is entirely in your gift: ask what you can click that you could not click last week.
+
+**Going quiet when something goes wrong.** The instinct is to fix it before telling anyone. That instinct is why a two-day problem becomes a three-week problem, and it is the single behaviour most worth asking about in a reference call.
+
+**Building what was asked for rather than what was needed.** Technically compliant, practically useless. A supplier who never pushes back on your requirements is not being agreeable, they are being passive.
+
+<Callout type="tip">
+Screen for these the same way you screen for the buyer-side risks: ask each supplier which of the six they have been guilty of. A candid answer names one or two specifically. A denial tells you they either have not reflected or will not be straight with you.
+</Callout>
+
+## What a recovered project looks like
+
+Projects do get rescued, and the pattern is consistent.
+
+**Stop building.** Nothing new gets started until the diagnosis is done. This is counterintuitive under deadline pressure and it is the only thing that works.
+
+**Re-establish the problem statement.** Get everyone who can call it a failure into one room and agree what success is now, given where you are. Not what it was in month one.
+
+**Re-cut the scope brutally, in writing.** Usually 30-40% of the remaining list turns out not to be needed for launch.
+
+**Name one decision-maker.** If the failure cause was a committee, this alone changes the trajectory.
+
+**Ship something small within two weeks.** Anything real, to anyone real. Re-establishing that delivery is possible changes the psychology on both sides more than any plan.
+
+**Then re-plan** from the new baseline, with the buffer you did not have last time.
+
+What does not work: adding people, extending the deadline without changing the scope, changing supplier mid-project, or a new project management tool.
+
+## A one-page project charter
+
+Everything above compresses into a single page. Write it before the project starts and re-read it monthly.
+
+```
+PROJECT CHARTER
+
+THE PROBLEM
+  [One paragraph. What is broken, who it affects, what it costs.]
+  Signed by: [three stakeholder names]
+
+SUCCESS IN SIX MONTHS
+  [One measurable outcome. Not "it is live".]
+
+DECISION-MAKER
+  Primary:   [name]  Response commitment: 48 hours
+  Deputy:    [name]  Full authority in their absence
+
+EXPLICITLY OUT OF SCOPE
+  [The three things people will ask for. Write them down now.]
+
+OUR OBLIGATIONS
+  Content by:            [date]
+  Third-party access by: [date]
+  Review turnaround:     [hours]
+  Test users available:  [when]
+
+FIRST DELIVERY
+  Something real in front of a real user by: [date, within 8 weeks]
+
+CHANGE PROCESS
+  Written, priced, approved by [name] before work starts.
+  Change budget reserved: [amount]
+
+POST-LAUNCH
+  Internal owner:    [name]
+  Stabilisation budget: [amount]
+  Training plan owner:  [name]
+
+REVIEW
+  This charter is re-read on the first Monday of each month.
+```
+
+One page, maybe two hours to complete, and it directly addresses seven of the eight failure causes. The monthly re-read matters as much as the writing: charters drift silently, and noticing that the problem statement no longer describes what the team is building is the earliest possible warning that something has gone wrong.
+
+## Related reading
+
+- [Managing a Software Project as a Client](/blogs/managing-a-software-project-as-a-client) - the patterns this is written to avoid
+- [How to Scope an MVP](/blogs/how-to-scope-an-mvp) - scope discipline, which is the most common cause
+- [The Real Cost of Cutting Corners in Software](/blogs/cost-of-cutting-corners) - the slower kind of failure
+- [Why Full-Stack Ownership Beats Handoffs](/blogs/full-stack-ownership) - the structural fix for the accountability gap
+
+## Sources and further reading
+
+- [DORA](https://dora.dev/) - the research on why small, frequent delivery outperforms large infrequent releases
+- [GOV.UK Service Manual](https://www.gov.uk/service-manual/technology) - a public, well-argued reference for running service projects in thin slices
+- [Nielsen Norman Group UX research methods](https://www.nngroup.com/articles/ux-research-cheat-sheet/) - practical ways to find out what users actually do
+- [Martin Fowler on technical debt](https://martinfowler.com/bliki/TechnicalDebt.html) - why deadline pressure produces compounding cost
+- [Google SRE Book](https://sre.google/sre-book/table-of-contents/) - on measuring outcomes rather than activity

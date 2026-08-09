@@ -1,0 +1,291 @@
+import { Callout, RateTable } from '@/mdx-components'
+
+The launch invoice is the number everyone plans for. The one that catches people out arrives quietly, a year later, when a dependency goes end-of-life, a payment provider deprecates an API version, or a security advisory lands on a package buried four levels down in the tree.
+
+Software is not a building. It does not sit there, finished, slowly weathering. It sits inside an ecosystem that keeps moving underneath it - browsers ship, runtimes reach end of support, certificates expire, platforms change their terms. Doing nothing is a decision with a cost, and the cost compounds.
+
+This is what maintaining a web application actually involves, what it costs, and how to tell the difference between a maintenance retainer that is earning its money and one that is not.
+
+## The short answer
+
+Budget **15 - 20% of the original build cost per year** to keep a web application current, secure and supported.
+
+<RateTable
+  headers={['Original build', 'Annual maintenance (typical)', 'What that buys']}
+  rows={[
+    ['$10,000', '$1,500 - $2,000', 'Patching, uptime monitoring, small fixes'],
+    ['$40,000', '$6,000 - $8,000', 'The above plus dependency upgrades and minor changes'],
+    ['$100,000', '$15,000 - $20,000', 'The above plus performance work and an incident response target'],
+    ['$250,000+', '$37,000+', 'Dedicated retained capacity'],
+  ]}
+/>
+
+That range is not a market convention someone invented. It falls out of what the work actually is, which is worth understanding so you can judge a quote instead of accepting one.
+
+<Callout type="info">
+If your budget is exactly the build price and nothing else, the budget is short. Not because anyone is upselling you, but because year one of owning software has recurring costs the same way year one of owning a vehicle does.
+</Callout>
+
+## What maintenance actually consists of
+
+### Security patching, which is not optional
+
+New vulnerabilities are published continuously to the [National Vulnerability Database](https://nvd.nist.gov/). A typical web application depends on hundreds of packages transitively, and any of them can be the one that gets an advisory.
+
+The tooling for this is mature and mostly automated - [`npm audit`](https://docs.npmjs.com/cli/v10/commands/npm-audit) surfaces known issues, [Dependabot](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates) opens the pull requests - but automation raises the alarm, it does not do the work. Someone has to judge whether an advisory affects your usage, apply the upgrade, and confirm nothing broke. That judgement is the job.
+
+### Runtime and framework end-of-life
+
+This one has published dates, which makes it the easiest part of maintenance to plan and the most embarrassing to be caught by.
+
+Node.js runs a [fixed release schedule](https://nodejs.org/en/about/previous-releases): each even-numbered major line becomes LTS, gets active support, moves to maintenance, and then stops receiving fixes entirely. [endoflife.date](https://endoflife.date/nodejs) tracks the calendar. Once a runtime is past end of life, it stops getting security patches - and hosting platforms eventually refuse to run it at all.
+
+Framework majors work similarly. Staying roughly current is a small, regular cost. Skipping four major versions and then attempting the jump is a project, not a patch.
+
+### Third-party APIs moving without asking
+
+Payment providers, auth providers, mapping services and mail platforms version their APIs and retire old ones. [Stripe's documentation](https://docs.stripe.com/payments) is a good example of a vendor that manages this carefully - and even careful vendors deprecate. The work is small if you do it in the window and urgent if you do not.
+
+### The browser and platform floor moving
+
+Google's performance thresholds are a moving, measured target rather than a one-off launch task. [Core Web Vitals](https://web.dev/articles/vitals) metrics get added and refined - [Interaction to Next Paint](https://web.dev/articles/inp) replaced First Input Delay as the responsiveness metric - and your field data changes as your content and traffic change. A site that passed at launch can quietly stop passing.
+
+### Actual bugs, found by actual users
+
+No amount of testing finds everything, because real users do things nobody modelled. A steady trickle of small defects is normal and healthy. It is only a warning sign when the trickle does not slow down after the first few months.
+
+### Backups you have actually restored
+
+An untested backup is a belief, not a backup. Part of a real maintenance arrangement is periodically restoring one somewhere safe and confirming the data comes back.
+
+## What a maintenance retainer should include
+
+Ask for these explicitly. A retainer that does not name them is selling you availability, not maintenance.
+
+<RateTable
+  headers={['Item', 'What good looks like']}
+  rows={[
+    ['Security patching', 'Advisories triaged within a stated window, critical ones same week'],
+    ['Dependency upgrades', 'Regular cadence, not a big-bang once a year'],
+    ['Runtime/framework currency', 'A plan with dates, tied to published EOL schedules'],
+    ['Uptime monitoring', 'Alerting to a human, with a response target'],
+    ['Error monitoring', 'Exceptions captured and triaged, not just logged'],
+    ['Backups', 'Automated, offsite, and restore-tested on a schedule'],
+    ['Bug fixes', 'Defects in delivered work, with a defined severity scale'],
+    ['A monthly report', 'What was patched, what broke, what is coming'],
+  ]}
+/>
+
+And be clear about what it excludes. New features are not maintenance. Neither is a redesign, a new integration, or work caused by a change in your own business process. Those are projects, quoted separately. A retainer that quietly absorbs feature work either runs out of hours for the actual maintenance or is priced as though it will.
+
+## The cost of not doing it
+
+Deferred maintenance does not save money, it converts a predictable expense into an unpredictable one.
+
+**Upgrades get harder superlinearly.** Moving one major version is routine. Moving four at once means every breaking change interacts with every other, on a codebase nobody has touched in two years.
+
+**The security window widens.** The gap between an advisory being published and your patch being applied is your exposure, and published advisories are exactly what opportunistic scanning looks for. The [OWASP Top 10](https://owasp.org/www-project-top-ten/) has included vulnerable and outdated components for years because it keeps being how systems get compromised.
+
+**Hiring gets harder.** Engineers can work on an old stack. Fewer want to, and the ones who will charge more.
+
+**Small changes stop being small.** The clearest symptom that debt has accumulated is that estimates become unpredictable - a change that sounds trivial keeps turning into a week.
+
+<Callout type="warning">
+The expensive version of this story is always the same: an application runs untouched for three years, then a compliance requirement or a broken integration forces the issue, and the only viable path is a rebuild. The rebuild costs more than five years of maintenance would have.
+</Callout>
+
+## Retainer, ad hoc, or in-house
+
+**Retainer.** Fixed monthly fee for a defined scope and response target. Predictable for you, and it means someone is watching before something breaks. Best for systems the business depends on. Downside: you pay in quiet months.
+
+**Ad hoc / time and materials.** You pay only when something needs doing. Cheaper in the quiet months and genuinely fine for low-stakes internal tools. Downside: nobody is watching, so you find out about problems from users, and you queue behind whoever has a retainer.
+
+**In-house.** Makes sense once you have enough software to occupy someone. A single application rarely does - you end up with an engineer whose job is 15% maintenance and 85% waiting, which is bad value and bad for them.
+
+A reasonable pattern for one significant application: a modest retainer covering patching, monitoring and small fixes, with feature work quoted separately as it comes up.
+
+## Reducing what maintenance costs you
+
+Most of this is decided during the build, not after it.
+
+- **Fewer dependencies.** Every package is a small permanent liability. A library that saves an afternoon and adds a transitive tree of forty is a bad trade.
+- **Boring, well-supported technology.** Popular tools get patched quickly and have people who can work on them. The [Stack Overflow Developer Survey](https://survey.stackoverflow.co/2025/) is a rough guide to what you will be able to hire for.
+- **Real tests.** The thing that makes an upgrade a two-hour job rather than a two-week one is a suite that tells you immediately whether the upgrade broke anything.
+- **Automated pipelines.** If deploying is a documented, one-command operation, patching is cheap. If it is a ritual only one person knows, everything is expensive. [The Twelve-Factor App](https://12factor.net/) is still the clearest short summary of what makes a service operable by someone who did not build it.
+- **Semantic versioning discipline.** [SemVer](https://semver.org/) is what lets you distinguish a safe patch from a breaking change at a glance, and it only helps if your own internal packages honour it.
+- **Upgrade little and often.** A monthly hour beats an annual week.
+
+## Questions to ask before you sign a retainer
+
+1. What exactly is included, and what is explicitly excluded?
+2. What is your response target for a critical security issue? For a normal bug?
+3. How often do you apply dependency updates?
+4. What is the plan for the next framework and runtime major version, with dates?
+5. Do you monitor uptime and errors, and who gets alerted?
+6. When did you last test-restore a backup?
+7. What do I receive each month that shows the work happened?
+8. What is the notice period, and what happens at the end?
+
+That last one matters. A maintenance relationship you cannot leave without losing access to your own systems is not a service, and it is worth confirming that repositories and cloud accounts remain in your name - the same point we make in [who owns the code](/blogs/who-owns-the-code-web-development).
+
+## A year in the life of a maintained application
+
+What the retainer actually buys, month by month. This is a real-shaped year for a mid-sized product, not a worst case.
+
+<RateTable
+  headers={['Month', 'What happened', 'Effort']}
+  rows={[
+    ['1', 'Two dependency advisories, one affecting us. Patched and deployed.', '3 hrs'],
+    ['2', 'Quiet. Routine dependency bump, monitoring review.', '2 hrs'],
+    ['3', 'Payment provider announced API version sunset in 9 months. Planned.', '2 hrs'],
+    ['4', 'Framework minor upgrade. One deprecation warning fixed.', '5 hrs'],
+    ['5', 'User-reported bug in a rarely used export. Fixed.', '4 hrs'],
+    ['6', 'Backup restore test. Found the restore script assumed an old schema.', '6 hrs'],
+    ['7', 'Payment API migration done, well ahead of the deadline.', '9 hrs'],
+    ['8', 'Quiet.', '2 hrs'],
+    ['9', 'Traffic spike exposed a slow query. Added an index.', '5 hrs'],
+    ['10', 'Node major version planning; upgrade scheduled.', '3 hrs'],
+    ['11', 'Node upgrade, full regression, deployed.', '11 hrs'],
+    ['12', 'Annual review, dependency audit, capacity check.', '5 hrs'],
+  ]}
+/>
+
+**Total: about 57 hours across the year.** Which at a normal rate lands close to the 15 - 20% figure for a build in the $40,000 range.
+
+Two things are worth pulling out of that table.
+
+**Month 6 is the whole argument for retainers.** The backup had been running successfully for a year. It was also unrestorable, because the restore script referenced a schema that had since changed. Nobody would ever have found that except by testing it, and you find it either in a scheduled test or during an actual incident.
+
+**Month 7 was cheap because of month 3.** The API sunset was handled in a planned nine-hour block instead of an emergency. The same work under deadline pressure, with no time to test properly, is two to three times the effort and carries real risk of breaking payments.
+
+## Auditing an application nobody has maintained
+
+If you have inherited something, or yours has been running untouched, this is the order to look in. Most of it takes a day.
+
+**1. What runtime is it on, and is that version still supported?** Check against [endoflife.date](https://endoflife.date/nodejs). This is the single most important answer, because a runtime past end of life means no security patches at all, regardless of how careful you are with everything else.
+
+**2. Run a dependency audit.** [`npm audit`](https://docs.npmjs.com/cli/v10/commands/npm-audit) gives you the count and severity in seconds. Read the number of *critical and high* advisories, and how old the oldest one is.
+
+**3. How far behind is the framework?** One major version is routine. Three or more and the upgrade is a project.
+
+**4. Do backups exist, and has one ever been restored?** Ask specifically for the date of the last successful restore test. "We have backups" is not an answer to that question.
+
+**5. Is anything monitored?** If a page started returning errors right now, how would you find out? If the answer is "a customer would email us", that is the first thing to fix and it is cheap.
+
+**6. Can it be deployed?** Have someone attempt a deploy of an unchanged version. Surprisingly often this fails, and finding out during an emergency is the bad time to learn it.
+
+**7. Are the SSL certificate and domain on auto-renew, in your name?**
+
+<Callout type="warning">
+The result that should worry you most is not a long list of vulnerabilities. It is being unable to deploy. A system you cannot deploy cannot be patched, which means every future problem is an emergency regardless of how small it would otherwise have been.
+</Callout>
+
+## What an audit typically costs to act on
+
+Rough shape of remediation, once you know where you stand.
+
+<RateTable
+  headers={['Finding', 'Typical effort to fix']}
+  rows={[
+    ['Runtime one LTS behind', '1 - 3 days'],
+    ['Runtime past end of life', '5 - 15 days'],
+    ['Framework one major behind', '2 - 5 days'],
+    ['Framework three or more majors behind', '15 - 40 days, consider a rewrite of parts'],
+    ['No CI/CD, manual deploys', '3 - 5 days to automate'],
+    ['No monitoring or alerting', '1 - 2 days'],
+    ['Backups untested', '1 day to test, unknown to fix'],
+    ['No test coverage on critical paths', '5 - 15 days for a useful baseline'],
+  ]}
+/>
+
+The pattern is the familiar one: each row roughly triples in cost as it ages. Being one version behind is a task. Being three versions behind is a project.
+
+## Objections we hear
+
+**"It works fine. Why would I pay for maintenance?"** Because "works fine" describes the application, and the risk is in the ecosystem around it: the runtime approaching end of life, the payment API being sunset, the advisory published last week against a package four levels deep. None of those change how the app behaves today, and all of them change what next year costs. Maintenance is not fixing a thing that is broken; it is preventing the state where fixing it is a project.
+
+**"Can we just do it once a year in one go?"** You can, and it is more expensive than doing it monthly. Twelve months of accumulated upgrades interact with each other, so debugging is harder, and you have carried twelve months of security exposure to save a few hours of attention.
+
+**"Our developer says the code is fine and does not need touching."** Their code may well be fine. Maintenance is mostly not about their code - it is about the hundreds of dependencies underneath it, which are being changed by other people continuously.
+
+**"Can we do it in-house?"** If you have an engineer, yes, and it is a good use of a few hours a month. The failure mode is that maintenance is never urgent, so it loses every week to something that is. Whoever owns it needs scheduled time, not spare time.
+
+**"What if we plan to rebuild in two years anyway?"** Then maintain at a reduced level: security patches and monitoring, skip the framework upgrades. Say that out loud and price it deliberately, rather than drifting into it. And be honest about whether "we will rebuild in two years" is a plan or a way of deferring the decision, because the second one is how applications reach the state where a rebuild is the only option left.
+
+**"How do I know the retainer is being used?"** Ask for a monthly summary: what was patched, what broke, what is coming. If the answer three months running is "nothing to report", either your application is unusually quiet or nobody is looking. Both are worth knowing.
+
+## What a good monthly report looks like
+
+The retainer is invisible work. A short monthly report is what makes it accountable, and it should take the supplier fifteen minutes to produce.
+
+```
+MAINTENANCE REPORT - March
+
+SECURITY
+  Advisories reviewed:        7
+  Affecting us:               2 (1 high, 1 moderate)
+  Patched:                    2, deployed 4 and 11 March
+  Outstanding:                0
+
+DEPENDENCIES
+  Packages updated:           14 minor, 3 patch
+  Deferred:                   1 (major version, scheduled April)
+
+PLATFORM
+  Runtime:                    Node 22 LTS, supported until April 2027
+  Framework:                  current major, one minor behind
+
+AVAILABILITY
+  Uptime:                     99.98%
+  Incidents:                  1 (3 min, upstream provider)
+  Slowest endpoint:           /reports/export, p95 1.9s
+
+BACKUPS
+  Automated:                  daily, offsite
+  Last restore test:          18 March, passed
+
+WORK DONE
+  Fixed CSV export encoding bug (reported 6 March)
+  Added index on orders.created_at after slow query alert
+
+COMING UP
+  April: framework major upgrade, ~1 day
+  June: payment API v2 migration, deadline September
+```
+
+If you receive that every month, you can tell at a glance whether the money is doing anything. If you receive an invoice and nothing else, you cannot.
+
+## Maintenance for a system you did not build
+
+Taking over someone else's application is a legitimate and common engagement, and it is priced differently for a reason.
+
+**Expect a paid audit first.** Nobody responsible will quote a maintenance retainer on a codebase they have not opened. A one to three day audit produces the findings list from the section above, and that is what the retainer gets priced against.
+
+**Expect the first three months to cost more.** There is a backlog: outstanding advisories, missing monitoring, no deployment automation, absent tests around critical paths. Clearing that is remediation, not maintenance, and it should be quoted separately so you can see what is one-off and what is ongoing.
+
+**Expect some things to be declined.** A responsible supplier will say "we will maintain this, but we will not guarantee response times on the payments module until it has tests". That is a good answer.
+
+**The steady-state rate afterwards is usually higher** than for a system the supplier built, because familiarity is worth real money. Roughly 20 - 25% of estimated rebuild value rather than 15 - 20%, until the codebase has been brought up to a standard they are comfortable with.
+
+## How we do it
+
+Every build ships with the post-launch support window stated in its scope, covering defects in our work. Beyond that, maintenance is a separate retainer with a named scope and response targets, because bundling it invisibly into a build price is how it ends up not happening.
+
+We keep the dependency surface small deliberately, wire security scanning into the pipeline on day one, and put repositories and cloud accounts in your name from the first deploy, so leaving is always possible.
+
+If you have an application that has been running untouched for a while and you want an honest read on where it stands, [tell us about it](/contactus). For the build-side numbers, see [what a web application costs](/blogs/web-application-development-cost).
+
+## Related reading
+
+- [What Happens After Launch](/blogs/what-happens-after-launch) - what the money is actually buying
+- [The Real Cost of Cutting Corners in Software](/blogs/cost-of-cutting-corners) - what deferring it compounds into
+- [Web Application Security Checklist](/blogs/web-application-security-checklist) - the patching that makes up much of the number
+- [CI/CD That Actually Ships: A Pipeline on Every Project](/blogs/ci-cd-that-actually-ships) - the pipeline that makes maintenance cheap
+
+## Sources and further reading
+
+- [National Vulnerability Database](https://nvd.nist.gov/) - the feed that makes patching a continuous job
+- [Node.js release schedule](https://nodejs.org/en/about/previous-releases) and [endoflife.date](https://endoflife.date/nodejs) - published dates you can plan against
+- [Dependabot security updates](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates) and [`npm audit`](https://docs.npmjs.com/cli/v10/commands/npm-audit) - the automation, which raises alarms rather than doing the work
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/) - why outdated components remain a top cause of compromise
+- [Semantic Versioning](https://semver.org/) and [The Twelve-Factor App](https://12factor.net/) - the conventions that make upgrades cheap

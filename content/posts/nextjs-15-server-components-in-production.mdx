@@ -26,6 +26,18 @@ This is not a cautionary tale. The wins are real, and they are the reason we did
 
 ## Where it bit us
 
+### Knowing where a component actually runs
+
+Before the specific problems, the one that underlies several of them: it is not always obvious, reading a file, whether it runs on the server or the browser. A component with no directive runs on the server - unless it was imported by something marked client, in which case it does not, and nothing in the file tells you.
+
+This is the single biggest cognitive cost of the model, and the mitigations are conventions rather than tooling.
+
+**Name the boundary files.** A component that owns a `'use client'` directive gets a name that says so, or lives in a directory that does. Making the boundary visible in the file tree removes most of the ambiguity.
+
+**Check the bundle, not your assumptions.** The build output tells you what actually shipped. Reading it once a month catches the accidental client import that a code review missed, and it is how we find the ones we were confidently wrong about.
+
+**Treat a growing bundle as a bug report.** A page whose JavaScript grew by 60KB in a release almost always means a boundary moved up the tree. Enforcing a budget in the build turns a slow drift into a specific failure on the day it happens.
+
 ### Third-party libraries that assume the client
 
 A large slice of the npm ecosystem was written before Server Components existed. Many libraries call `window`, use React Context, or rely on hooks at import time. Drop one into a Server Component and you get a cryptic build error.
@@ -48,6 +60,26 @@ This is the part that surprised us most. Next.js 15 has the Request Memoization,
 
 Next.js 15 made fetches uncached by default, which removed the worst of the surprises - earlier versions cached aggressively and silently. But you still have to be deliberate. We now treat `revalidatePath` and `revalidateTag` after every mutation as non-negotiable, the same way we treat error handling.
 
+### Streaming and Suspense, which fix a problem you did not know you had
+
+Server rendering has one obvious weakness: the page waits for the slowest thing on it. A dashboard with five panels, four of them instant and one running a three-second aggregate, is a three-second page.
+
+Streaming fixes this properly. The shell and the fast panels arrive immediately, the slow one arrives when it is ready, and the user sees a page rather than a blank screen. [Partial prerendering](https://nextjs.org/docs/app/getting-started/partial-prerendering) takes it further - a static shell served instantly from the edge with dynamic holes filled in per request.
+
+Two things we learned the hard way.
+
+**Boundaries need to be deliberate.** Wrapping the whole page in one Suspense boundary gets you nothing; the page still waits for everything inside it. The boundary goes around the slow thing specifically, and getting this right is a design decision about what the user should see first rather than a technical one.
+
+**Loading states become real UI.** With streaming, the skeleton is not a placeholder nobody sees for 40 milliseconds - it is what a meaningful proportion of users look at for a full second. It deserves the same design attention as the loaded state, and a skeleton that shifts the layout when the real content arrives is a [CLS](https://web.dev/articles/cls) failure delivered by your own loading strategy.
+
+### The `useEffect` habit, and why it persists
+
+The most common thing we correct in code review is data fetched in a client component's effect, on a route that could have fetched it on the server. It is not that anyone forgot the model - it is that the pattern is deeply learned and it still works, so nothing complains.
+
+The cost is real: an extra round trip after the page renders, a loading state the user has to sit through, and the data-fetching code shipped to the browser along with whatever it imports. On a page where the data could have been resolved before the HTML was sent, all three are avoidable.
+
+The rule we settled on: **an effect that fetches on mount is a code smell in the App Router.** Sometimes it is correct - genuinely client-driven data, something that depends on browser state, polling. Frequently it is habit, and the fix is moving the fetch up into the server component that renders it.
+
 ### Server Actions are great until they are your whole API
 
 Server Actions let you mutate data from a form without writing an API route. For internal CRUD, they are a genuine productivity win. But they are POST requests under the hood, they are not free to call from a mobile client, and they do not give you a documented contract.
@@ -58,6 +90,16 @@ We use Server Actions for the app's own forms and mutations. The moment a second
 Server Actions are a feature of your web app, not an API strategy. If you can foresee external clients, do not let actions become the only way to write data. Retrofitting an API after the fact is far more expensive than planning for one.
 </Callout>
 
+### Error handling changes shape
+
+Two things behave differently enough to catch a team out.
+
+**An error in a server component is not a JavaScript error in the browser.** It happens before the HTML exists, so there is nothing on the page to attach a message to. Route-level error boundaries handle this, and a route without one shows the user a generic failure page rather than a broken panel inside a working layout.
+
+**Error messages must not leak to the client.** A server component can touch the database, and the exception it throws can contain a query, a connection string or a record. In production those details are stripped, and in a hurried deployment where that behaviour is misconfigured they are not. This is the [security](/blogs/web-application-security-checklist) failure that this model makes newly possible, and it is worth checking explicitly rather than assuming.
+
+The practical rule we settled on: an error boundary per route group, a deliberate design for what a failed panel looks like, and error tracking wired to capture server-side failures - which are otherwise invisible, because nothing reaches the browser to report them.
+
 ## The rules we ship by
 
 After enough projects, the team converged on a short list that we now treat as defaults:
@@ -67,9 +109,78 @@ After enough projects, the team converged on a short list that we now treat as d
 3. **Revalidate after every write.** Treat a mutation without a matching `revalidatePath`/`revalidateTag` as an unfinished mutation.
 4. **Keep Server Actions for your own app.** Reach for a typed API the moment a second client is on the roadmap.
 5. **Read the cache before debugging the data.** Most "stale data" reports are cache behaviour, not logic bugs.
+6. **An effect that fetches on mount needs a justification.** Sometimes correct, frequently habit. Ask why the data could not be resolved on the server.
+7. **Suspense boundaries go around the slow thing, not around the page.** And the skeleton is real UI that a real proportion of users will look at.
+8. **An error boundary per route group, and error tracking that captures the server side.** A failure before the HTML exists reports itself nowhere unless you arrange it.
+9. **A JavaScript budget enforced in the build.** Boundaries drift upward silently; a budget turns that into a failing build on the day it happens rather than a mystery a year later.
+
+## What it means for the people paying for this
+
+Most of the above is written for engineers. Four consequences matter if you are commissioning the software rather than writing it.
+
+**Your pages arrive faster, and that is measurable.** Less JavaScript sent to the browser is the single largest lever on how a site feels on a mid-range phone, and it shows up directly in [Core Web Vitals](/blogs/core-web-vitals-for-business-owners). This is not an abstraction: on the content-heavy routes we have moved, first content typically improves by a second or more on mobile.
+
+**Marketing pages and application pages stop being a trade-off.** The old choice was a fast, indexable marketing site or a rich, interactive application, and sites frequently ended up as two codebases. Rendering per route means one codebase can be static where it needs to rank and interactive where it needs to respond - the decision framework is in [single-page app vs server-rendered](/blogs/single-page-app-vs-server-rendered).
+
+**A whole category of security mistake disappears.** Secrets, keys and internal endpoints cannot leak into the browser bundle if the code touching them never crosses the boundary. This is not a complete security story - the [checklist](/blogs/web-application-security-checklist) still applies - but it removes one of the more embarrassing recurring failures.
+
+**There is a learning curve, and it is real.** A team new to this model is slower for a few weeks, mostly on caching. If you are hiring or changing supplier, that is worth knowing rather than discovering. Ask what they have shipped on the App Router specifically, not on Next.js generally - they are different amounts of experience.
+
+## Upgrading an existing app, honestly
+
+If you have a working Next.js application on the older Pages Router, the question is whether to move. Our answer for most clients is: not as a project on its own.
+
+**The two routers coexist.** You can run both in the same application, which means the migration is incremental rather than a rewrite, and it can be abandoned halfway without leaving you anywhere bad. This is the single most important fact about the upgrade and it is frequently not known by the people deciding whether to fund one.
+
+**Move a route when you are already changing it.** Rebuilding a page for product reasons is the right moment to move it. Rebuilding it purely to change the router is a cost with no visible outcome, and it competes with work customers would notice.
+
+**Start with the pages where the benefit is largest.** Content and marketing routes, where shipping less JavaScript is worth the most and the interactivity is minimal. Leave the complex authenticated screens until the team is fluent.
+
+**Budget for the caching confusion once.** Whichever route goes first will cost a few extra days while the team builds the mental model. That cost is paid once rather than per route, which is a good argument for making the first one deliberately simple and a bad argument for starting with the hardest screen to prove it can be done.
+
+**Measure before and after, per route.** Bundle size and mobile LCP, on the specific pages you move. Without those numbers the migration is a matter of faith, and the first time someone asks whether it was worth it you will have nothing to show them.
+
+**Do not upgrade a system you are not otherwise investing in.** A stable application nobody is changing gains nothing from a new rendering model. Keep it patched, keep its runtime [in support](https://endoflife.date/nodejs), and spend the money elsewhere.
 
 ## Was it worth it?
 
 Yes - but with eyes open. The App Router and Server Components are not a free upgrade that makes everything faster. They are a different model with a real learning curve, and the caching layer in particular costs a team a few weeks of confusion before it clicks.
 
 What you get on the other side is apps that ship less JavaScript, keep secrets where they belong, and put data fetching where it makes sense. For the kind of production software we build, that trade is worth making - as long as you respect the boundary and the cache instead of fighting them.
+
+The honest caveat, for anyone weighing it: none of this rescues a slow backend. A server component awaiting a query with no index is a page waiting on a query with no index, and the rendering model has nothing to say about it. The wins here are in what gets shipped to the browser and where work happens. Everything else is still ordinary engineering, and it is still where most performance problems actually live.
+
+## A worked example
+
+A media company had a Next.js site on the Pages Router: roughly 4,000 article pages, a subscriber area, and a mobile PageSpeed score of 41. They had been quoted for a full rewrite.
+
+We moved four route groups over five weeks rather than rewriting anything.
+
+**Article pages first.** These were 90% of their traffic and almost entirely static. Moved to server components with static generation and revalidation on publish. JavaScript shipped to an article page went from 480KB to 94KB. Mobile LCP went from 4.9 seconds to 1.4.
+
+**The homepage and section pages second.** Same pattern, plus streaming for the "most read" panel, which was the slow query holding the whole page. The shell now arrives immediately and that panel fills in.
+
+**The subscriber area third**, and only partially. The account and billing screens are genuinely interactive and stayed as client components behind a server-rendered shell. There was no benefit in forcing them.
+
+**The editorial admin was left alone entirely.** Internal, behind a login, used by fourteen people on desks, no first-load pressure whatsoever. Moving it would have cost three weeks and improved nothing anybody would notice.
+
+Results after the five weeks: mobile PageSpeed 41 to 88, mobile LCP 4.9s to 1.4s, and - the number their commercial team cared about - indexed pages up 14%, because articles that had previously been rendering slowly enough to be crawled inconsistently now returned complete HTML immediately.
+
+Cost was $38,000 against the rewrite quote of $145,000. The instructive part is the fourth bullet: a third of the application was deliberately not migrated, and identifying that was worth more than any of the optimisation.
+
+## Related reading
+
+- [Single-page app vs server-rendered](/blogs/single-page-app-vs-server-rendered) - the rendering decision this model makes per route
+- [Core Web Vitals for business owners](/blogs/core-web-vitals-for-business-owners) - where the bundle reduction shows up
+- [Choosing your stack](/blogs/choosing-your-stack) - why this framework is our default
+- [Why your website is slow](/blogs/why-your-website-is-slow) - diagnosing whether rendering is actually your problem
+
+## Sources and further reading
+
+- [Next.js documentation](https://nextjs.org/docs) - the primary source, and the caching chapter is worth reading twice
+- [React Server Components](https://react.dev/reference/rsc/server-components) - the underlying model, explained by the people who designed it
+- [Partial prerendering](https://nextjs.org/docs/app/getting-started/partial-prerendering) - static shell plus streamed dynamic content
+- [Rendering on the web](https://web.dev/articles/rendering-on-the-web) - the full spectrum this sits within
+- [Largest Contentful Paint](https://web.dev/articles/lcp) and [Cumulative Layout Shift](https://web.dev/articles/cls) - the two metrics most affected by these decisions
+- [Vercel deployment documentation](https://vercel.com/docs/deployments) - preview deployments and how the caching behaves in production
+- [endoflife.date](https://endoflife.date/nodejs) - the runtime support window underneath all of it

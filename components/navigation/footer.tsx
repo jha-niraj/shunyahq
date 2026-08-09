@@ -36,10 +36,10 @@ const LINK_GROUPS = [
     {
         heading: "Services",
         links: [
-            { label: "Web Engineering", href: "/services" },
-            { label: "Mobile", href: "/services" },
-            { label: "AI Integration", href: "/services" },
-            { label: "Cloud Infra", href: "/services" },
+            { label: "Web Engineering", href: "/services/web-engineering" },
+            { label: "Pricing", href: "/pricing" },
+            { label: "Our Work", href: "/projects" },
+            { label: "Who We Build For", href: "/solutions" },
         ],
     },
     {
