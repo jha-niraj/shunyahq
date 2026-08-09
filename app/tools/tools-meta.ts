@@ -27,8 +27,8 @@ export interface ToolMeta {
 
 export const PRODUCT_TOOLS: ToolMeta[] = [
     {
-        slug: "syncorbit",
-        name: "SyncOrbit",
+        slug: "synchq",
+        name: "SyncHQ",
         eyebrow: "Product",
         status: "In beta",
         palette: "jade",
@@ -36,13 +36,13 @@ export const PRODUCT_TOOLS: ToolMeta[] = [
             "The centralized command center for high-velocity engineering teams. Unify code, tasks, and client communication in one real-time interface.",
         heroTitle: "One command center for your whole engineering team.",
         heroDescription:
-            "SyncOrbit unifies code, tasks, and client communication in a single real-time interface - so your team and your clients always see the same source of truth.",
+            "SyncHQ unifies code, tasks, and client communication in a single real-time interface - so your team and your clients always see the same source of truth.",
         summary:
-            "Engineering teams lose hours stitching together a kanban board, a Git provider, a CI dashboard, and a separate channel for client updates. SyncOrbit collapses all of it into one real-time workspace: a Kanban board wired directly to your Git activity, automated sprint reports, view-only portals you can share with clients, and a live view of your CI/CD pipeline. Everyone works from the same picture, and nobody has to write a status update by hand.",
+            "Engineering teams lose hours stitching together a kanban board, a Git provider, a CI dashboard, and a separate channel for client updates. SyncHQ collapses all of it into one real-time workspace: a Kanban board wired directly to your Git activity, automated sprint reports, view-only portals you can share with clients, and a live view of your CI/CD pipeline. Everyone works from the same picture, and nobody has to write a status update by hand.",
         howItWorks: [
-            { step: "01", title: "Connect your repos", body: "Link your Git provider and pipelines. SyncOrbit maps branches, commits, and builds onto your board automatically - no manual ticket bookkeeping." },
+            { step: "01", title: "Connect your repos", body: "Link your Git provider and pipelines. SyncHQ maps branches, commits, and builds onto your board automatically - no manual ticket bookkeeping." },
             { step: "02", title: "Work in real time", body: "Your team moves cards across a Kanban that updates live with Git activity, while CI/CD status surfaces inline so blockers are visible the moment they happen." },
-            { step: "03", title: "Share, don't summarize", body: "Hand clients a view-only portal and let SyncOrbit auto-generate the sprint report. Stakeholders see real progress instead of a hand-written status deck." },
+            { step: "03", title: "Share, don't summarize", body: "Hand clients a view-only portal and let SyncHQ auto-generate the sprint report. Stakeholders see real progress instead of a hand-written status deck." },
         ],
         features: [
             "Real-time Kanban with Git integration",
@@ -52,15 +52,18 @@ export const PRODUCT_TOOLS: ToolMeta[] = [
             "One source of truth for team and clients",
         ],
         faqs: [
-            { q: "Which Git providers does SyncOrbit work with?", a: "SyncOrbit connects to the major Git providers and maps your branches, commits, and pull requests onto the board automatically. If you run a setup we don't support yet, tell us during the beta and we'll prioritize it." },
+            { q: "Which Git providers does SyncHQ work with?", a: "SyncHQ connects to the major Git providers and maps your branches, commits, and pull requests onto the board automatically. If you run a setup we don't support yet, tell us during the beta and we'll prioritize it." },
             { q: "Do clients need an account to view progress?", a: "No. You share a view-only portal link and stakeholders see live progress and the latest sprint report without signing up or touching your internal workspace." },
-            { q: "How are sprint reports generated?", a: "SyncOrbit assembles them from real Git and board activity, so the report reflects what actually shipped instead of a hand-written summary. You review it before it goes out." },
-            { q: "Is SyncOrbit ready for production use?", a: "It's currently in beta. Core features - the Git-integrated Kanban, client portals, automated reports, and CI/CD visibility - are working today, and we onboard beta teams directly so we can shape it around how you work." },
+            { q: "How are sprint reports generated?", a: "SyncHQ assembles them from real Git and board activity, so the report reflects what actually shipped instead of a hand-written summary. You review it before it goes out." },
+            { q: "Is SyncHQ ready for production use?", a: "It's currently in beta. Core features - the Git-integrated Kanban, client portals, automated reports, and CI/CD visibility - are working today, and we onboard beta teams directly so we can shape it around how you work." },
             { q: "How do I get access?", a: "Reach out through the contact page and tell us about your team. We're letting teams into the beta in batches and will get you set up." },
         ],
-        seoTitle: "SyncOrbit - Command Center for Engineering Teams",
+        seoTitle: "SyncHQ - Command Center for Engineering Teams",
         seoDescription:
-            "SyncOrbit unifies code, tasks and client communication in one real-time interface - Git-integrated Kanban, sprint automation and live delivery status.",
+            "SyncHQ unifies code, tasks and client communication in one real-time interface - Git-integrated Kanban, sprint automation and live delivery status.",
+        // Points at the full product page rather than a thinner tool detail page - two URLs
+        // about one product would compete with each other.
+        href: "/synchq",
     },
     {
         slug: "budget-estimator",

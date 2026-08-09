@@ -23,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const routes: Record<string, [number, MetadataRoute.Sitemap[number]["changeFrequency"]]> = {
         "": [1.0, "weekly"],
         pricing: [0.9, "weekly"],
+        // Our own product, and a page we actively want ranking - same tier as pricing.
+        synchq: [0.9, "monthly"],
         projects: [0.9, "monthly"],
         solutions: [0.8, "monthly"],
         blogs: [0.8, "weekly"],

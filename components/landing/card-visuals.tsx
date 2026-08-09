@@ -370,7 +370,7 @@ function ProductTeams({ reduced }: SceneProps) {
 
 /* ───────────────────────── Tools ───────────────────────── */
 
-function SyncOrbit({ reduced }: SceneProps) {
+function SyncHQ({ reduced }: SceneProps) {
     const orbits = [
         { rx: 26, ry: 12, dur: 6, dot: "fill-so-accent" },
         { rx: 38, ry: 18, dur: 9, dot: "fill-so-ink-3" },
@@ -535,7 +535,7 @@ const SCENES: Record<string, (p: SceneProps) => ReactNode> = {
     enterprises: Enterprises,
     "product-teams": ProductTeams,
     // Tools
-    syncorbit: SyncOrbit,
+    synchq: SyncHQ,
     "budget-estimator": BudgetEstimator,
     "rate-card": RateCard,
     "strategy-call": StrategyCall,

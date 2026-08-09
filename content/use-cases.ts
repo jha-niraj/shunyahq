@@ -292,7 +292,7 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
             {
                 step: "04",
                 title: "Monitor & maintain",
-                body: "Monitoring, backups, and observability ship with every release, backed by post-launch support and optional ongoing maintenance with SyncOrbit-backed visibility into delivery and system health.",
+                body: "Monitoring, backups, and observability ship with every release, backed by post-launch support and optional ongoing maintenance with SyncHQ-backed visibility into delivery and system health.",
             },
         ],
         relevantServices: [
@@ -330,7 +330,7 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
             },
             {
                 q: "Do you maintain the system after the project ends?",
-                a: "Every project includes documentation and thirty days of post-launch support, and we offer ongoing maintenance with SyncOrbit-backed visibility for teams that want a long-term engineering partner rather than a one-off vendor.",
+                a: "Every project includes documentation and thirty days of post-launch support, and we offer ongoing maintenance with SyncHQ-backed visibility for teams that want a long-term engineering partner rather than a one-off vendor.",
             },
         ],
         cta: {
@@ -351,7 +351,7 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
         heroSubtitle:
             "Complex architectures, hard compliance requirements, and a need for teams that can be trusted with mission-critical systems. Shunya designs secure, observable microservices with proper access control and audit trails - delivered by a dedicated team with a single, accountable point of contact.",
         summary:
-            "At enterprise scale, the hard part isn't writing code - it's evolving complex, distributed systems without breaking compliance, security, or the dozen teams that depend on them. Shunya delivers to that standard. We architect secure microservices with clear service boundaries, role-based access control, and tamper-evident audit logging designed in from day one - not retrofitted after an audit finding. You get a dedicated team with a dedicated project manager who owns the outcome, not a queue of contractors closing tickets. And through SyncOrbit, your stakeholders get real-time, view-only visibility into delivery, pipeline health, and system status - the kind of accountability enterprise procurement expects.",
+            "At enterprise scale, the hard part isn't writing code - it's evolving complex, distributed systems without breaking compliance, security, or the dozen teams that depend on them. Shunya delivers to that standard. We architect secure microservices with clear service boundaries, role-based access control, and tamper-evident audit logging designed in from day one - not retrofitted after an audit finding. You get a dedicated team with a dedicated project manager who owns the outcome, not a queue of contractors closing tickets. And through SyncHQ, your stakeholders get real-time, view-only visibility into delivery, pipeline health, and system status - the kind of accountability enterprise procurement expects.",
         pains: [
             {
                 title: "Complex distributed systems are hard to evolve",
@@ -392,8 +392,8 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
                 body: "You get a committed team and a dedicated project manager as your single point of accountability - owning architecture, delivery, and outcomes, not just closing tickets in someone else's backlog.",
             },
             {
-                title: "Observability and SyncOrbit visibility",
-                body: "Real-time dashboards, monitoring, and SyncOrbit's view-only client portals give your stakeholders live visibility into delivery, pipeline status, and system health - no status deck required.",
+                title: "Observability and SyncHQ visibility",
+                body: "Real-time dashboards, monitoring, and SyncHQ's view-only client portals give your stakeholders live visibility into delivery, pipeline status, and system health - no status deck required.",
             },
             {
                 title: "Standards, documentation, and clean handoff",
@@ -409,7 +409,7 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
             {
                 step: "02",
                 title: "Stand up the dedicated team",
-                body: "A committed team and a dedicated project manager are assigned as your single point of accountability, with SyncOrbit configured to give your stakeholders real-time, view-only visibility from day one.",
+                body: "A committed team and a dedicated project manager are assigned as your single point of accountability, with SyncHQ configured to give your stakeholders real-time, view-only visibility from day one.",
             },
             {
                 step: "03",
@@ -432,7 +432,7 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
         stats: [
             { value: "RBAC", label: "And audit trails by design" },
             { value: "1 PM", label: "Single point of accountability" },
-            { value: "Live", label: "SyncOrbit delivery visibility" },
+            { value: "Live", label: "SyncHQ delivery visibility" },
         ],
         faqs: [
             {
@@ -445,7 +445,7 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
             },
             {
                 q: "How do we get visibility into a distributed engagement?",
-                a: "SyncOrbit gives your stakeholders real-time dashboards and view-only portals covering sprint progress, CI/CD pipeline status, and system health, alongside regular reviews with your dedicated PM - so leadership always has a current, honest picture.",
+                a: "SyncHQ gives your stakeholders real-time dashboards and view-only portals covering sprint progress, CI/CD pipeline status, and system health, alongside regular reviews with your dedicated PM - so leadership always has a current, honest picture.",
             },
             {
                 q: "Will our internal teams be able to maintain what you build?",
@@ -476,9 +476,9 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
         heroTitle: "Ship faster with one command",
         heroEmphasis: "center.",
         heroSubtitle:
-            "Slow releases, tooling scattered across a dozen tabs, and no shared view of what's actually happening. Shunya brings code, tasks, and delivery into SyncOrbit - backed by real CI/CD, live dashboards, and a shared design system - so your team ships with both velocity and visibility.",
+            "Slow releases, tooling scattered across a dozen tabs, and no shared view of what's actually happening. Shunya brings code, tasks, and delivery into SyncHQ - backed by real CI/CD, live dashboards, and a shared design system - so your team ships with both velocity and visibility.",
         summary:
-            "Capable teams ship slowly when the process around them is the bottleneck. Releases drag because deploys are manual and nerve-racking; context is scattered because code, tasks, and updates live in different tools; and nobody can give a straight answer on status because there's no single live view. Shunya fixes the machine, not just the output. We unify code, tasks, and client communication into SyncOrbit, wire up CI/CD so releases become routine, surface progress on live dashboards, and ship a shared design system that keeps engineering and design in lockstep. Embed us alongside your team to lift velocity, or hand us a workstream to own end to end.",
+            "Capable teams ship slowly when the process around them is the bottleneck. Releases drag because deploys are manual and nerve-racking; context is scattered because code, tasks, and updates live in different tools; and nobody can give a straight answer on status because there's no single live view. Shunya fixes the machine, not just the output. We unify code, tasks, and client communication into SyncHQ, wire up CI/CD so releases become routine, surface progress on live dashboards, and ship a shared design system that keeps engineering and design in lockstep. Embed us alongside your team to lift velocity, or hand us a workstream to own end to end.",
         pains: [
             {
                 title: "Delivery is slower than it should be",
@@ -503,7 +503,7 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
         ],
         howShunyaHelps: [
             {
-                title: "SyncOrbit as your command center",
+                title: "SyncHQ as your command center",
                 body: "Unify code, tasks, and client communication in one real-time interface - a Kanban board wired to Git, automated sprint reporting, and view-only client portals - so the whole engagement lives in a single place.",
             },
             {
@@ -536,7 +536,7 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
             {
                 step: "02",
                 title: "Wire up the command center",
-                body: "We bring code, tasks, and communication into SyncOrbit, stand up CI/CD pipelines, and configure live dashboards - so the team gets one source of truth and releases become routine.",
+                body: "We bring code, tasks, and communication into SyncHQ, stand up CI/CD pipelines, and configure live dashboards - so the team gets one source of truth and releases become routine.",
             },
             {
                 step: "03",
@@ -557,14 +557,14 @@ export const USE_CASES: Record<UseCaseSlug, UseCase> = {
         ],
         pricingKey: "web",
         stats: [
-            { value: "1 hub", label: "Code, tasks, and CI in SyncOrbit" },
+            { value: "1 hub", label: "Code, tasks, and CI in SyncHQ" },
             { value: "On-demand", label: "Releases via automated CI/CD" },
             { value: "Shared", label: "Design system across the team" },
         ],
         faqs: [
             {
-                q: "What is SyncOrbit?",
-                a: "SyncOrbit is our command center for high-velocity teams - real-time Kanban with Git integration, automated sprint reporting, CI/CD pipeline visualization, and view-only client portals, all in one interface. It's currently in beta and you can request access.",
+                q: "What is SyncHQ?",
+                a: "SyncHQ is our command center for high-velocity teams - real-time Kanban with Git integration, automated sprint reporting, CI/CD pipeline visualization, and view-only client portals, all in one interface. It's currently in beta and you can request access.",
             },
             {
                 q: "Can you work alongside our existing engineering team?",

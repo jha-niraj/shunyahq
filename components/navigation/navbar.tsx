@@ -95,8 +95,8 @@ interface ToolItem {
 
 const TOOLS: ToolItem[] = [
     {
-        title: "SyncOrbit",
-        href: "/tools/syncorbit",
+        title: "SyncHQ",
+        href: "/tools/synchq",
         description: "Real-time command center for engineering teams",
         icon: Orbit,
         badge: "Beta",

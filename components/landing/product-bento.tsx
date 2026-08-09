@@ -56,7 +56,7 @@ export default function ProductBento() {
                     className="mb-14 text-center"
                 >
                     <motion.p variants={fadeUp} transition={{ duration: 0.5 }} className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
-                        Experience SyncOrbit in action
+                        Experience SyncHQ in action
                     </motion.p>
                     <motion.h2 variants={fadeUp} transition={{ duration: 0.5 }} className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
                         The command center for high-velocity{" "}

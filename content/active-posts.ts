@@ -64,5 +64,5 @@ export const ACTIVE_BLOG_SLUGS: readonly string[] = [
 	'rag-pipelines-explained',
 	'designing-ai-agents-that-dont-hallucinate',
 	'codrzai-case-study',
-	'building-syncorbit-case-study',
+	'building-synchq-case-study',
 ]

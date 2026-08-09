@@ -101,12 +101,20 @@ const SOLUTION_ICONS: Record<(typeof USE_CASE_SLUGS)[number], React.ElementType>
     "product-teams": Users,
 }
 
-const SERVICE_ITEM: Item = {
-    title: WEB_SERVICE.name,
-    href: `/services/${WEB_SERVICE.slug}`,
-    description: "SaaS platforms, dashboards, marketing sites",
-    icon: Code2,
-}
+const SERVICE_ITEMS: Item[] = [
+    {
+        title: WEB_SERVICE.name,
+        href: `/services/${WEB_SERVICE.slug}`,
+        description: "SaaS platforms, dashboards, marketing sites",
+        icon: Code2,
+    },
+    {
+        title: "SyncHQ",
+        href: "/synchq",
+        description: "Our own product, for agencies",
+        icon: Orbit,
+    },
+]
 
 // The content layer prefixes every label with "For ". The group heading above the grid already says
 // that, so carrying it four times down the column reads as a stutter - and two of the four labels
@@ -121,7 +129,7 @@ const SOLUTION_ITEMS: Item[] = USE_CASE_SLUGS.map((slug) => ({
 const PROJECT_ICONS: Record<string, React.ElementType> = {
     buildrhq: Cpu,
     vidhica: Scale,
-    syncorbit: Orbit,
+    synchq: Orbit,
     gurukul: GraduationCap,
     eventeye: CalendarDays,
     "mp-solutions": Package,
@@ -156,7 +164,7 @@ const TOPIC_LINKS: Item[] = TOPIC_ORDER
     .map((k) => ({ title: BLOG_CATEGORIES[k], href: `/blogs/topics/${k}`, description: "", icon: TOPIC_ICONS[k] }))
 
 const TOOL_ICONS: Record<string, React.ElementType> = {
-    syncorbit: Orbit,
+    synchq: Orbit,
     "budget-estimator": Calculator,
 }
 // Two of the four entries in PRODUCT_TOOLS carry an `href` override and have no detail page -
@@ -303,7 +311,11 @@ function ServicesDropdown({ onSelect }: { onSelect: () => void }) {
             <div className="flex">
                 <div className="flex-1 p-3">
                     <GroupHeading>What we build</GroupHeading>
-                    <DropdownRow item={SERVICE_ITEM} onSelect={onSelect} />
+                    <div className="grid grid-cols-2 gap-x-2">
+                        {SERVICE_ITEMS.map((item) => (
+                            <DropdownRow key={item.href} item={item} onSelect={onSelect} />
+                        ))}
+                    </div>
                     <div className="mt-3">
                         <GroupHeading>Who we build for</GroupHeading>
                         <div className="grid grid-cols-2 gap-x-2">
@@ -423,7 +435,7 @@ type MobileNavItem =
 const MOBILE_NAV: MobileNavItem[] = [
     {
         name: "Services",
-        links: [SERVICE_ITEM, ...SOLUTION_ITEMS].map(({ title, href, icon }) => ({ title, href, icon })),
+        links: [...SERVICE_ITEMS, ...SOLUTION_ITEMS].map(({ title, href, icon }) => ({ title, href, icon })),
         viewAll: { name: "See the rate card", href: "/pricing" },
     },
     {

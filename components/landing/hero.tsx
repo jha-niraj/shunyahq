@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -445,9 +445,15 @@ const SCENES: Scene[] = [
  * by the drawn-on connector layer. Scenes cross-fade on a shared key, so moving between them is one
  * continuous dissolve rather than four cards appearing in turn.
  */
+/** The height the scene is composed at. Everything inside is laid out against this, then the whole
+ *  thing is scaled to whatever room the hero has left - see the note in HeroStage. */
+const STAGE_DESIGN_H = 470
+
 function HeroStage() {
     const [i, setI] = useState(0)
     const [paused, setPaused] = useState(false)
+    const boxRef = useRef<HTMLDivElement>(null)
+    const [scale, setScale] = useState(1)
 
     useEffect(() => {
         if (paused) return
@@ -455,12 +461,33 @@ function HeroStage() {
         return () => clearInterval(t)
     }, [paused])
 
+    /**
+     * Fit the scene to the room the hero has left.
+     *
+     * The satellites are positioned by percentage against the scene, so letting the scene itself
+     * flex would move them relative to the centre panel and, on a short viewport, clip the panel
+     * top and bottom. Instead the scene is always composed at STAGE_DESIGN_H and scaled down as a
+     * whole, which keeps the composition proportional at every window height.
+     */
+    useEffect(() => {
+        const el = boxRef.current
+        if (!el) return
+        const fit = () => {
+            const h = el.clientHeight
+            if (h > 0) setScale(Math.min(1, h / STAGE_DESIGN_H))
+        }
+        fit()
+        const ro = new ResizeObserver(fit)
+        ro.observe(el)
+        return () => ro.disconnect()
+    }, [])
+
     const scene = SCENES[i]!
     const SceneIcon = scene.Icon
 
     return (
-        <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-            <div className="relative overflow-hidden rounded-[26px] border border-neutral-900/10 bg-[#F5F2E9]/70 backdrop-blur-sm">
+        <div className="h-full" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+            <div ref={boxRef} className="relative h-full overflow-hidden rounded-[26px] border border-neutral-900/10 bg-[#F5F2E9]/70 backdrop-blur-sm">
                 <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 opacity-50"
@@ -470,11 +497,16 @@ function HeroStage() {
                     }}
                 />
 
-                {/* A DEFINITE height, not min-h + padding: the satellites are positioned by
-                    percentage, and percentages against a min-height parent resolve to auto. A fixed
-                    height also centres the panel so the leftover room splits evenly above and below
-                    it, which is exactly the band the satellites occupy. */}
-                <div className="relative h-[368px] px-4 sm:h-[420px] sm:px-8 lg:h-[470px]">
+                {/* A DEFINITE height, so the percentage-positioned satellites resolve. The scene is
+                    always this tall and is scaled as one unit to fit the box above. */}
+                <div
+                    className="absolute left-1/2 top-1/2 w-full px-4 sm:px-8"
+                    style={{
+                        height: STAGE_DESIGN_H,
+                        transform: `translate(-50%, -50%) scale(${scale})`,
+                        transformOrigin: "center",
+                    }}
+                >
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={scene.key}
@@ -597,14 +629,14 @@ function HeroTicker() {
         // `mt-auto` pins the ticker to the BOTTOM of the hero rather than merely following the
         // stage. On a tall viewport where the hero's min-height exceeds its content, the spare room
         // opens up above the ticker, so it always sits on the hero's bottom edge as its closing rule.
-        <div className="relative z-[2] mt-auto border-t border-neutral-900/10 bg-white/60 backdrop-blur-sm">
+        <div className="relative z-[2] mt-auto shrink-0 border-t border-neutral-900/10 bg-[#FDFBF5]">
             <div className="mx-auto flex max-w-7xl items-center gap-6 px-5 py-4 sm:px-7">
                 <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400 sm:block">
                     Trusted by
                 </span>
                 <div className="relative min-w-0 flex-1 overflow-hidden">
-                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#FBF8EF] to-transparent" />
-                    <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#FBF8EF] to-transparent" />
+                    <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#FDFBF5] to-transparent" />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#FDFBF5] to-transparent" />
                     <div className="flex w-max" style={{ animation: "hero-ticker 32s linear infinite" }}>
                         <Track />
                         <Track />
@@ -618,7 +650,7 @@ function HeroTicker() {
 export function Hero() {
     return (
         <section
-            className="relative flex min-h-[100svh] flex-col overflow-hidden bg-[#FBF8EF]"
+            className="relative flex h-[100svh] min-h-[640px] flex-col overflow-hidden bg-[#FBF8EF]"
             style={{ isolation: "isolate" }}
         >
             {/* Animated champagne mesh-gradient - stays at the back. */}
@@ -635,7 +667,7 @@ export function Hero() {
                 }}
             />
 
-            <div className="relative z-[2] mx-auto w-full max-w-7xl px-5 pb-6 pt-[clamp(96px,11vh,124px)] sm:px-7">
+            <div className="relative z-[2] mx-auto flex w-full min-h-0 max-w-7xl flex-1 flex-col px-5 pb-4 pt-[clamp(88px,10vh,112px)] sm:px-7">
                 {/* Copy block. Left-aligned and capped at ~3xl so the headline breaks where it
                     should, while the stage below runs the full width. */}
                 <div className="max-w-3xl">
@@ -649,32 +681,40 @@ export function Hero() {
 
                     <motion.h1
                         variants={fadeUp} initial="hidden" animate="show" custom={2}
-                        className="mt-6 text-[clamp(40px,6.6vw,76px)] font-bold leading-[0.99] tracking-[-0.04em] text-neutral-900 text-balance"
+                        className="mt-4 text-[clamp(38px,6.2vw,68px)] font-bold leading-[0.99] tracking-[-0.04em] text-neutral-900 text-balance"
                     >
                         We build the <span className="text-neutral-900/40">future.</span>
                     </motion.h1>
 
+                    <motion.p
+                        variants={fadeUp} initial="hidden" animate="show" custom={3}
+                        className="mt-3.5 max-w-[46ch] text-[clamp(14.5px,1.35vw,16.5px)] leading-[1.6] text-neutral-700"
+                    >
+                        A web engineering studio. We design, build and ship custom web applications
+                        with one team owning the whole stack - scope to production.
+                    </motion.p>
+
                     <motion.div
                         variants={fadeUp} initial="hidden" animate="show" custom={4}
-                        className="mt-8 flex flex-wrap items-center gap-3"
+                        className="mt-5 flex flex-wrap items-center gap-3"
                     >
                         <Link
                             href="/contactus"
-                            className="group inline-flex items-center gap-2 rounded-xl bg-neutral-900 px-7 py-3.5 text-[14px] font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-neutral-800"
+                            className="group inline-flex items-center gap-2 rounded-xl bg-neutral-900 px-6 py-3 text-[14px] font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-neutral-800"
                         >
                             Start a Project
                             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                         </Link>
                         <Link
                             href="/projects"
-                            className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-900/15 bg-white/60 px-7 py-3.5 text-[14px] font-medium text-neutral-700 backdrop-blur-sm transition-all hover:bg-white/80"
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-900/15 bg-white/60 px-6 py-3 text-[14px] font-medium text-neutral-700 backdrop-blur-sm transition-all hover:bg-white/80"
                         >
                             See Our Work <span className="text-neutral-400">→</span>
                         </Link>
                     </motion.div>
                 </div>
 
-                <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6} className="mt-9">
+                <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6} className="mt-6 min-h-0 flex-1">
                     <HeroStage />
                 </motion.div>
             </div>

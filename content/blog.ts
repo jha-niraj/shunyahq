@@ -2308,17 +2308,17 @@ export const BLOG_POSTS: Record<string, BlogMeta> = {
 			},
 		],
 	},
-	'building-syncorbit-case-study': {
-		title: 'Case Study: Building SyncOrbit, a Command Center for Agencies',
-		pageTitle: "Case Study: Building SyncOrbit for Agencies",
+	'building-synchq-case-study': {
+		title: 'Case Study: Building SyncHQ, a Command Center for Agencies',
+		pageTitle: "Case Study: Building SyncHQ for Agencies",
 		description:
-			'How SyncOrbit came together - an agency with no single screen, the aggregation architecture, and why the data model was the genuinely hard part.',
-		ogImage: '/posts/building-syncorbit-case-study.webp',
+			'How SyncHQ came together - an agency with no single screen, the aggregation architecture, and why the data model was the genuinely hard part.',
+		ogImage: '/posts/building-synchq-case-study.webp',
 		author: 'niraj',
 		datePublished: '2025-10-10',
 		dateModified: '2026-08-09',
 		keywords: [
-			'SyncOrbit case study',
+			'SyncHQ case study',
 			'agency management software',
 			'data aggregation product',
 			'building a command center dashboard',
@@ -2327,27 +2327,27 @@ export const BLOG_POSTS: Record<string, BlogMeta> = {
 		category: 'case-studies',
 		readingTime: 13,
 		keyTakeaways: [
-			'Agencies do not lack tools - they lack a single surface that ties the tools together; SyncOrbit is that surface.',
-			'The core loop: open SyncOrbit and immediately see the true state of every project and what to do next, without opening anything else.',
+			'Agencies do not lack tools - they lack a single surface that ties the tools together; SyncHQ is that surface.',
+			'The core loop: open SyncHQ and immediately see the true state of every project and what to do next, without opening anything else.',
 			'Aggregation products live and die on freshness - we combined webhooks for speed with scheduled reconciliation for correctness.',
 			'The hard part was the data model, not the screens - every meaningful view downstream depended on getting it right.',
 			'V1 was ruthlessly scoped: sensible defaults over customisation, the few integrations that mattered, present state before forecasting.',
 		],
 		faqs: [
 			{
-				q: 'What is SyncOrbit?',
-				a: 'SyncOrbit is a command center for agencies - a single surface that aggregates projects, people, capacity, time, and money so a team can open one screen and see the true state of everything, instead of assembling the picture from five disconnected tools by hand.',
+				q: 'What is SyncHQ?',
+				a: 'SyncHQ is a command center for agencies - a single surface that aggregates projects, people, capacity, time, and money so a team can open one screen and see the true state of everything, instead of assembling the picture from five disconnected tools by hand.',
 			},
 			{
-				q: 'What was the hardest part of building SyncOrbit?',
+				q: 'What was the hardest part of building SyncHQ?',
 				a: 'The data model, not the user interface. Representing projects, people, capacity, time, and money flexibly enough for how different agencies operate - without becoming so generic it meant nothing - took more iteration than any other part, because every view downstream depended on it.',
 			},
 			{
 				q: 'How does an aggregation product keep its dashboard accurate?',
-				a: 'By treating the aggregated state as a cache that must be continuously re-proven against the source. SyncOrbit combines webhooks (push updates the moment something changes) with scheduled background reconciliation (a periodic sweep to catch anything missed). Webhooks keep it fast; reconciliation keeps it correct.',
+				a: 'By treating the aggregated state as a cache that must be continuously re-proven against the source. SyncHQ combines webhooks (push updates the moment something changes) with scheduled background reconciliation (a periodic sweep to catch anything missed). Webhooks keep it fast; reconciliation keeps it correct.',
 			},
 			{
-				q: 'What stack was SyncOrbit built on?',
+				q: 'What stack was SyncHQ built on?',
 				a: 'Next.js App Router for server-rendered dashboards, tRPC for end-to-end type safety, Postgres with Prisma for relational data and safe migrations, background jobs and webhooks for sync, and role-based access for owner, member, and client-facing views.',
 			},
 		],

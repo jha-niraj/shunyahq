@@ -1,8 +1,8 @@
 import { Callout, RateTable } from '@/mdx-components'
 
-Agencies run on a strange contradiction: they sell organisation and clarity to clients while running their own operations across a dozen disconnected tools. Projects live in one app, time in another, invoices in a third, client updates in email, and the actual status of the business in someone's head. We built SyncOrbit because we were that agency, and we were tired of being it.
+Agencies run on a strange contradiction: they sell organisation and clarity to clients while running their own operations across a dozen disconnected tools. Projects live in one app, time in another, invoices in a third, client updates in email, and the actual status of the business in someone's head. We built SyncHQ because we were that agency, and we were tired of being it.
 
-This is the story of how SyncOrbit came together - the problem, the decisions, and what we learned building a command center for the way agencies actually work.
+This is the story of how SyncHQ came together - the problem, the decisions, and what we learned building a command center for the way agencies actually work.
 
 ## The problem: a business with no single screen
 
@@ -11,20 +11,20 @@ The symptom was simple and familiar. There was no one place to answer the questi
 Answering that meant opening five tabs and assembling the picture by hand, repeatedly, every day. The cost was not just the wasted time. It was that the picture was always slightly out of date, so decisions were made on stale information and things slipped through the gaps between tools.
 
 <Callout type="info">
-The core insight behind SyncOrbit: agencies do not lack tools. They lack a single surface that ties the tools together. The problem was never "we need another app" - it was "we need one place that knows about all the others."
+The core insight behind SyncHQ: agencies do not lack tools. They lack a single surface that ties the tools together. The problem was never "we need another app" - it was "we need one place that knows about all the others."
 </Callout>
 
 ## Defining the core loop
 
-We build everything around a core loop, and SyncOrbit was no exception. We resisted the temptation to build "everything an agency needs" and instead found the one loop that, if solved, made the rest worth building:
+We build everything around a core loop, and SyncHQ was no exception. We resisted the temptation to build "everything an agency needs" and instead found the one loop that, if solved, made the rest worth building:
 
-> A team member opens SyncOrbit and immediately sees the true state of every project, what needs attention, and what to do next - without opening anything else.
+> A team member opens SyncHQ and immediately sees the true state of every project, what needs attention, and what to do next - without opening anything else.
 
 Everything in the first version had to serve that loop. A feature that did not help someone open one screen and know what was going on did not make the cut.
 
 ## The architecture
 
-SyncOrbit is a data-aggregation product at heart, and that shaped every technical decision. The hard part is not displaying a dashboard - it is keeping the dashboard true.
+SyncHQ is a data-aggregation product at heart, and that shaped every technical decision. The hard part is not displaying a dashboard - it is keeping the dashboard true.
 
 <RateTable
   headers={["Layer", "Choice", "Why"]}
@@ -157,7 +157,7 @@ The lesson we took: **the feature that removes recurring manual work usually bea
 
 ## Where it stands
 
-SyncOrbit started as a tool to fix our own operations and became a product because the problem turned out to be everyone's problem. Building it forced us to take our own advice about scope, freshness, and data modelling more seriously than we ever had on a client project - because this time we were the client, and we used it every single day. That is the best test of software there is, and it is the reason we trust what we shipped.
+SyncHQ started as a tool to fix our own operations and became a product because the problem turned out to be everyone's problem. Building it forced us to take our own advice about scope, freshness, and data modelling more seriously than we ever had on a client project - because this time we were the client, and we used it every single day. That is the best test of software there is, and it is the reason we trust what we shipped.
 
 It remains in beta, deliberately. Onboarding teams in batches rather than opening the doors means every structural assumption still gets tested against a workflow we did not anticipate, and we would rather find the next project-versus-engagement problem with eight agencies watching than eight hundred.
 

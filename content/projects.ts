@@ -254,8 +254,8 @@ export const PROJECTS: Project[] = [
         ],
     },
     {
-        slug: "syncorbit",
-        seoTitle: "SyncOrbit - Agency Command Center Case Study",
+        slug: "synchq",
+        seoTitle: "SyncHQ - Agency Command Center Case Study",
         approach: [
             {
                 phase: "Discovery",
@@ -277,13 +277,13 @@ export const PROJECTS: Project[] = [
             },
         ],
         seoDescription:
-            "How we built SyncOrbit, one screen that shows the true state of every client project - the data model, aggregation, and reconciliation.",
-        title: "SyncOrbit",
+            "How we built SyncHQ, one screen that shows the true state of every client project - the data model, aggregation, and reconciliation.",
+        title: "SyncHQ",
         tagline: "The calm operating system for running clients at once.",
         description:
             "A unified workspace for agencies, studios, and founders juggling many client projects - project management, white-labeled client portals, billing, and live business intelligence in one place.",
         industry: "SaaS",
-        liveUrl: "https://syncorbit.nirajjha.xyz",
+        liveUrl: "https://synchq.nirajjha.xyz",
         technologies: ["Next.js", "GraphQL", "AWS", "PostgreSQL", "Tailwind"],
         year: 2025,
         timeline: "6 months",
@@ -292,7 +292,7 @@ export const PROJECTS: Project[] = [
         challenge:
             "Teams that run client work for a living lose the plot to fragmentation. The status of any given project is smeared across Slack threads, spreadsheets, a project management tool, a separate billing system, and someone's memory. To reconcile it all, teams fall back on status meetings and constant context-switching - both of which quietly eat hours every week and erode margins. There was no single source of truth that connected the work, the client, the team's time, and the money in one calm place.",
         whatWeBuilt:
-            "We built SyncOrbit as a unified operating system for client work, designed around three promises: one source of truth, async by default, and forecasts you can trust. Project management supports sprints, dependencies, and kanban, list, and timeline views. White-labeled client portals send automatic digests so clients stay informed without a single status call, and AI-powered intake gets a new client fully onboarded in under five minutes. Team management and time tracking feed directly into billing and revenue operations, where invoices are generated automatically from logged hours and milestones. Live BI dashboards surface revenue, utilization, and on-time delivery, and a GraphQL API plus webhooks tie SyncOrbit into Figma, Linear, GitHub, and Slack. The whole platform is secured with TLS 1.3, AES-256 encryption, and SSO through Google and Okta.",
+            "We built SyncHQ as a unified operating system for client work, designed around three promises: one source of truth, async by default, and forecasts you can trust. Project management supports sprints, dependencies, and kanban, list, and timeline views. White-labeled client portals send automatic digests so clients stay informed without a single status call, and AI-powered intake gets a new client fully onboarded in under five minutes. Team management and time tracking feed directly into billing and revenue operations, where invoices are generated automatically from logged hours and milestones. Live BI dashboards surface revenue, utilization, and on-time delivery, and a GraphQL API plus webhooks tie SyncHQ into Figma, Linear, GitHub, and Slack. The whole platform is secured with TLS 1.3, AES-256 encryption, and SSO through Google and Okta.",
         keyCapabilities: [
             {
                 title: "Project management",
@@ -320,7 +320,7 @@ export const PROJECTS: Project[] = [
             },
             {
                 title: "Integrations & API",
-                body: "Native connections to Figma, Linear, GitHub, and Slack, plus a GraphQL API and webhooks, let teams wire SyncOrbit into the rest of their stack.",
+                body: "Native connections to Figma, Linear, GitHub, and Slack, plus a GraphQL API and webhooks, let teams wire SyncHQ into the rest of their stack.",
             },
             {
                 title: "Enterprise-grade security",
@@ -335,8 +335,8 @@ export const PROJECTS: Project[] = [
         ],
         faqs: [
             {
-                q: "Who is SyncOrbit for?",
-                a: "Agencies, studios, and founders running multiple client projects at once. If your team's status is currently scattered across Slack, spreadsheets, a PM tool, and a billing system, SyncOrbit pulls all of it into one workspace.",
+                q: "Who is SyncHQ for?",
+                a: "Agencies, studios, and founders running multiple client projects at once. If your team's status is currently scattered across Slack, spreadsheets, a PM tool, and a billing system, SyncHQ pulls all of it into one workspace.",
             },
             {
                 q: "How do the white-labeled client portals work?",
@@ -348,7 +348,7 @@ export const PROJECTS: Project[] = [
             },
             {
                 q: "What integrations are supported?",
-                a: "SyncOrbit connects natively to Figma, Linear, GitHub, and Slack, and exposes a GraphQL API plus webhooks so teams can build any additional automation they need on top.",
+                a: "SyncHQ connects natively to Figma, Linear, GitHub, and Slack, and exposes a GraphQL API plus webhooks so teams can build any additional automation they need on top.",
             },
             {
                 q: "How is client data secured?",

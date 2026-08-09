@@ -177,7 +177,7 @@ export default function PricingPage() {
                                                                 </div>
 
                                                                 <Link
-                                                                    href="/contactus"
+                                                                    href={`/contactus?plan=${tier.slug}&currency=${currency}`}
                                                                     className={`so-btn mt-auto w-full justify-center ${isPopular ? "so-btn-primary" : "so-btn-ghost"}`}
                                                                 >
                                                                     Select {tier.name}
@@ -219,7 +219,7 @@ export default function PricingPage() {
                             For enterprise requirements, legacy migrations, or specific SLA needs,
                             we offer a bespoke pricing model based on engineering hours and resource allocation.
                         </p>
-                        <Link href="/contactus" className="so-btn so-btn-primary">
+                        <Link href={`/contactus?currency=${currency}`} className="so-btn so-btn-primary">
                             Schedule a Technical Discovery Call <ArrowRight size={13} />
                         </Link>
                     </div>

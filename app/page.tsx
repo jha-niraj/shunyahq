@@ -6,6 +6,7 @@ import {
     IntegrationsSection, TestimonialsSection, FAQSection, CTASection,
     CapabilitiesGrid, ProductBento,
 } from "@/components/landing/landing-sections"
+import { SyncHQSection } from "@/components/landing/synchq-section"
 import { LANDING_FAQS } from "@/components/landing/faq-data"
 
 export const metadata: Metadata = {
@@ -69,6 +70,7 @@ export default function HomePage() {
                 <HowItWorks />
                 <BeforeAfter />
                 <StatsTicker />
+                <SyncHQSection />
                 <IntegrationsSection />
                 <TestimonialsSection />
                 <FAQSection />

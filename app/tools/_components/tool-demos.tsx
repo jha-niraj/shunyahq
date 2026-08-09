@@ -6,7 +6,7 @@ import { ExamCard, ReportDraft, MetricCard, StreamingChat } from "@/components/l
 // landing illustration cards so the visual language stays consistent.
 export function ToolDemo({ slug }: { slug: string; variant?: "card" | "detail" }) {
     switch (slug) {
-        case "syncorbit":
+        case "synchq":
             return (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
                     <ExamCard className="w-full" />

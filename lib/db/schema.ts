@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import { index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export const contact = pgTable(
 	"Contact",
@@ -11,6 +11,9 @@ export const contact = pgTable(
 		name: text("name").notNull(),
 		email: text("email").notNull(),
 		message: text("message").notNull(),
+		/** Did they opt in to the SyncHQ AI intake session at the end of the contact flow?
+		 *  Nullable so records created before the step existed stay valid. */
+		intakeOptIn: boolean("intakeOptIn"),
 		createdAt: timestamp("createdAt", { precision: 3, mode: "date" })
 			.notNull()
 			.defaultNow(),

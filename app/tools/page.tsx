@@ -13,7 +13,7 @@ const PAGE_URL = `${SITE_URL}/tools`
 export const metadata: Metadata = pageMeta({
     title: "Tools - Free Utilities from ShunyaHQ",
     description:
-        "Products and free utilities we ship: SyncOrbit for engineering teams, a project budget estimator, our global rate card, and a technical strategy call.",
+        "Products and free utilities we ship: SyncHQ for engineering teams, a project budget estimator, our global rate card, and a technical strategy call.",
     path: "/tools",
     // Next does not inherit the root opengraph-image into this segment, so it is named
     // explicitly - without it this page ships with no og:image at all.

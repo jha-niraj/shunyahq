@@ -11,6 +11,8 @@ export const CURRENCIES = {
 export type CurrencyKey = keyof typeof CURRENCIES
 
 export type PricingTier = {
+    /** Stable identifier used in the /contactus deep link. Never rename without a redirect. */
+    slug: string
     name: string
     basePrice: number
     suffix: string
@@ -38,19 +40,19 @@ export const PRICING: Record<string, PricingDomain> = {
         icon: "globe",
         tiers: [
             {
-                name: "MVP / Startup", basePrice: 1599, suffix: "starts at", icon: "zap",
+                slug: "mvp", name: "MVP / Startup", basePrice: 1599, suffix: "starts at", icon: "zap",
                 description: "Rapid prototyping and launch for early-stage products.",
                 features: ["Next.js 15 Architecture", "Responsive UI/UX (Tailwind)", "Basic CMS Integration", "Authentication (Auth.js)", "Standard SEO Setup", "Contact Form Integration", "2 Weeks Support"],
                 missing: ["Database Optimization", "Payment Gateway", "Multi-tenant Architecture", "Custom SLA"],
             },
             {
-                name: "Scale / Business", basePrice: 3499, suffix: "starts at", icon: "shield", popular: true,
+                slug: "scale", name: "Scale / Business", basePrice: 3499, suffix: "starts at", icon: "shield", popular: true,
                 description: "Production-grade systems for growing businesses.",
                 features: ["Everything in MVP", "PostgreSQL/Prisma DB", "Payment Gateway (Stripe)", "Admin Dashboard Panel", "Advanced Animations (Framer)", "90+ Performance Score", "30 Days Support"],
                 missing: ["Microservices", "Dedicated DevOps"],
             },
             {
-                name: "Enterprise", basePrice: 8500, suffix: "project scope", icon: "crown",
+                slug: "enterprise", name: "Enterprise", basePrice: 8500, suffix: "project scope", icon: "crown",
                 description: "Complex distributed systems for large organizations.",
                 features: ["Microservices Architecture", "Custom AI/LLM Integration", "Real-time Systems (WebSockets)", "Global CDN Strategy", "RBAC & Audit Logs", "Dedicated Project Manager", "90 Days Priority Support"],
                 missing: [],
@@ -73,4 +75,27 @@ export function startingPrice(domainKey: string): number {
     const d = PRICING[domainKey]
     if (!d) return 0
     return Math.min(...d.tiers.map((t) => t.basePrice))
+}
+
+/** Look up a tier by its slug across every domain. Used to hydrate the contact flow from
+ *  a /pricing deep link, so the budget shown there and the budget captured here cannot drift. */
+export function findTier(slug: string): { domain: PricingDomain; tier: PricingTier } | undefined {
+    for (const domain of Object.values(PRICING)) {
+        const tier = domain.tiers.find((t) => t.slug === slug)
+        if (tier) return { domain, tier }
+    }
+    return undefined
+}
+
+/** The budget bands offered in the contact flow, in the visitor's currency. Derived from PRICING
+ *  so a change to the rate card changes the form too. */
+export function budgetOptions(currency: CurrencyKey): string[] {
+    const web = PRICING.web
+    if (!web) return ["Not sure yet"]
+    return [...web.tiers.map((t) => `${t.name} - from ${formatPrice(t.basePrice, currency)}`), "Not sure yet"]
+}
+
+/** The exact budget option string for a tier, so a prefilled answer matches an option. */
+export function budgetOptionFor(tier: PricingTier, currency: CurrencyKey): string {
+    return `${tier.name} - from ${formatPrice(tier.basePrice, currency)}`
 }

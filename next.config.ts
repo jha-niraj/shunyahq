@@ -37,6 +37,14 @@ const nextConfig: NextConfig = {
             { source: "/services/cloud-architecture", destination: "/services/web-engineering", permanent: true },
             { source: "/services/ui-ux-systems", destination: "/services/web-engineering", permanent: true },
             { source: "/services/system-security", destination: "/services/web-engineering", permanent: true },
+
+            // SyncOrbit was renamed SyncHQ before launch. Nothing was indexed under the old name,
+            // but anything already shared - a link in an email, a bookmark - should land rather
+            // than 404. The tool detail page is retired in favour of the full /synchq product page.
+            { source: "/tools/syncorbit", destination: "/synchq", permanent: true },
+            { source: "/tools/synchq", destination: "/synchq", permanent: true },
+            { source: "/projects/syncorbit", destination: "/projects/synchq", permanent: true },
+            { source: "/blogs/building-syncorbit-case-study", destination: "/blogs/building-synchq-case-study", permanent: true },
         ]
     },
 

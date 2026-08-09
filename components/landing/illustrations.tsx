@@ -4,7 +4,7 @@
  * Reusable, theme-responsive framer-motion illustrations used across the landing
  * and marketing pages. Each one shows a *real* Shunya Tech capability:
  *   - StreamingChat / CitationAnswer  -> AI coding assistant + deploy status
- *   - ExamCard                        -> SyncOrbit kanban / sprint task card
+ *   - ExamCard                        -> SyncHQ kanban / sprint task card
  *   - VouchingScan                    -> CI/CD pipeline build scan (Build->Test->Deploy)
  *   - ReportDraft                     -> live client analytics dashboard
  *   - MiniBarChart / LangToggle       -> dashboards + environment switcher
@@ -123,7 +123,7 @@ export function CitationAnswer({ className }: { className?: string }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 3. SyncOrbit kanban / sprint task card                            */
+/* 3. SyncHQ kanban / sprint task card                            */
 /* ------------------------------------------------------------------ */
 
 export function ExamCard({ className }: { className?: string }) {
@@ -142,7 +142,7 @@ export function ExamCard({ className }: { className?: string }) {
         >
             <div className="mb-2 flex items-center gap-2">
                 <span className="rounded-md bg-neutral-900 px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider text-white dark:bg-white dark:text-neutral-900">
-                    SYNCORBIT
+                    SYNCHQ
                 </span>
                 <span className="font-mono text-[10px] text-neutral-400 dark:text-neutral-500">Sprint 4 · SHU-218</span>
             </div>

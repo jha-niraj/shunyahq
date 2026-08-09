@@ -9,12 +9,12 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
-   Vidhica — SyncOrbit Design System
+   Vidhica - SyncHQ Design System
    Calm editorial aesthetic · Bricolage Grotesque throughout
    Cream/sage palette · Light + Dark mode
    ============================================================ */
 
-/* ── SyncOrbit tokens (public pages) ── */
+/* ── SyncHQ tokens (public pages) ── */
 :root {
   --so-bg: #F6F4EE;
   --so-bg-2: #EFEDE5;
@@ -176,7 +176,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* ── SyncOrbit (so-*) tokens exposed as Tailwind utilities ──
+  /* ── SyncHQ (so-*) tokens exposed as Tailwind utilities ──
      Enables bg-so-surface, text-so-ink, border-so-line, etc. */
   --color-so-bg: var(--so-bg);
   --color-so-bg-2: var(--so-bg-2);
@@ -417,7 +417,7 @@
 .so-nav-link:hover { color: var(--so-ink); background: var(--so-accent-soft); }
 .so-nav-link.is-current { color: var(--so-accent); background: var(--so-accent-soft); font-weight: 650; position: relative; }
 
-/* Light-on-dark variant — used when nav sits over always-dark hero */
+/* Light-on-dark variant - used when nav sits over always-dark hero */
 .so-nav-light .so-nav-logo { color: rgba(245,239,224,0.92); }
 .so-nav-light .so-nav-link { color: rgba(245,239,224,0.55); }
 .so-nav-light .so-nav-link:hover { color: rgba(245,239,224,0.9); background: rgba(245,239,224,0.07); }
@@ -826,7 +826,7 @@ html { scroll-padding-top: 80px; }
    Internal-surface readability layer  (admin app + main app's authenticated app)
    ────────────────────────────────────────────────────────────────────────────
    Scoped to [data-internal] only, so the public marketing pages (which use the
-   SyncOrbit so-ink editorial palette) are NEVER touched. Both the admin <body>
+   SyncHQ so-ink editorial palette) are NEVER touched. Both the admin <body>
    and the main app's internal wrapper carry data-internal.
 
    Goal: muted text reads as near-white in dark mode and near-black in light mode,

@@ -31,8 +31,8 @@ export const LANDING_FAQS: { q: string; a: string }[] = [
         a: "Yes - we modernize monolithic architectures into scalable microservices without downtime. We start with an audit, plan the migration in safe increments, and ship continuously so your product keeps running throughout.",
     },
     {
-        q: "What is SyncOrbit?",
-        a: "SyncOrbit is our centralized command center for high-velocity engineering teams - currently in beta. It unifies code, tasks, and client communication in one real-time interface with Git-integrated Kanban, automated sprint reporting, client view-only portals, and CI/CD pipeline visualization.",
+        q: "What is SyncHQ?",
+        a: "SyncHQ is our centralized command center for high-velocity engineering teams - currently in beta. It unifies code, tasks, and client communication in one real-time interface with Git-integrated Kanban, automated sprint reporting, client view-only portals, and CI/CD pipeline visualization.",
     },
 ]
 

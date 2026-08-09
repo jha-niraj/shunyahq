@@ -54,7 +54,7 @@ const TESTIMONIALS: Testimonial[] = [
         initials: "DW",
     },
     {
-        text: "SyncOrbit has completely changed how we manage sprints. One screen, the real state of everything.",
+        text: "SyncHQ has completely changed how we manage sprints. One screen, the real state of everything.",
         name: "Tom H.",
         role: "Product Manager, AgileCorp",
         initials: "TH",

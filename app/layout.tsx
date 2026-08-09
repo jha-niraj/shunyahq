@@ -6,8 +6,7 @@ import { ThemeProvider } from "@/components/themeprovider"
 import { Providers } from "./providers"
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_LOGO, SITE_ORG, SITE_SOCIALS } from "@/lib/site"
 import SmoothScroll from "@/components/smooth-scroll"
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
+import { SiteHeader, SiteFooter } from "@/components/site-chrome"
 
 // Bricolage Grotesque is the ONLY typeface on the platform - sans, display, mono slots and all.
 // It ships as a variable font, so the full 200-800 weight range comes from one file.
@@ -137,9 +136,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                         disableTransitionOnChange
                     >
                         <SmoothScroll>
-                            <Navbar />
+                            <SiteHeader />
                             {children}
-                            <Footer />
+                            <SiteFooter />
                         </SmoothScroll>
                         <SonnerToaster position="top-center" closeButton richColors />
                     </ThemeProvider>
