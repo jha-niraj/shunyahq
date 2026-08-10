@@ -97,9 +97,6 @@ export interface TypeformFlowProps {
     hideClose?: boolean
     /** Show Back in the form's bottom bar even when a side panel is present. */
     showFormBack?: boolean
-    /** Autosave answers and position to localStorage under this key. On return the flow resumes at
-     *  the first unanswered required step. Cleared on submit. */
-    persistKey?: string
 }
 
 // ─── Animation ────────────────────────────────────────────────────────────────
@@ -169,7 +166,6 @@ export function TypeformFlow({
     headerRight,
     hideClose = false,
     showFormBack = false,
-    persistKey,
 }: TypeformFlowProps) {
     const [currentIdx, setCurrentIdx] = useState(0)
     const [answers, setAnswers] = useState<Record<string, unknown>>(initialAnswers ?? {})
@@ -178,17 +174,10 @@ export function TypeformFlow({
     const [error, setError] = useState<string | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isDone, setIsDone] = useState(false)
-    // Gate the content until any draft has been read, so the welcome screen does not flash before
-    // we jump to the resumed step.
-    const [restored, setRestored] = useState(!persistKey)
 
     // Ref mirror so validation and auto-advance never read a stale closure. Without it, picking a
     // single_choice and immediately advancing reads the pre-select answers and throws "required".
     const answersRef = useRef(answers)
-    const initialAnswersRef = useRef(initialAnswers)
-    initialAnswersRef.current = initialAnswers
-    const stepsRef = useRef(steps)
-    stepsRef.current = steps
     const inputRef = useRef<HTMLInputElement | null>(null)
     const textareaRef = useRef<HTMLTextAreaElement | null>(null)
     const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -234,42 +223,11 @@ export function TypeformFlow({
         return reached - 1
     }, [maxIdx, steps, realSteps])
 
-    // ── Restore a draft on mount ─────────────────────────────────────────────
-    useEffect(() => {
-        if (!persistKey) return
-        try {
-            const raw = window.localStorage.getItem(persistKey)
-            if (raw) {
-                const saved = JSON.parse(raw) as { answers?: Record<string, unknown> }
-                if (saved.answers && typeof saved.answers === "object") {
-                    const merged = { ...saved.answers, ...(initialAnswersRef.current ?? {}) }
-                    setAnswers(merged)
-                    answersRef.current = merged
-                    const list = stepsRef.current
-                    let target = -1
-                    for (let i = 0; i < list.length; i++) {
-                        const s = list[i]
-                        if (!s || s.type === "welcome") continue
-                        if (s.skip && s.skip(merged)) continue
-                        if (s.required && !isStepAnswered(s, merged)) { target = i; break }
-                    }
-                    if (target > 0) { setCurrentIdx(target); setMaxIdx(target) }
-                }
-            }
-        } catch {
-            // A corrupt or unreadable draft must never stop the form loading.
-        }
-        setRestored(true)
-    }, [persistKey])
-
-    // ── Autosave ─────────────────────────────────────────────────────────────
-    useEffect(() => {
-        if (!persistKey || !restored) return
-        if (isDone) { try { window.localStorage.removeItem(persistKey) } catch { } ; return }
-        try {
-            window.localStorage.setItem(persistKey, JSON.stringify({ answers }))
-        } catch { /* quota or private mode - losing the draft is acceptable */ }
-    }, [answers, persistKey, restored, isDone])
+    // Answers live in memory for the length of the visit and nowhere else. There was a
+    // localStorage autosave here; it was removed deliberately. An abandoned draft has no expiry, so
+    // a half-filled form left someone's name and email sitting on the machine indefinitely -
+    // including a shared one - and a silent resume into question five confuses more people than
+    // the saved typing helps.
 
     useEffect(() => () => { if (errorTimerRef.current) clearTimeout(errorTimerRef.current) }, [])
 
@@ -479,7 +437,7 @@ export function TypeformFlow({
                     <div className="relative z-10 flex-1 overflow-y-auto">
                         <div className="mx-auto flex min-h-full w-full max-w-xl items-center px-6 py-8">
                             <AnimatePresence mode="wait" custom={direction}>
-                                {!restored ? null : isDone ? (
+                                {isDone ? (
                                     <ThankYouScreen key="done" title={thankYouTitle} desc={thankYouDesc} actions={thankYouActions} />
                                 ) : currentStep ? (
                                     <motion.div

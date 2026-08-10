@@ -9,14 +9,13 @@ import { SITE_URL } from "@/lib/site"
 export default function robots(): MetadataRoute.Robots {
     const disallow = [
         "/api/",    // API routes (not indexable)
-        "/admin/",  // Internal admin panel
         "/_next/",  // Next.js internals
     ]
 
     return {
         // Every rule repeats `disallow`. A named agent takes the block that names it and ignores
         // `User-agent: *` entirely, so a bare `allow: "/"` here did not inherit the exclusions - it
-        // granted Googlebot and every listed answer engine the run of /admin and /api.
+        // granted Googlebot and every listed answer engine the run of /api.
         rules: [
             { userAgent: "*", allow: "/", disallow },
 

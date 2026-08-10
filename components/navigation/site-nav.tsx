@@ -516,7 +516,7 @@ export function SiteNav() {
                     edge to meet the panel, and a clip here severs the join. */}
                 <div
                     className={cn(
-                        "relative flex w-full items-center gap-1 rounded-[28px] backdrop-blur-xl backdrop-saturate-150 lg:rounded-full",
+                        "relative flex w-full items-center gap-1 rounded-xl backdrop-blur-xl backdrop-saturate-150",
                         "transition-[background-color,box-shadow] duration-300",
                         // No ring or border: an outline here reads as a hard box AND draws a stripe
                         // across the open tab. Depth comes from the shadow alone.

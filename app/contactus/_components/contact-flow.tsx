@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
@@ -37,7 +37,15 @@ const TIMELINES = [
     "Just researching for now",
 ]
 
-const PERSIST_KEY = "shunya.contact.draft.v1"
+/**
+ * The key the flow used to autosave drafts under, before that was removed.
+ *
+ * Still named here only so the leftovers can be deleted. Anyone who part-filled the form before
+ * the change is carrying their name and email in localStorage with no expiry and nothing left that
+ * would ever clear it - dropping the feature without this line would strand that data permanently.
+ * Safe to delete this and the effect below once the site has been live for a while.
+ */
+const LEGACY_DRAFT_KEY = "shunya.contact.draft.v1"
 
 /** A currency code from the query string, or USD. Guards against `?currency=<anything>`. */
 function readCurrency(raw: string | null): CurrencyKey {
@@ -47,6 +55,10 @@ function readCurrency(raw: string | null): CurrencyKey {
 export function ContactFlow() {
     const params = useSearchParams()
     const [submitted, setSubmitted] = useState(false)
+
+    useEffect(() => {
+        try { window.localStorage.removeItem(LEGACY_DRAFT_KEY) } catch { }
+    }, [])
 
     const currency = readCurrency(params.get("currency"))
     const planSlug = params.get("plan")
@@ -144,13 +156,15 @@ export function ContactFlow() {
         },
     ], [match, budgets, currency])
 
-    /** Flatten the answers into the shape the Contact table stores. */
+    /** Compose the answers into the lead SyncHQ receives. */
     async function handleSubmit(answers: Record<string, unknown>) {
         const str = (k: string) => String(answers[k] ?? "").trim()
         const scope = Array.isArray(answers.scope) ? (answers.scope as string[]) : []
 
         const optedIn = answers.intake === true
 
+        // A readable summary as well as the structured fields below. The fields are what SyncHQ
+        // filters and reports on; this is what a human reads first when the lead is opened.
         const lines = [
             `Project type: ${str("projectType") || "Not stated"}`,
             `Needs: ${scope.length ? scope.join(", ") : "Not stated"}`,
@@ -164,19 +178,26 @@ export function ContactFlow() {
         const res = await submitContactForm({
             name: str("name"),
             email: str("email"),
+            company: str("company") || undefined,
             message: lines,
             inquiryType: match ? "PRICING" : "PROJECT",
-            // Stored as its own column too, so the intake queue can be filtered without parsing
-            // the message body.
-            intakeOptIn: optedIn,
+            // Sent as its own flag so the intake queue can be filtered on it rather than parsed
+            // out of the message body.
+            wantsIntake: optedIn,
+            projectType: str("projectType") || undefined,
+            scope: scope.length ? scope : undefined,
+            budget: str("budget") || undefined,
+            timeline: str("timeline") || undefined,
+            plan: match ? `${match.tier.name} (${match.domain.title})` : undefined,
+            currency,
+            page: typeof window === "undefined" ? undefined : window.location.pathname + window.location.search,
         })
 
-        // The flow only shows its success screen when onSubmit resolves, so a failed insert has to
-        // throw - otherwise the visitor sees "sent" for a message that was never stored.
+        // The flow only shows its success screen when onSubmit resolves, so a failed handoff has to
+        // throw - otherwise the visitor sees "sent" for a message that never reached us.
         if (!res.success) throw new Error(res.message)
 
         setSubmitted(true)
-        try { window.localStorage.removeItem(PERSIST_KEY) } catch { }
     }
 
     return (
@@ -185,7 +206,6 @@ export function ContactFlow() {
             initialAnswers={initialAnswers}
             onSubmit={handleSubmit}
             submitLabel="Send it"
-            persistKey={PERSIST_KEY}
             showFormBack
             hideClose
             renderSidePanel={(nav) => <ContactSidePanel nav={nav} prefilled={prefilledLabel} />}
