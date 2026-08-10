@@ -5,6 +5,7 @@ import { ArrowRight, Compass, Layers, GaugeCircle, ShieldCheck } from "lucide-re
 import { SITE_URL } from "@/lib/site"
 import { PageHero } from "@/components/landing/page-hero"
 import { PageBackground } from "@/components/landing/page-background"
+import { Reveal, StaggerContainer, StaggerItem } from "@/components/landing/animations"
 import { CardVisual } from "@/components/landing/card-visuals"
 import { USE_CASES, USE_CASE_SLUGS } from "@/content/use-cases"
 
@@ -84,7 +85,7 @@ export default function SolutionsIndexPage() {
                 <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
                     <div className="so-container">
                         <div className="grid lg:grid-cols-[1fr_auto] gap-x-16 gap-y-10 items-start">
-                            <div>
+                            <Reveal>
                                 <span className="so-eyebrow">How we think about it</span>
                                 <h2 className="mt-5 mb-5 text-[clamp(24px,3vw,36px)] tracking-[-0.025em] text-so-ink max-w-[20ch]">
                                     Same team, shaped to{" "}
@@ -93,8 +94,9 @@ export default function SolutionsIndexPage() {
                                 <p className="text-[15px] leading-[1.8] text-so-ink-2 max-w-[58ch]">
                                     Most agencies sell you a fixed package and bend your problem to fit it. We do the opposite. Whether you are a founder racing a runway, a business modernizing systems that growth has outgrown, an enterprise evolving distributed platforms under real compliance pressure, or a product team fighting for velocity, the engineering is the same caliber. What changes is how we scope, what we prioritize, and how we measure done. Pick the path that matches where you are today and you will see exactly how we would work with you.
                                 </p>
-                            </div>
-                            <dl className="grid grid-cols-2 gap-px bg-so-line rounded-xl overflow-hidden border border-so-line w-full lg:w-[320px]">
+                            </Reveal>
+                            <Reveal delay={0.12} direction="left" className="w-full lg:w-[320px]">
+                                <dl className="grid grid-cols-2 gap-px bg-so-line rounded-xl overflow-hidden border border-so-line w-full">
                                 {STATS.map((s) => (
                                     <div key={s.label} className="bg-so-bg p-5">
                                         <dt className="text-[clamp(22px,3vw,28px)] font-semibold tracking-[-0.02em] text-so-ink">
@@ -105,25 +107,28 @@ export default function SolutionsIndexPage() {
                                         </dd>
                                     </div>
                                 ))}
-                            </dl>
+                                </dl>
+                            </Reveal>
                         </div>
                     </div>
                 </section>
 
                 <section className="relative z-[1] bg-so-surface so-section border-t border-so-line">
                     <div className="so-container">
-                        <span className="so-eyebrow">Who we build for</span>
-                        <h2 className="mt-5 mb-12 text-[clamp(26px,3.4vw,40px)] tracking-[-0.025em] text-so-ink max-w-[24ch]">
-                            Pick the path that fits{" "}
-                            <span className="so-serif italic">your stage.</span>
-                        </h2>
+                        <Reveal>
+                            <span className="so-eyebrow">Who we build for</span>
+                            <h2 className="mt-5 mb-12 text-[clamp(26px,3.4vw,40px)] tracking-[-0.025em] text-so-ink max-w-[24ch]">
+                                Pick the path that fits{" "}
+                                <span className="so-serif italic">your stage.</span>
+                            </h2>
+                        </Reveal>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             {USE_CASE_SLUGS.map((slug) => {
                                 const useCase = USE_CASES[slug]
                                 return (
+                                    <StaggerItem key={slug} className="h-full">
                                     <Link
-                                        key={slug}
                                         href={`/solutions/${slug}`}
                                         className="group so-card h-full flex flex-col overflow-hidden hover:shadow-md transition-all"
                                     >
@@ -152,25 +157,28 @@ export default function SolutionsIndexPage() {
                                             </span>
                                         </div>
                                     </Link>
+                                    </StaggerItem>
                                 )
                             })}
-                        </div>
+                        </StaggerContainer>
                     </div>
                 </section>
 
                 <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
                     <div className="so-container">
+                        <Reveal>
                         <span className="so-eyebrow">How we approach solutions</span>
                         <h2 className="mt-5 mb-12 text-[clamp(26px,3.4vw,40px)] tracking-[-0.025em] text-so-ink max-w-[26ch]">
                             Four principles behind{" "}
                             <span className="so-serif italic">every engagement.</span>
                         </h2>
+                        </Reveal>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-so-line rounded-xl overflow-hidden border border-so-line">
+                        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-so-line rounded-xl overflow-hidden border border-so-line">
                             {APPROACH.map((item) => {
                                 const Icon = item.icon
                                 return (
-                                    <div key={item.title} className="bg-so-bg p-7 sm:p-8">
+                                    <StaggerItem key={item.title} className="bg-so-bg p-7 sm:p-8">
                                         <div className="flex items-center justify-center w-11 h-11 mb-5 rounded-xl bg-so-surface-2 text-so-ink">
                                             <Icon size={20} />
                                         </div>
@@ -180,16 +188,16 @@ export default function SolutionsIndexPage() {
                                         <p className="text-[14px] leading-[1.7] text-so-ink-2">
                                             {item.body}
                                         </p>
-                                    </div>
+                                    </StaggerItem>
                                 )
                             })}
-                        </div>
+                        </StaggerContainer>
                     </div>
                 </section>
 
                 <section className="relative z-[1] bg-so-surface so-section border-t border-so-line">
                     <div className="so-container">
-                        <div className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
+                        <Reveal className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
                             <span className="so-eyebrow">Not sure where you fit?</span>
                             <h2 className="mt-5 mb-4 text-[clamp(28px,4vw,46px)] tracking-[-0.03em] text-so-ink max-w-[20ch]">
                                 Tell us what you&apos;re{" "}
@@ -206,7 +214,7 @@ export default function SolutionsIndexPage() {
                                     See our work <ArrowRight size={13} />
                                 </Link>
                             </div>
-                        </div>
+                        </Reveal>
                     </div>
                 </section>
             </main>

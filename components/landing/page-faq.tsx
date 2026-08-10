@@ -1,9 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useId, useState } from "react"
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { Plus, X } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { EASE } from "./animations"
 
 export type FaqItem = { q: string; a: string }
 
@@ -12,16 +14,29 @@ interface PageFAQProps {
     eyebrow?: string
     /** Plain part of the heading */
     title?: string
-    /** Muted/accent second line of the heading */
+    /** Muted second line of the heading */
     titleAccent?: string
     description?: string
-    /** When true, the section emits FAQPage JSON-LD for SEO */
+    /** When true, the section emits FAQPage JSON-LD. Turn OFF on pages that already emit their own. */
     withSchema?: boolean
+    /** Anchor id. Only one element per page may own `faq`. */
+    id?: string
+    /**
+     * Overrides the width/padding wrapper. The default is the full-bleed marketing measure; pass
+     * something tighter when dropping this inside an existing column (e.g. an article body).
+     */
+    containerClassName?: string
+    /** Hide the call-to-action pair under the heading. */
+    showCta?: boolean
 }
 
 /**
- * Reusable FAQ section that matches the landing-page FAQ design (sticky heading
- * on the left, accordion on the right). Drop it on any page with its own items.
+ * The one FAQ on the platform.
+ *
+ * Sticky heading on the left, accordion on the right. The landing page, service pages, solution
+ * pages, tools, pricing, the accelerator and blog posts all render THIS component with different
+ * items and a different left-hand heading - there is deliberately no second FAQ implementation to
+ * drift away from it.
  */
 export function PageFAQ({
     items,
@@ -30,8 +45,14 @@ export function PageFAQ({
     titleAccent = "answered",
     description = "Everything you need to know before starting a project.",
     withSchema = true,
+    id = "faq",
+    containerClassName = "mx-auto max-w-6xl px-6 py-24 md:py-32",
+    showCta = true,
 }: PageFAQProps) {
     const [open, setOpen] = useState<number | null>(0)
+    const reduced = useReducedMotion()
+    // Panels need ids the buttons can point at, and this component can appear twice in one tree.
+    const uid = useId()
 
     const faqSchema = {
         "@context": "https://schema.org",
@@ -43,87 +64,123 @@ export function PageFAQ({
         })),
     }
 
+    if (!items.length) return null
+
     return (
-        <section id="faq" className="relative">
-            {withSchema && (
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-                />
-            )}
-            <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
-                <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_1.4fr]">
+        <section id={id} className="relative">
+            {
+                withSchema && (
+                    <script
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+                    />
+                )
+            }
+            <div className={containerClassName}>
+                <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: reduced ? 0 : 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                        viewport={{ once: true, margin: "-60px" }}
+                        transition={{ duration: reduced ? 0.25 : 0.65, ease: EASE }}
                         className="flex flex-col justify-start lg:sticky lg:top-24 lg:self-start"
                     >
-                        <p className="mb-5 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
+                        <p className="mb-5 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-so-ink-4">
                             {eyebrow}
                         </p>
-                        <h2 className="text-4xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-white md:text-5xl">
+                        <h2 className="text-4xl font-bold leading-tight tracking-tight text-so-ink md:text-5xl">
                             {title}{" "}
                             <br />
-                            <span className="text-neutral-500 dark:text-neutral-400">{titleAccent}</span>
+                            <span className="text-so-ink-3">{titleAccent}</span>
                         </h2>
-                        <p className="mt-6 max-w-sm text-base text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                        <p className="mt-6 max-w-sm text-base leading-relaxed text-so-ink-3">
                             {description}
                         </p>
-                        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-                            <Link
-                                href="/contactus"
-                                className="inline-flex items-center justify-center gap-2 rounded-xl bg-neutral-900 dark:bg-white px-6 py-3 text-sm font-semibold text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-all"
-                            >
-                                Start a Project
-                            </Link>
-                            <Link
-                                href="/contactus"
-                                className="inline-flex items-center justify-center gap-2 rounded-xl border border-neutral-200 dark:border-neutral-700 px-6 py-3 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all"
-                            >
-                                Contact Us
-                            </Link>
-                        </div>
+                        {
+                            showCta && (
+                                <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+                                    <Link
+                                        href="/contactus"
+                                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-so-ink px-6 py-3 text-sm font-semibold text-so-bg transition-opacity hover:opacity-90"
+                                    >
+                                        Start a Project
+                                    </Link>
+                                    <Link
+                                        href="/contactus"
+                                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-so-line px-6 py-3 text-sm font-medium text-so-ink-2 transition-colors hover:bg-so-surface-2"
+                                    >
+                                        Contact Us
+                                    </Link>
+                                </div>
+                            )
+                        }
                     </motion.div>
                     <div>
-                        {items.map((faq, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 8 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.4, delay: i * 0.04 }}
-                                className="border-b border-neutral-200 dark:border-neutral-800"
-                            >
-                                <button
-                                    onClick={() => setOpen(open === i ? null : i)}
-                                    className="flex w-full cursor-pointer items-center justify-between gap-4 py-5 text-left"
-                                >
-                                    <span className="text-base font-medium text-neutral-900 dark:text-white">
-                                        {faq.q}
-                                    </span>
-                                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-neutral-300 dark:border-neutral-600 text-neutral-500 dark:text-neutral-400 transition-all">
-                                        {open === i ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
-                                    </span>
-                                </button>
-                                <AnimatePresence>
-                                    {open === i && (
-                                        <motion.div
-                                            initial={{ height: 0, opacity: 0 }}
-                                            animate={{ height: "auto", opacity: 1 }}
-                                            exit={{ height: 0, opacity: 0 }}
-                                            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
-                                            className="overflow-hidden"
+                        {
+                            items.map((faq, i) => {
+                                const isOpen = open === i
+                                const panelId = `${uid}-panel-${i}`
+                                const buttonId = `${uid}-button-${i}`
+
+                                return (
+                                    <motion.div
+                                        key={faq.q}
+                                        initial={{ opacity: 0, y: reduced ? 0 : 8 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, margin: "-40px" }}
+                                        transition={{
+                                            duration: reduced ? 0.25 : 0.45,
+                                            delay: reduced ? 0 : i * 0.04,
+                                            ease: EASE,
+                                        }}
+                                        className="border-b border-so-line"
+                                    >
+                                        <button
+                                            id={buttonId}
+                                            type="button"
+                                            aria-expanded={isOpen}
+                                            aria-controls={panelId}
+                                            onClick={() => setOpen(isOpen ? null : i)}
+                                            className="flex w-full cursor-pointer items-center justify-between gap-4 py-5 text-left"
                                         >
-                                            <p className="pb-5 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400 md:text-base">
-                                                {faq.a}
-                                            </p>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </motion.div>
-                        ))}
+                                            <span className="text-base font-medium text-so-ink">
+                                                {faq.q}
+                                            </span>
+                                            <span
+                                                className={cn(
+                                                    "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors",
+                                                    isOpen
+                                                        ? "border-so-ink text-so-ink"
+                                                        : "border-so-ink-5 text-so-ink-3",
+                                                )}
+                                            >
+                                                {isOpen ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+                                            </span>
+                                        </button>
+                                        <AnimatePresence initial={false}>
+                                            {
+                                                isOpen && (
+                                                    <motion.div
+                                                        id={panelId}
+                                                        role="region"
+                                                        aria-labelledby={buttonId}
+                                                        initial={{ height: 0, opacity: 0 }}
+                                                        animate={{ height: "auto", opacity: 1 }}
+                                                        exit={{ height: 0, opacity: 0 }}
+                                                        transition={{ duration: reduced ? 0.01 : 0.28, ease: EASE }}
+                                                        className="overflow-hidden"
+                                                    >
+                                                        <p className="pb-5 text-sm leading-relaxed text-so-ink-2 md:text-base">
+                                                            {faq.a}
+                                                        </p>
+                                                    </motion.div>
+                                                )
+                                            }
+                                        </AnimatePresence>
+                                    </motion.div>
+                                )
+                            })
+                        }
                     </div>
                 </div>
             </div>

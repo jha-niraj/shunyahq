@@ -4,7 +4,6 @@ import { BLOG_CATEGORY_KEYS, getPublishedPosts } from "@/content/blog"
 import { USE_CASE_SLUGS } from "@/content/use-cases"
 import { SERVICE_SLUGS } from "@/content/services"
 import { PROJECTS } from "@/content/projects"
-import { STARTUP_IDS } from "@/content/accelerator-startups"
 import { PRODUCT_TOOLS } from "./tools/tools-meta"
 
 /**
@@ -31,9 +30,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
         tools: [0.7, "monthly"],
         aboutus: [0.7, "monthly"],
         contactus: [0.7, "monthly"],
-        accelerator: [0.6, "monthly"],
-        "accelerator/pricing": [0.5, "monthly"],
-        "accelerator/startups": [0.5, "weekly"],
         privacy: [0.2, "yearly"],
         terms: [0.2, "yearly"],
     }
@@ -93,14 +89,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.7,
     }))
 
-    // Indexable and internally linked, so they belong here - they were missing entirely.
-    const startupEntries: MetadataRoute.Sitemap = STARTUP_IDS.map((id) => ({
-        url: `${SITE_URL}/accelerator/startups/${id}`,
-        lastModified: STATIC_LAST_MODIFIED,
-        changeFrequency: "monthly",
-        priority: 0.4,
-    }))
-
     const blogTopicEntries: MetadataRoute.Sitemap = BLOG_CATEGORY_KEYS.map((key) => ({
         url: `${SITE_URL}/blogs/topics/${key}`,
         lastModified: newestPostModified,
@@ -114,7 +102,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
         ...projectEntries,
         ...solutionEntries,
         ...toolEntries,
-        ...startupEntries,
         ...blogPostEntries,
         ...blogTopicEntries,
     ]

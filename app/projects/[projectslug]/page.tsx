@@ -15,6 +15,7 @@ import {
 import { PageHero } from "@/components/landing/page-hero"
 import { PageBackground } from "@/components/landing/page-background"
 import { PageFAQ } from "@/components/landing/page-faq"
+import { Reveal, StaggerContainer, StaggerItem } from "@/components/landing/animations"
 import { TechBadge } from "@/components/landing/tech-icon"
 import { ProjectApproach } from "@/components/projects/project-approach"
 import { PROJECTS, getProjectBySlug } from "@/content/projects"
@@ -119,6 +120,7 @@ export default async function ProjectCaseStudyPage({
             <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
                 <div className="so-container">
                     {/* Back link */}
+                    <Reveal distance={12} className="mb-10">
                     <Link
                         href="/projects"
                         className="group inline-flex items-center gap-2 text-[13.5px] text-so-ink-3 hover:text-so-ink transition-colors mb-10"
@@ -128,9 +130,10 @@ export default async function ProjectCaseStudyPage({
                         </span>
                         All work
                     </Link>
+                    </Reveal>
 
                     {/* Meta strip + live link */}
-                    <div className="so-card p-6 mb-12 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                    <Reveal delay={0.06} className="so-card p-6 mb-12 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 flex-1">
                             {metaItems.map(({ icon: Icon, label, value }) => (
                                 <div key={label} className="flex items-start gap-3">
@@ -152,11 +155,11 @@ export default async function ProjectCaseStudyPage({
                         >
                             Visit live site <ExternalLink className="w-4 h-4" />
                         </Link>
-                    </div>
+                    </Reveal>
 
                     {/* Hero visual: screenshot or branded SVG panel */}
                     {project.image ? (
-                        <div className="relative aspect-video w-full overflow-hidden rounded-[var(--so-radius-lg)] border border-so-line bg-so-surface-2 mb-16">
+                        <Reveal delay={0.12} className="relative aspect-video w-full overflow-hidden rounded-[var(--so-radius-lg)] border border-so-line bg-so-surface-2 mb-16">
                             <Image
                                 src={project.image}
                                 alt={`${project.title} - product screenshot`}
@@ -164,65 +167,75 @@ export default async function ProjectCaseStudyPage({
                                 className="object-cover"
                                 priority
                             />
-                        </div>
+                        </Reveal>
                     ) : (
                         <BrandedPanel title={project.title} tagline={project.tagline} />
                     )}
 
                     {/* Overview */}
-                    <section className="max-w-3xl mb-16">
+                    <Reveal className="max-w-3xl mb-16">
+                        <section>
                         <span className="so-eyebrow">Overview</span>
                         <h2 className="mt-5 text-[clamp(22px,2.6vw,30px)] tracking-[-0.02em] text-so-ink leading-[1.25]">
                             {project.description}
                         </h2>
-                    </section>
+                        </section>
+                    </Reveal>
 
                     {/* Challenge + What we built */}
-                    <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 mb-20">
-                        <section className="so-card p-7 lg:p-9">
-                            <span className="so-eyebrow">The Challenge</span>
-                            <p className="mt-5 text-[15.5px] leading-[1.8] text-so-ink-2">
-                                {project.challenge}
-                            </p>
-                        </section>
-                        <section className="so-card p-7 lg:p-9">
-                            <span className="so-eyebrow">What We Built</span>
-                            <p className="mt-5 text-[15.5px] leading-[1.8] text-so-ink-2">
-                                {project.whatWeBuilt}
-                            </p>
-                        </section>
-                    </div>
+                    <StaggerContainer className="grid lg:grid-cols-2 gap-10 lg:gap-14 mb-20">
+                        <StaggerItem>
+                            <section className="so-card p-7 lg:p-9 h-full">
+                                <span className="so-eyebrow">The Challenge</span>
+                                <p className="mt-5 text-[15.5px] leading-[1.8] text-so-ink-2">
+                                    {project.challenge}
+                                </p>
+                            </section>
+                        </StaggerItem>
+                        <StaggerItem>
+                            <section className="so-card p-7 lg:p-9 h-full">
+                                <span className="so-eyebrow">What We Built</span>
+                                <p className="mt-5 text-[15.5px] leading-[1.8] text-so-ink-2">
+                                    {project.whatWeBuilt}
+                                </p>
+                            </section>
+                        </StaggerItem>
+                    </StaggerContainer>
 
                     <ProjectApproach steps={project.approach} />
 
                     {/* Key capabilities */}
                     <section className="mb-20">
-                        <div className="flex items-center gap-4 mb-8">
-                            <span className="so-eyebrow shrink-0">Key Capabilities</span>
-                            <span className="h-px flex-1 bg-so-line" />
-                        </div>
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <Reveal>
+                            <div className="flex items-center gap-4 mb-8">
+                                <span className="so-eyebrow shrink-0">Key Capabilities</span>
+                                <span className="h-px flex-1 bg-so-line" />
+                            </div>
+                        </Reveal>
+                        <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                             {project.keyCapabilities.map((cap) => (
-                                <div key={cap.title} className="so-card p-6 h-full flex flex-col">
+                                <StaggerItem key={cap.title} className="so-card p-6 h-full flex flex-col">
                                     <CheckCircle2 className="w-5 h-5 text-so-ink mb-4" />
                                     <h3 className="text-[16px] font-semibold text-so-ink mb-2 tracking-[-0.01em]">
                                         {cap.title}
                                     </h3>
                                     <p className="text-[14px] leading-[1.7] text-so-ink-2">{cap.body}</p>
-                                </div>
+                                </StaggerItem>
                             ))}
-                        </div>
+                        </StaggerContainer>
                     </section>
 
                     {/* Outcomes */}
                     <section className="mb-20">
-                        <div className="flex items-center gap-4 mb-8">
-                            <span className="so-eyebrow shrink-0">Outcomes</span>
-                            <span className="h-px flex-1 bg-so-line" />
-                        </div>
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Reveal>
+                            <div className="flex items-center gap-4 mb-8">
+                                <span className="so-eyebrow shrink-0">Outcomes</span>
+                                <span className="h-px flex-1 bg-so-line" />
+                            </div>
+                        </Reveal>
+                        <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                             {project.outcomes.map((o) => (
-                                <div
+                                <StaggerItem
                                     key={o.label}
                                     className="so-card p-7 text-center flex flex-col items-center justify-center"
                                 >
@@ -232,22 +245,26 @@ export default async function ProjectCaseStudyPage({
                                     <div className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-so-ink-3 mt-3 leading-snug">
                                         {o.label}
                                     </div>
-                                </div>
+                                </StaggerItem>
                             ))}
-                        </div>
+                        </StaggerContainer>
                     </section>
 
                     {/* Tech stack */}
                     <section className="mb-4">
-                        <div className="flex items-center gap-4 mb-8">
-                            <span className="so-eyebrow shrink-0">Tech Stack</span>
-                            <span className="h-px flex-1 bg-so-line" />
-                        </div>
-                        <div className="flex flex-wrap gap-2.5">
+                        <Reveal>
+                            <div className="flex items-center gap-4 mb-8">
+                                <span className="so-eyebrow shrink-0">Tech Stack</span>
+                                <span className="h-px flex-1 bg-so-line" />
+                            </div>
+                        </Reveal>
+                        <StaggerContainer className="flex flex-wrap gap-2.5" stagger={0.04}>
                             {project.technologies.map((tech) => (
-                                <TechBadge key={tech} name={tech} className="px-4 py-2 text-[13px]" />
+                                <StaggerItem key={tech}>
+                                    <TechBadge name={tech} className="px-4 py-2 text-[13px]" />
+                                </StaggerItem>
                             ))}
-                        </div>
+                        </StaggerContainer>
                     </section>
                 </div>
             </section>
@@ -266,7 +283,7 @@ export default async function ProjectCaseStudyPage({
             {/* CTA */}
             <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
                 <div className="so-container">
-                    <div className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
+                    <Reveal className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
                         <span className="so-eyebrow">Like what you see?</span>
                         <h2 className="mt-5 mb-4 text-[clamp(28px,4vw,46px)] tracking-[-0.03em] text-so-ink max-w-[22ch]">
                             Let&apos;s ship something{" "}
@@ -284,7 +301,7 @@ export default async function ProjectCaseStudyPage({
                                 All work <ArrowRight size={13} />
                             </Link>
                         </div>
-                    </div>
+                    </Reveal>
                 </div>
             </section>
         </main>

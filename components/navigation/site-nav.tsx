@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import {
     ChevronDown, Menu, X, ArrowRight, Code2, Rocket, Building2, Users,
     Briefcase, Wallet, Compass, ArrowLeftRight, FolderOpen, Lightbulb,
-    Terminal, Orbit, Calculator, Heart, GraduationCap, Layers, BookOpen,
+    Terminal, Orbit, Calculator, GraduationCap, Layers, BookOpen,
     Cpu, Scale, CalendarDays, Package,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -55,8 +55,7 @@ type Item = { title: string; href: string; description: string; icon: React.Elem
  *    service, because the menu kept its name after the studio narrowed to web engineering. Three of
  *    its four entries belonged at top level.
  *  - **`Company` was a junk drawer.** About, Blog, Accelerator and Contact share nothing except not
- *    fitting elsewhere. Blog is reading material, Accelerator is an offering, Contact is the CTA
- *    two inches to the right.
+ *    fitting elsewhere. Blog is reading material, Contact is the CTA two inches to the right.
  *  - **Six `/blogs/topics/*` hubs had no nav entry.** Every one has published posts and none was
  *    reachable from the nav - the same defect on 50 posts' worth of content.
  *  - **The six project pages were unreachable** except through the `/projects` index, which is the
@@ -69,7 +68,9 @@ type Item = { title: string; href: string; description: string; icon: React.Elem
  *  2. **Work** - "have you done this before". All six case studies, direct.
  *  3. **Pricing** - direct link.
  *  4. **Insights** - "help me decide". The six topic hubs, plus every article and the free tools.
- *  5. **Company** - "who are you". About, the accelerator, and its portfolio.
+ *  5. **Company** - "who are you". A direct link to About: the accelerator and its startup
+ *     portfolio have been removed from the site, and a menu holding one row is worse than the row
+ *     itself - the same mistake the old `Tools` slot made from the other direction.
  *
  * Every href resolves against the real route tree - `/services/*` and `/solutions/*` from the
  * content layer, `/projects/*` from PROJECTS, `/blogs/topics/*` only for categories with published
@@ -179,18 +180,12 @@ const TOOL_LINKS: Item[] = PRODUCT_TOOLS.filter((t) => !t.href).map((t) => ({
     icon: TOOL_ICONS[t.slug] ?? Layers,
 }))
 
-const COMPANY_LINKS: Item[] = [
-    { title: "About us", href: "/aboutus", description: "How we work, and who is behind it", icon: Heart },
-    { title: "Accelerator", href: "/accelerator", description: "Equity-friendly builds for founders", icon: Rocket },
-    { title: "Accelerator startups", href: "/accelerator/startups", description: "The companies in the programme", icon: GraduationCap },
-]
-
 const NAV_ITEMS: { name: string; href?: string }[] = [
     { name: "Services" },
     { name: "Work" },
     { name: "Pricing", href: "/pricing" },
     { name: "Insights" },
-    { name: "Company" },
+    { name: "Company", href: "/aboutus" },
 ]
 
 /**
@@ -411,20 +406,6 @@ function InsightsDropdown({ onSelect }: { onSelect: () => void }) {
     )
 }
 
-/** Every non-mega menu, from one component, so a change to the panel is a change to all of them. */
-function SimpleDropdown({ heading, items, onSelect }: { heading: string; items: Item[]; onSelect: () => void }) {
-    return (
-        <div className="w-[368px]">
-            <PanelHeading>{heading}</PanelHeading>
-            <div className="flex flex-col p-3">
-                {items.map((item) => (
-                    <DropdownRow key={item.href} item={item} onSelect={onSelect} />
-                ))}
-            </div>
-        </div>
-    )
-}
-
 // Mobile: items with `links` render as an accordion; items with `href` are plain links. Mobile nav
 // failures cost conversions disproportionately here - buyers research on a phone long before they
 // open a laptop - so this mirrors the desktop IA exactly rather than simplifying it.
@@ -455,7 +436,7 @@ const MOBILE_NAV: MobileNavItem[] = [
         ],
         viewAll: { name: "Read every article", href: "/blogs" },
     },
-    { name: "Company", links: COMPANY_LINKS.map(({ title, href, icon }) => ({ title, href, icon })) },
+    { name: "Company", href: "/aboutus" },
 ]
 
 export function SiteNav() {
@@ -520,7 +501,6 @@ export function SiteNav() {
         if (name === "Services") return <ServicesDropdown onSelect={close} />
         if (name === "Work") return <WorkDropdown onSelect={close} />
         if (name === "Insights") return <InsightsDropdown onSelect={close} />
-        if (name === "Company") return <SimpleDropdown heading="Who is behind this" items={COMPANY_LINKS} onSelect={close} />
         return null
     }
 
@@ -717,7 +697,7 @@ export function SiteNav() {
                             onClick={() => setMenuOpen((v) => !v)}
                             aria-label="Toggle menu"
                             aria-expanded={menuOpen}
-                            className="rounded-full p-2 text-so-ink"
+                            className="cursor-pointer rounded-full p-2 text-so-ink"
                         >
                             {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                         </button>

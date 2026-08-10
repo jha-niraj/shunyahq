@@ -124,6 +124,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
                 />
+                {/* Scroll reveals server-render at opacity:0 and only become visible once framer
+                    hydrates. On a content site that would mean the blog grid is blank to anything
+                    that does not run JS. `so-anim` is on every motion primitive, and !important in
+                    a stylesheet outranks framer's inline style, so the no-JS render is complete. */}
+                <noscript>
+                    <style
+                        dangerouslySetInnerHTML={{
+                            __html: ".so-anim{opacity:1!important;transform:none!important}",
+                        }}
+                    />
+                </noscript>
             </head>
             <body
                 className={`${bricolage.className} ${bricolage.variable} antialiased`}

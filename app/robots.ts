@@ -14,25 +14,28 @@ export default function robots(): MetadataRoute.Robots {
     ]
 
     return {
+        // Every rule repeats `disallow`. A named agent takes the block that names it and ignores
+        // `User-agent: *` entirely, so a bare `allow: "/"` here did not inherit the exclusions - it
+        // granted Googlebot and every listed answer engine the run of /admin and /api.
         rules: [
             { userAgent: "*", allow: "/", disallow },
 
             // Search
-            { userAgent: "Googlebot", allow: "/" },
-            { userAgent: "Googlebot-Image", allow: "/" },
-            { userAgent: "Bingbot", allow: "/" },
+            { userAgent: "Googlebot", allow: "/", disallow },
+            { userAgent: "Googlebot-Image", allow: "/", disallow },
+            { userAgent: "Bingbot", allow: "/", disallow },
 
             // Answer engines / LLM crawlers
-            { userAgent: "GPTBot", allow: "/" },
-            { userAgent: "OAI-SearchBot", allow: "/" },
-            { userAgent: "ChatGPT-User", allow: "/" },
-            { userAgent: "ClaudeBot", allow: "/" },
-            { userAgent: "Claude-Web", allow: "/" },
-            { userAgent: "PerplexityBot", allow: "/" },
-            { userAgent: "Google-Extended", allow: "/" },
-            { userAgent: "Amazonbot", allow: "/" },
-            { userAgent: "Applebot", allow: "/" },
-            { userAgent: "Applebot-Extended", allow: "/" },
+            { userAgent: "GPTBot", allow: "/", disallow },
+            { userAgent: "OAI-SearchBot", allow: "/", disallow },
+            { userAgent: "ChatGPT-User", allow: "/", disallow },
+            { userAgent: "ClaudeBot", allow: "/", disallow },
+            { userAgent: "Claude-Web", allow: "/", disallow },
+            { userAgent: "PerplexityBot", allow: "/", disallow },
+            { userAgent: "Google-Extended", allow: "/", disallow },
+            { userAgent: "Amazonbot", allow: "/", disallow },
+            { userAgent: "Applebot", allow: "/", disallow },
+            { userAgent: "Applebot-Extended", allow: "/", disallow },
         ],
         sitemap: `${SITE_URL}/sitemap.xml`,
         host: SITE_URL,

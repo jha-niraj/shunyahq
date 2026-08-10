@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { Reveal } from "@/components/landing/animations"
 import {
     Check, X, Zap, Shield, Crown, Globe, Smartphone, Clapperboard, Server,
     ArrowRight
@@ -53,7 +54,7 @@ export default function PricingPage() {
                         className="space-y-10"
                     >
                         {/* Controls: service tabs + currency switcher */}
-                        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+                        <Reveal className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between" distance={14}>
                             {/* The studio offers one service, so a one-item tab strip would be a
                                 dead control. It renders only if a second domain is ever added. */}
                             <div className={`overflow-x-auto pb-1 -mx-4 px-4 lg:mx-0 lg:px-0 scrollbar-hide ${Object.keys(pricingData).length < 2 ? "hidden" : ""}`}>
@@ -92,7 +93,7 @@ export default function PricingPage() {
                                     }
                                 </div>
                             </div>
-                        </div>
+                        </Reveal>
 
                         {/* Active domain description */}
                         <AnimatePresence mode="wait">
@@ -209,7 +210,7 @@ export default function PricingPage() {
 
             <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
                 <div className="so-container">
-                    <div className="so-card flex flex-col items-center p-[clamp(32px,5vw,64px)] text-center">
+                    <Reveal className="so-card flex flex-col items-center p-[clamp(32px,5vw,64px)] text-center">
                         <span className="so-eyebrow">Need a Custom Configuration?</span>
                         <h2 className="mt-5 mb-4 max-w-[22ch] text-[clamp(28px,4vw,46px)] tracking-[-0.03em] text-so-ink">
                             Built around your{" "}
@@ -222,7 +223,7 @@ export default function PricingPage() {
                         <Link href={`/contactus?currency=${currency}`} className="so-btn so-btn-primary">
                             Schedule a Technical Discovery Call <ArrowRight size={13} />
                         </Link>
-                    </div>
+                    </Reveal>
                 </div>
             </section>
         </main>

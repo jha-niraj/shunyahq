@@ -8,6 +8,7 @@ import { PageBackground } from "@/components/landing/page-background"
 import { PostCard, CATEGORY_BADGE } from "./_components/post-card"
 import { pageMeta } from "@/lib/seo"
 import { TopicGlyph } from "@/components/blog/topic-glyph"
+import { Reveal, StaggerContainer, StaggerItem } from "@/components/landing/animations"
 
 const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -86,40 +87,52 @@ export default function BlogPage() {
                         featured && (
                             <section className="pt-[clamp(36px,4.5vw,56px)] pb-[clamp(20px,2.5vw,28px)]">
                                 <div className="so-container">
-                                    <Link
-                                        href={`/blogs/${featured[0]}`}
-                                        className="group block rounded-2xl overflow-hidden so-card hover:shadow-lg transition-all"
-                                    >
-                                        <div className="grid grid-cols-1 lg:grid-cols-2">
-                                            <div
-                                                className="aspect-video lg:aspect-auto lg:min-h-[280px] bg-cover bg-center bg-so-accent-soft"
-                                                style={{
-                                                    backgroundImage: `url(/blogs/${featured[0]}/opengraph-image)`,
-                                                }}
-                                            />
-                                            <div className="p-8 lg:p-10 flex flex-col justify-center">
-                                                <div className="flex items-center gap-3 mb-4">
-                                                    <span
-                                                        className={`px-2.5 py-1 rounded-full text-[11px] font-medium border ${CATEGORY_BADGE}`}
-                                                    >
-                                                        {BLOG_CATEGORIES[featured[1].category]}
-                                                    </span>
-                                                    <span className="text-[12px] text-so-ink-3">
-                                                        {featured[1].readingTime} min read
-                                                    </span>
+                                    {/* The featured card keeps its visible title: it is the widest
+                                        card on the page, the cover sits beside the copy rather than
+                                        above it, and the headline is doing the work of a lede here
+                                        rather than repeating what is directly under it. */}
+                                    <Reveal>
+                                        <Link
+                                            href={`/blogs/${featured[0]}`}
+                                            className="group block rounded-2xl overflow-hidden so-card hover:shadow-lg transition-all"
+                                        >
+                                            <div className="grid grid-cols-1 lg:grid-cols-2">
+                                                <div className="overflow-hidden">
+                                                    <div
+                                                        className="aspect-video lg:aspect-auto lg:h-full lg:min-h-[280px] bg-cover bg-center bg-so-accent-soft transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                                                        style={{
+                                                            backgroundImage: `url(/blogs/${featured[0]}/opengraph-image)`,
+                                                        }}
+                                                    />
                                                 </div>
-                                                <h2 className="so-serif text-balance group-hover:opacity-80 transition-opacity text-[clamp(20px,2.5vw,28px)] text-so-ink tracking-[-0.015em]">
-                                                    {featured[1].title}
-                                                </h2>
-                                                <p className="mt-3 text-[14px] leading-relaxed line-clamp-3 text-so-ink-2">
-                                                    {featured[1].description}
-                                                </p>
-                                                <div className="mt-5 flex items-center gap-2 text-[13px] font-medium text-so-accent">
-                                                    Read article <ArrowRight size={13} />
+                                                <div className="p-8 lg:p-10 flex flex-col justify-center">
+                                                    <div className="flex items-center gap-3 mb-4">
+                                                        <span
+                                                            className={`px-2.5 py-1 rounded-full text-[11px] font-medium border ${CATEGORY_BADGE}`}
+                                                        >
+                                                            {BLOG_CATEGORIES[featured[1].category]}
+                                                        </span>
+                                                        <span className="text-[12px] text-so-ink-3">
+                                                            {featured[1].readingTime} min read
+                                                        </span>
+                                                    </div>
+                                                    <h2 className="so-serif text-balance group-hover:opacity-80 transition-opacity text-[clamp(20px,2.5vw,28px)] text-so-ink tracking-[-0.015em]">
+                                                        {featured[1].title}
+                                                    </h2>
+                                                    <p className="mt-3 text-[14px] leading-relaxed line-clamp-3 text-so-ink-2">
+                                                        {featured[1].description}
+                                                    </p>
+                                                    <div className="mt-5 flex items-center gap-2 text-[13px] font-medium text-so-accent">
+                                                        Read article{" "}
+                                                        <ArrowRight
+                                                            size={13}
+                                                            className="transition-transform group-hover:translate-x-0.5"
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </Link>
+                                        </Link>
+                                    </Reveal>
                                 </div>
                             </section>
                         )
@@ -127,40 +140,52 @@ export default function BlogPage() {
 
                     <section className="pb-[clamp(20px,2.5vw,28px)]">
                         <div className="so-container">
-                            <h2 className="text-[clamp(18px,2vw,24px)] so-serif text-so-ink tracking-[-0.015em] mb-1.5">
-                                Browse by topic
-                            </h2>
-                            <p className="text-[14px] text-so-ink-2 mb-6">
-                                Jump into a topic hub for deeper coverage of a single area.
-                            </p>
+                            <Reveal>
+                                <h2 className="text-[clamp(18px,2vw,24px)] so-serif text-so-ink tracking-[-0.015em] mb-1.5">
+                                    Browse by topic
+                                </h2>
+                                <p className="text-[14px] text-so-ink-2 mb-6">
+                                    Jump into a topic hub for deeper coverage of a single area.
+                                </p>
+                            </Reveal>
                             {/* Each hub carries a drawn glyph so six similarly-worded labels read as
-                                six distinct places rather than a row of pills. */}
-                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                                six distinct places rather than a row of pills. The glyphs draw
+                                themselves in, so the stagger here sets them off left to right. */}
+                            <StaggerContainer className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6" stagger={0.06}>
                                 {
                                     BLOG_CATEGORY_KEYS.map((key) => (
-                                        <Link
-                                            key={key}
-                                            href={`/blogs/topics/${key}`}
-                                            className="group so-card flex flex-col items-start gap-3 p-4 transition-all hover:shadow-md"
-                                        >
-                                            <TopicGlyph topic={key} className="h-9 w-9 text-so-ink" />
-                                            <span className="text-[13px] font-medium leading-snug text-so-ink">
-                                                {BLOG_CATEGORIES[key]}
-                                            </span>
-                                            <ArrowRight size={13} className="mt-auto text-so-accent transition-transform group-hover:translate-x-0.5" />
-                                        </Link>
+                                        <StaggerItem key={key} className="h-full">
+                                            <Link
+                                                href={`/blogs/topics/${key}`}
+                                                className="group so-card flex h-full flex-col items-start gap-3 p-4 transition-all hover:shadow-md"
+                                            >
+                                                <TopicGlyph topic={key} className="h-9 w-9 text-so-ink" />
+                                                <span className="text-[13px] font-medium leading-snug text-so-ink">
+                                                    {BLOG_CATEGORIES[key]}
+                                                </span>
+                                                <ArrowRight size={13} className="mt-auto text-so-accent transition-transform group-hover:translate-x-0.5" />
+                                            </Link>
+                                        </StaggerItem>
                                     ))
                                 }
-                            </div>
+                            </StaggerContainer>
                         </div>
                     </section>
 
                     <section className="pb-[clamp(56px,7vw,88px)]">
                         <div className="so-container">
+                            {/* Each card reveals on its own intersection rather than inheriting a
+                                stagger from the grid. A single StaggerContainer would ladder one
+                                delay across sixty posts, and chunking the grid into rows of three
+                                would fall apart at the one- and two-column breakpoints. The `% 3`
+                                delay gives a left-to-right ripple within whatever row the reader is
+                                actually looking at, at every column count. */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {
-                                    rest.map(([slug, meta]) => (
-                                        <PostCard key={slug} slug={slug} meta={meta} />
+                                    rest.map(([slug, meta], i) => (
+                                        <Reveal key={slug} delay={(i % 3) * 0.07} className="h-full">
+                                            <PostCard slug={slug} meta={meta} />
+                                        </Reveal>
                                     ))
                                 }
                             </div>

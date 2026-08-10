@@ -57,7 +57,6 @@ const LINK_GROUPS = [
             { label: "Blog", href: "/blogs" },
             { label: "Tools", href: "/tools" },
             { label: "Solutions", href: "/solutions" },
-            { label: "Accelerator", href: "/accelerator" },
         ],
     },
     {

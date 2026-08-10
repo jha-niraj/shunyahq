@@ -42,7 +42,6 @@ we take goes live: not a prototype, not a Figma deck, but a real production syst
 - [Work](${SITE_URL}/projects): Selected production systems we've shipped.
 - [Pricing](${SITE_URL}/pricing): Transparent rate cards across four currencies.
 - [About](${SITE_URL}/aboutus): The team and how we work.
-- [Accelerator](${SITE_URL}/accelerator): Practical, affordable support for student founders.
 - [Contact](${SITE_URL}/contactus): Start a project or book a strategy call.
 - [Blog](${SITE_URL}/blogs): Engineering and product guides.
 

@@ -10,7 +10,7 @@ Shunya (Shunya Tech) is a software engineering studio. Marketing/agency site. Fu
 - Next.js 15 (App Router), React 19, TypeScript, Tailwind v4 (tokens in `app/globals.css`).
 - Drizzle ORM on Neon Postgres (`lib/db/`). No auth on this platform.
 - MDX blog via `@next/mdx` (`mdx-components.tsx`, posts in `content/posts/`).
-- Dev/start run on **port 3002** (`pnpm dev`, `pnpm start`).
+- `pnpm dev` runs on **port 7005**; `pnpm start` runs on **port 3002**.
 
 ## Design system
 - Tokens live in `app/globals.css` (`--so-*` cream/sage editorial palette). Use the utility classes, not raw colors: `.so-container`, `.so-section`, `.so-eyebrow`, `.so-serif`, `.so-lede`, `.so-card`, `.so-btn` / `.so-btn-primary` / `.so-btn-ghost`, and Tailwind `text-so-ink/-2/-3`, `bg-so-bg/-surface/-surface-2`, `border-so-line`.

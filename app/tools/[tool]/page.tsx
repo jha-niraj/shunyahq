@@ -6,6 +6,7 @@ import { SITE_URL, SITE_NAME } from "@/lib/site"
 import { PageHero } from "@/components/landing/page-hero"
 import { PageBackground } from "@/components/landing/page-background"
 import { PageFAQ } from "@/components/landing/page-faq"
+import { Reveal, StaggerContainer, StaggerItem } from "@/components/landing/animations"
 import { PRODUCT_TOOLS, getToolBySlug } from "../tools-meta"
 import { ToolDemo } from "../_components/tool-demos"
 
@@ -83,52 +84,62 @@ export default async function ToolDetailPage({
                 {/* Summary + demo */}
                 <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
                     <div className="so-container grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div>
+                        <Reveal>
                             <span className="so-eyebrow">Overview</span>
                             <p className="mt-5 text-[16px] leading-[1.8] text-so-ink-2">
                                 {tool.summary}
                             </p>
-                        </div>
-                        <div>
+                        </Reveal>
+                        <Reveal delay={0.12} direction="left">
                             <ToolDemo slug={tool.slug} variant="detail" />
-                        </div>
+                        </Reveal>
                     </div>
                 </section>
 
                 {/* How it works */}
                 <section className="relative z-[1] bg-so-surface so-section border-t border-so-line">
                     <div className="so-container">
-                        <span className="so-eyebrow">How it works</span>
-                        <h2 className="mt-5 mb-12 text-[clamp(26px,3.4vw,40px)] tracking-[-0.025em] text-so-ink max-w-[22ch]">
-                            Three steps to{" "}
-                            <span className="so-serif italic">value.</span>
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <Reveal>
+                            <span className="so-eyebrow">How it works</span>
+                            <h2 className="mt-5 mb-12 text-[clamp(26px,3.4vw,40px)] tracking-[-0.025em] text-so-ink max-w-[22ch]">
+                                Three steps to{" "}
+                                <span className="so-serif italic">value.</span>
+                            </h2>
+                        </Reveal>
+                        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-5">
                             {tool.howItWorks.map((step) => (
-                                <div key={step.step} className="so-card p-7 h-full">
-                                    <span className="so-mono text-[13px] text-so-ink-3">{step.step}</span>
-                                    <h3 className="mt-4 mb-2 text-[18px] font-semibold text-so-ink tracking-[-0.01em]">
-                                        {step.title}
-                                    </h3>
-                                    <p className="text-[14px] leading-[1.7] text-so-ink-2">{step.body}</p>
-                                </div>
+                                <StaggerItem key={step.step} className="h-full">
+                                    <div className="so-card p-7 h-full">
+                                        <span className="so-mono text-[13px] text-so-ink-3">{step.step}</span>
+                                        <h3 className="mt-4 mb-2 text-[18px] font-semibold text-so-ink tracking-[-0.01em]">
+                                            {step.title}
+                                        </h3>
+                                        <p className="text-[14px] leading-[1.7] text-so-ink-2">{step.body}</p>
+                                    </div>
+                                </StaggerItem>
                             ))}
-                        </div>
+                        </StaggerContainer>
                     </div>
                 </section>
 
                 {/* Features */}
                 <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">
                     <div className="so-container">
-                        <span className="so-eyebrow">What you get</span>
-                        <ul className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 max-w-3xl">
+                        <Reveal>
+                            <span className="so-eyebrow">What you get</span>
+                        </Reveal>
+                        <StaggerContainer
+                            as="ul"
+                            className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 max-w-3xl"
+                            stagger={0.05}
+                        >
                             {tool.features.map((f) => (
-                                <li key={f} className="flex items-start gap-3 text-[15px] text-so-ink-2">
+                                <StaggerItem as="li" key={f} className="flex items-start gap-3 text-[15px] text-so-ink-2">
                                     <Check size={18} className="mt-0.5 shrink-0 text-emerald-600" />
                                     {f}
-                                </li>
+                                </StaggerItem>
                             ))}
-                        </ul>
+                        </StaggerContainer>
                     </div>
                 </section>
 
@@ -148,7 +159,7 @@ export default async function ToolDetailPage({
                 {/* CTA */}
                 <section className="relative z-[1] bg-so-surface so-section border-t border-so-line">
                     <div className="so-container">
-                        <div className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
+                        <Reveal className="so-card p-[clamp(32px,5vw,64px)] text-center flex flex-col items-center">
                             <h2 className="mb-4 text-[clamp(28px,4vw,46px)] tracking-[-0.03em] text-so-ink max-w-[20ch]">
                                 {isLive ? (
                                     <>Ready to <span className="so-serif italic">try it?</span></>
@@ -169,7 +180,7 @@ export default async function ToolDetailPage({
                                     All tools <ArrowRight size={13} />
                                 </Link>
                             </div>
-                        </div>
+                        </Reveal>
                     </div>
                 </section>
             </main>

@@ -6,7 +6,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import {
     ChevronRight, ChevronDown, Menu, X, ArrowRight, Code2,
-    Cloud, Palette, ShieldCheck, Heart, BookOpen, Rocket, Mail,
+    Cloud, Palette, ShieldCheck, Heart, BookOpen, Mail,
     Orbit, Calculator, Wallet, PhoneCall, Activity, ScanSearch, Component
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -68,12 +68,6 @@ const COMPANY: CompanyItem[] = [
         href: "/blogs",
         description: "Engineering notes and product thinking",
         icon: BookOpen,
-    },
-    {
-        title: "Accelerator",
-        href: "/accelerator",
-        description: "We help startups go from idea to launch",
-        icon: Rocket,
     },
     {
         title: "Contact",
@@ -152,7 +146,6 @@ const MOBILE_LINKS = [
     { label: "Pricing", href: "/pricing" },
     { label: "About Us", href: "/aboutus" },
     { label: "Blog", href: "/blogs" },
-    { label: "Accelerator", href: "/accelerator" },
     { label: "Contact", href: "/contactus" },
 ]
 
@@ -410,7 +403,6 @@ function activeFromPath(pathname: string | null): string | undefined {
     if (pathname.startsWith("/pricing")) return "pricing"
     if (pathname.startsWith("/aboutus")) return "aboutus"
     if (pathname.startsWith("/blogs")) return "blogs"
-    if (pathname.startsWith("/accelerator")) return "accelerator"
     if (pathname.startsWith("/contactus")) return "contactus"
     return undefined
 }
@@ -549,7 +541,7 @@ export function Navbar({ active: activeProp }: NavbarProps) {
                                 label="Company"
                                 isOpen={openMenu === "company"}
                                 onMouseEnter={() => handleEnter("company")}
-                                active={["aboutus", "blogs", "accelerator", "contactus"].includes(active ?? "")}
+                                active={["aboutus", "blogs", "contactus"].includes(active ?? "")}
                             />
                             <AnimatePresence>
                                 {

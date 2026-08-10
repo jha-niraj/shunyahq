@@ -13,6 +13,7 @@ import {
 import { SITE_URL, SITE_NAME } from "@/lib/site"
 import { PageHero } from "@/components/landing/page-hero"
 import { PageBackground } from "@/components/landing/page-background"
+import { Reveal, StaggerContainer, StaggerItem } from "@/components/landing/animations"
 import { PostCard } from "../../_components/post-card"
 
 function isBlogCategory(value: string): value is BlogCategory {
@@ -149,22 +150,30 @@ export default async function TopicHubPage({
                     <section className="so-section bg-so-surface">
                         <div className="so-container">
                             {/* Breadcrumb */}
-                            <nav className="flex items-center gap-2 text-[13px] text-so-ink-4 mb-8">
-                                <Link href="/" className="transition-colors duration-150">Home</Link>
-                                <span className="text-so-line">/</span>
-                                <Link href="/blogs" className="transition-colors duration-150">Blog</Link>
-                                <span className="text-so-line">/</span>
-                                <span className="text-so-ink-3">{BLOG_CATEGORIES[topic]}</span>
-                            </nav>
+                            <Reveal distance={12}>
+                                <nav className="flex items-center gap-2 text-[13px] text-so-ink-4 mb-8">
+                                    <Link href="/" className="transition-colors duration-150">Home</Link>
+                                    <span className="text-so-line">/</span>
+                                    <Link href="/blogs" className="transition-colors duration-150">Blog</Link>
+                                    <span className="text-so-line">/</span>
+                                    <span className="text-so-ink-3">{BLOG_CATEGORIES[topic]}</span>
+                                </nav>
+                            </Reveal>
 
-                            <p className="max-w-[68ch] text-[15px] leading-[1.7] text-so-ink-2">
-                                {intro}
-                            </p>
+                            <Reveal delay={0.06}>
+                                <p className="max-w-[68ch] text-[15px] leading-[1.7] text-so-ink-2">
+                                    {intro}
+                                </p>
+                            </Reveal>
 
+                            {/* Per-card reveal with a `% 3` delay, same as /blogs - a ripple across
+                                whichever row is entering, at every column count. */}
                             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {
-                                    posts.map((post) => (
-                                        <PostCard key={post.slug} slug={post.slug} meta={post} />
+                                    posts.map((post, i) => (
+                                        <Reveal key={post.slug} delay={(i % 3) * 0.07} className="h-full">
+                                            <PostCard slug={post.slug} meta={post} />
+                                        </Reveal>
                                     ))
                                 }
                             </div>
@@ -173,35 +182,38 @@ export default async function TopicHubPage({
 
                     <section className="so-section bg-so-bg pt-0">
                         <div className="so-container">
-                            <h2 className="text-[clamp(18px,2vw,24px)] so-serif text-so-ink tracking-[-0.015em] mb-1.5">
-                                Explore other topics
-                            </h2>
-                            <p className="text-[14px] text-so-ink-2 mb-6">
-                                Browse the rest of the Shunya engineering and product hubs.
-                            </p>
-                            <div className="flex flex-wrap gap-3">
+                            <Reveal>
+                                <h2 className="text-[clamp(18px,2vw,24px)] so-serif text-so-ink tracking-[-0.015em] mb-1.5">
+                                    Explore other topics
+                                </h2>
+                                <p className="text-[14px] text-so-ink-2 mb-6">
+                                    Browse the rest of the Shunya engineering and product hubs.
+                                </p>
+                            </Reveal>
+                            <StaggerContainer className="flex flex-wrap gap-3" stagger={0.05}>
                                 {
                                     otherTopics.map((key) => (
-                                        <Link
-                                            key={key}
-                                            href={`/blogs/topics/${key}`}
-                                            className="group inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full so-card text-[13px] font-medium text-so-ink hover:shadow-md transition-all"
-                                        >
-                                            {BLOG_CATEGORIES[key]}
-                                            <ArrowRight size={13} className="text-so-accent" />
-                                        </Link>
+                                        <StaggerItem key={key}>
+                                            <Link
+                                                href={`/blogs/topics/${key}`}
+                                                className="group inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full so-card text-[13px] font-medium text-so-ink hover:shadow-md transition-all"
+                                            >
+                                                {BLOG_CATEGORIES[key]}
+                                                <ArrowRight size={13} className="text-so-accent transition-transform group-hover:translate-x-0.5" />
+                                            </Link>
+                                        </StaggerItem>
                                     ))
                                 }
-                            </div>
+                            </StaggerContainer>
 
-                            <div className="mt-10">
+                            <Reveal delay={0.1} className="mt-10">
                                 <Link
                                     href="/blogs"
-                                    className="inline-flex items-center gap-2 text-[14px] font-semibold text-so-accent transition-opacity duration-150 hover:opacity-80"
+                                    className="group inline-flex items-center gap-2 text-[14px] font-semibold text-so-accent transition-opacity duration-150 hover:opacity-80"
                                 >
-                                    <ArrowLeft size={14} /> Back to all articles
+                                    <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" /> Back to all articles
                                 </Link>
-                            </div>
+                            </Reveal>
                         </div>
                     </section>
                 </main>

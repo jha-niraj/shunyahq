@@ -19,7 +19,9 @@ export const SITE_LOGO = '/shunyahq-icon-512.png'
 // Organization details used to build the Organization JSON-LD (knowledge-panel signals).
 export const SITE_ORG = {
   legalName: 'Shunya Tech',
-  foundingDate: '2019',
+  // Feeds Organization JSON-LD. Must agree with the About page timeline - a founding date in the
+  // structured data that contradicts the visible history is a trust signal pointing the wrong way.
+  foundingDate: '2025',
   email: 'contact@shunyatech.com',
   address: {
     locality: 'Woodbridge',

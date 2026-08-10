@@ -65,12 +65,29 @@ const values = [
     },
 ]
 
+// Four nodes, running from the studio's actual start to now. It previously opened in 2019 and
+// stopped at 2024 - two years stale, and claiming a history that predates the company.
 const milestones = [
-    { year: "2019", title: "GENESIS", description: "Shunya Tech founded. The vision was simple: Code is art." },
-    { year: "2020", title: "TRACTION", description: "Secured first 10 major enterprise contracts." },
-    { year: "2021", title: "SCALING", description: "Launched internal product labs. Team grew to 15 engineers." },
-    { year: "2023", title: "DOMINANCE", description: "150+ Projects delivered. Recognized for high-performance web systems." },
-    { year: "2024", title: "GLOBAL", description: "Expanded operations to international markets." },
+    {
+        year: "Early 2025",
+        title: "GENESIS",
+        description: "Shunya founded as a studio with one rule: the team that designs it is the team that ships it.",
+    },
+    {
+        year: "Mid 2025",
+        title: "FIRST BUILDS",
+        description: "First production clients shipped end to end - and the Next.js, tRPC and Postgres stack we still default to settled here.",
+    },
+    {
+        year: "Late 2025",
+        title: "OWN PRODUCTS",
+        description: "SyncHQ started as our own internal tooling, then became a product we ship to other teams.",
+    },
+    {
+        year: "2026",
+        title: "TODAY",
+        description: "A published rate card, a full case-study library, and AI work running in production rather than in demos.",
+    },
 ]
 
 const teamMembers = [
@@ -148,7 +165,7 @@ export default function AboutPage() {
                             <div className="mt-8 pt-8 flex gap-10 border-t border-so-line">
                                 <div>
                                     <h3 className="text-[clamp(32px,4vw,44px)] font-semibold text-so-ink mb-1 tracking-[-0.02em]">50+</h3>
-                                    <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-so-ink-3">Clients Since 2019</p>
+                                    <p className="text-[12px] font-medium uppercase tracking-[0.1em] text-so-ink-3">Clients Since 2025</p>
                                 </div>
                                 <div className="w-px self-stretch bg-so-line" />
                                 <div>

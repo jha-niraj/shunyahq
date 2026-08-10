@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ShaderHeroBg } from "@/components/landing/hero-shader-bg"
 import { SHADER_PALETTES } from "@/components/landing/shader-palettes"
+import { Entrance, Reveal } from "@/components/landing/animations"
 
 export interface LegalSection {
     id: string
@@ -128,12 +129,19 @@ export function LegalDocument({
                 )}
                 <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/75 to-black/60" />
                 <div className="relative z-10 flex h-full flex-col p-10">
-                    <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white/60">
-                        {badge.icon} {badge.text}
-                    </div>
-                    <h2 className="text-3xl font-bold leading-[1.1] text-white">{kind}</h2>
-                    <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">{intro}</p>
-                    <p className="mt-3 text-sm text-white/35">Last updated: {lastUpdated}</p>
+                    {/* Entrances, not scroll reveals - this panel is above the fold on arrival. The
+                        <aside> itself is deliberately left unwrapped: a motion wrapper around it
+                        would become the offset parent and the panel would stop sticking. */}
+                    <Entrance className="mb-5 w-fit" distance={12}>
+                        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white/60">
+                            {badge.icon} {badge.text}
+                        </div>
+                    </Entrance>
+                    <Entrance delay={0.08}>
+                        <h2 className="text-3xl font-bold leading-[1.1] text-white">{kind}</h2>
+                        <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">{intro}</p>
+                        <p className="mt-3 text-sm text-white/35">Last updated: {lastUpdated}</p>
+                    </Entrance>
 
                     <LegalTOC sections={sections} />
 
@@ -151,13 +159,13 @@ export function LegalDocument({
             {/* ── RIGHT: content ── */}
             <div className="min-w-0 flex-1 px-6 pb-24 pt-28 lg:px-12 lg:pt-28">
                 {/* Mobile header - the sticky panel is hidden below lg, so its title has to reappear here. */}
-                <div className="mb-10 lg:hidden">
+                <Entrance className="mb-10 lg:hidden">
                     <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-neutral-200/80 bg-neutral-50 px-4 py-1.5 text-sm font-medium text-neutral-700 dark:border-neutral-700/80 dark:bg-neutral-900 dark:text-neutral-300">
                         {badge.icon} {badge.text}
                     </div>
                     <h1 className="text-4xl font-bold text-neutral-950 dark:text-white">{kind}</h1>
                     <p className="mt-2 text-neutral-600 dark:text-neutral-300">Last updated: {lastUpdated}</p>
-                </div>
+                </Entrance>
 
                 <div className="mx-auto max-w-3xl space-y-12">
                     {effective && (
@@ -166,7 +174,8 @@ export function LegalDocument({
                         </p>
                     )}
                     {sections.map((s) => (
-                        <section key={s.id} id={s.id} className="scroll-mt-28">
+                        <Reveal key={s.id} distance={16}>
+                        <section id={s.id} className="scroll-mt-28">
                             <h2 className="mb-4 text-xl font-bold text-neutral-900 dark:text-white">{s.label}</h2>
                             {s.callout && (
                                 <div className="mb-4 rounded-2xl border border-[#EDE8D0] bg-[#EDE8D0]/60 p-4 text-sm leading-relaxed text-neutral-800 dark:border-[#EDE8D0]/30 dark:bg-[#EDE8D0]/10 dark:text-neutral-200">
@@ -178,6 +187,7 @@ export function LegalDocument({
                                 {renderContent(s.content)}
                             </div>
                         </section>
+                        </Reveal>
                     ))}
                 </div>
             </div>
