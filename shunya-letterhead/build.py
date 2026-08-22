@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Builds the ShunyaHQ letterhead HTML files (A4 + US Letter, placeholder + blank)."""
+"""Builds the ShunyaHQ letterhead HTML files (A4 + US Letter, placeholder + blank).
+
+Single sheet - one page per PDF, no continuation sheet."""
 
 import base64
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent
-REPO = pathlib.Path("/Users/nirajjha/Documents/niraj/shunyahq")
+REPO = ROOT.parent
 
 
 def b64(path):
@@ -205,17 +207,21 @@ html, body {
 
 .salutation { margin-bottom: 5.2mm; }
 
-.signoff { margin-top: 9mm; }
-.sig-space { height: 17mm; }
+.signoff { margin-top: 6mm; }
+/* "Sincerely," sits close to the signature space - the .body p rule is too loose here */
+.signoff > p { margin-bottom: 1.6mm; }
+.sig-space { height: 12mm; }
 .sig-name {
   font-weight: 700;
   color: var(--ink);
   font-size: 10.2pt;
+  line-height: 1.3;
 }
 .sig-meta {
+  margin-top: 0.6mm;
   font-size: 9pt;
   color: var(--ink-3);
-  line-height: 1.55;
+  line-height: 1.45;
 }
 
 /* placeholder tokens - replace these, then delete the highlight */
@@ -246,24 +252,6 @@ html, body {
 }
 .footer .dot { color: var(--ink-5, #C4C2B6); padding: 0 1.6mm; }
 
-/* ── continuation sheet ─────────────────────────────────── */
-.cont-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10mm;
-}
-.cont-head .brand { gap: 3.4mm; }
-.cont-head .mark { width: 8.5mm; height: 8.5mm; border-radius: 2.1mm; }
-.cont-head .wordmark { font-size: 12.5pt; }
-.cont-meta {
-  font-size: 7.4pt;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-4);
-  text-align: right;
-}
-
 /* blank variant - chrome only, no placeholder copy */
 body.blank .placeholders { display: none; }
 </style>
@@ -289,8 +277,8 @@ body.blank .placeholders { display: none; }
         <span class="value value--strong">shunyatech.net</span>
       </div>
       <div class="group">
-        <span class="label">Email</span>
-        <span class="value">jhaniraj45@gmail.com</span>
+        <span class="label">Address</span>
+        <span class="value">Naxal, Kathmandu</span>
       </div>
     </div>
   </header>
@@ -325,10 +313,9 @@ body.blank .placeholders { display: none; }
       <div class="signoff">
         <p>Sincerely,</p>
         <div class="sig-space"></div>
-        <div class="sig-name"><span class="ph">[Your Name]</span></div>
+        <div class="sig-name">Niraj Kumar Jha</div>
         <div class="sig-meta">
-          <span class="ph">[Title]</span> &nbsp;·&nbsp; ShunyaHQ<br>
-          jhaniraj45@gmail.com
+          Founder &amp; CEO &nbsp;·&nbsp; ShunyaHQ
         </div>
       </div>
     </div>
@@ -336,39 +323,7 @@ body.blank .placeholders { display: none; }
 
   <footer class="footer">
     <span>shunyatech.net</span>
-    <span>Page 1</span>
-  </footer>
-
-  <div class="bar bar--bottom"></div>
-</section>
-
-<!-- ══════════ PAGE 2 · CONTINUATION SHEET ══════════ -->
-<section class="sheet">
-  <div class="bar bar--top"></div>
-
-  <header class="cont-head">
-    <div class="brand">
-      <img class="mark" src="data:image/png;base64,__LOGO__" alt="ShunyaHQ">
-      <div class="wordmark">ShunyaHQ</div>
-    </div>
-    <div class="cont-meta">
-      <span class="ph">[Client Name]</span> &nbsp;·&nbsp; <span class="ph">[Date]</span> &nbsp;·&nbsp; Page 2
-    </div>
-  </header>
-
-  <div class="rule"></div>
-
-  <div class="body">
-    <div class="placeholders">
-      <p><span class="hint">[Continuation - carry the letter over onto this sheet. Keep the same margins so the two pages read as one document.]</span></p>
-      <p><span class="hint">[Paragraph]</span></p>
-      <p><span class="hint">[Paragraph]</span></p>
-    </div>
-  </div>
-
-  <footer class="footer">
-    <span>shunyatech.net</span>
-    <span>Page 2</span>
+    <span>Naxal, Kathmandu</span>
   </footer>
 
   <div class="bar bar--bottom"></div>
