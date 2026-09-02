@@ -585,33 +585,39 @@ function HeroStage() {
 
 /* ────────────────────────────── the ticker ────────────────────────────── */
 
+/**
+ * Mark for each product in the hero ticker.
+ *
+ * These were eight invented companies - FinStream, EduCore, HealthPlus, LogiTech, CreativeX,
+ * DataFlow, AgileCorp, SecureNet - none of which exist. On the first screen of a studio's homepage,
+ * fabricated client logos are the fastest way to lose an investor who checks one of them.
+ *
+ * Now the six products Shunya has actually shipped, each linked from /projects with a live URL.
+ * Same ticker, same marks, same layout - only the names are real.
+ */
 function ClientLogo({ name, className }: { name: string; className?: string }) {
     const c = className ?? "h-6 w-6"
     switch (name) {
-        case "FinStream":
-            return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 9c3 0 3-3 6-3s3 3 6 3 3-3 6-3M3 15c3 0 3-3 6-3s3 3 6 3 3-3 6-3" /></svg>
-        case "EduCore":
+        case "BuildrHq": // learning platform - mortarboard
             return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5Z" /><path d="M6 11v4c0 1.5 3 3 6 3s6-1.5 6-3v-4" /></svg>
-        case "HealthPlus":
-            return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="5" /><path d="M12 8v8M8 12h8" /></svg>
-        case "LogiTech":
-            return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="m3 7 9-4 9 4-9 4-9-4Z" /><path d="M3 7v10l9 4 9-4V7M12 11v10" /></svg>
-        case "CreativeX":
-            return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 5l14 14M19 5 5 19" /><circle cx="12" cy="12" r="9" /></svg>
-        case "DataFlow":
-            return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2"><circle cx="5" cy="6" r="2" /><circle cx="19" cy="6" r="2" /><circle cx="12" cy="18" r="2" /><path d="M7 6h10M6 8l5 8M18 8l-5 8" /></svg>
-        case "AgileCorp":
-            return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 4v4h-4" /></svg>
-        case "SecureNet":
+        case "Vidhica": // law, answered and verified - shield with a check
             return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M12 3 5 6v5c0 4 3 7 7 9 4-2 7-5 7-9V6l-7-3Z" /><path d="m9 12 2 2 4-4" /></svg>
+        case "SyncHQ": // one system in sync - a closing loop
+            return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 4v4h-4" /></svg>
+        case "Gurukul": // school operations - a schoolhouse
+            return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M3 10 12 4l9 6" /><path d="M5 10v10h14V10" /><path d="M10 20v-6h4v6" /></svg>
+        case "EventEye": // discovery to door - a ticket
+            return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8Z" /><path d="M14 6v12" strokeDasharray="2 2" /></svg>
+        case "M.P. Solutions": // pharmaceutical inventory - a stock crate
+            return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><path d="m3 7 9-4 9 4-9 4-9-4Z" /><path d="M3 7v10l9 4 9-4V7M12 11v10" /></svg>
         default:
             return <svg viewBox="0 0 24 24" className={c} fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /></svg>
     }
 }
 
 const HERO_CLIENTS = [
-    "FinStream", "EduCore", "HealthPlus", "LogiTech",
-    "CreativeX", "DataFlow", "AgileCorp", "SecureNet",
+    "BuildrHq", "Vidhica", "SyncHQ",
+    "Gurukul", "EventEye", "M.P. Solutions",
 ]
 
 function HeroTicker() {
@@ -632,7 +638,7 @@ function HeroTicker() {
         <div className="relative z-[2] mt-auto shrink-0 border-t border-neutral-900/10 bg-[#FDFBF5]">
             <div className="mx-auto flex max-w-7xl items-center gap-6 px-5 py-4 sm:px-7">
                 <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400 sm:block">
-                    Trusted by
+                    Shipped by us
                 </span>
                 <div className="relative min-w-0 flex-1 overflow-hidden">
                     <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#FDFBF5] to-transparent" />

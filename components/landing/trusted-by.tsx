@@ -2,21 +2,28 @@
 
 import { motion } from "framer-motion"
 
-// The teams we've shipped with and the industries we build for - the signals
-// behind every product Shunya Tech puts into production.
+/**
+ * The proof strip.
+ *
+ * These were invented companies - FinStream, EduCore, HealthPlus, LogiTech, CreativeX, DataFlow,
+ * AgileCorp, SecureNet - none of which exist. On the homepage of a studio whose entire pitch to
+ * investors and first customers is credibility, one search turns that into a liability.
+ *
+ * Replaced with the six products Shunya has actually shipped, which are named, live, and linked
+ * from /projects. The component, the marquee and the layout are untouched.
+ */
 const SOURCES = [
-    "FinStream",
-    "EduCore",
-    "HealthPlus",
-    "LogiTech",
-    "CreativeX",
-    "DataFlow",
-    "AgileCorp",
-    "SecureNet",
+    "BuildrHq",
+    "Vidhica",
+    "SyncHQ",
+    "Gurukul",
+    "EventEye",
+    "M.P. Solutions",
     "EdTech",
-    "HealthTech",
-    "FinTech",
+    "LegalTech",
+    "SaaS",
     "Events",
+    "Healthcare",
 ]
 
 export default function TrustedBy() {
@@ -34,7 +41,7 @@ export default function TrustedBy() {
                     Trusted by teams that ship
                 </motion.h2>
                 <p className="mt-3 text-center text-sm text-neutral-500 dark:text-neutral-400">
-                    Built for forward-thinking companies across EdTech, HealthTech, FinTech, and more.
+                    Six products live in production across EdTech, LegalTech, SaaS, Events and Healthcare.
                 </p>
 
                 <div className="relative mt-10 overflow-hidden">

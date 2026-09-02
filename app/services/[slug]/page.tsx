@@ -14,6 +14,7 @@ import {
     StreamingChat, VouchingScan, MiniBarChart, LangToggle, ExamCard, ReportDraft,
 } from "@/components/landing/illustrations"
 import { CardVisual } from "@/components/landing/card-visuals"
+import { DISCIPLINE_GLYPHS, DisciplineGlyphStyles } from "@/components/landing/discipline-glyphs"
 import { SectionDivider } from "./_section-divider"
 import {
     SERVICE_SLUGS, getServiceBySlug, type ServiceIconKey,
@@ -170,6 +171,67 @@ export default async function ServiceDetailPage({ params }: PageProps) {
                         </StaggerContainer>
                     </div>
                 </section>
+
+                {/* ── Every layer ──
+                    The studio sells one engagement that spans six disciplines. Consolidating to a
+                    single service URL was a deliberate SEO call (see the 301s in next.config.ts),
+                    but it left five of those six named across the site and substantiated nowhere.
+
+                    Glyph-led, not text-led: the first version of this section carried a paragraph
+                    AND a four-item checklist per discipline, which on a page that was already a
+                    wall of prose just added 24 more lines of it. Each animated SVG now states the
+                    idea and the copy beside it is a single sentence. */}
+                {service.disciplines && service.disciplines.length > 0 && (
+                    <section
+                        id="disciplines"
+                        className="relative z-[1] bg-so-surface-2 so-section border-t border-so-line"
+                    >
+                        <DisciplineGlyphStyles />
+                        <div className="so-container">
+                            <div className="max-w-[46ch]">
+                                <span className="so-eyebrow">Every layer</span>
+                                <h2 className="mt-5 mb-4 text-[clamp(24px,3vw,36px)] tracking-[-0.025em] text-so-ink">
+                                    One team holds the{" "}
+                                    <span className="so-serif italic">whole stack.</span>
+                                </h2>
+                                <p className="text-[14.5px] leading-[1.7] text-so-ink-2">
+                                    One engagement, not a menu - which is why there is nobody to hand off to
+                                    when something breaks between two layers.
+                                </p>
+                            </div>
+
+                            <StaggerContainer className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-[var(--so-radius-lg)] border border-so-line bg-so-line sm:grid-cols-2 lg:grid-cols-3">
+                                {service.disciplines.map((d, i) => {
+                                    const Glyph = DISCIPLINE_GLYPHS[d.glyph]
+                                    return (
+                                        <StaggerItem key={d.title} className="h-full">
+                                            <div className="group flex h-full flex-col bg-so-surface transition-colors duration-200 hover:bg-so-surface-2">
+                                                {/* The glyph is the content here, so it gets the
+                                                    real estate: a full-bleed panel above the copy. */}
+                                                <div className="border-b border-so-line-2 bg-so-bg px-6 pb-2 pt-6 transition-colors duration-200 group-hover:bg-so-bg-2">
+                                                    <Glyph />
+                                                </div>
+                                                <div className="flex flex-1 flex-col p-6">
+                                                    <div className="flex items-baseline gap-2.5">
+                                                        <span className="so-num text-[11px] font-semibold tracking-[0.08em] text-so-gold">
+                                                            {String(i + 1).padStart(2, "0")}
+                                                        </span>
+                                                        <h3 className="text-[17px] font-semibold tracking-[-0.02em] text-so-ink">
+                                                            {d.title}
+                                                        </h3>
+                                                    </div>
+                                                    <p className="mt-2.5 text-[13.5px] leading-[1.65] text-so-ink-3">
+                                                        {d.body}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </StaggerItem>
+                                    )
+                                })}
+                            </StaggerContainer>
+                        </div>
+                    </section>
+                )}
 
                 {/* ── Process ── */}
                 <section className="relative z-[1] bg-so-bg so-section border-t border-so-line">

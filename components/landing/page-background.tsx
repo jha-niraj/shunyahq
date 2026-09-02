@@ -8,34 +8,35 @@ interface PageBackgroundProps {
     style?: CSSProperties
 }
 
-// Clean, professional page backdrop for public/marketing pages. The old
-// featurestackbg photo was removed - instead we use a subtle neutral wash plus a
-// faint top glow so pages read as crisp light/dark surfaces, not a busy image.
+/**
+ * Page body backdrop. A near-flat surface with one faint warm bloom at the top, so the page reads
+ * as paper rather than as a busy image.
+ */
 export function PageBackground({ className, style }: PageBackgroundProps) {
     return (
         <div
             aria-hidden
-            className={cn(
-                "pointer-events-none absolute inset-0 bg-white dark:bg-neutral-950",
-                className,
-            )}
+            className={cn("pointer-events-none absolute inset-0 bg-so-bg", className)}
             style={style}
         >
             <div
-                className="absolute inset-0 opacity-[0.5] dark:opacity-[0.6]"
+                className="absolute inset-0"
                 style={{
                     background:
-                        "radial-gradient(120% 80% at 50% -10%, rgba(201,169,97,0.06) 0%, transparent 55%)",
+                        "radial-gradient(120% 70% at 50% -10%, var(--so-gold-softer) 0%, transparent 60%)",
                 }}
             />
         </div>
     )
 }
 
-// Animated mesh-gradient background for dark header bands (page hero strips).
-// Each page passes a unique `palette` so every surface gets its own colour. A
-// soft scrim keeps white header text legible and fades into the neutral-950 page
-// body. Use this in place of a flat black/dark header background.
+/**
+ * The dark band behind a page hero.
+ *
+ * Each page passes a `palette` so every surface gets its own colourway, and the scrim resolves the
+ * band into the cream page body so the seam reads as one continuous document rather than two
+ * stacked blocks. See `hero-shader-bg.tsx` for why this is CSS rather than WebGL.
+ */
 export function PageHeaderBg({
     className,
     palette = "goldNoir",
@@ -43,25 +44,18 @@ export function PageHeaderBg({
 }: {
     className?: string
     palette?: ShaderPalette
-    // subtle => a much gentler, lighter shader wash (used where the band should
-    // whisper rather than shout, e.g. the consultants pages).
+    /** A gentler wash, for bands that should whisper rather than shout. */
     subtle?: boolean
 }) {
     return (
         <div aria-hidden className={cn("absolute inset-0 z-0 overflow-hidden", className)}>
             <ShaderHeroBg
                 colors={SHADER_PALETTES[palette]}
-                speed={subtle ? 0.5 : 1}
-                className={subtle ? "opacity-50" : undefined}
+                className={subtle ? "opacity-60" : undefined}
             />
-            {/* Soft scrim - keeps white header text readable while the shader shows through */}
             <div
-                className={cn(
-                    "absolute inset-0 bg-gradient-to-b",
-                    subtle
-                        ? "from-black/65 via-black/60 to-neutral-950"
-                        : "from-black/45 via-black/35 to-neutral-950",
-                )}
+                className="so-mesh-scrim"
+                style={subtle ? { filter: "brightness(0.85)" } : undefined}
             />
         </div>
     )

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -440,18 +441,42 @@ const MOBILE_NAV: MobileNavItem[] = [
 ]
 
 export function SiteNav() {
+    const pathname = usePathname()
     const [scrolled, setScrolled] = useState(false)
+    /**
+     * True while the pill is floating over a page's dark hero band.
+     *
+     * The pill's default surface is cream at 65% opacity. On the fourteen pages built on PageHero
+     * that put it as a pale grey slab with near-black text on top of a near-black hero - the logo
+     * and every nav label were effectively unreadable for the first screen. `.so-nav-over-dark`
+     * (globals.css) swaps it for dark glass with light type.
+     *
+     * Detected from the DOM rather than a route list, so a page changes its own hero without having
+     * to remember to update the nav.
+     */
+    const [overDark, setOverDark] = useState(false)
     const [menuOpen, setMenuOpen] = useState(false)
     const [openMenu, setOpenMenu] = useState<string | null>(null)
     const navRef = useRef<HTMLElement>(null)
     const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 8)
+        const onScroll = () => {
+            setScrolled(window.scrollY > 8)
+            const hero = document.querySelector("[data-hero-dark]")
+            // 64px is the pill's bottom edge: top-3 (12px) + the pill's own height.
+            setOverDark(!!hero && hero.getBoundingClientRect().bottom > 64)
+        }
         onScroll()
         window.addEventListener("scroll", onScroll, { passive: true })
         return () => window.removeEventListener("scroll", onScroll)
     }, [])
+
+    // A client navigation swaps the hero without firing scroll, so re-check when the route changes.
+    useEffect(() => {
+        const hero = document.querySelector("[data-hero-dark]")
+        setOverDark(!!hero && hero.getBoundingClientRect().bottom > 64)
+    }, [pathname])
 
     useEffect(() => {
         document.body.style.overflow = menuOpen ? "hidden" : ""
@@ -509,6 +534,7 @@ export function SiteNav() {
             ref={navRef}
             // z-40 keeps the navbar above page content but BELOW the modal layer (Sheet/Dialog are
             // z-50), so dialogs render over it. Do not raise this.
+            data-over-dark={overDark ? "true" : undefined}
             className="fixed inset-x-0 top-3 z-40 px-3"
         >
             <div className="relative mx-auto flex max-w-7xl items-center justify-center">
@@ -516,7 +542,7 @@ export function SiteNav() {
                     edge to meet the panel, and a clip here severs the join. */}
                 <div
                     className={cn(
-                        "relative flex w-full items-center gap-1 rounded-xl backdrop-blur-xl backdrop-saturate-150",
+                        "so-navpill relative flex w-full items-center gap-1 rounded-xl backdrop-blur-xl backdrop-saturate-150",
                         "transition-[background-color,box-shadow] duration-300",
                         // No ring or border: an outline here reads as a hard box AND draws a stripe
                         // across the open tab. Depth comes from the shadow alone.

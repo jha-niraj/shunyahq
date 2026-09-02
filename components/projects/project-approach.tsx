@@ -69,20 +69,18 @@ export function ProjectApproach({ steps }: { steps: ProjectApproachStep[] }) {
 
             <div className="grid gap-5 lg:mt-2 lg:grid-cols-3">
                 {steps.map((s, i) => (
-                    <motion.div
+                    <div
                         key={s.phase}
-                        initial={{ opacity: 0, y: 14 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.4 }}
-                        transition={{ duration: 0.5, delay: i * 0.12, ease: EASE }}
-                        className="so-card flex h-full flex-col p-6"
+                        data-rv=""
+                        style={{ "--rv-y": "14px", "--rv-duration": "0.5s", "--rv-delay": `${i * 0.12}s` } as React.CSSProperties}
+                        className="so-anim so-card flex h-full flex-col p-6"
                     >
                         <span className="so-mono text-[11px] uppercase tracking-[0.16em] text-so-ink-4">
                             {String(i + 1).padStart(2, "0")} · {s.phase}
                         </span>
                         <h3 className="mt-3 text-[16px] font-semibold tracking-[-0.01em] text-so-ink">{s.title}</h3>
                         <p className="mt-2.5 text-[14px] leading-[1.7] text-so-ink-2">{s.body}</p>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
         </section>

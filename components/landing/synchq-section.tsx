@@ -87,12 +87,7 @@ export function SyncHQSection() {
         <section className="so-section relative border-t border-so-line">
             <div className="so-container">
                 <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
-                    <motion.div
-                        initial={{ opacity: 0, y: 18 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.55, ease: EASE }}
-                    >
+                    <div data-rv="" className="so-anim" style={{ "--rv-y": "18px", "--rv-duration": "0.55s" } as React.CSSProperties}>
                         <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-so-ink px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-so-bg">
                             <Sparkles className="h-3 w-3" />
                             Our own product
@@ -123,14 +118,9 @@ export function SyncHQSection() {
                                 How we built it
                             </Link>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 18 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.55, ease: EASE, delay: 0.08 }}
-                    >
+                    <div data-rv="" className="so-anim" style={{ "--rv-y": "18px", "--rv-duration": "0.55s", "--rv-delay": "0.08s" } as React.CSSProperties}>
                         <div className="so-card p-6 sm:p-8">
                             <LoopDiagram />
                             <ul className="mt-6 grid gap-4 border-t border-so-line pt-6 sm:grid-cols-2">
@@ -142,7 +132,7 @@ export function SyncHQSection() {
                                 ))}
                             </ul>
                         </div>
-                    </motion.div>
+                    </div>
                 </div>
             </div>
         </section>

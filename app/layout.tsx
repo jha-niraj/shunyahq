@@ -5,8 +5,9 @@ import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { ThemeProvider } from "@/components/themeprovider"
 import { Providers } from "./providers"
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_LOGO, SITE_ORG, SITE_SOCIALS } from "@/lib/site"
-import SmoothScroll from "@/components/smooth-scroll"
 import { SiteHeader, SiteFooter } from "@/components/site-chrome"
+import { RevealProvider } from "@/components/landing/animations"
+import SmoothScroll from "@/components/smooth-scroll"
 
 // Bricolage Grotesque is the ONLY typeface on the platform - sans, display, mono slots and all.
 // It ships as a variable font, so the full 200-800 weight range comes from one file.
@@ -124,17 +125,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
                 />
-                {/* Scroll reveals server-render at opacity:0 and only become visible once framer
-                    hydrates. On a content site that would mean the blog grid is blank to anything
-                    that does not run JS. `so-anim` is on every motion primitive, and !important in
-                    a stylesheet outranks framer's inline style, so the no-JS render is complete. */}
-                <noscript>
-                    <style
-                        dangerouslySetInnerHTML={{
-                            __html: ".so-anim{opacity:1!important;transform:none!important}",
-                        }}
-                    />
-                </noscript>
+                {/* Reveal opt-in.
+                    Content is visible in the HTML by default; the hidden state lives behind
+                    `html.rv` and is switched on here, before first paint, only when JS is actually
+                    running. So a crawler, a JS error, Reader Mode or a slow connection all get the
+                    complete page - the opposite of the previous setup, which server-rendered
+                    opacity:0 inline and left headlines permanently invisible when the reveal never
+                    completed. `RevealProvider` strips the class again after 2.5s as a failsafe. */}
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rv')}catch(e){}`,
+                    }}
+                />
             </head>
             <body
                 className={`${bricolage.className} ${bricolage.variable} antialiased`}
@@ -146,6 +148,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                         enableSystem={false}
                         disableTransitionOnChange
                     >
+                        <RevealProvider />
                         <SmoothScroll>
                             <SiteHeader />
                             {children}

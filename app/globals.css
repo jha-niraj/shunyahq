@@ -9,9 +9,9 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
-   Vidhica - SyncHQ Design System
-   Calm editorial aesthetic · Bricolage Grotesque throughout
-   Cream/sage palette · Light + Dark mode
+   Shunya - Design System
+   Editorial engineering aesthetic · Bricolage Grotesque throughout
+   Cream/ink palette with a single gold accent · Light + Dark mode
    ============================================================ */
 
 /* ── SyncHQ tokens (public pages) ── */
@@ -303,7 +303,7 @@
   position: relative;
 }
 
-.so-section { padding-block: clamp(5rem, 9vw, 9rem); }
+.so-section { padding-block: clamp(4.5rem, 7vw, 7.5rem); }
 
 /* ── Buttons ── */
 .so-btn {
@@ -637,17 +637,6 @@
 }
 .so-legal-callout strong { color: var(--so-ink); }
 
-/* ── Reveal animation ── */
-.so-reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.7s cubic-bezier(0.2, 0.6, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.6, 0.2, 1);
-}
-.so-reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 /* ── Marquee ── */
 @keyframes so-marquee {
   from { transform: translateX(0); }
@@ -715,12 +704,6 @@
 }
 .scroll-pretty::-webkit-scrollbar-thumb:hover { background: var(--so-ink-4); }
 
-/* ── Internal pages (admin + app) share the platform sans ── */
-[data-internal] {
-  font-family: var(--font-internal);
-  letter-spacing: -0.01em;
-}
-
 /* ── Route transition ──
    Applied by app/template.tsx, which Next remounts on every navigation, so this replays on each
    route change. Opacity only: a transform here would become the containing block for any
@@ -772,43 +755,6 @@
   .so-legal-meta .dot { display: none; }
 }
 
-/* ── Reveal animations (IntersectionObserver driven) ── */
-.so-reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.8s cubic-bezier(0.2, 0.6, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.6, 0.2, 1);
-}
-.so-reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.so-reveal[data-delay="1"] { transition-delay: 80ms; }
-.so-reveal[data-delay="2"] { transition-delay: 160ms; }
-.so-reveal[data-delay="3"] { transition-delay: 240ms; }
-.so-reveal[data-delay="4"] { transition-delay: 320ms; }
-
-/* Stagger children animation */
-.so-stagger > * {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s cubic-bezier(0.2, 0.6, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.6, 0.2, 1);
-}
-.so-stagger.is-visible > *:nth-child(1) { transition-delay: 0ms; opacity: 1; transform: none; }
-.so-stagger.is-visible > *:nth-child(2) { transition-delay: 80ms; opacity: 1; transform: none; }
-.so-stagger.is-visible > *:nth-child(3) { transition-delay: 160ms; opacity: 1; transform: none; }
-.so-stagger.is-visible > *:nth-child(4) { transition-delay: 240ms; opacity: 1; transform: none; }
-.so-stagger.is-visible > *:nth-child(5) { transition-delay: 320ms; opacity: 1; transform: none; }
-.so-stagger.is-visible > *:nth-child(6) { transition-delay: 400ms; opacity: 1; transform: none; }
-
-/* Fade in on load */
-@keyframes so-fade-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.so-fade-in { animation: so-fade-in 0.6s cubic-bezier(0.2, 0.6, 0.2, 1) forwards; }
-.so-fade-in-delay-1 { animation-delay: 100ms; opacity: 0; }
-.so-fade-in-delay-2 { animation-delay: 200ms; opacity: 0; }
-.so-fade-in-delay-3 { animation-delay: 300ms; opacity: 0; }
 
 /* Dark mode transitions */
 body, .so-card, .so-nav, .so-footer, .so-chip {
@@ -851,111 +797,384 @@ html { scroll-padding-top: 80px; }
   .so-marquee { animation: none; }
 }
 
-/* ════════════════════════════════════════════════════════════════════════════
-   Internal-surface readability layer  (admin app + main app's authenticated app)
-   ────────────────────────────────────────────────────────────────────────────
-   Scoped to [data-internal] only, so the public marketing pages (which use the
-   SyncHQ so-ink editorial palette) are NEVER touched. Both the admin <body>
-   and the main app's internal wrapper carry data-internal.
 
-   Goal: muted text reads as near-white in dark mode and near-black in light mode,
-   and the smallest font sizes are nudged up a step for legibility. Covers the
-   neutral / gray / zinc / slate / stone families plus text-muted-foreground, and
-   their dark: variants. !important + the extra [data-internal] specificity guarantee
-   these win over the raw Tailwind utilities regardless of source order.
+/* ════════════════════════════════════════════════════════════════════════════
+   REVEAL SYSTEM
+   ────────────────────────────────────────────────────────────────────────────
+   Compositor-only transitions driven by one IntersectionObserver (see
+   components/landing/animations.tsx). Three guarantees this markup encodes:
+
+     1. FAILS OPEN. The hidden state lives behind `html.rv`, a class an inline
+        script in <head> sets before first paint. No JS, a thrown error, a
+        crawler, Reader Mode - the content is simply visible. The previous
+        framer-driven system did the opposite: it shipped opacity:0 inline and
+        left headlines permanently invisible when RAF starved.
+     2. CANNOT STALL. Once `.is-in` lands, opacity and transform run off the
+        main thread. A busy CPU delays the start, never the finish.
+     3. HAS A FAILSAFE. The provider strips `html.rv` after 2.5s regardless.
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* ── DARK MODE: lift muted text toward white ── */
-.dark [data-internal] .text-neutral-300,
-.dark [data-internal] .text-gray-300,
-.dark [data-internal] .text-zinc-300,
-.dark [data-internal] .text-slate-300,
-.dark [data-internal] .text-stone-300,
-.dark [data-internal] .dark\:text-neutral-300,
-.dark [data-internal] .dark\:text-gray-300,
-.dark [data-internal] .dark\:text-zinc-300,
-.dark [data-internal] .dark\:text-slate-300,
-.dark [data-internal] .dark\:text-stone-300 { color: #ffffff !important; }
+html.rv [data-rv] {
+  transition:
+    opacity var(--rv-duration, 0.65s) cubic-bezier(0.16, 1, 0.3, 1) var(--rv-delay, 0s),
+    transform var(--rv-duration, 0.65s) cubic-bezier(0.16, 1, 0.3, 1) var(--rv-delay, 0s);
+}
 
-.dark [data-internal] .text-neutral-400,
-.dark [data-internal] .text-gray-400,
-.dark [data-internal] .text-zinc-400,
-.dark [data-internal] .text-slate-400,
-.dark [data-internal] .text-stone-400,
-.dark [data-internal] .dark\:text-neutral-400,
-.dark [data-internal] .dark\:text-gray-400,
-.dark [data-internal] .dark\:text-zinc-400,
-.dark [data-internal] .dark\:text-slate-400,
-.dark [data-internal] .dark\:text-stone-400 { color: #f4f4f5 !important; }
+/* A group is a trigger for its children, not a block that fades on its own. */
+html.rv [data-rv]:not([data-rv-group]):not(.is-in) {
+  opacity: 0;
+  transform: translate3d(var(--rv-x, 0px), var(--rv-y, 24px), 0);
+}
+html.rv [data-rv].is-in { opacity: 1; transform: none; }
 
-.dark [data-internal] .text-neutral-500,
-.dark [data-internal] .text-gray-500,
-.dark [data-internal] .text-zinc-500,
-.dark [data-internal] .text-slate-500,
-.dark [data-internal] .text-stone-500,
-.dark [data-internal] .text-muted-foreground,
-.dark [data-internal] .dark\:text-neutral-500,
-.dark [data-internal] .dark\:text-gray-500,
-.dark [data-internal] .dark\:text-zinc-500,
-.dark [data-internal] .dark\:text-slate-500,
-.dark [data-internal] .dark\:text-stone-500,
-.dark [data-internal] .dark\:text-muted-foreground { color: #e6e6e6 !important; }
+/* ── Stagger cascade ── */
+html.rv [data-rv-group] > * {
+  transition:
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1) var(--rv-d, 0s),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1) var(--rv-d, 0s);
+}
+html.rv [data-rv-group]:not(.is-in) > * {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+}
+html.rv [data-rv-group].is-in > * { opacity: 1; transform: none; }
 
-.dark [data-internal] .text-neutral-600,
-.dark [data-internal] .text-gray-600,
-.dark [data-internal] .text-zinc-600,
-.dark [data-internal] .text-slate-600,
-.dark [data-internal] .text-stone-600,
-.dark [data-internal] .dark\:text-neutral-600,
-.dark [data-internal] .dark\:text-gray-600,
-.dark [data-internal] .dark\:text-zinc-600,
-.dark [data-internal] .dark\:text-slate-600,
-.dark [data-internal] .dark\:text-stone-600 { color: #d4d4d4 !important; }
+/* CSS has no nth-child arithmetic, so the ladder is spelled out. 24 rungs covers
+   every grid, list and card row on the site with room to spare. */
+html.rv [data-rv-group] > *:nth-child(1)  { --rv-d: calc(var(--rv-delay, 0s) + 0  * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(2)  { --rv-d: calc(var(--rv-delay, 0s) + 1  * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(3)  { --rv-d: calc(var(--rv-delay, 0s) + 2  * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(4)  { --rv-d: calc(var(--rv-delay, 0s) + 3  * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(5)  { --rv-d: calc(var(--rv-delay, 0s) + 4  * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(6)  { --rv-d: calc(var(--rv-delay, 0s) + 5  * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(7)  { --rv-d: calc(var(--rv-delay, 0s) + 6  * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(8)  { --rv-d: calc(var(--rv-delay, 0s) + 7  * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(9)  { --rv-d: calc(var(--rv-delay, 0s) + 8  * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(10) { --rv-d: calc(var(--rv-delay, 0s) + 9  * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(11) { --rv-d: calc(var(--rv-delay, 0s) + 10 * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(12) { --rv-d: calc(var(--rv-delay, 0s) + 11 * var(--rv-step, 0.07s)); }
+html.rv [data-rv-group] > *:nth-child(n + 13) { --rv-d: calc(var(--rv-delay, 0s) + 12 * var(--rv-step, 0.07s)); }
 
-.dark [data-internal] .text-neutral-700,
-.dark [data-internal] .text-gray-700,
-.dark [data-internal] .text-zinc-700,
-.dark [data-internal] .text-slate-700,
-.dark [data-internal] .text-stone-700,
-.dark [data-internal] .dark\:text-neutral-700,
-.dark [data-internal] .dark\:text-gray-700,
-.dark [data-internal] .dark\:text-zinc-700,
-.dark [data-internal] .dark\:text-slate-700,
-.dark [data-internal] .dark\:text-stone-700 { color: #bdbdbd !important; }
+/* Reduced motion: content still resolves, nothing travels. */
+@media (prefers-reduced-motion: reduce) {
+  html.rv [data-rv]:not([data-rv-group]):not(.is-in),
+  html.rv [data-rv-group]:not(.is-in) > * { transform: none; }
+}
 
-/* ── LIGHT MODE: darken muted text toward black ── */
-[data-internal] .text-neutral-300,
-[data-internal] .text-gray-300,
-[data-internal] .text-zinc-300,
-[data-internal] .text-slate-300,
-[data-internal] .text-stone-300 { color: #3f3f46 !important; }
+/* ════════════════════════════════════════════════════════════════════════════
+   BRAND LAYER - accent, elevation, surfaces
+   ────────────────────────────────────────────────────────────────────────────
+   The palette was effectively monochrome: `--so-accent` is near-black, so the
+   only colour on the site was a gold that appeared on dark hero bands and
+   nowhere else. Gold is now a first-class token used consistently - eyebrows,
+   active states, focus rings, rules, numerals - which is what turns a neutral
+   layout into a brand.
 
-[data-internal] .text-neutral-400,
-[data-internal] .text-gray-400,
-[data-internal] .text-zinc-400,
-[data-internal] .text-slate-400,
-[data-internal] .text-stone-400 { color: #27272a !important; }
+   Shadows are warm (they carry the cream's hue) rather than neutral black.
+   A pure-black shadow on a #F6F4EE ground reads as dirt; a warm one reads as
+   paper lifting off paper.
+   ════════════════════════════════════════════════════════════════════════════ */
 
-[data-internal] .text-neutral-500,
-[data-internal] .text-gray-500,
-[data-internal] .text-zinc-500,
-[data-internal] .text-slate-500,
-[data-internal] .text-stone-500,
-[data-internal] .text-muted-foreground { color: #18181b !important; }
+:root {
+  --so-gold:        #A98337;
+  --so-gold-bright: #C9A961;
+  --so-gold-soft:   rgba(169, 131, 55, 0.10);
+  --so-gold-softer: rgba(169, 131, 55, 0.05);
+  --so-gold-line:   rgba(169, 131, 55, 0.24);
 
-[data-internal] .text-neutral-600,
-[data-internal] .text-gray-600,
-[data-internal] .text-zinc-600,
-[data-internal] .text-slate-600,
-[data-internal] .text-stone-600 { color: #111111 !important; }
+  --so-e1: 0 1px 2px rgba(60, 50, 30, 0.05);
+  --so-e2: 0 2px 4px rgba(60, 50, 30, 0.04), 0 6px 16px rgba(60, 50, 30, 0.06);
+  --so-e3: 0 4px 8px rgba(60, 50, 30, 0.05), 0 16px 40px rgba(60, 50, 30, 0.09);
+  --so-e-press: 0 1px 1px rgba(60, 50, 30, 0.08);
 
-/* ── Font-size floor: nudge the tiniest sizes up a step for legibility ── */
-[data-internal] .text-\[9px\],
-[data-internal] .text-\[9\.5px\] { font-size: 11px !important; }
-[data-internal] .text-\[10px\] { font-size: 11.5px !important; }
-[data-internal] .text-\[10\.5px\] { font-size: 12px !important; }
-[data-internal] .text-\[11px\] { font-size: 12px !important; }
-[data-internal] .text-\[11\.5px\] { font-size: 12.5px !important; }
-[data-internal] .text-\[12px\] { font-size: 12.5px !important; }
-[data-internal] .text-\[12\.5px\] { font-size: 13px !important; }
-[data-internal] .text-xs { font-size: 0.8125rem !important; } /* 12px → 13px */
+  --so-dur-fast: 140ms;
+  --so-dur:      220ms;
+  --so-dur-slow: 420ms;
+  --so-ease:     cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark {
+  --so-gold:        #C9A961;
+  --so-gold-bright: #E3C888;
+  --so-gold-soft:   rgba(201, 169, 97, 0.12);
+  --so-gold-softer: rgba(201, 169, 97, 0.06);
+  --so-gold-line:   rgba(201, 169, 97, 0.26);
+
+  --so-e1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --so-e2: 0 2px 4px rgba(0, 0, 0, 0.35), 0 6px 16px rgba(0, 0, 0, 0.45);
+  --so-e3: 0 4px 8px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.55);
+  --so-e-press: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+@theme inline {
+  --color-so-gold: var(--so-gold);
+  --color-so-gold-bright: var(--so-gold-bright);
+  --color-so-gold-soft: var(--so-gold-soft);
+  --color-so-gold-line: var(--so-gold-line);
+}
+
+/* ── Eyebrow: gold, with the hairline that anchors it to the section ── */
+.so-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--so-gold);
+}
+.so-eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+  flex: none;
+}
+/* Centred sections read better with the rule on both sides. */
+.so-eyebrow-center::after {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+  flex: none;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────────
+   Every button gains a press state and an arrow that nudges on hover. The
+   translate is 1px - enough to feel mechanical, small enough never to look
+   like a bug. */
+.so-btn {
+  height: 46px;
+  padding: 0 22px;
+  position: relative;
+  transition:
+    background var(--so-dur) var(--so-ease),
+    border-color var(--so-dur) var(--so-ease),
+    color var(--so-dur) var(--so-ease),
+    box-shadow var(--so-dur) var(--so-ease),
+    transform var(--so-dur-fast) var(--so-ease);
+}
+.so-btn:active { transform: translateY(1px); box-shadow: var(--so-e-press); }
+
+.so-btn svg { transition: transform var(--so-dur) var(--so-ease); }
+.so-btn:hover svg:last-child { transform: translateX(3px); }
+
+.so-btn-primary { box-shadow: var(--so-e1); }
+.so-btn-primary:hover { box-shadow: var(--so-e2); }
+
+.so-btn-ghost { background: var(--so-surface); }
+.so-btn-ghost:hover {
+  background: var(--so-surface);
+  border-color: var(--so-gold-line);
+  color: var(--so-gold);
+  box-shadow: var(--so-e2);
+}
+
+/* Text link with the rule that draws itself in - the site's default "read more". */
+.so-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--so-ink);
+  position: relative;
+  padding-bottom: 2px;
+}
+.so-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--so-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--so-dur-slow) var(--so-ease);
+}
+.so-link:hover { color: var(--so-gold); }
+.so-link:hover::after { transform: scaleX(1); }
+.so-link svg { transition: transform var(--so-dur) var(--so-ease); }
+.so-link:hover svg { transform: translateX(3px); }
+
+/* ── Cards ── */
+.so-card {
+  box-shadow: var(--so-e1);
+  transition:
+    border-color var(--so-dur) var(--so-ease),
+    box-shadow var(--so-dur) var(--so-ease),
+    transform var(--so-dur) var(--so-ease);
+}
+.so-card:hover {
+  border-color: var(--so-gold-line);
+  box-shadow: var(--so-e3);
+  transform: translateY(-2px);
+}
+/* Cards that are not links should not pretend to be. */
+.so-card-static:hover { transform: none; box-shadow: var(--so-e1); border-color: var(--so-line); }
+
+.dark .so-card { box-shadow: var(--so-e1); }
+.dark .so-card:hover { box-shadow: var(--so-e3); }
+
+/* ── Numerals: tabular, gold, used for section indices and stats ── */
+.so-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum", "zero";
+  letter-spacing: -0.02em;
+}
+
+/* ── Hairline rule ── */
+.so-rule { height: 1px; background: var(--so-line); border: 0; }
+
+/* ── Focus: one visible, branded ring everywhere ── */
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--so-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.so-btn:focus-visible, .so-theme-toggle:focus-visible, .so-nav-link:focus-visible {
+  outline: 2px solid var(--so-gold);
+  outline-offset: 3px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   HERO BACKDROP - CSS mesh, replacing the WebGL shader
+   ────────────────────────────────────────────────────────────────────────────
+   Every page hero used to mount a @paper-design/shaders-react MeshGradient: a
+   full-bleed WebGL canvas re-rendering ~1M fragments a frame. Stacked with the
+   Lenis RAF loop and a few hundred motion nodes it saturated the main thread -
+   a 1-second requestAnimationFrame probe on /solutions timed out after 45s,
+   and hero headlines never finished animating in.
+
+   These four layered radials are visually equivalent at this blur radius and
+   cost the compositor a single paint. The drift is a transform on a wrapper,
+   so it runs off-thread; `translateZ(0)` keeps it on its own layer.
+
+   Palette comes in as --m1..--m4, so a page still picks its own colourway.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.so-mesh {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--m1, #0a0a0a);
+  z-index: 0;
+}
+.so-mesh::before,
+.so-mesh::after {
+  content: "";
+  position: absolute;
+  /* Oversized so the drift never exposes an edge. */
+  inset: -30%;
+  transform: translateZ(0);
+  will-change: transform;
+}
+.so-mesh::before {
+  background:
+    radial-gradient(46% 58% at 72% 18%, var(--m4, #e8d39a) 0%, transparent 62%),
+    radial-gradient(52% 62% at 22% 78%, var(--m3, #b89a4a) 0%, transparent 66%);
+  opacity: 0.5;
+  animation: so-mesh-a 34s ease-in-out infinite alternate;
+}
+.so-mesh::after {
+  background:
+    radial-gradient(62% 52% at 88% 74%, var(--m2, #161510) 0%, transparent 64%),
+    radial-gradient(44% 46% at 8% 12%, var(--m3, #b89a4a) 0%, transparent 58%);
+  opacity: 0.42;
+  animation: so-mesh-b 44s ease-in-out infinite alternate;
+}
+
+/* Grain + scrim. The grain is what stops a CSS gradient reading as a cheap
+   blur: it breaks the banding the way the shader's film grain used to. */
+.so-mesh-grain {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.so-mesh-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 10, 0.42) 0%,
+    rgba(10, 10, 10, 0.30) 42%,
+    var(--so-bg) 100%
+  );
+  pointer-events: none;
+}
+
+@keyframes so-mesh-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(4%, -3%, 0) scale(1.08); }
+}
+@keyframes so-mesh-b {
+  from { transform: translate3d(0, 0, 0) scale(1.06); }
+  to   { transform: translate3d(-5%, 3%, 0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .so-mesh::before, .so-mesh::after { animation: none; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   NAV OVER A DARK HERO
+   ────────────────────────────────────────────────────────────────────────────
+   The pill's default surface is cream at 65% opacity with near-black type. On
+   the fourteen pages built on PageHero that rendered a pale grey slab carrying
+   unreadable dark text on top of a near-black hero band - the logo, every nav
+   label and the theme toggle all failed contrast for the whole first screen.
+
+   SiteNav sets data-over-dark on the header whenever a [data-hero-dark] band is
+   still under the pill, and these rules swap the whole thing to dark glass.
+
+   The !important flags are deliberate and contained: the pill's children are
+   styled with Tailwind utilities (text-so-ink, border-so-line, bg-so-ink) that
+   would otherwise win on specificity. Rewriting ~20 class strings in an
+   800-line component to thread a colour variable through would be a far larger
+   change for the same result.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+header[data-over-dark="true"] .so-navpill {
+  background: rgba(16, 15, 13, 0.55) !important;
+  box-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Wordmark and nav labels */
+header[data-over-dark="true"] .so-navpill .text-so-ink { color: rgba(247, 242, 230, 0.96) !important; }
+header[data-over-dark="true"] .so-navpill .text-so-ink-2 { color: rgba(247, 242, 230, 0.74) !important; }
+header[data-over-dark="true"] .so-navpill .text-so-ink-3,
+header[data-over-dark="true"] .so-navpill .text-so-ink-4 { color: rgba(247, 242, 230, 0.55) !important; }
+header[data-over-dark="true"] .so-navpill .hover\:text-so-ink:hover { color: #FFFDF7 !important; }
+
+/* Divider and any hairline inside the pill */
+header[data-over-dark="true"] .so-navpill .bg-so-line { background-color: rgba(247, 242, 230, 0.18) !important; }
+header[data-over-dark="true"] .so-navpill .border-so-line { border-color: rgba(247, 242, 230, 0.18) !important; }
+
+/* The logo mark is a light glyph inverted to black for cream surfaces - over a
+   dark band it must go back to its original light form. */
+header[data-over-dark="true"] .so-navpill img.invert { filter: none !important; }
+
+/* "Start a project" inverts too: cream fill, dark label. */
+header[data-over-dark="true"] .so-navpill .bg-so-ink { background-color: #F7F2E6 !important; }
+header[data-over-dark="true"] .so-navpill .text-so-bg { color: #12110F !important; }
+
+/* The active-tab underline sits on the dark surface. */
+header[data-over-dark="true"] .so-navpill .bg-so-ink.rounded-full { background-color: var(--so-gold-bright) !important; }
+
+header[data-over-dark="true"] .so-navpill,
+header[data-over-dark="true"] .so-navpill * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Horizontal reveals are a desktop-only idea.
+   Below `lg` almost every element is full-bleed inside the container, so a sideways offset pushes
+   it past the viewport edge for the length of the transition - measured on /solutions, a `w-full`
+   stat card sat at left:40px / right:398px in a 390px viewport while its reveal was in flight.
+   `!important` is required to beat the inline `--rv-x` the primitive writes. Everything rises
+   instead, which is also the better read on a narrow screen. */
+@media (max-width: 1023px) {
+  html.rv [data-rv] { --rv-x: 0px !important; }
+}

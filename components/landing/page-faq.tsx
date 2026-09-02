@@ -78,12 +78,10 @@ export function PageFAQ({
             }
             <div className={containerClassName}>
                 <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
-                    <motion.div
-                        initial={{ opacity: 0, y: reduced ? 0 : 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-60px" }}
-                        transition={{ duration: reduced ? 0.25 : 0.65, ease: EASE }}
-                        className="flex flex-col justify-start lg:sticky lg:top-24 lg:self-start"
+                    <div
+                        data-rv=""
+                        style={{ "--rv-y": "20px" } as React.CSSProperties}
+                        className="so-anim flex flex-col justify-start lg:sticky lg:top-24 lg:self-start"
                     >
                         <p className="mb-5 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-so-ink-4">
                             {eyebrow}
@@ -114,7 +112,7 @@ export function PageFAQ({
                                 </div>
                             )
                         }
-                    </motion.div>
+                    </div>
                     <div>
                         {
                             items.map((faq, i) => {
@@ -123,16 +121,10 @@ export function PageFAQ({
                                 const buttonId = `${uid}-button-${i}`
 
                                 return (
-                                    <motion.div
+                                    <div
                                         key={faq.q}
-                                        initial={{ opacity: 0, y: reduced ? 0 : 8 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true, margin: "-40px" }}
-                                        transition={{
-                                            duration: reduced ? 0.25 : 0.45,
-                                            delay: reduced ? 0 : i * 0.04,
-                                            ease: EASE,
-                                        }}
+                                        data-rv=""
+                                        style={{ "--rv-y": "8px", "--rv-delay": `${i * 0.04}s`, "--rv-duration": "0.45s" } as React.CSSProperties}
                                         className="border-b border-so-line"
                                     >
                                         <button
@@ -177,7 +169,7 @@ export function PageFAQ({
                                                 )
                                             }
                                         </AnimatePresence>
-                                    </motion.div>
+                                    </div>
                                 )
                             })
                         }

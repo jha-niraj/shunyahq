@@ -3,17 +3,12 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useEffect, useRef } from "react"
-import { motion } from "framer-motion"
 import { Check, Lock, ArrowLeft, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { FlowNav } from "@/components/contact/typeform-flow"
 import { SITE_ORG } from "@/lib/site"
 import { ThemeToggle } from "@/components/themetoggle"
 
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
-const container = { hidden: {}, show: { transition: { staggerChildren: 0.09, delayChildren: 0.06 } } }
-const stepsContainer = { hidden: {}, show: { transition: { staggerChildren: 0.045, delayChildren: 0.04 } } }
-const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } } }
 
 /**
  * The left rail. It owns navigation on lg+ - the form's own Back and counter hide there - and it is
@@ -39,16 +34,22 @@ export function ContactSidePanel({ nav, prefilled }: { nav: FlowNav; prefilled?:
                 }}
             />
 
-            <motion.div variants={container} initial="hidden" animate="show" className="relative z-10 flex h-full flex-col p-8 xl:p-10">
-                <motion.div variants={item} className="flex items-center justify-between gap-3">
+            <div
+                data-rv=""
+                data-rv-group=""
+                data-rv-mount=""
+                className="relative z-10 flex h-full flex-col p-8 xl:p-10"
+                style={{ "--rv-step": "0.09s", "--rv-delay": "0.06s" } as React.CSSProperties}
+            >
+                <div className="flex items-center justify-between gap-3">
                     <Link href="/" className="inline-flex items-center gap-2.5" aria-label="ShunyaHQ home">
                         <Image src="/shunyahqmainlogo.png" alt="" width={32} height={32} className="h-8 w-8 invert dark:invert-0" />
                         <span className="text-lg font-semibold tracking-[-0.01em] text-so-ink">ShunyaHQ</span>
                     </Link>
                     <ThemeToggle />
-                </motion.div>
+                </div>
 
-                <motion.div variants={item} className="mt-8">
+                <div className="mt-8">
                     <h2 className="text-[26px] font-bold leading-tight tracking-[-0.02em] text-so-ink">
                         Tell us what you want to build
                     </h2>
@@ -62,12 +63,12 @@ export function ContactSidePanel({ nav, prefilled }: { nav: FlowNav; prefilled?:
                             Carried over from pricing: {prefilled}
                         </p>
                     )}
-                </motion.div>
+                </div>
 
                 {/* min-h-0 is load-bearing: a flex child defaults to min-height:auto, so without it this
                     nav grows to fit every step instead of scrolling, and the overflow is clipped. */}
-                <motion.nav variants={item} className="mt-7 min-h-0 flex-1 overflow-y-auto">
-                    <motion.ol variants={stepsContainer} className="space-y-1">
+                <nav className="mt-7 min-h-0 flex-1 overflow-y-auto">
+                    <ol className="space-y-1">
                         {nav.realSteps.map((step, i) => {
                             const isCurrent = i === nav.realIdx
                             // Answered, not merely "behind the cursor" - otherwise stepping back up
@@ -75,7 +76,7 @@ export function ContactSidePanel({ nav, prefilled }: { nav: FlowNav; prefilled?:
                             const isDone = nav.answered.has(step.id) || (nav.isDone && i <= nav.maxRealIdx)
                             const isReachable = i <= nav.maxRealIdx && !nav.isDone
                             return (
-                                <motion.li variants={item} key={step.id} ref={isCurrent ? currentRef : undefined}>
+                                <li key={step.id} ref={isCurrent ? currentRef : undefined}>
                                     <button
                                         type="button"
                                         onClick={() => isReachable && nav.goToRealStep(i)}
@@ -111,15 +112,15 @@ export function ContactSidePanel({ nav, prefilled }: { nav: FlowNav; prefilled?:
                                         </span>
                                         {!isReachable && !isDone && !isCurrent && <Lock className="mt-1 h-3 w-3 shrink-0 text-so-ink-4" />}
                                     </button>
-                                </motion.li>
+                                </li>
                             )
                         })}
-                    </motion.ol>
-                </motion.nav>
+                    </ol>
+                </nav>
 
                 {/* The old contact page offered a plain email address. A form is a worse experience
                     for someone who just wants to send one line, so that route stays available. */}
-                <motion.div variants={item} className="mt-4 rounded-xl border border-so-line bg-so-surface p-4">
+                <div className="mt-4 rounded-xl border border-so-line bg-so-surface p-4">
                     <p className="text-[12.5px] font-semibold text-so-ink">Would rather just email?</p>
                     <a
                         href={`mailto:${SITE_ORG.email}`}
@@ -128,9 +129,9 @@ export function ContactSidePanel({ nav, prefilled }: { nav: FlowNav; prefilled?:
                         <Mail className="h-3.5 w-3.5" />
                         {SITE_ORG.email}
                     </a>
-                </motion.div>
+                </div>
 
-                <motion.div variants={item} className="mt-6 flex items-center justify-between border-t border-so-line pt-5">
+                <div className="mt-6 flex items-center justify-between border-t border-so-line pt-5">
                     <span className="text-xs font-medium text-so-ink-3">
                         {/* realIdx is -1 on the welcome screen, which would read as "Step 0 of 8". */}
                         Step {Math.min(Math.max(nav.realIdx + 1, 1), nav.realSteps.length)} of {nav.realSteps.length}
@@ -139,8 +140,8 @@ export function ContactSidePanel({ nav, prefilled }: { nav: FlowNav; prefilled?:
                         <ArrowLeft className="h-3.5 w-3.5" />
                         Back to site
                     </Link>
-                </motion.div>
-            </motion.div>
+                </div>
+            </div>
         </div>
     )
 }

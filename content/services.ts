@@ -43,6 +43,30 @@ export type TechGroup = {
     items: string[]
 }
 
+/**
+ * One layer of the stack this engagement covers.
+ *
+ * ## Why this exists
+ *
+ * The studio deliberately consolidated from six services to one on 2026-08-09 (see the 301s and
+ * their rationale in `next.config.ts`): six thin service URLs were competing for the same queries
+ * instead of one strong one. That was the right SEO call and it stands.
+ *
+ * But the pitch everywhere else - the homepage capability grid, "one team for every layer of the
+ * product" - names six disciplines, and only web was substantiated anywhere. A visitor who read
+ * "Cloud architecture" or "AI integration" had nowhere to go.
+ *
+ * These are those disciplines, on the single service page rather than as five separate pages. Same
+ * information, one URL, no thin duplicates.
+ */
+export type Discipline = {
+    /** Animated SVG glyph key - see components/landing/discipline-glyphs.tsx. */
+    glyph: "web" | "mobile" | "ai" | "cloud" | "design" | "security"
+    title: string
+    /** ONE sentence. The glyph carries the explanation; this only names the idea. */
+    body: string
+}
+
 export type Service = {
     slug: string
     name: string
@@ -55,6 +79,8 @@ export type Service = {
     summary: string
     /** Expanded deliverables manifest. */
     whatWeDeliver: string[]
+    /** The layers of the stack this engagement covers. Rendered as the "Every layer" section. */
+    disciplines?: Discipline[]
     process: ProcessStep[]
     /** Real scenarios that show who this is for and what it unblocks. */
     useCases: UseCase[]
@@ -80,39 +106,71 @@ export const SERVICES: Service[] = [
         heroDescription:
             "From marketing sites to complex SaaS dashboards, we architect web systems that load fast, rank well, and stay maintainable as they grow.",
         summary:
-            "We architect scalable, SEO-optimized, and globally distributed web systems on Next.js 15 and React Server Components. Whether you need a high-converting landing page, a content-heavy marketing site, or a multi-tenant SaaS dashboard, we treat performance as a first-class requirement - not an afterthought. Every build is measured against Core Web Vitals, designed for maintainability, and shipped with the kind of architecture that won't need a rewrite in eighteen months. Why it matters: the web is still where most buyers form their first impression and where search engines decide whether you're worth surfacing. A slow, brittle front end quietly costs you conversions and rankings every single day - studies consistently tie every additional second of load time to measurable drops in conversion. We design the front end, the data layer, and the deploy pipeline as one coherent system, so the site that wins you a customer on Monday is the same codebase your team confidently extends on Friday.",
+            "We architect SEO-optimized, globally distributed web systems on Next.js 15 and React Server Components - from a high-converting landing page to a multi-tenant SaaS dashboard. Performance is a requirement we budget for, not an audit we run at the end. The front end, the data layer and the deploy pipeline are designed as one system, so the site that wins you a customer on Monday is the codebase your team confidently extends on Friday.",
         whatWeDeliver: [
-            "Next.js 15 App Router architecture with React Server Components and a sensible client/server boundary",
-            "Responsive, accessible UI built with Tailwind CSS and a documented, reusable component library",
-            "Technical SEO foundation - semantic markup, metadata, canonical URLs, XML sitemaps, robots, and JSON-LD structured data",
-            "Headless CMS integration (Sanity, Contentful, or Payload) so non-technical teams ship content safely without deploys",
-            "Core Web Vitals tuning and Lighthouse auditing on real devices, targeting 90+ across performance, accessibility, and SEO",
-            "Type-safe data layer with Prisma and tRPC, plus authentication and role-based authorization wired in",
-            "Image, font, and bundle optimization - next/image, edge caching, code-splitting, and ISR/streaming where they fit",
-            "Analytics, error tracking, and conversion event instrumentation from day one, not bolted on later",
-            "CI/CD deploy pipeline with a preview environment for every pull request and one-click rollbacks",
-            "Documentation, a component storybook, and 30 days of post-launch support for a clean, confident handoff",
+            "Next.js 15 App Router architecture with a deliberate client/server boundary",
+            "Accessible, responsive UI on a documented component library",
+            "Technical SEO: semantic markup, metadata, sitemaps, JSON-LD",
+            "Headless CMS so your team ships content without a deploy",
+            "Core Web Vitals tuned on real devices, targeting 90+ Lighthouse",
+            "Type-safe data layer with Prisma and tRPC, auth and RBAC wired in",
+            "Image, font and bundle optimization with edge caching",
+            "Analytics, error tracking and conversion events from day one",
+            "CI/CD with a preview per pull request and one-click rollback",
+            "Documentation, a component reference and 30 days of support",
+        ],
+        disciplines: [
+            {
+                glyph: "web",
+                title: "Web engineering",
+                body: "Next.js 15 and React Server Components, with the rendering strategy chosen per route rather than applied wholesale.",
+            },
+            {
+                glyph: "mobile",
+                title: "Mobile",
+                body: "iOS and Android from one codebase, sharing the web build's data layer and design system so the two surfaces cannot drift.",
+            },
+            {
+                glyph: "ai",
+                title: "AI integration",
+                body: "Retrieval grounded in your own data, with citations a user can check and an evaluation harness built alongside the feature.",
+            },
+            {
+                glyph: "cloud",
+                title: "Cloud architecture",
+                body: "Infrastructure codified in Terraform and shipped through automated pipelines, so scaling is a config change rather than a project.",
+            },
+            {
+                glyph: "design",
+                title: "Design systems",
+                body: "Tokens and documented components rather than a folder of screens, so the tenth feature looks like the first.",
+            },
+            {
+                glyph: "security",
+                title: "Security & DevOps",
+                body: "Auth, encryption and monitoring scoped into the architecture in week one and tested before anything goes live.",
+            },
         ],
         process: [
             {
                 step: "01",
                 title: "Architecture & Spec",
-                body: "We map your requirements to a concrete technical plan - routing model, data layer, rendering strategy (SSR, SSG, ISR, or streaming per route), auth model, and a component inventory. We pin down which pages must be statically generated for SEO and which need live data, then hand you a written spec and an architecture diagram before a single line of code is written. You approve scope, stack, and timeline up front, so there are no surprises mid-build.",
+                body: "We turn your requirements into a written plan: routing, data layer, rendering strategy per route, auth model and a component inventory. You approve scope, stack and timeline before anyone writes code.",
             },
             {
                 step: "02",
                 title: "Build in Sprints",
-                body: "We work in two-week agile sprints, deploying to a staging URL at the end of every one. You always click on real, working software - never a deck of mockups - and steer priorities as the product takes shape. Each pull request ships with its own preview deployment, so stakeholders can review a live link instead of imagining what the change will look like.",
+                body: "Two-week sprints, each ending on a live staging URL. Every pull request ships its own preview, so you review working software instead of imagining a mockup.",
             },
             {
                 step: "03",
                 title: "Optimize & Harden",
-                body: "We profile Core Web Vitals against real-device data, eliminate render-blocking work, trim and split JavaScript bundles, and add caching and edge strategies where they earn their keep. We audit accessibility to WCAG 2.2 AA, lock down security headers, and verify the SEO foundation - metadata, structured data, and crawlability - so the site is fast, findable, and usable by everyone.",
+                body: "We profile Core Web Vitals on real-device data, trim and split bundles, audit accessibility to WCAG 2.2 AA, and lock down security headers before launch.",
             },
             {
                 step: "04",
                 title: "Launch & Support",
-                body: "We deploy to production with monitoring, error tracking, and analytics live from the first visitor. You get full documentation, a component reference, and 30 days of post-launch support to catch anything the real world surfaces. From there you can extend it in-house with confidence or keep us on a retainer for new features and ongoing performance work.",
+                body: "Production deploy with monitoring, error tracking and analytics live from the first visitor - plus documentation and 30 days of post-launch support.",
             },
         ],
         useCases: [

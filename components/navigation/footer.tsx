@@ -32,31 +32,36 @@ const InstagramIcon = () => (
     </svg>
 )
 
+/**
+ * Footer navigation.
+ *
+ * Every route appears exactly once. The previous grouping listed /projects twice ("Our Work" under
+ * Services and "Projects" under Company) and /pricing twice, which makes a footer read as filler
+ * rather than a map - and gives two different names to the same page.
+ */
 const LINK_GROUPS = [
     {
         heading: "Services",
         links: [
             { label: "Web Engineering", href: "/services/web-engineering" },
-            { label: "Pricing", href: "/pricing" },
-            { label: "Our Work", href: "/projects" },
             { label: "Who We Build For", href: "/solutions" },
+            { label: "Pricing", href: "/pricing" },
+        ],
+    },
+    {
+        heading: "Work",
+        links: [
+            { label: "Case Studies", href: "/projects" },
+            { label: "SyncHQ", href: "/synchq" },
+            { label: "Tools", href: "/tools" },
         ],
     },
     {
         heading: "Company",
         links: [
             { label: "About Us", href: "/aboutus" },
-            { label: "Projects", href: "/projects" },
-            { label: "Pricing", href: "/pricing" },
-            { label: "Contact", href: "/contactus" },
-        ],
-    },
-    {
-        heading: "Resources",
-        links: [
             { label: "Blog", href: "/blogs" },
-            { label: "Tools", href: "/tools" },
-            { label: "Solutions", href: "/solutions" },
+            { label: "Contact", href: "/contactus" },
         ],
     },
     {
@@ -75,7 +80,7 @@ function SocialIcon({ icon, href, label }: { icon: React.ReactNode; href: string
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 text-neutral-500 dark:text-white/40 hover:bg-neutral-200 dark:hover:bg-white/10 hover:text-neutral-900 dark:hover:text-white transition-all duration-200"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-so-line bg-so-surface text-so-ink-3 transition-all duration-200 hover:-translate-y-0.5 hover:border-so-gold-line hover:text-so-gold"
         >
             {icon}
         </a>
@@ -89,18 +94,18 @@ export function Footer() {
     const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" })
 
     return (
-        <footer className="relative text-neutral-900 dark:text-white dark:bg-neutral-950 overflow-hidden pt-24 pb-0 border-t border-neutral-200 dark:border-white/5">
+        <footer className="relative bg-so-bg text-so-ink overflow-hidden pt-24 pb-0 border-t border-so-line">
             <PageBackground />
 
             <div className="max-w-7xl mx-auto px-6 md:px-8 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-20">
                     <div className="md:col-span-3 space-y-8">
                         <div className="space-y-5">
-                            <Link href="/" className="inline-flex items-center gap-2 text-neutral-900 dark:text-white">
+                            <Link href="/" className="inline-flex items-center gap-2 text-so-ink">
                                 <Image src="/shunyahqmainlogo.png" alt="ShunyaHQ" width={32} height={32} className="h-8 w-8 invert dark:invert-0" />
                                 <span className="font-bold tracking-tight text-lg">ShunyaHQ</span>
                             </Link>
-                            <p className="text-neutral-600 dark:text-white/50 text-sm leading-relaxed max-w-xs">
+                            <p className="text-so-ink-3 text-sm leading-relaxed max-w-xs">
                                 Engineering intelligence for the digital age. We build high-performance systems for forward-thinking companies.
                             </p>
                             <div className="flex gap-3 pt-1">
@@ -112,18 +117,18 @@ export function Footer() {
                         </div>
 
                         <div>
-                            <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-white/40 mb-4">Get in Touch</h4>
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-so-ink-4 mb-4">Get in Touch</h4>
                             <ul className="space-y-3 mb-5">
                                 <li>
                                     <a
                                         href="mailto:contact@shunyatech.com"
-                                        className="inline-flex items-start gap-2.5 text-sm text-neutral-600 dark:text-white/50 hover:text-neutral-900 dark:hover:text-white transition-colors duration-200"
+                                        className="inline-flex items-start gap-2.5 text-sm text-so-ink-3 hover:text-so-gold transition-colors duration-200"
                                     >
                                         <Mail className="w-4 h-4 mt-0.5 shrink-0" />
                                         contact@shunyatech.com
                                     </a>
                                 </li>
-                                <li className="flex items-start gap-2.5 text-sm text-neutral-600 dark:text-white/50 leading-relaxed">
+                                <li className="flex items-start gap-2.5 text-sm text-so-ink-3 leading-relaxed">
                                     <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
                                     <span>10 Green State, Unit 4 PMB 1058, Woodbridge, NJ 07095, United States</span>
                                 </li>
@@ -134,11 +139,11 @@ export function Footer() {
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
                                     placeholder="Enter your email"
-                                    className="w-full h-11 bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 rounded-lg pl-4 pr-12 text-sm text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-white/30 focus:outline-none focus:border-neutral-400 dark:focus:border-white/30 transition-colors"
+                                    className="h-11 w-full rounded-lg border border-so-line bg-so-surface pl-4 pr-12 text-sm text-so-ink transition-colors placeholder:text-so-ink-4 focus:border-so-gold focus:outline-none"
                                 />
                                 <button
                                     type="submit"
-                                    className="cursor-pointer absolute right-2 top-1.5 h-8 w-8 bg-neutral-200 dark:bg-white/10 rounded-md flex items-center justify-center hover:bg-neutral-900 hover:text-white dark:hover:bg-white/20 transition-all"
+                                    className="cursor-pointer absolute right-2 top-1.5 h-8 w-8 rounded-md bg-so-ink text-so-bg flex items-center justify-center hover:bg-so-gold transition-all"
                                 >
                                     <ArrowRight className="w-3.5 h-3.5" />
                                 </button>
@@ -151,12 +156,12 @@ export function Footer() {
                             {
                                 LINK_GROUPS.map(({ heading, links }) => (
                                     <div key={heading}>
-                                        <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-white/40 mb-5">{heading}</h4>
+                                        <h4 className="text-xs font-bold uppercase tracking-widest text-so-ink-4 mb-5">{heading}</h4>
                                         <ul className="space-y-3.5">
                                             {
                                                 links.map(({ label, href }) => (
                                                     <li key={`${heading}-${label}`}>
-                                                        <Link href={href} className="text-sm text-neutral-600 dark:text-white/50 hover:text-neutral-900 dark:hover:text-white transition-colors duration-200">
+                                                        <Link href={href} className="text-sm text-so-ink-3 hover:text-so-gold transition-colors duration-200">
                                                             {label}
                                                         </Link>
                                                     </li>
@@ -169,7 +174,7 @@ export function Footer() {
                         </div>
                     </div>
                 </div>
-                <div className="border-t border-neutral-200 dark:border-white/10 py-7 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-neutral-500 dark:text-white/40">
+                <div className="border-t border-so-line py-7 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-so-ink-4">
                     <div className="flex items-center gap-4">
                         <span className="text-xs">&copy; {year} ShunyaHQ</span>
                         <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider">
@@ -181,12 +186,12 @@ export function Footer() {
                         </span>
                     </div>
                     <div className="flex items-center gap-6">
-                        <Link href="/privacy" className="text-xs hover:text-neutral-900 dark:hover:text-white transition-colors">Privacy</Link>
-                        <Link href="/terms" className="text-xs hover:text-neutral-900 dark:hover:text-white transition-colors">Terms</Link>
+                        <Link href="/privacy" className="text-xs hover:text-so-gold transition-colors">Privacy</Link>
+                        <Link href="/terms" className="text-xs hover:text-so-gold transition-colors">Terms</Link>
                         <button
                             type="button"
                             onClick={scrollToTop}
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 dark:border-white/10 px-3 py-1.5 text-xs font-medium hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/5 transition-all cursor-pointer"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-so-line px-3 py-1.5 text-xs font-medium hover:border-so-gold-line hover:text-so-gold transition-all cursor-pointer"
                         >
                             <ArrowUp className="h-3 w-3" />
                             Back to top
@@ -197,10 +202,10 @@ export function Footer() {
 
             {/* Oversized brand wordmark bleeding off the bottom edge. Decorative only - the accessible
                 name is already on the logo link above, so this is aria-hidden and inert. */}
-            <div className="relative w-full border-t border-neutral-200 dark:border-white/5 pt-2 pointer-events-none select-none overflow-hidden">
+            <div className="relative w-full border-t border-so-line pt-2 pointer-events-none select-none overflow-hidden">
                 <p
                     aria-hidden
-                    className="relative z-10 text-center text-[17.5vw] font-bold leading-[0.82] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-b from-neutral-900/25 dark:from-white/[0.16] to-transparent"
+                    className="relative z-10 text-center text-[17.5vw] font-bold leading-[0.82] tracking-[-0.04em] text-transparent bg-clip-text bg-gradient-to-b from-so-ink/[0.14] to-transparent"
                 >
                     ShunyaHQ
                 </p>
