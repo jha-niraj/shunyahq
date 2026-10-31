@@ -58,25 +58,18 @@ function LoopDiagram() {
                             animate={play ? { scale: 1 } : {}}
                             transition={{ delay: 0.45 + i * 0.32, type: "spring", stiffness: 340, damping: 16 }}
                         />
-                        {/* Opacity only. Animating `y` on an SVG <text> makes framer-motion write a
-                            CSS translateY rather than the y attribute, so the label lands at
-                            82 + 88 = 170 - outside this 120-tall viewBox - and never appears. */}
-                        <motion.text
+                        <text
                             x={x} y="82" textAnchor="middle" fontSize="10.5" fontWeight="600" fill={INK}
-                            initial={{ opacity: 0 }}
-                            animate={play ? { opacity: 1 } : {}}
-                            transition={{ delay: 0.5 + i * 0.32, duration: 0.35, ease: EASE }}
                         >
                             {STEPS[i]!.k}
-                        </motion.text>
+                        </text>
                     </g>
                 ))}
-                <motion.text
+                <text
                     x="208" y="24" textAnchor="middle" fontSize="9" fill="#9A9B91" fontWeight="600" letterSpacing="1.4"
-                    initial={{ opacity: 0 }} animate={play ? { opacity: 1 } : {}} transition={{ delay: 1.5, duration: 0.4 }}
                 >
                     ONE RECORD, NEVER RETYPED
-                </motion.text>
+                </text>
             </svg>
         </motion.div>
     )

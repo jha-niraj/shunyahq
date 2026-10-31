@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 
 /**
  * The proof strip.
@@ -31,15 +30,11 @@ export default function TrustedBy() {
     return (
         <section className="border-y border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-neutral-950 py-14">
             <div className="mx-auto max-w-6xl px-6">
-                <motion.h2
-                    initial={{ opacity: 0, y: 14 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                <h2 data-rv=""
                     className="text-center text-2xl md:text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-neutral-900 to-neutral-500 dark:from-white dark:to-neutral-500"
                 >
                     Trusted by teams that ship
-                </motion.h2>
+                </h2>
                 <p className="mt-3 text-center text-sm text-neutral-500 dark:text-neutral-400">
                     Six products live in production across EdTech, LegalTech, SaaS, Events and Healthcare.
                 </p>

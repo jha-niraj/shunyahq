@@ -743,7 +743,7 @@ export function SiteNav() {
                                 HAIRLINE,
                             )}
                         >
-                            <div data-lenis-prevent className="max-h-[calc(100dvh-5.5rem)] overflow-y-auto px-4 pb-4 pt-3">
+                            <div className="max-h-[calc(100dvh-5.5rem)] overflow-y-auto px-4 pb-4 pt-3">
                                 {/* type="single" so only one section is open at a time. */}
                                 <Accordion type="single" collapsible className="w-full">
                                     {MOBILE_NAV.map((item) =>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
+import type { CSSProperties } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
     ChevronRight, Check, Boxes, GitMerge, Rocket, Activity,
@@ -10,11 +11,6 @@ import {
 import { HeroShaderBg } from "./hero-shader-bg"
 
 const EASE = [0.22, 1, 0.36, 1] as const
-
-const fadeUp = {
-    hidden: { opacity: 0, y: 18 },
-    show: (d: number) => ({ opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE, delay: d * 0.08 } }),
-}
 
 // The hero is a forced-light band sitting on the champagne shader, so the stage draws against a
 // known palette rather than inheriting theme tokens that could flip underneath it.
@@ -507,7 +503,7 @@ function HeroStage() {
                         transformOrigin: "center",
                     }}
                 >
-                    <AnimatePresence mode="wait">
+                    <AnimatePresence mode="wait" initial={false}>
                         <motion.div
                             key={scene.key}
                             initial={{ opacity: 0 }}
@@ -677,31 +673,27 @@ export function Hero() {
                 {/* Copy block. Left-aligned and capped at ~3xl so the headline breaks where it
                     should, while the stage below runs the full width. */}
                 <div className="max-w-3xl">
-                    <motion.span
-                        variants={fadeUp} initial="hidden" animate="show" custom={1}
+                    <span data-rv="" style={{ "--rv-y": "18px", "--rv-delay": "0.08s" } as CSSProperties}
                         className="inline-flex h-7 items-center gap-2 rounded-full border border-neutral-900/10 bg-white/80 px-3 text-[12.5px] font-medium text-neutral-700 backdrop-blur"
                     >
                         <span className="h-1.5 w-1.5 rounded-full bg-neutral-900" />
                         Software engineering studio
-                    </motion.span>
+                    </span>
 
-                    <motion.h1
-                        variants={fadeUp} initial="hidden" animate="show" custom={2}
+                    <h1 data-rv="" style={{ "--rv-y": "18px", "--rv-delay": "0.16s" } as CSSProperties}
                         className="mt-4 text-[clamp(38px,6.2vw,68px)] font-bold leading-[0.99] tracking-[-0.04em] text-neutral-900 text-balance"
                     >
                         We build the <span className="text-neutral-900/40">future.</span>
-                    </motion.h1>
+                    </h1>
 
-                    <motion.p
-                        variants={fadeUp} initial="hidden" animate="show" custom={3}
+                    <p data-rv="" style={{ "--rv-y": "18px", "--rv-delay": "0.24s" } as CSSProperties}
                         className="mt-3.5 max-w-[46ch] text-[clamp(14.5px,1.35vw,16.5px)] leading-[1.6] text-neutral-700"
                     >
                         A web engineering studio. We design, build and ship custom web applications
                         with one team owning the whole stack - scope to production.
-                    </motion.p>
+                    </p>
 
-                    <motion.div
-                        variants={fadeUp} initial="hidden" animate="show" custom={4}
+                    <div data-rv="" style={{ "--rv-y": "18px", "--rv-delay": "0.32s" } as CSSProperties}
                         className="mt-5 flex flex-wrap items-center gap-3"
                     >
                         <Link
@@ -717,12 +709,12 @@ export function Hero() {
                         >
                             See Our Work <span className="text-neutral-400">→</span>
                         </Link>
-                    </motion.div>
+                    </div>
                 </div>
 
-                <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6} className="mt-6 min-h-0 flex-1">
+                <div data-rv="" style={{ "--rv-y": "18px", "--rv-delay": "0.48s" } as CSSProperties} className="mt-6 min-h-0 flex-1">
                     <HeroStage />
-                </motion.div>
+                </div>
             </div>
 
             <HeroTicker />

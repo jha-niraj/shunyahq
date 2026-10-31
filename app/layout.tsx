@@ -7,7 +7,6 @@ import { Providers } from "./providers"
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SITE_LOGO, SITE_ORG, SITE_SOCIALS } from "@/lib/site"
 import { SiteHeader, SiteFooter } from "@/components/site-chrome"
 import { RevealProvider } from "@/components/landing/animations"
-import SmoothScroll from "@/components/smooth-scroll"
 
 // Bricolage Grotesque is the ONLY typeface on the platform - sans, display, mono slots and all.
 // It ships as a variable font, so the full 200-800 weight range comes from one file.
@@ -131,10 +130,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     running. So a crawler, a JS error, Reader Mode or a slow connection all get the
                     complete page - the opposite of the previous setup, which server-rendered
                     opacity:0 inline and left headlines permanently invisible when the reveal never
-                    completed. `RevealProvider` strips the class again after 2.5s as a failsafe. */}
+                    completed. `RevealProvider` strips the class again after 2.5s as a failsafe, and the timer here
+                    covers the case where the JS bundle never runs, so React can't. */}
                 <script
                     dangerouslySetInnerHTML={{
-                        __html: `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rv')}catch(e){}`,
+                        __html: `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){var h=document.documentElement;h.classList.add('rv');setTimeout(function(){h.classList.remove('rv')},3500)}}catch(e){}`,
                     }}
                 />
             </head>
@@ -149,11 +149,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                         disableTransitionOnChange
                     >
                         <RevealProvider />
-                        <SmoothScroll>
-                            <SiteHeader />
-                            {children}
-                            <SiteFooter />
-                        </SmoothScroll>
+                        <SiteHeader />
+                        {children}
+                        <SiteFooter />
                         <SonnerToaster position="top-center" closeButton richColors />
                     </ThemeProvider>
                 </Providers>

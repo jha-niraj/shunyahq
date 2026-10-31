@@ -2,7 +2,7 @@
 
 /**
  * Reusable, theme-responsive framer-motion illustrations used across the landing
- * and marketing pages. Each one shows a *real* Shunya Tech capability:
+ * and marketing pages. Each one shows a *real* ShunyaHQ capability:
  *   - StreamingChat / CitationAnswer  -> AI coding assistant + deploy status
  *   - ExamCard                        -> SyncHQ kanban / sprint task card
  *   - VouchingScan                    -> CI/CD pipeline build scan (Build->Test->Deploy)
@@ -410,7 +410,7 @@ export function ConsultCard({ className }: { className?: string }) {
                         <p className="truncate text-[13px] font-semibold text-neutral-900 dark:text-white">Niraj Jha</p>
                         <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
                     </div>
-                    <p className="text-[11px] text-neutral-400 dark:text-neutral-500">Co-Founder &amp; CTO · Shunya Tech</p>
+                    <p className="text-[11px] text-neutral-400 dark:text-neutral-500">Co-Founder &amp; CTO · ShunyaHQ</p>
                 </div>
             </div>
             <div className="mt-3 flex items-center justify-between">

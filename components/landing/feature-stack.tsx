@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState, type Ref } from "react"
 import Link from "next/link"
 import { motion, useScroll, useTransform, useMotionValueEvent, type MotionValue } from "framer-motion"
 import {
@@ -313,8 +313,8 @@ function UIUXSystemsIllustration() {
 
             <g className="cn5">
                 <text x="20" y="162" fontSize="8" fill="var(--vi-ink3)" fontFamily="inherit" letterSpacing="0.08em">CONTRAST RATIO</text>
-                <text x="20" y="176" fontSize="16" fontWeight="700" fill="var(--vi-ink)" fontFamily="inherit">AAA</text>
-                <text x="68" y="176" fontSize="8.5" fill="var(--vi-ink4)" fontFamily="inherit">/ accessible</text>
+                <text x="20" y="176" fontSize="16" fontWeight="700" fill="var(--vi-ink)" fontFamily="inherit">AA</text>
+                <text x="50" y="176" fontSize="8.5" fill="var(--vi-ink4)" fontFamily="inherit">/ accessible</text>
             </g>
 
             <g className="cn6">
@@ -362,7 +362,7 @@ function DevOpsSecurityIllustration() {
                     { y: 72, label: "Penetration test", status: "0 critical", cls: "ds1" },
                     { y: 95, label: "OAuth 2.0 + RBAC", status: "enforced", cls: "ds2" },
                     { y: 118, label: "AES-256 / TLS 1.3", status: "encrypted", cls: "ds3" },
-                    { y: 141, label: "Uptime monitor", status: "99.99%", cls: "ds4" },
+                    { y: 141, label: "Uptime monitor", status: "99.9%", cls: "ds4" },
                 ].map(({ y, label, status, cls }) => (
                     <g key={y} className={cls}>
                         <rect x="12" y={y - 11} width="316" height="20" rx="6" fill="var(--vi-bg2)" stroke="var(--vi-line)" strokeWidth="0.5" />
@@ -467,10 +467,10 @@ const FEATURES: Feature[] = [
         bullets: [
             { icon: Layout, text: "Figma design files and reusable atomic components" },
             { icon: BookOpen, text: "Living design-system documentation for your team" },
-            { icon: Shield, text: "Accessibility audited to WCAG standards" },
+            { icon: Shield, text: "Accessibility audited to WCAG 2.2 AA" },
             { icon: ArrowRight, text: "Interactive high-fidelity prototypes before a line of code" },
         ],
-        accentMetric: "WCAG AAA",
+        accentMetric: "WCAG 2.2 AA",
         accentLabel: "accessible contrast across the system",
         illustration: <UIUXSystemsIllustration />,
     },
@@ -506,6 +506,11 @@ const FEATURES: Feature[] = [
  *  - `STACK_TOP` is that plus the bar's own height, and it is where the CARDS pin. Deriving it
  *    rather than writing a third number is the point: if the bar's height changes, the cards follow
  *    it instead of sliding underneath it.
+ *
+ * The bar sticks inside its own track, not the whole container, and the track stops one last-card
+ * height short of the container's end. Sticky releases when the track runs out, so that gap is what
+ * makes the bar leave at the exact moment the finished stack starts scrolling away. With the whole
+ * container as its limit it stayed pinned for another viewport while the last card slid under it.
  */
 const NAV_BOTTOM = 112
 const BAR_H = 56
@@ -522,8 +527,9 @@ const STACK_GAP = 24
  * card is always full-size, so the last one is never pushed below anything.
  */
 function StackCard({
-    feature, i, n, progress, play,
+    ref, feature, i, n, progress, play,
 }: {
+    ref?: Ref<HTMLDivElement>
     feature: Feature
     i: number
     n: number
@@ -541,6 +547,7 @@ function StackCard({
     // every card starts at exactly the same place under the header.
     return (
         <div
+            ref={ref}
             className="sticky flex items-start justify-center px-5 pb-10 sm:px-7"
             style={{
                 top: STACK_TOP,
@@ -622,6 +629,7 @@ function StackCard({
 
 export function FeatureStack() {
     const container = useRef<HTMLDivElement>(null)
+    const lastCard = useRef<HTMLDivElement>(null)
     const { scrollYProgress } = useScroll({ target: container, offset: ["start start", "end end"] })
     const n = FEATURES.length
 
@@ -632,6 +640,19 @@ export function FeatureStack() {
     // Latched high-water mark: the card illustrations animate with fill-mode `both`, so once a card
     // has been reached its animation should stay running rather than re-pausing on the way back up.
     const [seen, setSeen] = useState(0)
+
+    // A card can outgrow its min-height on short screens, so the track's cut-off follows the real
+    // height. Until this runs the fallback in the track's style is right for every normal viewport.
+    useEffect(() => {
+        const box = container.current
+        const card = lastCard.current
+        if (!box || !card) return
+        const observer = new ResizeObserver(() => {
+            box.style.setProperty("--fs-last-card", `${card.offsetHeight}px`)
+        })
+        observer.observe(card)
+        return () => observer.disconnect()
+    }, [])
 
     useMotionValueEvent(scrollYProgress, "change", (v) => {
         const idx = Math.min(n - 1, Math.max(0, Math.floor(v * n)))
@@ -668,54 +689,66 @@ export function FeatureStack() {
                 </div>
             </div>
 
-            <div ref={container} className="relative mt-10">
+            <div ref={container} className="relative mt-10" style={{ paddingTop: BAR_H }}>
                 {/*
-                  The pinned header. It carries the section's title in condensed form plus a step
-                  readout, and it is INSIDE the scroll container so it unpins the moment the stack
-                  ends - a bar pinned to the whole page would follow the reader into the next
-                  section.
-
-                  It needs a near-opaque ground: cards pass directly underneath it, and a
+                  The pinned header: the section's title in condensed form plus a step readout. It
+                  needs a near-opaque ground, because cards pass directly underneath it and a
                   transparent bar would let card content show through the title.
+
+                  The track is what ends the pin - see the note above NAV_BOTTOM. It sits over the
+                  cards, so it has to let clicks through to their links.
                 */}
                 <div
-                    className="sticky z-30 border-y border-[var(--vi-line)] bg-white/85 backdrop-blur-md dark:bg-neutral-950/85"
-                    style={{ top: NAV_BOTTOM, height: BAR_H }}
+                    className="pointer-events-none absolute inset-x-0 top-0 z-30"
+                    style={{ bottom: `var(--fs-last-card, calc(100svh - ${STACK_TOP}px))` }}
                 >
-                    <div className="mx-auto flex h-full max-w-7xl items-center gap-4 px-5 sm:px-7">
-                        <span className="hidden shrink-0 items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--vi-ink4)] sm:inline-flex">
-                            <span className="h-1 w-1 rounded-full bg-[var(--vi-ink)]" />
-                            Full-spectrum engineering
-                        </span>
-                        <span className="truncate text-[14px] font-semibold tracking-[-0.01em] text-[var(--vi-ink)] sm:text-[15px]">
-                            One team for every layer of the product.
-                        </span>
+                    <div
+                        className="pointer-events-auto sticky border-y border-[var(--vi-line)] bg-white/85 backdrop-blur-md dark:bg-neutral-950/85"
+                        style={{ top: NAV_BOTTOM, height: BAR_H }}
+                    >
+                        <div className="mx-auto flex h-full max-w-7xl items-center gap-4 px-5 sm:px-7">
+                            <span className="hidden shrink-0 items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--vi-ink4)] sm:inline-flex">
+                                <span className="h-1 w-1 rounded-full bg-[var(--vi-ink)]" />
+                                Full-spectrum engineering
+                            </span>
+                            <span className="truncate text-[14px] font-semibold tracking-[-0.01em] text-[var(--vi-ink)] sm:text-[15px]">
+                                One team for every layer of the product.
+                            </span>
 
-                        {/* Step readout + progress ticks, so a six-card stack tells you where you
-                            are in it instead of feeling unbounded. */}
-                        <span className="ml-auto flex shrink-0 items-center gap-3">
-                            <span className="hidden items-center gap-1.5 sm:flex">
-                                {FEATURES.map((f, i) => (
-                                    <span
-                                        key={f.id}
-                                        className="h-1 rounded-full transition-all duration-300"
-                                        style={{
-                                            width: i === active ? 20 : 8,
-                                            background: i <= active ? "var(--vi-ink)" : "var(--vi-ink5)",
-                                        }}
-                                    />
-                                ))}
+                            {/* Step readout + progress ticks, so a six-card stack tells you where you
+                                are in it instead of feeling unbounded. */}
+                            <span className="ml-auto flex shrink-0 items-center gap-3">
+                                <span className="hidden items-center gap-1.5 sm:flex">
+                                    {FEATURES.map((f, i) => (
+                                        <span
+                                            key={f.id}
+                                            className="h-1 rounded-full transition-all duration-300"
+                                            style={{
+                                                width: i === active ? 20 : 8,
+                                                background: i <= active ? "var(--vi-ink)" : "var(--vi-ink5)",
+                                            }}
+                                        />
+                                    ))}
+                                </span>
+                                <span className="text-[12px] font-semibold tabular-nums text-[var(--vi-ink3)]">
+                                    {String(active + 1).padStart(2, "0")}
+                                    <span className="text-[var(--vi-ink4)]">/{String(n).padStart(2, "0")}</span>
+                                </span>
                             </span>
-                            <span className="text-[12px] font-semibold tabular-nums text-[var(--vi-ink3)]">
-                                {String(active + 1).padStart(2, "0")}
-                                <span className="text-[var(--vi-ink4)]">/{String(n).padStart(2, "0")}</span>
-                            </span>
-                        </span>
+                        </div>
                     </div>
                 </div>
 
                 {FEATURES.map((f, i) => (
-                    <StackCard key={f.id} feature={f} i={i} n={n} progress={scrollYProgress} play={i <= seen} />
+                    <StackCard
+                        key={f.id}
+                        ref={i === n - 1 ? lastCard : undefined}
+                        feature={f}
+                        i={i}
+                        n={n}
+                        progress={scrollYProgress}
+                        play={i <= seen}
+                    />
                 ))}
             </div>
         </section>

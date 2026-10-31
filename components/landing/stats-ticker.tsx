@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
 import { motion } from "framer-motion"
+import { useState } from "react"
 
 const TECH_TERMS = [
     "Next.js 15", "React Server Components", "TypeScript", "Node.js",
@@ -109,11 +109,6 @@ const POINTS = [
     },
 ]
 
-const fadeUp = {
-    hidden: { opacity: 0, y: 22 },
-    visible: { opacity: 1, y: 0 },
-}
-
 /**
  * Each card's SVG animates with `animation-play-state: var(--anim-play, paused)` and fill-mode
  * `both`, so while the variable stays `paused` the shapes hold their `from` keyframe - which is
@@ -126,8 +121,7 @@ function PointCard({ point }: { point: (typeof POINTS)[number] }) {
 
     return (
         <motion.div
-            variants={fadeUp}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            initial={false}
             viewport={{ once: true, amount: 0.25 }}
             onViewportEnter={start}
             onMouseEnter={start}
@@ -151,35 +145,29 @@ export function StatsTicker() {
             `}</style>
 
             <div className="mx-auto max-w-6xl px-6">
-                <motion.div
-                    initial="hidden" whileInView="visible" viewport={{ once: true }}
-                    transition={{ staggerChildren: 0.1 }}
+                <div data-rv="" data-rv-group=""
                     className="mb-16 text-center"
                 >
-                    <motion.p variants={fadeUp} transition={{ duration: 0.5 }}
+                    <p
                         className="text-[11px] font-mono font-semibold uppercase tracking-[0.22em] text-neutral-400 dark:text-neutral-500 mb-4">
                         Why it matters
-                    </motion.p>
-                    <motion.h2 variants={fadeUp} transition={{ duration: 0.5 }}
+                    </p>
+                    <h2
                         className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
                         Most agency engagements{" "}
                         <span className="text-neutral-400 dark:text-neutral-500">fall apart.</span>
-                    </motion.h2>
-                    <motion.p variants={fadeUp} transition={{ duration: 0.5 }}
+                    </h2>
+                    <p
                         className="mt-3 text-[15px] text-neutral-500 dark:text-neutral-400 max-w-lg mx-auto">
                         Three structural problems that stall product teams every single day - and exactly what Shunya does differently.
-                    </motion.p>
-                </motion.div>
-                <motion.div
-                    initial="hidden" whileInView="visible" viewport={{ once: true }}
-                    transition={{ staggerChildren: 0.13 }}
+                    </p>
+                </div>
+                <div data-rv="" data-rv-group=""
                     className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-14"
                 >
                     {POINTS.map((p) => <PointCard key={p.n} point={p} />)}
-                </motion.div>
-                <motion.div
-                    initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
+                </div>
+                <div data-rv=""
                     className="space-y-3 overflow-hidden relative"
                 >
                     {/* --tw-gradient-from is never set here, so the old fallback painted a white
@@ -191,7 +179,7 @@ export function StatsTicker() {
                         style={{ background: "linear-gradient(to left, var(--so-bg), transparent)" }} />
                     <Marquee />
                     <Marquee reverse />
-                </motion.div>
+                </div>
             </div>
         </section>
     )

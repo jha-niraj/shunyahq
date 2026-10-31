@@ -189,6 +189,8 @@ export const PROJECTS: Project[] = [
             "An AI legal and tax intelligence platform that answers Nepal's tax and law questions with the exact statutory section and court ruling - built for CAs, auditors, lawyers, businesses, and foreign investors.",
         industry: "LegalTech",
         liveUrl: "https://vidhica.nirajjha.xyz",
+        // PLACEHOLDER: stock photo from Unsplash. Replace with a real product screenshot.
+        image: "/projects/placeholder-vidhica.jpg",
         technologies: ["Next.js", "PostgreSQL", "OpenAI", "Anthropic", "OCR", "Tailwind"],
         year: 2025,
         timeline: "4 months",
@@ -284,6 +286,8 @@ export const PROJECTS: Project[] = [
             "A unified workspace for agencies, studios, and founders juggling many client projects - project management, white-labeled client portals, billing, and live business intelligence in one place.",
         industry: "SaaS",
         liveUrl: "https://synchq.nirajjha.xyz",
+        // PLACEHOLDER: stock photo from Unsplash. Replace with a real product screenshot.
+        image: "/projects/placeholder-synchq.jpg",
         technologies: ["Next.js", "GraphQL", "AWS", "PostgreSQL", "Tailwind"],
         year: 2025,
         timeline: "6 months",
@@ -387,6 +391,8 @@ export const PROJECTS: Project[] = [
             "A school management platform for institutions in Nepal that turns paper-based attendance, fees, and exams into fast digital workflows - with an AI layer across every module.",
         industry: "EdTech",
         liveUrl: "https://gurukul.nirajjha.xyz",
+        // PLACEHOLDER: stock photo from Unsplash. Replace with a real product screenshot.
+        image: "/projects/placeholder-gurukul.jpg",
         technologies: ["Next.js", "React Native", "PostgreSQL", "Khalti", "eSewa", "Tailwind"],
         year: 2024,
         timeline: "5 months",

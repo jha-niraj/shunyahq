@@ -1,5 +1,5 @@
 // Data-driven content for the /solutions/[audience] use-case pages.
-// Each entry is real, audience-specific copy for Shunya Tech - a software
+// Each entry is real, audience-specific copy for ShunyaHQ - a software
 // engineering studio that architects, builds, and scales production-grade
 // web applications - SaaS platforms, dashboards and marketing sites.
 

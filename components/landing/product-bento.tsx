@@ -1,19 +1,11 @@
 "use client"
 
 import { type ReactNode } from "react"
-import { motion } from "framer-motion"
 import { ShieldCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
     StreamingChat, VouchingScan, ReportDraft, ExamCard, LangToggle, MiniBarChart,
 } from "./illustrations"
-
-const EASE = [0.22, 1, 0.36, 1] as const
-
-const fadeUp = {
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0 },
-}
 
 function Tile({
     title, body, children, className, contentClassName,
@@ -25,9 +17,7 @@ function Tile({
     contentClassName?: string
 }) {
     return (
-        <motion.div
-            variants={fadeUp}
-            transition={{ duration: 0.55, ease: EASE }}
+        <div
             className={cn(
                 "group relative flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white p-5 transition-colors hover:border-neutral-300 dark:border-white/10 dark:bg-neutral-900/40 dark:hover:border-white/20",
                 className,
@@ -40,7 +30,7 @@ function Tile({
                 <h3 className="text-[15px] font-bold leading-snug text-neutral-900 dark:text-white">{title}</h3>
                 <p className="mt-1 text-[13px] leading-relaxed text-neutral-500 dark:text-neutral-400">{body}</p>
             </div>
-        </motion.div>
+        </div>
     )
 }
 
@@ -48,27 +38,19 @@ export default function ProductBento() {
     return (
         <section className="py-24 md:py-32">
             <div className="mx-auto max-w-6xl px-6">
-                <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    transition={{ staggerChildren: 0.1 }}
+                <div data-rv="" data-rv-group=""
                     className="mb-14 text-center"
                 >
-                    <motion.p variants={fadeUp} transition={{ duration: 0.5 }} className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
+                    <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
                         Experience SyncHQ in action
-                    </motion.p>
-                    <motion.h2 variants={fadeUp} transition={{ duration: 0.5 }} className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                    </p>
+                    <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white">
                         The command center for high-velocity{" "}
                         <span className="text-neutral-400 dark:text-neutral-500">engineering teams.</span>
-                    </motion.h2>
-                </motion.div>
+                    </h2>
+                </div>
 
-                <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    transition={{ staggerChildren: 0.1 }}
+                <div data-rv="" data-rv-group=""
                     className="grid auto-rows-[minmax(190px,auto)] grid-cols-1 gap-4 md:grid-cols-3"
                 >
                     <Tile
@@ -107,7 +89,7 @@ export default function ProductBento() {
                             <MiniBarChart className="h-24 w-full" />
                         </div>
                     </Tile>
-                </motion.div>
+                </div>
             </div>
         </section>
     )

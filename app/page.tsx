@@ -3,10 +3,11 @@ import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site"
 import { Hero } from "@/components/landing/hero"
 import {
     WhoItsFor, FeatureStack, HowItWorks, BeforeAfter, StatsTicker,
-    IntegrationsSection, TestimonialsSection, FAQSection, CTASection,
+    IntegrationsSection, FAQSection, CTASection,
     CapabilitiesGrid, ProductBento,
 } from "@/components/landing/landing-sections"
 import { SyncHQSection } from "@/components/landing/synchq-section"
+import { ShippedWork } from "@/components/landing/shipped-work"
 import { LANDING_FAQS } from "@/components/landing/faq-data"
 
 export const metadata: Metadata = {
@@ -72,7 +73,7 @@ export default function HomePage() {
                 <StatsTicker />
                 <SyncHQSection />
                 <IntegrationsSection />
-                <TestimonialsSection />
+                <ShippedWork />
                 <FAQSection />
                 <CTASection />
             </main>

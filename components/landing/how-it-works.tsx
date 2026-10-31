@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 
 const STEPS = [
     {
@@ -53,51 +52,32 @@ const STEPS = [
     },
 ]
 
-const fadeUp = {
-    hidden: { opacity: 0, y: 28 },
-    visible: { opacity: 1, y: 0 },
-}
-
 export function HowItWorks() {
     return (
         <section className="py-24 md:py-32">
             <div className="mx-auto max-w-6xl px-6">
-                <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    transition={{ staggerChildren: 0.1 }}
+                <div data-rv="" data-rv-group=""
                     className="mb-16"
                 >
-                    <motion.p
-                        variants={fadeUp}
-                        transition={{ duration: 0.5 }}
+                    <p
                         className="text-[11px] font-mono font-semibold uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500 mb-4"
                     >
                         The Protocol
-                    </motion.p>
-                    <motion.h2
-                        variants={fadeUp}
-                        transition={{ duration: 0.5 }}
+                    </p>
+                    <h2
                         className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white max-w-xl"
                     >
                         How we turn chaos{" "}
                         <span className="text-neutral-400 dark:text-neutral-500">into code.</span>
-                    </motion.h2>
-                </motion.div>
-                <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    transition={{ staggerChildren: 0.14 }}
+                    </h2>
+                </div>
+                <div data-rv="" data-rv-group=""
                     className="grid grid-cols-1 md:grid-cols-3 gap-px bg-neutral-200 dark:bg-neutral-800 rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800"
                 >
                     {
                         STEPS.map((step, i) => (
-                            <motion.div
+                            <div
                                 key={step.n}
-                                variants={fadeUp}
-                                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                                 className="bg-white dark:bg-neutral-900 p-8 flex flex-col relative"
                             >
                                 <span className="font-mono text-[11px] font-semibold tracking-[0.16em] text-neutral-400 dark:text-neutral-600 mb-5">
@@ -129,15 +109,11 @@ export function HowItWorks() {
                                         </div>
                                     )
                                 }
-                            </motion.div>
+                            </div>
                         ))
                     }
-                </motion.div>
-                <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
+                </div>
+                <div data-rv=""
                     className="mt-10 flex flex-wrap justify-center gap-x-8 gap-y-3"
                 >
                     {
@@ -156,7 +132,7 @@ export function HowItWorks() {
                             </div>
                         ))
                     }
-                </motion.div>
+                </div>
             </div>
         </section>
     )

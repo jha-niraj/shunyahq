@@ -31,7 +31,7 @@ export function GET() {
 
 > ${SITE_DESCRIPTION}
 
-Shunya (Shunya Tech) is a software engineering studio. We architect, build, and scale
+ShunyaHQ (registered as Shunya Tech) is a software engineering studio. We architect, build, and scale
 production-grade web applications - SaaS platforms, dashboards, internal tools and
 infrastructure - with one team that owns everything from concept to launch. Every project
 we take goes live: not a prototype, not a Figma deck, but a real production system people use.

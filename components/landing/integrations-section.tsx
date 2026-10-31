@@ -1,9 +1,9 @@
 "use client"
 
-import type { ReactNode } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
+import { STACK_LOGOS, type StackLogo } from "./stack-logos"
 
 /**
  * ## The stack, rebuilt
@@ -24,115 +24,24 @@ import { ArrowUpRight } from "lucide-react"
  * recognising your own stack at a glance is what this section is for.
  */
 
-type Item = { id: string; name: string; mark: ReactNode }
-
 const EASE = [0.22, 1, 0.36, 1] as const
 
-// Rounded brand tile with a centred glyph, in the style of each tool's own app icon.
-function Tile({ bg, children }: { bg: string; children: ReactNode }) {
+// Rounded tile in the style of each tool's own app icon, carrying its official mark.
+function LogoTile({ logo }: { logo: StackLogo }) {
+    const offset = (40 - logo.size) / 2
     return (
-        <svg viewBox="0 0 40 40" width="40" height="40" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-            <rect width="40" height="40" rx="11" fill={bg} />
-            {children}
+        <svg viewBox="0 0 40 40" width="40" height="40" className="rounded-[11px]" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <rect width="40" height="40" fill={logo.bg} />
+            <path d={logo.d} fill={logo.fill} transform={`translate(${offset} ${offset}) scale(${logo.size / 24})`} />
         </svg>
     )
 }
 
-const T = (x: number, y: number, size: number, weight: string, extra: Record<string, string | number> = {}) => ({
-    x, y, textAnchor: "middle" as const, fill: "#fff", fontFamily: "inherit",
-    fontWeight: weight, fontSize: size, ...extra,
-})
-
-const NextLogo = () => (
-    <Tile bg="#000000">
-        <circle cx="20" cy="20" r="11.5" stroke="#fff" strokeOpacity="0.45" strokeWidth="1.4" fill="none" />
-        <path d="M15 27 L15 13 L26 27 M24.5 13 L24.5 22" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </Tile>
-)
-const ReactLogo = () => (
-    <Tile bg="#087EA4">
-        <circle cx="20" cy="20" r="2.6" fill="#fff" />
-        <g stroke="#fff" strokeWidth="1.5" fill="none">
-            <ellipse cx="20" cy="20" rx="11" ry="4.3" />
-            <ellipse cx="20" cy="20" rx="11" ry="4.3" transform="rotate(60 20 20)" />
-            <ellipse cx="20" cy="20" rx="11" ry="4.3" transform="rotate(120 20 20)" />
-        </g>
-    </Tile>
-)
-const TypeScriptLogo = () => (
-    <Tile bg="#3178C6">
-        <text {...T(20, 27, 16, "800")}>TS</text>
-    </Tile>
-)
-const NodeLogo = () => (
-    <Tile bg="#5FA04E">
-        <path d="M20 7 L31 13.5 L31 26.5 L20 33 L9 26.5 L9 13.5 Z" stroke="#fff" strokeOpacity="0.45" strokeWidth="1.4" strokeLinejoin="round" fill="none" />
-        <path d="M16 25.5 L16 16 L24 25.5 L24 16" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </Tile>
-)
-const PostgresLogo = () => (
-    <Tile bg="#336791">
-        <ellipse cx="20" cy="13" rx="9" ry="3.6" stroke="#fff" strokeWidth="1.8" fill="none" />
-        <path d="M11 13 L11 27 C11 29 15 30.5 20 30.5 C25 30.5 29 29 29 27 L29 13" stroke="#fff" strokeWidth="1.8" fill="none" />
-        <path d="M11 20 C11 22 15 23.5 20 23.5 C25 23.5 29 22 29 20" stroke="#fff" strokeOpacity="0.6" strokeWidth="1.8" fill="none" />
-    </Tile>
-)
-const AwsLogo = () => (
-    <Tile bg="#FF9900">
-        <text {...T(20, 22, 11, "800", { letterSpacing: "0.3" })}>aws</text>
-        <path d="M11 27 C16 30.5 24 30.5 29 27" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-        <path d="M26.5 25.8 L29.8 26.5 L29 30" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-    </Tile>
-)
-const KubernetesLogo = () => (
-    <Tile bg="#326CE5">
-        <path d="M20 8 L29.5 13.5 L29.5 24.5 L20 30 L10.5 24.5 L10.5 13.5 Z" stroke="#fff" strokeOpacity="0.5" strokeWidth="1.5" strokeLinejoin="round" fill="none" />
-        <circle cx="20" cy="19" r="2.8" fill="#fff" />
-        <g stroke="#fff" strokeWidth="1.5" strokeLinecap="round">
-            <line x1="20" y1="19" x2="20" y2="11.5" />
-            <line x1="20" y1="19" x2="26.5" y2="23" />
-            <line x1="20" y1="19" x2="13.5" y2="23" />
-        </g>
-    </Tile>
-)
-const OpenAiLogo = () => (
-    <Tile bg="#0F0F0F">
-        <g transform="translate(20,20)">
-            {[0, 60, 120, 180, 240, 300].map((deg) => (
-                <ellipse key={deg} cx="0" cy="-6.8" rx="2.7" ry="6.8" fill="#fff" opacity="0.9" transform={`rotate(${deg})`} />
-            ))}
-            <circle cx="0" cy="0" r="3.1" fill="#0F0F0F" />
-        </g>
-    </Tile>
-)
-const AnthropicLogo = () => (
-    <Tile bg="#D97757">
-        <path d="M12 30 L20 9 L28 30" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <line x1="15.2" y1="23.5" x2="24.8" y2="23.5" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" />
-    </Tile>
-)
-const StripeLogo = () => (
-    <Tile bg="#635BFF">
-        <text {...T(20, 28, 20, "800", { fontStyle: "italic" })}>S</text>
-    </Tile>
-)
-
 /**
- * Ten rails, in the order the funnel below draws them. The count is load-bearing: the funnel
- * geometry assumes ten evenly spaced columns, so adding an eleventh means editing both.
+ * The count is load-bearing: the funnel geometry assumes ten evenly spaced columns in this order,
+ * so adding an eleventh means editing both.
  */
-const ITEMS: Item[] = [
-    { id: "nextjs", name: "Next.js", mark: <NextLogo /> },
-    { id: "react", name: "React", mark: <ReactLogo /> },
-    { id: "typescript", name: "TypeScript", mark: <TypeScriptLogo /> },
-    { id: "node", name: "Node.js", mark: <NodeLogo /> },
-    { id: "postgres", name: "PostgreSQL", mark: <PostgresLogo /> },
-    { id: "aws", name: "AWS", mark: <AwsLogo /> },
-    { id: "kubernetes", name: "Kubernetes", mark: <KubernetesLogo /> },
-    { id: "openai", name: "OpenAI", mark: <OpenAiLogo /> },
-    { id: "anthropic", name: "Anthropic", mark: <AnthropicLogo /> },
-    { id: "stripe", name: "Stripe", mark: <StripeLogo /> },
-]
+const ITEMS = STACK_LOGOS
 
 /**
  * The funnel: ten rails, one system.
@@ -175,7 +84,7 @@ function Funnel() {
 
 const PROOF = [
     {
-        stat: "24+ tools",
+        stat: "10 core tools",
         title: "One integrated stack",
         body: "Next.js, React, TypeScript, AWS, Kubernetes and the rest - wired together on day one, not bolted on at the end.",
     },
@@ -195,11 +104,7 @@ export default function IntegrationsSection() {
     return (
         <section className="py-24 md:py-32">
             <div className="mx-auto max-w-6xl px-6">
-                <motion.div
-                    initial={{ opacity: 0, y: 18 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.4 }}
-                    transition={{ duration: 0.6, ease: EASE }}
+                <div data-rv=""
                     className="mx-auto max-w-2xl text-center"
                 >
                     <p className="mb-4 flex items-center justify-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">
@@ -214,13 +119,9 @@ export default function IntegrationsSection() {
                         Battle-tested tools, wired together by one team. Nothing here is a pilot - this is the stack your
                         product ships on.
                     </p>
-                </motion.div>
+                </div>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.2 }}
-                    transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
+                <div data-rv=""
                     className="relative mt-14 overflow-hidden rounded-3xl border border-neutral-200 bg-white/60 px-4 py-10 backdrop-blur-sm sm:px-8 sm:py-12 dark:border-neutral-800 dark:bg-neutral-900/40"
                 >
                     <div
@@ -237,23 +138,19 @@ export default function IntegrationsSection() {
                         {/* A 5-column grid on small screens becomes the 10-column row the funnel is
                             drawn against, so the lines only claim to line up with the tiles at the
                             width where they actually do. */}
-                        <div className="grid grid-cols-5 gap-x-2 gap-y-6 lg:grid-cols-10">
-                            {ITEMS.map((item, i) => (
-                                <motion.div
+                        <div data-rv="" data-rv-group="" className="grid grid-cols-5 gap-x-2 gap-y-6 lg:grid-cols-10">
+                            {ITEMS.map((item) => (
+                                <div
                                     key={item.id}
-                                    initial={{ opacity: 0, y: 12 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, amount: 0.5 }}
-                                    transition={{ duration: 0.45, delay: i * 0.05, ease: EASE }}
                                     className="flex flex-col items-center gap-2"
                                 >
                                     <span className="grid h-[58px] w-[58px] place-items-center rounded-[18px] border border-neutral-200 bg-white shadow-[0_10px_28px_-16px_rgba(0,0,0,0.35)] dark:border-neutral-700/70 dark:bg-neutral-900">
-                                        {item.mark}
+                                        <LogoTile logo={item} />
                                     </span>
                                     <span className="whitespace-nowrap text-center font-mono text-[10px] tracking-tight text-neutral-500 dark:text-neutral-400">
                                         {item.name}
                                     </span>
-                                </motion.div>
+                                </div>
                             ))}
                         </div>
 
@@ -293,16 +190,12 @@ export default function IntegrationsSection() {
                             </div>
                         </div>
                     </div>
-                </motion.div>
+                </div>
 
-                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-                    {PROOF.map((p, i) => (
-                        <motion.div
+                <div data-rv="" data-rv-group="" className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+                    {PROOF.map((p) => (
+                        <div
                             key={p.stat}
-                            initial={{ opacity: 0, y: 16 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, amount: 0.4 }}
-                            transition={{ duration: 0.5, delay: i * 0.08, ease: EASE }}
                             className="rounded-2xl border border-neutral-200 bg-white/60 p-6 dark:border-neutral-800 dark:bg-neutral-900/40"
                         >
                             <p className="text-[30px] font-semibold leading-none tracking-[-0.03em] text-neutral-900 dark:text-white">
@@ -310,7 +203,7 @@ export default function IntegrationsSection() {
                             </p>
                             <p className="mt-4 text-[15px] font-semibold text-neutral-900 dark:text-white">{p.title}</p>
                             <p className="mt-2 text-[13.5px] leading-relaxed text-neutral-500 dark:text-neutral-400">{p.body}</p>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
 

@@ -27,11 +27,6 @@ export const IntegrationsSection = dynamic(
     { ssr: false }
 )
 
-export const TestimonialsSection = dynamic(
-    () => import("./testimonials-section"),
-    { ssr: false }
-)
-
 export const FAQSection = dynamic(
     () => import("./faq-section"),
     { ssr: false }

@@ -212,8 +212,6 @@
     box-sizing: border-box;
   }
 
-  html { scroll-behavior: smooth; }
-
   body {
     background: var(--so-bg);
     color: var(--so-ink);
@@ -785,13 +783,10 @@ html { scroll-padding-top: 80px; }
    silk drift, route enter, spinners) that nothing in JS is watching. Durations are collapsed rather
    than set to `none` so anything relying on an animation reaching its end state still gets there. */
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 
   .so-marquee { animation: none; }

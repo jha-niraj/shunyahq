@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import {
     Layers, Rocket, Gauge
 } from "lucide-react"
@@ -44,60 +43,39 @@ const PROFILES = [
     },
 ]
 
-const fadeUp = {
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0 },
-}
-
 export function WhoItsFor() {
     return (
         <section className="py-24 md:py-32">
             <div className="mx-auto max-w-6xl px-6">
-                <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    transition={{ staggerChildren: 0.1 }}
+                <div data-rv="" data-rv-group=""
                     className="text-center mb-16"
                 >
-                    <motion.p
-                        variants={fadeUp}
-                        transition={{ duration: 0.5 }}
+                    <p
                         className="text-[11px] font-mono font-semibold uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500 mb-4"
                     >
                         How we operate
-                    </motion.p>
-                    <motion.h2
-                        variants={fadeUp}
-                        transition={{ duration: 0.5 }}
+                    </p>
+                    <h2
                         className="text-4xl md:text-5xl font-bold tracking-tight text-neutral-900 dark:text-white"
                     >
                         Built{" "}
                         <span className="text-neutral-400 dark:text-neutral-500">Different.</span>
-                    </motion.h2>
-                    <motion.p
-                        variants={fadeUp}
-                        transition={{ duration: 0.5 }}
+                    </h2>
+                    <p
                         className="mt-4 text-base text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto"
                     >
                         We don&apos;t manage projects - we own them. Here&apos;s what that actually means in practice.
-                    </motion.p>
-                </motion.div>
-                <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    transition={{ staggerChildren: 0.12 }}
+                    </p>
+                </div>
+                <div data-rv="" data-rv-group=""
                     className="grid grid-cols-1 md:grid-cols-3 gap-6"
                 >
                     {
                         PROFILES.map((profile) => {
                             const Icon = profile.icon
                             return (
-                                <motion.div
+                                <div
                                     key={profile.role}
-                                    variants={fadeUp}
-                                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                                     className="relative rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/50 p-7 flex flex-col"
                                 >
                                     {profile.tag && (
@@ -131,11 +109,11 @@ export function WhoItsFor() {
                                             ))
                                         }
                                     </ul>
-                                </motion.div>
+                                </div>
                             )
                         })
                     }
-                </motion.div>
+                </div>
             </div>
         </section>
     )

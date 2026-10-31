@@ -96,7 +96,7 @@ export default function PricingPage() {
                         </Reveal>
 
                         {/* Active domain description */}
-                        <AnimatePresence mode="wait">
+                        <AnimatePresence mode="wait" initial={false}>
                             {
                                 Object.entries(pricingData).map(([key, data]) => (
                                     <TabsContent key={key} value={key} className="mt-0 outline-none">

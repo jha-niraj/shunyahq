@@ -13,7 +13,7 @@ import { FadeIn, StaggerContainer, StaggerItem } from "@/components/landing/anim
 
 const FAQS = [
     {
-        q: "What kind of work does Shunya Tech take on?",
+        q: "What kind of work does ShunyaHQ take on?",
         a: "We architect and ship digital products end to end - web platforms, mobile apps, AI features, and the cloud infrastructure behind them. We work best on ambitious builds where engineering quality actually matters, not throwaway sites.",
     },
     {
@@ -94,7 +94,7 @@ const teamMembers = [
     {
         name: "Kratik Singh",
         role: "CO-FOUNDER & CEO",
-        bio: "Co-Founder & CEO of Shunya Tech. Focused on digital branding, product strategy, and helping businesses build a meaningful presence in the modern digital world.",
+        bio: "Co-Founder & CEO of ShunyaHQ. Focused on digital branding, product strategy, and helping businesses build a meaningful presence in the modern digital world.",
         image: "/teams/kartiksingh.png",
         linkedin: "#",
         colSpan: "md:col-span-2 lg:col-span-2"
@@ -102,7 +102,7 @@ const teamMembers = [
     {
         name: "Amandeep",
         role: "CO-FOUNDER & CFO",
-        bio: "Co-Founder & CFO at Shunya Tech. Drives financial planning and strategic operations, building a stable foundation for the company's long-term growth.",
+        bio: "Co-Founder & CFO at ShunyaHQ. Drives financial planning and strategic operations, building a stable foundation for the company's long-term growth.",
         image: "",
         linkedin: "#",
         colSpan: "md:col-span-1 lg:col-span-1"
@@ -110,7 +110,7 @@ const teamMembers = [
     {
         name: "Niraj Jha",
         role: "CO-FOUNDER & CTO",
-        bio: "Co-Founder & CTO of Shunya Tech. Full-stack architect who sets the engineering culture and technical standards behind every product we ship.",
+        bio: "Co-Founder & CTO of ShunyaHQ. Full-stack architect who sets the engineering culture and technical standards behind every product we ship.",
         image: "",
         linkedin: "https://linkedin.com/in/nirajjha",
         colSpan: "md:col-span-1 lg:col-span-1"
@@ -118,7 +118,7 @@ const teamMembers = [
     {
         name: "Harsh Pandey",
         role: "OPERATIONS ASSOCIATE",
-        bio: "Operations Associate at Shunya Tech. Keeps daily operations running efficiently with strong organizational discipline and a proactive work ethic.",
+        bio: "Operations Associate at ShunyaHQ. Keeps daily operations running efficiently with strong organizational discipline and a proactive work ethic.",
         image: "",
         linkedin: "#",
         colSpan: "md:col-span-2 lg:col-span-2"
@@ -153,7 +153,7 @@ export default function AboutPage() {
                             </h2>
                             <div className="space-y-5 text-[15px] leading-[1.75] text-so-ink-2">
                                 <p>
-                                    At Shunya Tech, we reject the noise. We believe that great technology is silent-it works so well
+                                    At ShunyaHQ, we reject the noise. We believe that great technology is silent-it works so well
                                     you don&apos;t notice the complexity behind it.
                                 </p>
                                 <p>
@@ -335,7 +335,7 @@ export default function AboutPage() {
                     items={FAQS}
                     eyebrow="FAQ"
                     title="Working with"
-                    titleAccent="Shunya Tech"
+                    titleAccent="ShunyaHQ"
                     description="A few things founders and teams usually want to know before we start."
                 />
             </section>

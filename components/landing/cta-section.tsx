@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { motion } from "framer-motion"
 import { ChevronRight } from "lucide-react"
 import { CitationAnswer, ExamCard, VouchingScan, ReportDraft } from "./illustrations"
 
@@ -24,11 +23,7 @@ export default function CTASection() {
             </div>
 
             <div className="relative z-10 mx-auto max-w-4xl text-center">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
+                <div data-rv=""
                 >
                     <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-neutral-200 dark:border-white/10 bg-neutral-100/50 dark:bg-white/5 px-4 py-2 text-xs text-neutral-600 dark:text-white/50 backdrop-blur-sm">
                         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
@@ -59,7 +54,7 @@ export default function CTASection() {
                             Book a Strategy Call
                         </Link>
                     </div>
-                </motion.div>
+                </div>
             </div>
         </section>
     )

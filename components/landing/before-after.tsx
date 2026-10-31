@@ -6,7 +6,6 @@ import {
     X, Check
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useSlideSnap } from "@/hooks/use-slide-snap"
 
 interface Topic {
     id: string
@@ -661,7 +660,6 @@ const FADE = {
 export default function BeforeAfter() {
     const containerRef = useRef<HTMLDivElement>(null)
     const { scrollYProgress } = useScroll({ target: containerRef })
-    useSlideSnap(containerRef, TOPICS.length)
     const [activeTab, setActiveTab] = useState(0)
     const [tabProgress, setTabProgress] = useState(0)
     const [animKey, setAnimKey] = useState(0)
@@ -752,7 +750,7 @@ export default function BeforeAfter() {
                         }
                     </div>
                     <div className="flex-1 min-h-0 py-4">
-                        <AnimatePresence mode="wait">
+                        <AnimatePresence mode="wait" initial={false}>
                             <motion.div
                                 key={topic.id}
                                 {...FADE}
